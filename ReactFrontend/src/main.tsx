@@ -8,6 +8,7 @@ import './index.css'
 import { createBrowserRouter,RouterProvider,Route ,Link } from 'react-router-dom'
 import Home from './pages/Home.tsx'
 import Nav from './components/Nav.tsx'
+import ProjectList from './pages/ProjectList.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -17,8 +18,12 @@ const router = createBrowserRouter([
     element: <Home/>,
   },
   {
-    path: "/worksapce",
+    path: "/workspaces",
     element: <Workspace/>,
+  },
+  {
+      path: "/workspaces/:id/project-list",
+    element: <ProjectList/>,
   },
   {
     path: "about",

@@ -1,176 +1,209 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+import {  DotChartOutlined, PieChartOutlined, RadarChartOutlined, SearchOutlined } from '@ant-design/icons';
+import Footer from '../components/Footer';
 
 function Home() {
+
+  const AITypeData = [
+    {
+      type:'Object Detection',
+      desc:'ระบุพื้นที่วาดกรอบรอบสี่เหลี่ยมวัตถุในภาพและวิดีโอ',
+      icon: 'SearchOutlined'
+
+    },
+    {
+      type:'Segmentation',
+      desc:'ตรวจจับวัตถุแต่ละอย่างในภาพ และวาดแบ่งกลุ่มสีเฉพาะ เพื่อแสดงถึงขอบเขต',
+      icon: 'PieChartOutlined'
+    },
+    {
+      type:'Regression',
+      desc:'ทำนายค่าข้อมูลที่เกี่ยวข้องด้วยรูปภาพ',
+      icon: 'DotChartOutlined'
+    },
+    {
+      type:'Classification',
+      desc:'แยกแยะจัดกลุ่มรูปภาพหรือจัดหมวดหมู่ให้วัตถุในรูปภาพ',
+      icon: 'RadarChartOutlined'
+    },
+  ]
+  
+  const DevTeamData = {
+    teacher: [
+      { name: "ผศ.ดร. ธราวิเชษฐ์ ธิติจรูญโรจน์", img: "images/homeImage/Taravichet-300x300.jpg" },
+      {
+        name: "ผศ.ดร. พรสุรีย์ แจ่มศรี",
+        img: "images/homeImage/Pornsuree-300x300.jpg",
+      },
+    ],
+    dev: [
+      { name: "นาย กิตตินันท์ เจริญทรง", img: "images/homeImage/kittnan.jpeg" },
+      { name: "นาย พุฒิพงษ์ ชอบงาม", img: "images/homeImage/puttipong.jpg" },
+    ],
+  };
+
+
+const renderIcon = (iconName: any) => {
+  switch (iconName) {
+    case 'SearchOutlined':
+      return <SearchOutlined style={{ fontSize: "48px" }} />;
+    case 'PieChartOutlined':
+      return <PieChartOutlined style={{ fontSize: "48px" }} />;
+    case 'RadarChartOutlined':
+      return <RadarChartOutlined style={{ fontSize: "48px" }} />;
+    default:
+      return <DotChartOutlined style={{ fontSize: "48px" }} />; 
+  }
+};
   return (
     <div className="">
-    {/* hero section */}
-    <div className="pt-24 grid grid-cols-5 gap-1 h-[100%] relative bg-neutral-100 ">
-      <div className="col-span-3 left-item ">
-        <div className="m-24">
-          <div className="flex">
-            <p>welcome to</p>
-            <div className="w-[63px] h-[0px] border border-black"></div>
-          </div>
-          <h1 className="my-4 text-3xl font-medium leading-none tracking-tight text-indigo-900 md:text-4xl dark:text-white">
-            AI Garden System
-          </h1>
-          <p className="my-4 text-black text-xl font-medium font-['Roboto'] leading-loose">
-            เว็บไซต์สำหรับทำงานประมวลผลภาพและวิดีโอด้วย AI computer vision
-          </p>
-          <Link to={`/worksapce`}>
-          <button
-            type="button"
-            className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4
+      {/* hero section */}
+      <div className="pt-24 grid grid-cols-5 gap-1 h-[100%] relative bg-neutral-100 ">
+        <div className="col-span-3 left-item mb-28 ">
+          <div className="m-24">
+            <div className="flex">
+              <div className="flex items-center">
+                <p>welcome to</p>
+                <div className="mx-1 mt-1  w-[100px] h-[0px] border border-black"></div>
+              </div>
+            </div>
+            <h1 className="my-4 text-3xl font-medium leading-none tracking-tight text-indigo-900 md:text-4xl dark:text-white">
+              AI Garden System
+            </h1>
+            <p className="my-4 text-black text-xl font-medium font-['Roboto'] leading-loose ">
+              เว็บไซต์สำหรับทำงานประมวลผลภาพและวิดีโอด้วย AI computer vision
+            </p>
+            <Link to={`/workspaces`}>
+              <button
+                type="button"
+                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4
              focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
              dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-            เริ่มใช้งาน
-          </button>
-          </Link>
-          <button
-            type="button"
-            className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            เรียนรู้เพิ่มเติม
-          </button>
-        </div>
-      </div>
-      <div className=" right-item  p-20 col-span-2">
-        <img
-          className=" h-[100%] w-[90%] "
-          src="https://cdn.discordapp.com/attachments/1013435571747704893/1259148597438451774/AI_Garden_System.jpg?ex=668aa103&is=66894f83&hm=663ff1bd76240df595902c10fdcc995b997f93feb4fd79156595f6730c6d4e0f&"
-        />
-      </div>
-    </div>
-    {/* section 4 card */}
-    <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
-      <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
-        ประเภทของ AI ในระบบ
-      </h1>
-      <div className="p-10 flex gap-14 ">
-        {/* card */}
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
-            Object detection
-          </h5>
-          <div className="mt-14 flex justify-center">
-            <h5 className="mb-2  text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
-              Icon
-            </h5>
+              >
+                เริ่มใช้งาน
+              </button>
+            </Link>
+            <Link to={`/documents`}>
+              <button
+                type="button"
+                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                เรียนรู้เพิ่มเติม
+              </button>
+            </Link>
           </div>
-          <p className="mt-4 mb-14 font-normal text-stone-900 dark:text-gray-400">
-            ระบุพื้นที่วาดกรอบรอบสี่เหลี่ยมวัตถุในภาพและวิดีโอ
-          </p>
         </div>
-        {/* card */}
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
-            Object detection
-          </h5>
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            ระบุพื้นที่วาดกรอบรอบสี่เหลี่ยมวัตถุในภาพและวิดีโอ
-          </p>
-        </div>
-        {/* card */}
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow "
-        >
-          <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
-            Object detection
-          </h5>
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            ระบุพื้นที่วาดกรอบรอบสี่เหลี่ยมวัตถุในภาพและวิดีโอ
-          </p>
-        </div>
-        {/* card */}
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
-            Object detection
-          </h5>
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            ระบุพื้นที่วาดกรอบรอบสี่เหลี่ยมวัตถุในภาพและวิดีโอ
-          </p>
+        <div className=" right-item  p-20 col-span-2">
+          {/* <img
+            className=" h-[100%] w-[90%] "
+            src="https://cdn.discordapp.com/attachments/1013435571747704893/1259148597438451774/AI_Garden_System.jpg?ex=668aa103&is=66894f83&hm=663ff1bd76240df595902c10fdcc995b997f93feb4fd79156595f6730c6d4e0f&"
+          /> */}
         </div>
       </div>
-    </div>
-    {/* หัวข้ออีกอัน section */}
-    <div>
-      <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-black md:text-2xl">
-        หัวข้ออีกอัน
-      </h1>
-    </div>
-    {/* developer team section */}
-    <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
-      <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
-        Developer Team / ทีมผู้พัฒนา
-      </h1>
-      {/* teacher advisor */}
-      <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
-        Teacher Advisor
-      </h1>
-      <div className="p-10 flex gap-14 ">
-        <div className=" block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow "
-        >
-          <img
-            className="mb-10 w-[167px] h-[166px] rounded-[360px] border"
-            src="images/Taravichet-300x300.jpg"
-            alt="อาจารย์ Taravichet Image"
-          />
-
-          <p className="text-center font-normal text-stone-900 dark:text-gray-400">
-            ผศ.ดร. ธราวิเชษฐ์
-          </p>
-          <p className="text-center font-normal text-stone-900 dark:text-gray-400">
-            ธิติจรูญโรจน์
-          </p>
-        </div>
-
-        <div className="text-center  block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <img
-            className="mb-10 w-[167px] h-[166px] rounded-[360px] border "
-            src="images/Pornsuree-300x300.jpg"
-            alt="อาจารย์ Pornsuree Image"
-          />
-
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            ผศ.ดร. พรสุรีย์ แจ่มศรี
-          </p>
+      {/* section 4 card */}
+      <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
+        <h1 className="ml-24 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
+          ประเภทของ AI ในระบบ
+        </h1>
+        <div className="p-10 flex gap-24 justify-center">
+          {/* card */}
+          {AITypeData.map((data) => (
+            <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
+              <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
+                {data.type}
+              </h5>
+              <div className="mt-14 flex justify-center ">
+                <h5 className="mb-2  text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
+                {renderIcon(data.icon)}
+                </h5>
+              </div>
+              <p className="mt-4 mb-14text-stone-900 text-lg font-medium font-['Inter'] leading-[27px] mx-a">
+                {data.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
-      <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
-        Dev
-      </h1>
-
-      <div className="p-10 flex gap-14 ">
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <img
-            className="mb-10 w-[167px] h-[166px] rounded-[360px] border "
-            src="images/"
-            alt="kittinan img"
-          />
-
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            นาย กิตตินันท์ เจริญทรง
-          </p>
+      {/* หัวข้ออีกอัน section */}
+      <div className=''>
+        <div className='h-full flex justify-end p-10 '>
+          <h1 className=" text-indigo-900 text-5xl font-medium leading-none tracking-tight  md:text-3xl ">
+            เกี่ยวกับระบบ AI System Garden
+          </h1>
         </div>
-
-        <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-          <img
-            className="mb-10 w-[167px] h-[166px] rounded-[360px] border "
-            src="images/"
-            alt="putthipong img"
-          />
-
-          <p className="font-normal text-stone-900 dark:text-gray-400">
-            นาย พุฒิพงษ์ ชอบงาม
-          </p>
+          <div className=' pb-20  grid grid-cols-12 items-center'>
+            <div className='col-span-3 ml-24'>
+            <img
+                className="w-56"
+                src='images/desktop-smartphone-app-development_23-2148683810.avif'
+              />
+            </div>
+            <div className='col-span-7'>
+        <h1 className=" text-indigo-900 text-2xl font-medium mb-4">
+            การพัฒนาแพลตฟอร์ม AI System Garden
+          </h1>
+        <p>เป็นการพัฒนาแพลตฟอร์มแอปพลิเคชันเพื่อช่วยสำหรับสนับสนุนทำงานวิเคราะห์ภาพ
+          และวิดีโอด้วยระบบปัญญาประดิษฐ์ประเภท Computer Vision
+          โดยที่ปัญญาประดิษฐ์ในแต่ละตัวจะมีการวิเคราะห์ผลลัพธ์จากภาพหรือวิดีโอตามคุณสมบัติและประเภทต่างกันออกไปแต่ละตัว</p>
+            </div>
         </div>
       </div>
+      {/* developer team section */}
+      <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
+        <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
+          Developer Team / ทีมผู้พัฒนา
+        </h1>
+        {/* teacher advisor */}
+        <div className="ml-10 mt-10 flex flex-row items-center space-x-4 p-4">
+          <h1 className="text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
+            Teacher Advisor
+          </h1>
+          <div className="w-9 h-9 bg-white rounded-full" />
+          <div className="w-[613px] h-[0px] border-2 border-white" />
+        </div>
+        <div className="p-10 flex gap-14 ">
+          {DevTeamData.teacher.map((data) => (
+            <div className=" block w-56 p-6 bg-white border border-gray-200 rounded-md shadow ">
+              <img
+                className="mb-10 w-[167px] h-[166px] rounded-[360px] border"
+                src={data.img}
+              />
+
+              <p className="text-center font-normal text-stone-900 dark:text-gray-400">
+                {data.name}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* dev */}
+        <div className="ml-10 mt-10 flex flex-row items-center space-x-4 p-4">
+          <h1 className=" text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
+            Dev ทีม
+          </h1>
+          <div className="w-9 h-9 bg-white rounded-full" />
+          <div className="w-[613px] h-[0px] border-2 border-white" />
+        </div>
+        <div className="p-10 flex gap-14 ">
+          {DevTeamData.dev.map((data) => (
+            <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
+              <img
+                className="mb-10 w-[167px] h-[166px] rounded-[360px] border "
+                src={data.img}
+              />
+
+              <p className="font-normal text-stone-900 dark:text-gray-400">
+                {data.name}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* footer */}
+      <Footer/>
     </div>
-    {/* footer */}
-    
-  </div>
-  )
+  );
 }
 
 export default Home

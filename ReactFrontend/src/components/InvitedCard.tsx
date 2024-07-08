@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {MoreOutlined}  from '@ant-design/icons';
 
 interface WorkspaceCardProps {
@@ -11,7 +10,7 @@ interface WorkspaceCardProps {
   updateAt:string;
 }
 
-const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
+const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
     return (
         <div className="m-10 w-10/12 h-[184px] relative bg-white rounded-[15px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50">
           {/* left blue line card */}
@@ -23,17 +22,27 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
               <h1 className="text-indigo-900 text-lg font-semibold">
               {props.name}
               </h1>
+              <p className='text-indigo-600 text-sm font-medium'>Project Owner</p>
               <p className='text-black/opacity-75 text-xs font-normal pr-4'>{props.desc}</p>
               <div
               className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center"><MoreOutlined style={{color:'#999'}}/></div>
             </div>
             {/* lower content */}
-            <div className='grid grid-cols-3 bg'>
+            <div className='grid grid-cols-3'>
               <div className='col-span-2'>
                 <p className='text-black/opacity-75 text-xs font-normal'>{props.members.length} member</p>
-                <p className='text-black/opacity-75 text-xs font-normal'>{props.createAt}</p>
+                <div className='flex items-center'> 
+                <p className='mr-1 text-black/opacity-75 text-xs font-normal'>create by</p>
+                <img 
+                className="w-8 h-8 rounded-full border-2 border-white" 
+                src={props.members[0].avatar} 
+                
+                />
+                <p className='ml-1 text-indigo-600 text-sm font-medium'>{props.members[0].name}</p>
+                
+                </div>
               </div>
-            <div className="flex -space-x-2">
+              <div className="flex -space-x-3 absolute bottom-2 right-4 ">
               {props.members.slice(0, 2).map((member, index) => (
                 <img 
                 key={index} 
@@ -48,13 +57,9 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
                 </div>
               )}
             </div>
-      </div>    
+        </div>    
           </div>
         </div>
     );
   };
-  
-  export default WorkspaceCard;
-
-
-  
+  export default InvitedCard;
