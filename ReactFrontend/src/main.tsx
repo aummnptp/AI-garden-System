@@ -6,9 +6,12 @@ import Workspace from './pages/Workspace.tsx'
 
 import './index.css'
 import { createBrowserRouter,RouterProvider,Route ,Link } from 'react-router-dom'
+
+// pag import
 import Home from './pages/Home.tsx'
 import Nav from './components/Nav.tsx'
 import ProjectList from './pages/ProjectList.tsx'
+import AIlist from './pages/AiList.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -26,8 +29,12 @@ const router = createBrowserRouter([
     element: <ProjectList/>,
   },
   {
-    path: "about",
-    element: <div>About</div>,
+    path: "/docs",
+    element: <div>docs</div>,
+  },
+  {
+    path: "/ai-list",
+    element: <AIlist/>,
   },
 ]);
 
