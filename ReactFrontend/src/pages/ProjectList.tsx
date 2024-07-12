@@ -1,11 +1,14 @@
 import { TextField } from '@mui/material'
 import React from 'react'
+import Sidebar from '../components/Sidebar'
+import FilterButton from '../components/FilterButton';
+import { Link } from 'react-router-dom';
 
 const ProjectList = () => {
   return (
-    <div className=" bg-neutral-100  items-center justify-center h-full pb-32 grid grid-cols-12">
+    <div className="bg-neutral-100  items-center justify-center h-full pb-32 grid grid-cols-12">
       {/* side bar */}
- <div className="mt-16 h-fit w-11/12 bg-red-400 rounded-[15px] justify-self-center relative col-span-2">ddd</div>
+    <Sidebar></Sidebar>
       <div className='col-span-10'>
       {/* top card (create sort workspace name) */}
       <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
@@ -35,14 +38,17 @@ const ProjectList = () => {
               ประเภท filter
             </button>
           </div>
-          <button
-            type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800
-            focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
-            dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            + Create New Project
-          </button>
+          {/* create button */}
+          <Link to={`/create`}>
+            <button
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800
+              focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
+              dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+              + Create New Project
+            </button>
+          </Link>
         </div>
         <div className="m-6 flex justify-start gap-4">
           <input
@@ -58,11 +64,10 @@ const ProjectList = () => {
             className="text-white bg-blue-700 hover:bg-blue-800
             focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
             dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
+            >
             + Add Tag filter
           </button>
         </div>
-        {/* create button */}
       </div>
       {/* card container */}
       <div className="mt-16 h-fit w-11/12 grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">

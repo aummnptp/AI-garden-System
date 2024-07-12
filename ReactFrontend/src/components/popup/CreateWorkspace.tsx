@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 
 import { Input } from "antd";
 import { CloseOutlined } from '@ant-design/icons';
+const { TextArea } = Input;
+
+
 interface CreateWorkspaceProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   
 }
 
-const { TextArea } = Input;
 
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setShowModal}) => {
   const handleCloseModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

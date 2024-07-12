@@ -70,10 +70,10 @@ function AIlist() {
       {/* card container */}
       <div className="mt-16 h-fit w-11/12 grid grid-cols-3 bg-white rounded-[15px] justify-self-center relative ">
         {/* card */}
-        <div className="m-10 w-8/12 bg-white rounded-[10px] border border-zinc-400 items-center ">
+        <div className="m-10 w-8/12 bg-white rounded-[10px] shadow border items-center ">
           <img
             className=" w-full h-3/6   
-            border border-zinc-400 object-cover"
+            object-cover"
             src="../../public/images/homeImage/puttipong.jpg"
             />
 

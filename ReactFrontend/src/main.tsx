@@ -12,6 +12,7 @@ import Home from './pages/Home.tsx'
 import Nav from './components/Nav.tsx'
 import ProjectList from './pages/ProjectList.tsx'
 import AIlist from './pages/AiList.tsx'
+import CreateProject from './pages/CreateProject.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "/ai-list",
     element: <AIlist/>,
+  },
+  {
+    path: "/create",
+    element: <CreateProject/>,
   },
 ]);
 
