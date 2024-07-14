@@ -13,6 +13,8 @@ import Nav from './components/Nav.tsx'
 import ProjectList from './pages/ProjectList.tsx'
 import AIlist from './pages/AiList.tsx'
 import CreateProject from './pages/CreateProject.tsx'
+import Admin from './pages/Admin.tsx'
+import CreateAi from './pages/CreateAi.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
   {
     path: "/create",
     element: <CreateProject/>,
+  },
+  {
+    path: "/admin",
+    element: <Admin/>,
+  },
+  {
+    path: "/createai",
+    element: <CreateAi/>,
   },
 ]);
 
