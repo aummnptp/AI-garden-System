@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     element: <Workspace/>,
   },
   {
-      path: "/workspaces/:id/project-list",
+      path: "/workspaces/:workspaceId/project-list",
     element: <ProjectList/>,
   },
   {
