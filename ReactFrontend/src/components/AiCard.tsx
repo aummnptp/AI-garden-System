@@ -4,17 +4,19 @@ interface AiCardProps {
     id:number;
     name:string;
     aiDesc: string;
+    img:string;
     type: string;
     tags:string[];
   }
 
 const AiCard :React.FC<AiCardProps> = (props) => {
   return (
-    <div className="m-10 w-8/12 bg-white shadow border items-center ">
+    <div className="m-10 w-8/12 h-fit bg-white shadow border items-center ">
           <img
-            className=" w-full h-3/6   
+            className=" w-full h-64 
             object-cover"
-            src="../../public/images/homeImage/puttipong.jpg"
+            
+            src={props.img}
             />
 
           <h1 className="p-2 mb-2 text-black text-[25px] font-semibold">
@@ -27,11 +29,18 @@ const AiCard :React.FC<AiCardProps> = (props) => {
           <p className=" p-2">
           {props.aiDesc}
           </p>
+          
           <div className=' p-2 mb-2'>
           {props.tags.map((tag) => (
-              <span  className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-xs font-normal">{tag}</span>
+              <span  className="w-fit bg-sky-500 rounded-[15px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-xs font-normal">{tag}</span>
             ))}
-              </div>
+            </div>
+            <button
+            type="button"
+            className=" items-center text-white bg-indigo-600 rounded-[25px] hover:bg-blue-800
+           font-medium  text-sm px-5 py-2.5 me-2 mb-2">
+            ส่งคำขอใช้งาน
+          </button>
         </div>
   )
 }

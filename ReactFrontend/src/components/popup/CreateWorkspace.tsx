@@ -51,15 +51,19 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
+                <span className="font-medium tracking-tight text-indigo-900">ชื่อ workspace</span>
+                <span className="ml-2 text-red-500 text-sm">*</span>
                   <Input
                     placeholder="Workspace Name"
                     variant="filled"
                     className="my-4"
                   />
+                  <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
                   <TextArea
+                   className="my-4"
                     rows={4}
                     variant="filled"
-                    placeholder="คำอธิบายworkspace"
+                    placeholder="คำอธิบาย workspace"
                   />
                 </div>
                 {/*footer*/}

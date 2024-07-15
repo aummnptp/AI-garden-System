@@ -94,7 +94,9 @@ function Workspace() {
             <div className={`grid grid-cols-3 gap-4`}>  
                 {MyWorkspaceData.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
+                <Link to={`/workspaces/${data.id}/project-list`}>
                   <InvitedCard  id={data.id} name={data.name} desc={data.desc} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
+                </Link>
               </div>
                 ))}
               </div>

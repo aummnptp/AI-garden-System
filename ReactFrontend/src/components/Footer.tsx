@@ -20,9 +20,7 @@ function Footer() {
                       <li className="mb-4">
                           <div className="">Faculty of IT Bldg. </div>
                       </li>
-                      <li>
-                      <div className="">Faculty of IT Bldg. </div>
-                      </li>
+
                   </ul>
               </div>
            

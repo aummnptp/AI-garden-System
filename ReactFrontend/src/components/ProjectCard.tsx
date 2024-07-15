@@ -13,7 +13,7 @@ const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
           >
           <img
             className="m-2 w-[186px] h-[168px] rounded-[10px] "
-            src="../../public/images/homeImage/puttipong.jpg"
+            src="../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png"
             />
           <div className='flex flex-col h-full w-full'>
             <h1 className="mb-2 text-black text-[25px] font-semibold">{props.name}</h1>

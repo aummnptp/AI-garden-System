@@ -20,6 +20,8 @@
     "react-router-dom": "^6.24.1"
   },
   "devDependencies": {
+    "@iconify-icon/react": "^2.1.0",
+    "@iconify/tailwind": "^1.1.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

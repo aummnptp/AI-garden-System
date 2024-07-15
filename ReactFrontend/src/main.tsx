@@ -15,6 +15,7 @@ import AIlist from './pages/AiList.tsx'
 import CreateProject from './pages/CreateProject.tsx'
 import Admin from './pages/Admin.tsx'
 import CreateAi from './pages/CreateAi.tsx'
+import ProjectDetail from './pages/ProjectDetail.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -26,11 +27,16 @@ const router = createBrowserRouter([
   {
     path: "/workspaces",
     element: <Workspace/>,
+    children:[]
   },
   {
       path: "/workspaces/:workspaceId/project-list",
     element: <ProjectList/>,
   },
+  {
+    path: "/workspaces/:workspaceId/project-list/:ProjectId/detail",
+  element: <ProjectDetail/>,
+},
   {
     path: "/docs",
     element: <div>docs</div>,
@@ -40,7 +46,7 @@ const router = createBrowserRouter([
     element: <AIlist/>,
   },
   {
-    path: "/create",
+    path: "/workspaces/:workspaceId/create",
     element: <CreateProject/>,
   },
   {
