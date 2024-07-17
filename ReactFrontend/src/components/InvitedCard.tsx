@@ -12,7 +12,7 @@ interface WorkspaceCardProps {
 
 const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
     return (
-        <div className="m-10 w-10/12 h-[184px] relative bg-white rounded-[15px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50">
+        <div className="mt-10 w-10/12 h-[184px] relative bg-white rounded-[15px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50">
           {/* left blue line card */}
         <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
           {/* content */}

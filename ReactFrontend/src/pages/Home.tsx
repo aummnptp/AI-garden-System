@@ -127,7 +127,7 @@ const renderIcon = (iconName: any) => {
       </div>
       {/* หัวข้ออีกอัน section */}
       <div className=''>
-        <div className='h-full flex justify-end p-10 '>
+        <div className='h-full flex justify-end p-10  '>
           <h1 className=" text-indigo-900 text-5xl font-medium leading-none tracking-tight  md:text-3xl ">
             เกี่ยวกับระบบ AI System Garden
           </h1>
@@ -143,14 +143,14 @@ const renderIcon = (iconName: any) => {
         <h1 className=" text-indigo-900 text-2xl font-medium mb-4">
             การพัฒนาแพลตฟอร์ม AI System Garden
           </h1>
-        <p>เป็นการพัฒนาแพลตฟอร์มแอปพลิเคชันเพื่อช่วยสำหรับสนับสนุนทำงานวิเคราะห์ภาพ
+        <p>เป็นการพัฒนาแพลตฟอร์มแอปพลิเคชันเพื่อช่วยสำหรับสนับสนุนการทำงานวิเคราะห์ภาพ
           และวิดีโอด้วยระบบปัญญาประดิษฐ์ประเภท Computer Vision
-          โดยที่ปัญญาประดิษฐ์ในแต่ละตัวจะมีการวิเคราะห์ผลลัพธ์จากภาพหรือวิดีโอตามคุณสมบัติและประเภทต่างกันออกไปแต่ละตัว</p>
+          โดยที่ปัญญาประดิษฐ์ในแต่ละตัวที่มีในแพลตฟอร์มนี้จะมีการวิเคราะห์ผลลัพธ์จากภาพหรือวิดีโอตามคุณสมบัติ ประเภทและรายละเอียดที่แตกต่างกันออกไปแต่ละตัว</p>
             </div>
         </div>
       </div>
       {/* developer team section */}
-      <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
+      <div className=" pb-10 h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
         <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
           Developer Team / ทีมผู้พัฒนา
         </h1>
@@ -163,14 +163,17 @@ const renderIcon = (iconName: any) => {
           <div className="w-[613px] h-[0px] border-2 border-white" />
         </div>
         <div className="p-10 flex gap-14 ">
+          {/* card */}
           {DevTeamData.teacher.map((data) => (
-            <div className=" block w-56 p-6 bg-white border border-gray-200 rounded-md shadow ">
+               <div className="block w-64 h-[20em] p-6 bg-white border border-gray-200 rounded-md shadow items-center text-center">
+          <div className="flex justify-center mb-10">
               <img
-                className="mb-10 w-[167px] h-[166px] rounded-[360px] border"
+                className=" w-[167px] h-[166px] rounded-[360px] border"
                 src={data.img}
               />
+              </div>
 
-              <p className="text-center font-normal text-stone-900 dark:text-gray-400">
+              <p className="text-center font-medium text-stone-900 text-xl dark:text-gray-400">
                 {data.name}
               </p>
             </div>
@@ -182,21 +185,24 @@ const renderIcon = (iconName: any) => {
           <h1 className=" text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
             Dev ทีม
           </h1>
-          <div className="w-9 h-9 bg-white rounded-full" />
+          <div className="w-9 h-9 bg-white rounded-full " />
           <div className="w-[613px] h-[0px] border-2 border-white" />
         </div>
         <div className="p-10 flex gap-14 ">
+          {/* card */}
           {DevTeamData.dev.map((data) => (
-            <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
+            <div className="block w-64 h-[20em] p-6 bg-white border border-gray-200 rounded-md shadow items-center text-center">
+            <div className="flex justify-center mb-10">
               <img
-                className="mb-10 w-[167px] h-[166px] rounded-[360px] border "
+                className="w-[167px] h-[166px] rounded-full border"
                 src={data.img}
               />
-
-              <p className="font-normal text-stone-900 dark:text-gray-400">
-                {data.name}
-              </p>
             </div>
+            <p className="font-medium text-xl text-stone-900 dark:text-gray-400">
+              {data.name}
+            </p>
+          </div>
+          
           ))}
         </div>
       </div>

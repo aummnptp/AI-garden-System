@@ -9,6 +9,7 @@ import {DownOutlined, UpOutlined}  from '@ant-design/icons';
 // mockup data
 import MyWorkspaceData from "../data/WorkspaceData";
 import { Link } from "react-router-dom";
+import MiniFooter from "../components/MiniFooter";
 
 function Workspace() {
   // my workspace show
@@ -28,14 +29,15 @@ function Workspace() {
 
 
   return (
+    <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
 
         {/* popup */}
         <CreateWorkspace showModal={showModal} setShowModal={setShowModal} />
         <div className=" flex flex-col items-center justify-center w-full">
           {/* My Worksspace Container */}
-          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  justify-self-center relative">
-          
+          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative">
+            
               <h1  className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
               text-indigo-900 dark:text-white ">My Workspace
               </h1>
@@ -44,7 +46,7 @@ function Workspace() {
               <button
               onClick={() => setShowModal(true)}
               type="button"
-              className="h-fit w-fit  text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 
+              className="h-fit w-fit text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 
               font-medium rounded-2xl text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 
               focus:outline-none dark:focus:ring-blue-800 absolute top-0 right-0 my-6 mr-6">+ Create Workspace</button>
 
@@ -104,6 +106,8 @@ function Workspace() {
           </div>
         </div>
       </div>
+            <MiniFooter></MiniFooter>
+            </>
   );
 }
 

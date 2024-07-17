@@ -5,10 +5,12 @@ import FilterButton from '../components/FilterButton';
 import { Link, useParams } from 'react-router-dom';
 import ProjectCard from '../components/ProjectCard';
 import ProjectData from '../data/ProjectData';
+import MiniFooter from '../components/MiniFooter';
 
 const ProjectList = () => {
   let {workspaceId} = useParams();
   return (
+    <>
     <div className="flex h-full min-h-screen bg-neutral-100">
 
       {/* side bar */}
@@ -89,7 +91,8 @@ const ProjectList = () => {
         </div>
       </div>
     </div>
-
+      <MiniFooter></MiniFooter>
+      </>
   );
 }
 

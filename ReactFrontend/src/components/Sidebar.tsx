@@ -18,7 +18,7 @@ const Sidebar = () => {
           <div className="text-neutral-400 text-base font-medium font-['Roboto'] leading-loose mt-[-12px]">
             In workspace
           </div>
-          <h1 className="text-black text-2xl font-semibold mt-[-10px]">h1 and icon</h1>
+          <h1 className="text-black text-2xl font-semibold mt-[-10px]">Workspace Name</h1>
         </div>
       </div>
       <div className="ml-[7.5%] w-fit ">
@@ -47,20 +47,24 @@ const Sidebar = () => {
         </li>
 
         <li>
+        <Link to={`/workspaces/${workspaceId}/history`}>
           <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
           <HistoryOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace history
             </span>
           </div>
+          </Link>
         </li>
         <li>
+        <Link to={`/workspaces/${workspaceId}/setting`}>
           <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
           <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace setting
             </span>
           </div>
+        </Link>
         </li>
       </ul>
       <div className="my-3 w-full border border-zinc-300"/>

@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 
 import { ExclamationCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import MiniFooter from "../components/MiniFooter";
 
 
 
@@ -16,6 +17,7 @@ interface ProjectCardProps {
 
 const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
   return (
+    <>
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* side bar */}
       <Sidebar></Sidebar>
@@ -25,8 +27,8 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
         <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
           <h1
             className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
-          text-indigo-900 dark:text-white "
-          >
+            text-indigo-900 dark:text-white "
+            >
             รายละเอียด
           </h1>
           <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
@@ -37,7 +39,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
             <img
               className=" col-span-2  h-[100%] object-cover"
               src="/images/ai/Object-detection-Real-world-applications-and-benefits.png"
-            />
+              />
             <div className="col-span-4 p-6">
               <div>
               <div className="flex items-center">
@@ -106,12 +108,15 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                 เริ่มต้นใช้งาน
               </h1>
             <div className="mt-6 w-full border border-zinc-300"/>
+            
             </div>
           </div>
           
         </div>
       </div>
     </div>
+      <MiniFooter></MiniFooter>
+    </>
   );
 };
 
