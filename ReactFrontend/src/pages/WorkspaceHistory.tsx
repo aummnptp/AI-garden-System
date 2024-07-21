@@ -1,6 +1,8 @@
 import React from 'react'
 import Sidebar from '../components/Sidebar'
 import MiniFooter from '../components/MiniFooter'
+import CustomizedTables from '../components/Table'
+import EnhancedTable from '../components/WorkspaceTable'
 
 const WorkspaceHistory = () => {
   return (
@@ -10,7 +12,7 @@ const WorkspaceHistory = () => {
       <Sidebar></Sidebar>
       {/* content container */}
       <div className=" w-10/12 ml-auto bg-red-100 flex flex-col items-center pb-32  h-full min-h-screen">
-      <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
+      <div className="mt-5 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">
         <h1
           className="p-5 ml-5 text-3xl font-medium tracking-tight 
           text-indigo-900 dark:text-white "
@@ -41,6 +43,13 @@ const WorkspaceHistory = () => {
           </button>
         </div>
         {/* table content */}
+        <div className='px-6'>
+        {/* <CustomizedTables/> */}
+        </div>
+        <div className='px-6'>
+        <EnhancedTable></EnhancedTable>
+        </div>
+       
       </div>
       </div>
       

@@ -9,6 +9,10 @@ function Nav() {
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse md:order-2"
         >
+             <img 
+                        className="w-10 h-10 rounded-full  " 
+                        src="/images/logo/navlogo.png"
+                        />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             AI Garden System
           </span>

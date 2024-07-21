@@ -69,6 +69,8 @@ const router = createBrowserRouter([
     path: "/createai",
     element: <CreateAi/>,
   },
+
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

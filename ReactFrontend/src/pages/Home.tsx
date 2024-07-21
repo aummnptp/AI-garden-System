@@ -95,10 +95,10 @@ const renderIcon = (iconName: any) => {
           </div>
         </div>
         <div className=" right-item  p-20 col-span-2">
-          {/* <img
+          <img
             className=" h-[100%] w-[90%] "
-            src="https://cdn.discordapp.com/attachments/1013435571747704893/1259148597438451774/AI_Garden_System.jpg?ex=668aa103&is=66894f83&hm=663ff1bd76240df595902c10fdcc995b997f93feb4fd79156595f6730c6d4e0f&"
-          /> */}
+            src="/images/logo/slothlogo.png"
+          />
         </div>
       </div>
       {/* section 4 card */}
