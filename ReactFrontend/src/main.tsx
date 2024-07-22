@@ -13,12 +13,15 @@ import Nav from './components/Nav.tsx'
 import ProjectList from './pages/ProjectList.tsx'
 import AIlist from './pages/AiList.tsx'
 import CreateProject from './pages/CreateProject.tsx'
-import Admin from './pages/Admin.tsx'
-import CreateAi from './pages/CreateAi.tsx'
 import ProjectDetail from './pages/ProjectDetail.tsx'
 import WorkspaceHistory from './pages/WorkspaceHistory.tsx'
 import WorkspaceSetting from './pages/WorkspaceSetting.tsx'
 
+import Admin from './pages/Admin.tsx'
+import CreateAi from './pages/CreateAi.tsx'
+import AdminAi from './pages/AdminAi.tsx'
+import PredictAiModel from './pages/PredictAiModel.tsx'
+import PredictionResult from './pages/PredictionResult.tsx';
 //  React router path here
 const router = createBrowserRouter([
   
@@ -66,10 +69,22 @@ const router = createBrowserRouter([
     element: <Admin/>,
   },
   {
-    path: "/createai",
+    path: "/admin/admin-ai",
+    element: <AdminAi/>,
+  },
+  
+  {
+    path: "/admin/createai",
     element: <CreateAi/>,
   },
-
+  {
+    path: "/admin/test/:modelId",
+    element: <PredictAiModel/>,
+  },
+  {
+    path: "/admin/predict/result",
+    element: <PredictionResult />,
+  },
 
 ]);
 
