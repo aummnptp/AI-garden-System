@@ -13,7 +13,7 @@ function Nav() {
                         className="w-10 h-10 rounded-full  " 
                         src="/images/logo/navlogo.png"
                         />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap dark:text-white">
             AI Garden System
           </span>
         </a>
@@ -37,7 +37,7 @@ function Nav() {
           <a
             href="#"
             type="button"
-            className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-[15px] text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Sign In
           </a>

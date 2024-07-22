@@ -17,7 +17,7 @@ function AIlist() {
         >
           AI List
         </h1>
-        <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
+        <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto "></div>
         <div className="m-6 flex justify-start">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">
@@ -58,13 +58,13 @@ function AIlist() {
           />
           <button
             type="button"
-            className=" rounded-[25px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-2.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className=" rounded-[15px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
           >
             ประเภท <SortAscendingOutlined />
           </button>
           <button
             type="button"
-            className=" rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-2.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className="   h-fit rounded-[15px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
           >
             tag <ControlOutlined/>
           </button>
@@ -72,7 +72,7 @@ function AIlist() {
       </div>
 
       {/* card container */}
-      <div className="mt-16 h-fit w-11/12 grid grid-cols-3 bg-white rounded-[15px] justify-self-center relative ">
+      <div className="mt-16 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
         {/* card */}
         {AiData.map((data) => (
           <AiCard

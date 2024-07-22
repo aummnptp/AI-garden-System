@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import {  DotChartOutlined, PieChartOutlined, RadarChartOutlined, SearchOutlined } from '@ant-design/icons';
 import Footer from '../components/Footer';
+import { Button } from '@mui/material';
+import Buttons from '../components/Button';
 
 function Home() {
 
@@ -71,10 +73,12 @@ const renderIcon = (iconName: any) => {
             <h1 className="my-4 text-3xl font-medium leading-none tracking-tight text-indigo-900 md:text-4xl dark:text-white">
               AI Garden System
             </h1>
-            <p className="my-4 text-black text-xl font-medium font-['Roboto'] leading-loose ">
+            <p className="my-4 text-black text-xl leading-loose  ">
               เว็บไซต์สำหรับทำงานประมวลผลภาพและวิดีโอด้วย AI computer vision
             </p>
             <Link to={`/workspaces`}>
+            {/* <Button variant="contained"    size="large">abc</Button> */}
+            {/* <Buttons name='abc' startIcon={RadarChartOutlined}></Buttons> */}
               <button
                 type="button"
                 className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4
@@ -118,7 +122,7 @@ const renderIcon = (iconName: any) => {
                 {renderIcon(data.icon)}
                 </h5>
               </div>
-              <p className="mt-4 mb-14text-stone-900 text-lg font-medium font-['Inter'] leading-[27px] mx-a">
+              <p className="mt-4 mb-14text-stone-900 text-lg  leading-[27px] mx-a">
                 {data.desc}
               </p>
             </div>
@@ -173,7 +177,7 @@ const renderIcon = (iconName: any) => {
               />
               </div>
 
-              <p className="text-center font-medium text-stone-900 text-xl dark:text-gray-400">
+              <p className="text-center  text-stone-900 text-xl dark:text-gray-400">
                 {data.name}
               </p>
             </div>
@@ -198,7 +202,7 @@ const renderIcon = (iconName: any) => {
                 src={data.img}
               />
             </div>
-            <p className="font-medium text-xl text-stone-900 dark:text-gray-400">
+            <p className="text-xl text-stone-900 dark:text-gray-400">
               {data.name}
             </p>
           </div>

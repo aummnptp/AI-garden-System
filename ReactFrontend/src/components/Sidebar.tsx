@@ -18,7 +18,7 @@ const Sidebar = () => {
           <div className="text-neutral-400 text-base font-medium font-['Roboto'] leading-loose mt-[-12px]">
             In workspace
           </div>
-          <h1 className="text-black text-2xl font-semibold mt-[-10px]">Workspace Name</h1>
+          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">Kmitl team</h1>
         </div>
       </div>
       <div className="ml-[7.5%] w-fit ">
@@ -81,7 +81,7 @@ const Sidebar = () => {
           <div className="text-neutral-400 text-base font-medium font-['Roboto'] leading-loose mt-[-12px]">
             In project
           </div>
-          <h1 className="text-black text-2xl font-semibold mt-[-10px]">ProjectName</h1>
+          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">ProjectName</h1>
         </div>
       </div>
       <span className="ml-[5%] w-fit  text-indigo-600 text-lg font-semibold">

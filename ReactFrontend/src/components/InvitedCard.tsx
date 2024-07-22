@@ -12,18 +12,19 @@ interface WorkspaceCardProps {
 
 const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
     return (
-        <div className="mt-10 w-10/12 h-[184px] relative bg-white rounded-[15px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50">
+        <div className="mx-auto w-10/12 h-[184px] relative bg-white rounded-[15px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50">
           {/* left blue line card */}
         <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
           {/* content */}
           <div className="py-3  col-start-2 col-end-13 grid grid-rows-4">
             {/* upper content */}
             <div className=' row-span-4'>
-              <h1 className="text-indigo-900 text-lg font-semibold">
+            <h1 className="text-indigo-900 text-2xl font-medium">
+
               {props.name}
               </h1>
-              <p className='text-indigo-600 text-sm font-medium'>Project Owner</p>
-              <p className='text-black/opacity-75 text-xs font-normal pr-4'>{props.desc}</p>
+              <p className='text-indigo-600  font-medium'>Project Owner</p>
+              <p className='text-black/opacity-75 text-sm font-normal pr-4'>{props.desc}</p>
               <div
               className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center"><MoreOutlined style={{color:'#999'}}/></div>
             </div>

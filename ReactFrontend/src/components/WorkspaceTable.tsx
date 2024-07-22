@@ -45,7 +45,8 @@ interface Data {
   inputType: string;
   date: Date;
   image: string;
-  uploader: number;
+  uploader:string;
+  avartar:string;
 }
 
 function createData(
@@ -56,7 +57,8 @@ function createData(
   date: string,
   inputNumber: number,
   inputType: string,
-  uploader: number,
+  uploader: string,
+  avartar:string,
 ): Data {
   return {
     id,
@@ -67,49 +69,50 @@ function createData(
     inputNumber,
     inputType,
     uploader,
+    avartar,
   };
 }
 
 const rows = [
   createData(1, 
     "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
-    'Pet AI','object detection', '2023-06-02T11:30:00', 6,"รูปภาพ", 4.3),
+    'Pet Detection','object detection', '2023-06-02T11:30:00', 6,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(2, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Donut','object detection',  '2023-06-02T09:15:00', 12,"รูปภาพ", 4.9),
+    "../../public/images/ai/images.jpg",
+    'Road Segmentation','object detection',  '2023-06-02T09:15:00', 12,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(3, 
     "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
-    'Pet AI','object detection',  '2023-06-03T10:45:00', 1,"วิดีโอ", 6.0),
+    'Pet Detection','object detection',  '2023-06-03T10:45:00', 1,"วิดีโอ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(4, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Frozen yoghurt', 'object detection', '2023-06-04T11:30:00', 6,"รูปภาพ", 4.0),
+    'Road Detection', 'object detection', '2023-06-04T11:30:00', 6,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(5, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Gingerbread','object detection',  '2023-06-05T12:00:00', 4,"รูปภาพ", 3.9),
+    'Road Detection','object detection',  '2023-06-05T12:00:00', 4,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(6, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Honeycomb','object detection',  '2023-06-06T13:15:00', 3,"รูปภาพ", 6.5),
+    "../../public/images/ai/images.jpg",
+    'Road Segmentation','object detection',  '2023-06-06T13:15:00', 3,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(7, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Ice cream sandwich','object detection',  '2023-06-07T14:00:00', 8,"รูปภาพ", 4.3),
+    'Road Detection','object detection',  '2023-06-07T14:00:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(8, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Jelly Bean', 'object detection', '2023-06-08T15:30:00', 8,"รูปภาพ", 0.0),
+    'Road Detection', 'object detection', '2023-06-08T15:30:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(9, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'KitKat', 'object detection', '2023-06-09T16:00:00', 12,"รูปภาพ", 7.0),
+   'Road Detection', 'object detection', '2023-06-09T16:00:00', 12,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(10, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Lollipop', 'object detection', '2023-06-10T17:15:00', 14,"รูปภาพ", 0.0),
+    "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
+   'Pet Detection', 'object detection', '2023-06-10T17:15:00', 14,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(11, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Marshmallow', 'object detection', '2023-06-11T18:30:00', 12,"รูปภาพ", 2.0),
+   'Road Detection', 'object detection', '2023-06-11T18:30:00', 12,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
   createData(12, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Nougat','object detection',  '2023-06-12T19:00:00', 9,"รูปภาพ", 37.0),
+   'Road Detection','object detection',  '2023-06-12T19:00:00', 9,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
   createData(13, 
     "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Oreo','object detection',  '2023-06-13T20:15:00', 15,"รูปภาพ", 4.0),
+    'Road Detection','object detection',  '2023-06-13T20:15:00', 15,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -372,7 +375,7 @@ export default function EnhancedTable() {
                     </StyledTableCell>
                     <StyledTableCell align="center">  
                       <div className="mx-auto  my-2 w-fit ">
-                      {formatTime(row.date)} น.
+                      {formatTime(row.date)}&nbsp;น.
                       </div> 
                       <div className="mx-auto  my-2 w-fit ">
                         {formatDate(row.date)}
@@ -385,10 +388,10 @@ export default function EnhancedTable() {
                       <div className="mx-auto flex items-center my-4 w-fit ">
                         <img 
                         className="w-10 h-10 rounded-full border-2 bg-red-200 " 
-                        src="/images/homeImage/puttipong.jpg"
+                        src={row.avartar}
                         />
                         <div className="ml-2">
-                        <p className="text-black text-lg font-normal">putthipong Chobngam</p>
+                        <p className="text-black text-lg font-normal">{row.uploader}</p>
                         </div>
                     </div>
                     </StyledTableCell>

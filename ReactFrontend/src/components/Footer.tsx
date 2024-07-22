@@ -9,6 +9,10 @@ function Footer() {
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
               <a href="/" className="flex items-center">
+              <img 
+                        className="h-8 me-3 rounded-full " 
+                        src="/images/logo/navlogo.png"
+                        />
                   <span className=" self-center text-2xl font-semibold whitespace-nowrap dark:text-white">AI Garden System</span>
               </a>
           </div>
@@ -18,7 +22,16 @@ function Footer() {
                   <h2 className=" mt-16 mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contract Us</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
                       <li className="mb-4">
-                          <div className="">Faculty of IT Bldg. </div>
+                          <div className=""><p><a  href="https://www.facebook.com/ITLadkrabang" >Facebook  </a> </p></div>
+                      </li>
+                      <li className="mb-4">
+                          <div className=""><p><a href="mailto:IT@kmitl.ac.th">Send email</a></p></div>
+                      </li>
+                      <li className="mb-4">
+                          <div className=""><p><a href="https://line.me/th/">Line</a></p></div>
+                      </li>
+                      <li className="mb-4">
+                          <div className=""><p><a>Faculty of IT building. </a></p> </div>
                       </li>
 
                   </ul>
@@ -32,7 +45,9 @@ function Footer() {
                   <h2 className="mt-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">© IT@KMITL</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
                       <li className="mb-4">
-                          <div >School of Information Technology King Mongkut's Institute of Technology Ladkrabang 1 Chalongkrung Road Bangkok Thailand 10520
+                          <div ><p>School of Information Technology</p>
+                          <p>King Mongkut's Institute of Technology Ladkrabang</p> 
+                          <p>1 Chalongkrung Road Bangkok Thailand 10520</p>
                           </div>
                       </li>
 
