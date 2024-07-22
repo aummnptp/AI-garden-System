@@ -34,9 +34,9 @@ function Workspace() {
 
         {/* popup */}
         <CreateWorkspace showModal={showModal} setShowModal={setShowModal} />
-        <div className=" flex flex-col items-center justify-center w-full">
+        <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
-          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative">
+          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
             
               <h1  className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
               text-indigo-900 dark:text-white ">My Workspace
@@ -47,23 +47,23 @@ function Workspace() {
               onClick={() => setShowModal(true)}
               type="button"
               className="h-fit w-fit text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 
-              font-medium rounded-2xl text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 
+              font-medium rounded-[15px] text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 
               focus:outline-none dark:focus:ring-blue-800 absolute top-0 right-0 my-6 mr-6">+ Create Workspace</button>
 
-              <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" ></div>
+              <div className=" w-[95%] h-[0px] border border-zinc-300 mx-auto" ></div>
               {/* show more bar */}
-              <div onClick={toggleWorkspaceRow} className="mx-auto my-2 w-[95%] flex items-center space-x-2 px-2 hover:bg-gray-100 rounded-[5px]" >
+              <div onClick={toggleWorkspaceRow} className=" mx-auto my-2 w-[95%] flex items-center space-x-2 px-2 hover:bg-gray-100 rounded-[5px]" >
                 {showWorkspaceRow ?(
                   <div className="">
                   <DownOutlined style={{color:'#999',fontSize:"24px"}}/>
                   </div>
                 ):( <UpOutlined style={{color:'#999',fontSize:"24px"}}/>)
                 }
-                <p className="text-center text-zinc-500 text-lg font-normal font-['Roboto'] leading-[49px]">  {showWorkspaceRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
+                <p className="text-center text-zinc-500 text-xl leading-[49px]">  {showWorkspaceRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
                 <div className="w-[88%] h-[0px] border border-zinc-300"></div>
               </div>
               {/* My wokspace Card group */}
-              <div className={`grid grid-cols-3 gap-4`}>  
+              <div className={` grid grid-cols-3 gap-4 w-fit pb-8 pt-2`}>  
                 {MyWorkspaceData.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showWorkspaceRow && index >= 3 ? 'hidden' : ''}`}>
                    <Link to={`/workspaces/${data.id}/project-list`}>
@@ -89,11 +89,11 @@ function Workspace() {
                   </div>
                 ):( <UpOutlined style={{color:'#999',fontSize:"24px"}}/>)
                 }
-                <p className="text-center text-zinc-500 text-lg font-normal font-['Roboto'] leading-[49px]">  {showInvitedRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
+                <p className="text-center text-zinc-500 text-xl leading-[49px]">  {showInvitedRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
                 <div className="w-[88%] h-[0px] border border-zinc-300"></div>
               </div>
             {/* invited wokspace Card */}
-            <div className={`grid grid-cols-3 gap-4`}>  
+            <div className={`grid grid-cols-3 gap-4 pb-8 pt-2`}>  
                 {MyWorkspaceData.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
                 <Link to={`/workspaces/${data.id}/project-list`}>
