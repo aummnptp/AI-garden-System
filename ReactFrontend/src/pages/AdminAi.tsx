@@ -21,7 +21,7 @@ function AdminAi() {
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 dark:text-black">
                 AI List
               </h1>
-              <Link to="/admin/createai" className="p-2 bg-blue-500 text-white rounded">
+              <Link to="/admin/createai" className="p-2  text-white bg-indigo-600 rounded-[15px]">
                 + New AI Project
               </Link>
             </div>

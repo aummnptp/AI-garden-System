@@ -9,6 +9,7 @@ import Barchart from "../components/BarChart";
 
 import DoughnutChart from "../components/chart/doughnutChart";
 import SummaryCard from "../components/chart/sumaryCard";
+import UsageBarChart from "../components/chart/UsageBarChart";
 
 
 
@@ -39,6 +40,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
             </h1>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
           </div>
+
           {/* detail */}
           <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
@@ -99,6 +101,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                 </div>
               </div>
             </div>
+
             {/*  */}
             <div className=" mt-6 ml-3 ">
               <ExclamationCircleOutlined style={{ color: "#404040" }} />
@@ -133,13 +136,14 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
               </div>
               <div className="ml-3 w-full bg-r">
                 <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
-                  Summar
+                  Summary
                 </h1>
                 <div className="mt-6 w-full border border-zinc-300" />
               </div>
             </div>
 
             <div className="">
+              {/* Sumary Content Row1 */}
               <div className="grid grid-cols-3 px-10">
                 <SummaryCard
                   icon={
@@ -148,6 +152,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                   label="จำนวนผู้ใช้ทั้งหมด"
                   value="512"
                   inputType="ผู้ใช้"
+                  disable={true}
                 />
                 <SummaryCard
                   icon={
@@ -157,7 +162,8 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                   }
                   label="ประมวลผลด้วยภาพ"
                   value="5.32k"
-                   inputType="ภาพ"
+                  inputType="ภาพ"
+                  disable={true}
                 />
                 <SummaryCard
                   icon={
@@ -166,11 +172,43 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                     />
                   }
                   label="ประมวลผลด้วยวิดีโอ"
-                  value="1.34k"
-                   inputType="วิดีโอ"
+                  value=""
+                  inputType="วิดีโอ"
+                  disable={false}
                 />
-                <div className="w-full mx-auto">{/* <DoughnutChart/> */}</div>
               </div>
+
+              {/* Sumary Content Row/ */}
+              <div className="grid grid-cols-2 px-10 my-4">
+                {/* create date card */}
+                <div className="flex h-full items-center  bg-white shadow rounded-md m-2">
+                <div className="w-2 h-full bg-indigo-900 rounded-tl-[15px] rounded-bl-[15px]" />
+                <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center">
+                  {/* icon */}
+                </div>
+                  <div className="ml-4">
+                    <div className="py-4">
+                    <p className="text-gray-600">วันที่สร้าง</p>
+                    <span className="text-indigo-900 text-2xl font-bold">
+                      2 มิถุนายน 2567
+                    </span>
+                    </div>
+                  </div>
+                </div>
+                  {/* update date card */}
+                  <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
+                  <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
+                  <div className="ml-4">
+                  <div className="py-4">
+                    <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
+                    <span className="text-indigo-900 text-2xl font-bold">
+                      15 มิถุนายน 2567
+                    </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <div className="flex ">
                   <div className="w-[70%] mx-auto">
@@ -178,6 +216,15 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                   </div>
                   <div className="w-[30%] mx-auto">
                     <DoughnutChart />
+                  </div>
+                </div>
+                {/* usage */}
+                <div className="flex ">
+                  <div className="w-[70%] mx-auto">
+                    <UsageBarChart />
+                  </div>
+                  <div className="w-[30%] mx-auto">
+                    {/* <DoughnutChart /> */}
                   </div>
                 </div>
               </div>

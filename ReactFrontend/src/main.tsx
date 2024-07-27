@@ -22,6 +22,8 @@ import CreateAi from './pages/CreateAi.tsx'
 import AdminAi from './pages/AdminAi.tsx'
 import PredictAiModel from './pages/PredictAiModel.tsx'
 import PredictionResult from './pages/PredictionResult.tsx';
+import Docs from './pages/Docs.tsx'
+import AiDetail from './pages/Ai/AiDetail.tsx'
 //  React router path here
 const router = createBrowserRouter([
   
@@ -54,11 +56,15 @@ const router = createBrowserRouter([
 
   {
     path: "/docs",
-    element: <div>docs</div>,
+    element: <Docs/>,
   },
   {
     path: "/ai-list",
     element: <AIlist/>,
+  },
+  {
+    path: "/ai-list/detail",
+    element: <AiDetail/>,
   },
   {
     path: "/workspaces/:workspaceId/create",

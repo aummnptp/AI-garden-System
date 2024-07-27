@@ -158,23 +158,25 @@ interface HeadCell {
   id: keyof Data;
   label: string;
   numeric: boolean;
-  sortable: boolean; // Add this line
+  sortable: boolean;
+  colspan: number;
 }
 
 const headCells: readonly HeadCell[] = [
-  {
-    id: 'image',
-    numeric: true,
-    disablePadding: false,
-    label: 'รูป',
-    sortable: false, // Make image column not sortable
-  },
+  // {
+  //   id: 'image',
+  //   numeric: true,
+  //   disablePadding: false,
+  //   label: 'รูป',
+  //   sortable: false, // Make image column not sortable
+  // },
   {
     id: 'name',
     numeric: true,
     disablePadding: true,
-    label: 'ชื่อ AI',
+    label: 'ชื่อ Project',
     sortable: true,
+    colspan:2,
   },
   {
     id: 'date',
@@ -182,6 +184,7 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'วันที่',
     sortable: true,
+    colspan:1,
   },
   {
     id: 'inputNumber',
@@ -189,6 +192,7 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'จำนวน',
     sortable: true,
+    colspan:1,
   },
   {
     id: 'uploader',
@@ -196,6 +200,7 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'ผู้อัปโหลด',
     sortable: true,
+    colspan:1,
   },
 ]
 
@@ -215,13 +220,14 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <StyledTableRow>
-        <StyledTableCell padding="checkbox"></StyledTableCell>
+        <StyledTableCell padding="checkbox" ></StyledTableCell>
         {headCells.map((headCell) => (
-          <StyledTableCell
+          <StyledTableCell 
             key={headCell.id}
             align={headCell.numeric ? 'center' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            colSpan={headCell.colspan}
           >
             {headCell.sortable ? (
               <TableSortLabel
@@ -369,21 +375,21 @@ export default function EnhancedTable() {
                     </StyledTableCell>
                     <StyledTableCell align="center">
                     <div className="mx-auto  my-2 w-fit ">
-                      {row.name}
+                    <p className="text-indigo-900  text-lg font-medium">{row.name}</p>   
                       </div>
                       {row.type}
                     </StyledTableCell>
                     <StyledTableCell align="center">  
                       <div className="mx-auto  my-2 w-fit ">
-                      {formatTime(row.date)}&nbsp;น.
+                      <p className="text-black  text-lg  font-medium">{formatTime(row.date)} น.</p>
                       </div> 
-                      <div className="mx-auto  my-2 w-fit ">
-                        {formatDate(row.date)}
+                      <div className="mx-auto w-fit ">
+                      <p className="text-black  font-normal"> {formatDate(row.date)}</p>
                       </div>
                     
     
                       </StyledTableCell>
-                    <StyledTableCell align="center">{row.inputNumber} {row.inputType}</StyledTableCell>
+                    <StyledTableCell align="center">  <p className="text-black  text-lg  font-medium">{row.inputNumber} {row.inputType}</p></StyledTableCell>
                     <StyledTableCell align="center">
                       <div className="mx-auto flex items-center my-4 w-fit ">
                         <img 
