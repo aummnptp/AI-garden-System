@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,6 +12,8 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
+import ProjectImage from './card/projectImage';
+import { IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -205,7 +208,7 @@ const headCells: readonly HeadCell[] = [
 ]
 
 interface EnhancedTableProps {
-  numSelected: number;
+  // numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   order: Order;
   orderBy: string;
@@ -252,7 +255,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-
+function EnhancedTableToolbar({ searchItem, handleInputChange }: { searchItem: string, handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+  return (
+    <Toolbar>
+      <input
+        type="text"
+        id="first_name"
+        className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder="ค้นหาด้วยชื่อโปรเจค"
+        value={searchItem}
+        onChange={handleInputChange}
+      />
+    </Toolbar>
+  );
+}
 
 
 export default function EnhancedTable() {
@@ -262,7 +278,21 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchItem, setSearchItem] = React.useState('');
+  const [filteredRows, setFilteredRows] = React.useState(rows);
 
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearchItem(searchTerm);
+
+    const filteredItems = rows.filter((row) =>
+      row.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    setFilteredRows(filteredItems);
+  };
+  
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data,
@@ -306,7 +336,7 @@ export default function EnhancedTable() {
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
 
     const formatDate = (date: Date) => {
       return new Intl.DateTimeFormat('en-GB', {
@@ -323,14 +353,13 @@ export default function EnhancedTable() {
       }).format(date);
     };
   
-  
-  
-  
+
 
 
   return (
     <Box sx={{ width: '100%' }}>
     <Paper sx={{ width: '100%', mb: 2 }}>
+     <EnhancedTableToolbar searchItem={searchItem} handleInputChange={handleInputChange} />
       <TableContainer>
         <Table
           sx={{ minWidth: 750 }}
@@ -338,14 +367,15 @@ export default function EnhancedTable() {
           size={dense ? 'small' : 'medium'}
         >
           <EnhancedTableHead
-            numSelected={selected.length}
+
             order={order}
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
-            rowCount={rows.length}
+            rowCount={filteredRows.length}
           />
           <TableBody>
-            {stableSort(rows, getComparator(order, orderBy))
+
+            {stableSort(filteredRows, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.id);
@@ -368,10 +398,11 @@ export default function EnhancedTable() {
                       scope="row"
                       padding="none"
                     >
-                      <img
-            className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto "
-            src={row.image}
-            />
+                      <ProjectImage projectName={row.name} className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto  border-2 flex items-center justify-center text-white font-medium text-xl" />
+                      {/* <img
+                      className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto "
+                      src={row.image}
+                      /> */}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                     <div className="mx-auto  my-2 w-fit ">
@@ -392,8 +423,9 @@ export default function EnhancedTable() {
                     <StyledTableCell align="center">  <p className="text-black  text-lg  font-medium">{row.inputNumber} {row.inputType}</p></StyledTableCell>
                     <StyledTableCell align="center">
                       <div className="mx-auto flex items-center my-4 w-fit ">
+                  
                         <img 
-                        className="w-10 h-10 rounded-full border-2 bg-red-200 " 
+                        className="w-10 h-10 rounded-full border-2" 
                         src={row.avartar}
                         />
                         <div className="ml-2">
@@ -415,7 +447,7 @@ export default function EnhancedTable() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={filteredRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

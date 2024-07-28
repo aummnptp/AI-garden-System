@@ -38,7 +38,7 @@ function Workspace() {
           {/* My Worksspace Container */}
           <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
             
-              <h1  className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
+              <h1  className="  p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
               text-indigo-900 dark:text-white ">My Workspace
               </h1>
              

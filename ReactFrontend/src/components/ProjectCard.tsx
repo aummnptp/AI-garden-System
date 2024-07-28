@@ -1,20 +1,31 @@
 import React from 'react'
-
+import ProjectImage from './card/projectImage';
 interface ProjectCardProps {
 
     name:string;
     desc: string;
+    projectImage?:string;
   }
   
 const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
   return (
-    <div
-          className="m-10 w-fit bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2"
-          >
-          <img
-            className="m-2 w-[186px] h-[168px] rounded-[10px] "
-            src="../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png"
-            />
+    <div className="mx-auto my-4 w-11/12 h-[45%] bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2 ">
+           {props.projectImage ? (
+           <div className='mx-2 w-fit h-fit  flex items-center  '>
+             <img
+             className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
+             src={props.projectImage}
+             alt={`${props.name} project`}
+             />
+              </div>
+            ) : (
+              
+              <ProjectImage
+              projectName={props.name}
+              className="m-2  w-[300px] h-[186px] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-xl"
+              />
+            )}
+            
           <div className='flex flex-col h-fit w-full'>
             <h1 className="mb-2 text-indigo-900 text-2xl font-medium">{props.name}</h1>
             <span className="mb-2 w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-sm font-normal">AI Type</span>
