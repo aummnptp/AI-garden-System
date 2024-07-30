@@ -1,5 +1,5 @@
 import React from 'react'
-import ProjectImage from './card/projectImage';
+import ProjectImage from './card/ProjectLetterImage';
 interface ProjectCardProps {
 
     name:string;
@@ -9,7 +9,7 @@ interface ProjectCardProps {
   
 const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
   return (
-    <div className="mx-auto my-4 w-11/12 h-[45%] bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2 ">
+    <div className="mx-auto my-4 w-11/12 h-fit bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2 ">
            {props.projectImage ? (
            <div className='mx-2 w-fit h-fit  flex items-center  '>
              <img
@@ -22,7 +22,7 @@ const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
               
               <ProjectImage
               projectName={props.name}
-              className="m-2  w-[300px] h-[186px] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-xl"
+              className="m-2  w-[300px] h-[186px] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-3xl"
               />
             )}
             

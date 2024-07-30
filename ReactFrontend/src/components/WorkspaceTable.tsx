@@ -12,8 +12,9 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import ProjectImage from './card/projectImage';
-import { IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
+import ProjectImage from './card/ProjectLetterImage';
+import { FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import { CameraOutlined, PictureOutlined, PlaySquareOutlined } from '@ant-design/icons';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -54,7 +55,7 @@ interface Data {
 
 function createData(
   id: number,
-  image: string,
+
   name: string,
   type: string,
   date: string,
@@ -62,6 +63,7 @@ function createData(
   inputType: string,
   uploader: string,
   avartar:string,
+  image: string,
 ): Data {
   return {
     id,
@@ -78,44 +80,57 @@ function createData(
 
 const rows = [
   createData(1, 
-    "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
-    'Pet Detection','object detection', '2023-06-02T11:30:00', 6,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'IT 67 Project','Segmentation', '2023-06-02T11:30:00', 6,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "",
+  ),
   createData(2, 
-    "../../public/images/ai/images.jpg",
-    'Road Segmentation','object detection',  '2023-06-02T09:15:00', 12,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Object Oriented 67','Segmentation',  '2023-06-02T09:15:00', 12,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+  ,  "",
+  ),
   createData(3, 
-    "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
-    'Pet Detection','object detection',  '2023-06-03T10:45:00', 1,"วิดีโอ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Pet Detection','Object Detection',  '2023-06-03T10:45:00', 1,"วิดีโอ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+  ,  "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
+  ),
   createData(4, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Road Detection', 'object detection', '2023-06-04T11:30:00', 6,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Road Detection', 'Object Detection', '2023-06-04T11:30:00', 6,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+  ,  "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(5, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Road Detection','object detection',  '2023-06-05T12:00:00', 4,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'Road Detection','Object Detection',  '2023-06-05T12:00:00', 4,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(6, 
-    "../../public/images/ai/images.jpg",
-    'Road Segmentation','object detection',  '2023-06-06T13:15:00', 3,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Road Segmentation','Object Detection',  '2023-06-06T13:15:00', 3,"รูปภาพ","Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+  ,  "../../public/images/ai/images.jpg",
+  ),
   createData(7, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Road Detection','object detection',  '2023-06-07T14:00:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'Road Detection','Object Detection',  '2023-06-07T14:00:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(8, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Road Detection', 'object detection', '2023-06-08T15:30:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'Road Detection', 'Object Detection', '2023-06-08T15:30:00', 8,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(9, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-   'Road Detection', 'object detection', '2023-06-09T16:00:00', 12,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'Road Detection', 'Object Detection', '2023-06-09T16:00:00', 12,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "",
+  ),
   createData(10, 
-    "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
-   'Pet Detection', 'object detection', '2023-06-10T17:15:00', 14,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Pet Detection', 'Object Detection', '2023-06-10T17:15:00', 14,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+  ,  "../../public/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png",
+  ),
   createData(11, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-   'Road Detection', 'object detection', '2023-06-11T18:30:00', 12,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Road Detection', 'Object Detection', '2023-06-11T18:30:00', 12,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+   , "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(12, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-   'Road Detection','object detection',  '2023-06-12T19:00:00', 9,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"),
+    'Road Detection','Object Detection',  '2023-06-12T19:00:00', 9,"รูปภาพ", "Kittinan Chalearnsong","/images/homeImage/kittnan.jpeg"
+  ,  "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
   createData(13, 
-    "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
-    'Road Detection','object detection',  '2023-06-13T20:15:00', 15,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"),
+    'Road Detection','Object Detection',  '2023-06-13T20:15:00', 15,"รูปภาพ", "Putthipong Chobngam","/images/homeImage/puttipong.jpg"
+   , "../../public/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+  ),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -208,7 +223,7 @@ const headCells: readonly HeadCell[] = [
 ]
 
 interface EnhancedTableProps {
-  // numSelected: number;
+
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   order: Order;
   orderBy: string;
@@ -255,44 +270,86 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-function EnhancedTableToolbar({ searchItem, handleInputChange }: { searchItem: string, handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+
+
+interface EnhancedTableToolbarProps {
+  searchItem: string;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  filterType: string;
+  handleChangeFilterType: (e: SelectChangeEvent<string>) => void;
+}
+
+const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({
+  searchItem,
+  handleInputChange,
+  filterType,
+  handleChangeFilterType
+}) => {
   return (
     <Toolbar>
-      <input
-        type="text"
-        id="first_name"
-        className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        placeholder="ค้นหาด้วยชื่อโปรเจค"
-        value={searchItem}
-        onChange={handleInputChange}
-      />
+      <div className="grid grid-cols-3 w-full">
+        <div className='col-span-2'>
+        <TextField  sx={{width:'80%'}}id="outlined-basic" label="ค้นหาด้วยชื่อโปรเจค" variant="outlined"   value={searchItem}
+          onChange={handleInputChange}/>
+          </div>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Filter by Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={filterType}
+            label="Filter by Type"
+            onChange={handleChangeFilterType}
+          >
+            <MenuItem value="All">ทั้งหมด</MenuItem>
+            <MenuItem value="Object Detection">Object Detection</MenuItem>
+            <MenuItem value="Segmentation">Segmentation</MenuItem>
+            <MenuItem value="Regression">Regression</MenuItem>
+            <MenuItem value="Classification">Classification</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
     </Toolbar>
   );
-}
+};
 
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchItem, setSearchItem] = React.useState('');
   const [filteredRows, setFilteredRows] = React.useState(rows);
-
+  const [filterType, setFilterType] = React.useState('All');
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearchItem(searchTerm);
+    applyFilters(searchTerm, filterType);
+  };
 
-    const filteredItems = rows.filter((row) =>
+  const handleChangeFilterType = (e: SelectChangeEvent<string>) => {
+    const type = e.target.value;
+    setFilterType(type);
+    applyFilters(searchItem, type);
+  };
+
+  const applyFilters = (searchTerm: string, type: string) => {
+    let filteredItems = rows;
+
+    if (type !== 'All') {
+      filteredItems = filteredItems.filter(row => row.type === type);
+    }
+
+    filteredItems = filteredItems.filter(row =>
       row.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setFilteredRows(filteredItems);
   };
-  
+
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data,
@@ -302,158 +359,133 @@ export default function EnhancedTable() {
     setOrderBy(property);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
 
-  const emptyRows =
-  page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(date);
+  };
 
-    const formatDate = (date: Date) => {
-      return new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      }).format(date);
-    };
-  
-    const formatTime = (date: Date) => {
-      return new Intl.DateTimeFormat('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(date);
-    };
-  
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
 
 
 
   return (
     <Box sx={{ width: '100%' }}>
-    <Paper sx={{ width: '100%', mb: 2 }}>
-     <EnhancedTableToolbar searchItem={searchItem} handleInputChange={handleInputChange} />
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby="tableTitle"
-          size={dense ? 'small' : 'medium'}
-        >
-          <EnhancedTableHead
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <EnhancedTableToolbar
+          searchItem={searchItem}
+          handleInputChange={handleInputChange}
+          filterType={filterType}
+          handleChangeFilterType={handleChangeFilterType}
+        />
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={dense ? 'small' : 'medium'}
+          >
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              rowCount={filteredRows.length}
+            />
+            <TableBody>
+              {stableSort(filteredRows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const labelId = `enhanced-table-checkbox-${index}`;
+                  return (
+                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.id}  >
 
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-            rowCount={filteredRows.length}
-          />
-          <TableBody>
-
-            {stableSort(filteredRows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <StyledTableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                  >
-                    <StyledTableCell padding="checkbox"></StyledTableCell>
-                    <StyledTableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      <ProjectImage projectName={row.name} className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto  border-2 flex items-center justify-center text-white font-medium text-xl" />
-                      {/* <img
-                      className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto "
-                      src={row.image}
-                      /> */}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                    <div className="mx-auto  my-2 w-fit ">
-                    <p className="text-indigo-900  text-lg font-medium">{row.name}</p>   
-                      </div>
-                      {row.type}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">  
-                      <div className="mx-auto  my-2 w-fit ">
-                      <p className="text-black  text-lg  font-medium">{formatTime(row.date)} น.</p>
-                      </div> 
-                      <div className="mx-auto w-fit ">
-                      <p className="text-black  font-normal"> {formatDate(row.date)}</p>
-                      </div>
-                    
-    
+                      <StyledTableCell padding="checkbox"></StyledTableCell>
+                      <StyledTableCell component="th" id={labelId} scope="row" padding="none">
+                        {row.image ? (
+                          <img
+                            className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto"
+                            src={row.image}
+                          />
+                        ) : (
+                          <ProjectImage
+                            projectName={row.name}
+                            className="m-2 w-[124px] h-[124px] rounded-[10px] mx-auto border-2 flex items-center justify-center text-white font-medium text-xl"
+                          />
+                        )}
                       </StyledTableCell>
-                    <StyledTableCell align="center">  <p className="text-black  text-lg  font-medium">{row.inputNumber} {row.inputType}</p></StyledTableCell>
-                    <StyledTableCell align="center">
-                      <div className="mx-auto flex items-center my-4 w-fit ">
-                  
-                        <img 
-                        className="w-10 h-10 rounded-full border-2" 
-                        src={row.avartar}
-                        />
-                        <div className="ml-2">
-                        <p className="text-black text-lg font-normal">{row.uploader}</p>
+                      <StyledTableCell align="center">
+                        <div className="mx-auto my-2 w-fit">
+                          <p className="text-indigo-900 text-lg font-medium">{row.name}</p>
                         </div>
-                    </div>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <StyledTableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                <StyledTableCell colSpan={6} />
-              </StyledTableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredRows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
-  </Box>
+                        {row.type}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <div className="mx-auto my-2 w-fit">
+                          <p className="text-black text-lg font-medium">
+                            {formatTime(row.date)} น.
+                          </p>
+                        </div>
+                        <div className="mx-auto w-fit">
+                          <p className="text-black font-normal"> {formatDate(row.date)}</p>
+                        </div>
+                      </StyledTableCell>
+                      <StyledTableCell align="left" >
+                          {/* <div className='bg-red-100'> */}
+                          {row.inputType === "วิดีโอ"  ? ( <PlaySquareOutlined style={{ color: "black", fontSize: "1.525rem" , }}/>
+                        ):(<CameraOutlined style={{ color: "black", fontSize: "1.525rem" ,}}/>)}
+                        <span className='text-black text-lg font-medium'>{" "}{row.inputNumber}</span>
+                        <span className='font-normal text'> {row.inputType}</span>
+                          {/* </div> */}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <div className="mx-auto flex items-center my-4 w-fit">
+                          <img
+                            className="w-10 h-10 rounded-full border-2"
+                            src={row.avartar}
+                          />
+                          <div className="ml-2">
+                            <p className="text-black text-lg font-normal">{row.uploader}</p>
+                          </div>
+                        </div>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <StyledTableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                  <StyledTableCell colSpan={6} />
+                </StyledTableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </Box>
   );
 }

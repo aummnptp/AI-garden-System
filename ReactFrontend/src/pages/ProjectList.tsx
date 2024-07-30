@@ -7,7 +7,13 @@ import MiniFooter from "../components/MiniFooter";
 import Sidebar from "../components/Sidebar";
 
 const ProjectList = () => {
-  let { workspaceId } = useParams();
+  const { workspaceId } = useParams<{ workspaceId?: string }>();
+  if (typeof workspaceId === 'undefined') {
+    // Handle the case where workspaceId is undefined
+    return <div>No workspace ID provided</div>;
+  }
+  const id = parseInt(workspaceId, 10);
+  const workspace = ProjectData.find(ws => ws.workspaceId === id);
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -61,19 +67,16 @@ const ProjectList = () => {
             </div>
           </div>
           <div className="py-10  mt-16 h-fit w-11/12 grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">
-            {Object.entries(ProjectData).map(([key, projects]) => (
-              <div key={key} className="">
-                {projects.map((data, index) => (
-                  <Link to={`/workspaces/${workspaceId}/project-list/${key}/detail`} key={index}>
-                    <ProjectCard
-                      name={data.name}
-                      desc={data.desc}
-                      projectImage={data.projectImage}
-                    />
-                  </Link>
-                ))}
-              </div>
+        {workspace?.details.map(data => (
+              <Link key={data.id} to={`/workspaces/${workspaceId}/project-list/${data.id}/detail`}>
+                <ProjectCard
+                  name={data.name}
+                  desc={data.desc}
+                  projectImage={data.projectImage}
+                />
+              </Link>
             ))}
+
           </div>
         </div>
       </div>

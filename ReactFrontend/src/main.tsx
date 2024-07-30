@@ -41,7 +41,7 @@ const router = createBrowserRouter([
     element: <ProjectList/>,
   },
   {
-    path: "/workspaces/:workspaceId/project-list/:ProjectId/detail",
+    path: "/workspaces/:workspaceId/project-list/:projectId/detail",
   element: <ProjectDetail/>,
   },
 

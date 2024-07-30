@@ -5,12 +5,12 @@ interface SummaryCardProps {
   icon: React.ReactElement<IconType>;
   label: string;
   value: string;
-  inputType: string;
+  valueType: string;
   disable: boolean;
 }
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ icon, label, value, inputType, disable }) => {
-  const cardClass = disable ? "flex items-center bg-white shadow rounded-md p-4 m-2" : "flex items-center bg-gray-300 shadow rounded-md p-4 m-2 opacity-50 cursor-not-allowed";
+const SummaryCard: React.FC<SummaryCardProps> = ({ icon, label, value, valueType, disable }) => {
+  const cardClass = disable ?  "flex items-center bg-gray-300 shadow rounded-md p-4 m-2 opacity-50 cursor-not-allowed" :"flex items-center bg-white shadow rounded-md p-4 m-2" ;
 
   return (
     <div className={cardClass}>
@@ -18,7 +18,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ icon, label, value, inputType
         {icon}
       </div>
       <div className="ml-4">
-        <span className="text-indigo-900 text-2xl font-bold">{value}</span> <span className="text-indigo-900 text-2xl font-bold">{inputType}</span>
+        <span className="text-indigo-900 text-2xl font-bold">{value}</span> <span className="text-indigo-900 text-2xl font-bold">{valueType}</span>
         <p className="text-gray-600">{label}</p>
       </div>
     </div>

@@ -2,12 +2,12 @@
 import React from 'react'
 import stringToColor from '../../function/util';
 
-interface projectImageProps {
+interface ProjectImageProps {
     projectName: string;
     className: string;
 
   }
-const projectImage: React.FC<projectImageProps>  = ( {projectName ,className = "" }) => {
+const ProjectImage: React.FC<ProjectImageProps>  = ( {projectName ,className = "" }) => {
     const words = projectName.split(" ");
     let initials = "";
   
@@ -30,5 +30,5 @@ return (
 )
 }
 
-export default projectImage
+export default ProjectImage
 

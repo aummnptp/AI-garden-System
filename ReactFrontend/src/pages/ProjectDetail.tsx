@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
-
+import ProjectImage from "../components/card/ProjectLetterImage";
 
 
 import {  ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
@@ -10,7 +10,9 @@ import Barchart from "../components/BarChart";
 import DoughnutChart from "../components/chart/doughnutChart";
 import SummaryCard from "../components/chart/sumaryCard";
 import UsageBarChart from "../components/chart/UsageBarChart";
-import { Link } from "react-router-dom";
+import SubmitRankTable from "../components/table/SumitRankTable";
+import { Link, useParams } from "react-router-dom";
+import ProjectData from "../data/ProjectData";
 
 
 
@@ -23,7 +25,31 @@ interface ProjectCardProps {
     img:string;
 }
 
-const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
+const ProjectDetail:React.FC<ProjectCardProps> = () => {
+
+  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
+
+  if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
+    // จัดการกรณีที่ workspaceId หรือ projectId เป็น undefined
+    return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
+  }
+
+  const workspaceIdNum = parseInt(workspaceId, 10);
+  const projectIdNum = parseInt(projectId, 10);
+
+  const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
+  
+  if (!workspace) {
+    return <div>ไม่พบพื้นที่ทำงาน</div>;
+  }
+
+  const detail = workspace.details.find(d => d.id === projectIdNum);
+
+  if (!detail) {
+    return <div>ไม่พบรายละเอียดโปรเจก</div>;
+  }
+
+
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -45,10 +71,20 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
           {/* detail */}
           <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
-              <img
-                className=" col-span-2  h-[100%] object-cover"
-                src="/images/ai/dermpic.jpg"
+            {detail.projectImage ? (
+             <img
+               className=" col-span-2 w-full h-[100%] object-cover"
+             src={detail.projectImage}
+             alt={`${detail.name} project`}
+             />
+            ) : (
+              
+              <ProjectImage
+              projectName={detail.name}
+              className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
               />
+            )}
+            
               <div className="col-span-4 p-6">
                 <div>
                   <div className="flex items-center">
@@ -56,7 +92,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                       className=" mb-2 text-3xl font-medium tracking-tight 
                   text-indigo-900 dark:text-white "
                     >
-                      ชื่อ AI
+                      {detail.name}
                     </h1>
 
                     <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-lg font-normal">
@@ -128,15 +164,15 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
       <div className="mt-2 w-full border border-zinc-300" />
     </div>
   </div>
-  <Link to={`/workspaces/1/project-list/1/detail/test/1`} className="ml-16 mt-2">
-    <button
-      type="button"
-      className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-    >
-      อัพโหลดรูปภาพ
-    </button>
-  </Link>
-</div>
+      <Link to={`/workspaces/1/project-list/1/detail/test/1`} className="ml-16 mt-2">
+        <button
+          type="button"
+          className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          อัพโหลดรูปภาพ
+        </button>
+      </Link>
+    </div>
 
             
           </div>
@@ -149,13 +185,18 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
               </div>
               <div className="ml-3 w-full bg-r">
                 <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
-                  Summary
+                  Project Summary
                 </h1>
                 <div className="mt-6 w-full border border-zinc-300" />
               </div>
             </div>
 
             <div className="">
+
+             
+
+         
+
               {/* Sumary Content Row1 */}
               <div className="grid grid-cols-3 px-10">
                 <SummaryCard
@@ -164,9 +205,12 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                   }
                   label="จำนวนผู้ใช้ทั้งหมด"
                   value="512"
-                  inputType="ผู้ใช้"
-                  disable={true}
+                  valueType="ผู้ใช้"
+                  disable={false}
                 />
+                {/* รูป summary */}
+                {detail.inputType === "รูปภาพ"  ? (
+               
                 <SummaryCard
                   icon={
                     <PictureOutlined
@@ -175,30 +219,69 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                   }
                   label="ประมวลผลด้วยภาพ"
                   value="5.32k"
-                  inputType="ภาพ"
-                  disable={true}
+                  valueType="ภาพ"
+                  disable={false}
                 />
+              ) : (
                 <SummaryCard
                   icon={
                     <VideoCameraOutlined
                       style={{ color: "#fff", fontSize: "2em" }}
                     />
                   }
-                  label="ประมวลผลด้วยวิดีโอ"
+                  label="ประมวลผลด้วยภาพ"
                   value=""
-                  inputType="วิดีโอ"
-                  disable={false}
+                 valueType="ภาพ"
+                  disable={true}
                 />
+              )}
+                {/* วิดีโอ summary */}
+                {detail.inputType === "วิดีโอ"  ? (
+                <SummaryCard
+                icon={
+                  <PictureOutlined
+                    style={{ color: "#fff", fontSize: "2em" }}
+                  />
+                }
+                label="ประมวลผลด้วยวิดีโอ"
+                value="5.32k"
+               valueType="วิดีโอ"
+                disable={false}
+              />
+                ):(
+              <SummaryCard
+                icon={
+                  <VideoCameraOutlined
+                    style={{ color: "#fff", fontSize: "2em" }}
+                  />
+                }
+                label="ประมวลผลด้วยวิดีโอ"
+                value=""
+                valueType="วิดีโอ"
+                disable={true}
+              />
+              )}
               </div>
+
+       {/* usage */}
+       <div className="flex  px-10 my-10">
+                  <div className=" w-full   mx-auto">
+                    {/* <UsageBarChart /> */}
+                    <SubmitRankTable></SubmitRankTable>
+                  </div>
+                  <div className="w-[30%] mx-auto">
+                    {/* <DoughnutChart /> */}
+                  </div>
+                </div>
 
               {/* Sumary Content Row/ */}
               <div className="grid grid-cols-2 px-10 my-4">
                 {/* create date card */}
                 <div className="flex h-full items-center  bg-white shadow rounded-md m-2">
-                <div className="w-2 h-full bg-indigo-900 rounded-tl-[15px] rounded-bl-[15px]" />
-                <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center">
+                <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
+                {/* <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center"> */}
                   {/* icon */}
-                </div>
+                {/* </div> */}
                   <div className="ml-4">
                     <div className="py-4">
                     <p className="text-gray-600">วันที่สร้าง</p>
@@ -231,15 +314,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
                     <DoughnutChart />
                   </div>
                 </div>
-                {/* usage */}
-                <div className="flex ">
-                  <div className="w-[70%] mx-auto">
-                    <UsageBarChart />
-                  </div>
-                  <div className="w-[30%] mx-auto">
-                    {/* <DoughnutChart /> */}
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>

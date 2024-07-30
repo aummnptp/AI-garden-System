@@ -1,28 +1,54 @@
-  import AiData from "./AiData" ;
+import AiData from "./AiData";
 
-  const ProjectData = {
-    1: [
-      { 
-        id:1,
-        name: "Derm Infer",
-        desc:"Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
+
+const ProjectData = [
+  {
+    workspaceId: 1,
+    details: [
+      {
+        id: 1,
+        name: "KMITL Project",
+        inputType:"รูปภาพ",
+        desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
         ai: AiData[0].name,
-        projectImage:"../../public/images/ai/dermpic.jpg",
-        },
-        {    id:2,
-          name: "Pet",
-            desc:"Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
-            ai: ".."
-            },
+        projectImage: "/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+      },
+      {
+        id: 2,
+        name: "Pet Project",
+        inputType:"วิดีโอ",
+        desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
+        ai: "..",
+      },
+      {
+        id: 3,
+        name: "It67 Project",
+        inputType:"รูปภาพ",
+        desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
+        ai: "..",
+      },
+      {
+        id: 4,
+        name: "Project Name",
+        inputType:"รูปภาพ",
+        desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
+        ai: "..",
+      },
+
     ],
-    2: [
-        { 
-          id:1,
-          name: "Road Detection",
-            desc:"Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
-            ai: ".."
-            
-            },
+  },
+  {
+    workspaceId: 2,
+    details: [
+      {
+        id: 1,
+        name: "Road Detection",
+        inputType:"รูปภาพ",
+        desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
+        ai: "..",
+      },
     ],
-  };
-  export default ProjectData;
+  },
+];
+
+export default ProjectData;
