@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { SendOutlined } from '@ant-design/icons';
 import AiData from "../data/AiData";
 import AiCard from "../components/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
@@ -21,7 +21,7 @@ function AdminAi() {
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 dark:text-black">
                 AI List
               </h1>
-              <Link to="/admin/createai" className="p-2  text-white bg-indigo-600 rounded-[15px]">
+              <Link to="/admin/createai" className="p-2  text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 rounded-[15px]">
                 + New AI Project
               </Link>
             </div>
@@ -64,6 +64,7 @@ function AdminAi() {
                 type={data.type}
               />
             ))}
+            
           </div>
         </div>
       </div>

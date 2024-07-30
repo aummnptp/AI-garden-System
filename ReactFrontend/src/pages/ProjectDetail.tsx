@@ -10,6 +10,7 @@ import Barchart from "../components/BarChart";
 import DoughnutChart from "../components/chart/doughnutChart";
 import SummaryCard from "../components/chart/sumaryCard";
 import UsageBarChart from "../components/chart/UsageBarChart";
+import { Link } from "react-router-dom";
 
 
 
@@ -46,7 +47,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
             <div className="grid grid-cols-6">
               <img
                 className=" col-span-2  h-[100%] object-cover"
-                src="/images/ai/Object-detection-Real-world-applications-and-benefits.png"
+                src="/images/ai/dermpic.jpg"
               />
               <div className="col-span-4 p-6">
                 <div>
@@ -115,17 +116,29 @@ const ProjectDetail:React.FC<ProjectCardProps> = (props) => {
             </p>
 
             {/* เริ่มต้นใช้งาน */}
-            <div className="flex items-center my-10">
-              <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center ">
-                <UploadOutlined style={{ color: "#fff", fontSize: "2em" }} />
-              </div>
-              <div className="ml-3 w-full bg-r">
-                <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
-                  เริ่มต้นใช้งาน
-                </h1>
-                <div className="mt-6 w-full border border-zinc-300" />
-              </div>
-            </div>
+            <div className="flex flex-col my-10">
+  <div className="flex items-center">
+    <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center">
+      <UploadOutlined style={{ color: "#fff", fontSize: "2em" }} />
+    </div>
+    <div className="ml-3 flex-1">
+      <h1 className="text-indigo-900 text-2xl font-medium">
+        เริ่มต้นใช้งาน
+      </h1>
+      <div className="mt-2 w-full border border-zinc-300" />
+    </div>
+  </div>
+  <Link to={`/workspaces/1/project-list/1/detail/test/1`} className="ml-16 mt-2">
+    <button
+      type="button"
+      className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    >
+      อัพโหลดรูปภาพ
+    </button>
+  </Link>
+</div>
+
+            
           </div>
 
           <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">

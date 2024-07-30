@@ -106,6 +106,7 @@ const AiDetail = () => {
                 เริ่มต้นใช้งาน
               </h1>
               <div className="mt-6 w-full border border-zinc-300" />
+              
             </div>
           </div>
         </div>

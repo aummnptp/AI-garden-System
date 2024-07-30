@@ -84,11 +84,11 @@ const router = createBrowserRouter([
     element: <CreateAi/>,
   },
   {
-    path: "/admin/test/:modelId",
+    path: "/workspaces/:workspaceId/project-list/:workspaceId/detail/test/:modelId",
     element: <PredictAiModel/>,
   },
   {
-    path: "/admin/predict/result",
+    path: "/workspaces/:workspaceId/project-list/:workspaceId/detail/test/:modelId/result",
     element: <PredictionResult />,
   },
 

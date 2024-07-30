@@ -105,6 +105,18 @@ const CreateAiProject = () => {
                 />
               </div>
               <div className="form-group">
+                <label>ประเภท AI</label>
+                <select
+                  value={aiType}
+                  onChange={(e) => setAiType(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="Object Detection">Object Detection</option>
+                  <option value="Regression">Regression</option>
+                  <option value="Segmentation">Segmentation</option>
+                </select>
+              </div>
+              <div className="form-group">
                 <label>Service URI</label>
                 <input
                   type="text"
@@ -145,18 +157,7 @@ const CreateAiProject = () => {
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              <div className="form-group">
-                <label>ประเภท AI</label>
-                <select
-                  value={aiType}
-                  onChange={(e) => setAiType(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="Object Detection">Object Detection</option>
-                  <option value="Regression">Regression</option>
-                  <option value="Segmentation">Segmentation</option>
-                </select>
-              </div>
+              
               <div className="form-group">
                 <label>Tag ของโปรเจค</label>
                 <div className="tags-input space-y-2">
