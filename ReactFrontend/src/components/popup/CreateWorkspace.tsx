@@ -13,6 +13,7 @@ interface CreateWorkspaceProps {
 
 
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setShowModal}) => {
+  
   const handleCloseModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) {
       setShowModal(false);

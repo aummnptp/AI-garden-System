@@ -15,7 +15,7 @@ const Sidebar = () => {
           <LaptopOutlined style={{ color: "#353D81", fontSize: "2em" }} />
         </div>
         <div className="ml-3">
-          <div className="text-neutral-400 text-base font-medium font-['Roboto'] leading-loose mt-[-12px]">
+          <div className="text-neutral-400 text-base font-medium leading-loose mt-[-12px]">
             In workspace
           </div>
           <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">Kmitl team</h1>
@@ -31,7 +31,7 @@ const Sidebar = () => {
       </div>
       <div className="mt-6 w-full border border-zinc-300"/>
       {/* workspace menu */}
-      <div className=" text-neutral-400 text-lg font-normal font-['Roboto'] leading-loose">
+      <div className=" text-neutral-400 text-lg font-normal  leading-loose">
         Workspace Menu
       </div>
       <ul className="font-medium">
@@ -78,7 +78,7 @@ const Sidebar = () => {
         </div>
 
         <div className="ml-3 mt-4">
-          <div className="text-neutral-400 text-base font-medium font-['Roboto'] leading-loose mt-[-12px]">
+          <div className="text-neutral-400 text-base font-medium  leading-loose mt-[-12px]">
             In project
           </div>
           <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">ProjectName</h1>
@@ -91,7 +91,7 @@ const Sidebar = () => {
       <span className="text-indigo-900 text-base font-medium "> ai type </span>
       <div className="mt-6 w-full border border-zinc-300"/>
       {/* project menu */}
-      <div className="text-neutral-400 text-lg font-normal font-['Roboto'] leading-loose">
+      <div className="text-neutral-400 text-lg font-normal leading-loose">
         Project Menu
       </div>
       <ul className="font-medium">

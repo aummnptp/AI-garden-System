@@ -11,7 +11,7 @@ const ProjectData = [
         inputType:"รูปภาพ",
         desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
         ai: AiData[0].name,
-        projectImage: "/images/ai/Object-detection-Real-world-applications-and-benefits.png",
+        projectImage: "/images/ai/dermpic.jpg",
       },
       {
         id: 2,
