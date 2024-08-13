@@ -485,7 +485,7 @@ const EditContent = (index: number, subIndex: number | null) => {
           <button
             onClick={handleTitleAdd}
             type="button"
-            className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
           >
             <PlusCircleOutlined />
             Add New Heading
@@ -498,7 +498,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                 <div className=" flex  justify-between">
                   <span
                     onClick={() => NavigationToContent(index)}
-                    className="py-2 flex-1 pl-3 whitespace-nowrap text-lg font-semibold hover:bg-gray-100 rounded-lg dark:hover:bg-gray-800 gap-3 cursor-pointer"
+                    className="py-2 flex-1 pl-3 whitespace-nowrap text-lg font-semibold hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
                   >
                     {doc.title}
                   </span>
@@ -519,7 +519,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                               onClick={() =>
                                 NavigationToContent(index, subIndex)
                               }
-                              className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg dark:hover:bg-gray-800 gap-3 cursor-pointer"
+                              className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
                             >
                               {subTitle.name}
                             </span>
@@ -568,7 +568,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                             >
                               <ul>
                                 <li
-                                  className="cursor-pointer rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                                  className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
                                   onClick={() => {
                                     handleEditSubTitleClick(index, subIndex);
                                     const updatedTitleModals = [...docDatas];
@@ -592,7 +592,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                                     ].showEdit = false;
                                     setDocDatas(updatedTitleModals);
                                   }}
-                                  className="cursor-pointer rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                                  className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
                                 >
                                   <span className="text-[#f93a37]">
                                     <DeleteOutlined />
@@ -627,7 +627,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                                   <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
                                     <h1
                                       className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-                  text-indigo-900 dark:text-white"
+                  text-indigo-900 "
                                     >
                                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
                                         คุณยืนยันที่จะลบหัวข้อย่อยนี้ใช่ไหม
@@ -667,7 +667,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                     ))}
                   </ul>
                   <div   onClick={() => handleSubTitleAdd(index)}
-                  className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg dark:hover:bg-gray-800 cursor-pointer px-4 my-2 ">
+                  className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 ">
                     <span
                       className="text-blue-700"
                     
@@ -710,7 +710,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                 >
                   <ul>
                     <li
-                      className="cursor-pointer rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                      className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
                       onClick={() => {
                         handleEditClick(index);
                         const updatedTitleModals = [...docDatas];
@@ -730,7 +730,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                         updatedTitleModals[index].showEditModal = false;
                         setDocDatas(updatedTitleModals);
                       }}
-                      className="cursor-pointer rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                      className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
                     >
                       <span className="text-[#f93a37]">
                         <DeleteOutlined />
@@ -760,7 +760,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                       <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
                         <h1
                           className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-                  text-indigo-900 dark:text-white"
+                  text-indigo-900 "
                         >
                           <span className="mt-5 absolute inset-x-0 top-0 text-center">
                             คุณยืนยันที่จะลบหัวข้อนี้ใช่ไหม
@@ -821,7 +821,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                     handleSaveEditorModal()
                   }
                   type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
                 >
                   <SaveOutlined />
                   Save Content
@@ -863,7 +863,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                     EditContent(editAtIndex[0].index, editAtIndex[0].subIndex)
                   }
                   type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
                 >
                   <EditOutlined />
                   Edit Document Content
@@ -890,7 +890,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                   <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
                     <h1
                       className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-                  text-indigo-900 dark:text-white"
+                  text-indigo-900 "
                     >
                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
                         ละทิ้งการปลี่ยนแปลงหรือไม่
@@ -936,7 +936,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                   <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
                     <h1
                       className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-                  text-indigo-900 dark:text-white"
+                  text-indigo-900 "
                     >
                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
                         ต้องการบันทึกหรือไม่

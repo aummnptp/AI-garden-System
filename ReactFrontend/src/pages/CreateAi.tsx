@@ -81,7 +81,7 @@ const CreateAiProject = () => {
           {/* Top card (create sort workspace name) */}
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 dark:text-black">
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
                 เพิ่มโปรเจค AI
               </h1>
             </div>

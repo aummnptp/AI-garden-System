@@ -70,7 +70,7 @@ const renderIcon = (iconName: any) => {
                 <div className="mx-1 mt-1  w-[100px] h-[0px] border border-black"></div>
               </div>
             </div>
-            <h1 className="my-4 text-3xl font-medium leading-none tracking-tight text-indigo-900 md:text-4xl dark:text-white">
+            <h1 className="my-4 text-3xl font-medium leading-none tracking-tight text-indigo-900 md:text-4xl ">
               AI Garden System
             </h1>
             <p className="my-4 text-black text-xl leading-loose  ">
@@ -83,7 +83,7 @@ const renderIcon = (iconName: any) => {
                 type="button"
                 className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4
              focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
-             dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+             "
               >
                 เริ่มใช้งาน
               </button>
@@ -91,7 +91,7 @@ const renderIcon = (iconName: any) => {
             <Link to={`/documents`}>
               <button
                 type="button"
-                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
               >
                 เรียนรู้เพิ่มเติม
               </button>
@@ -114,11 +114,11 @@ const renderIcon = (iconName: any) => {
           {/* card */}
           {AITypeData.map((data) => (
             <div className="block max-w-64 p-6 bg-white border border-gray-200 rounded-md shadow ">
-              <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
+              <h5 className="text-center mb-2 text-2xl font-bold tracking-tight text-indigo-900 ">
                 {data.type}
               </h5>
               <div className="mt-14 flex justify-center ">
-                <h5 className="mb-2  text-2xl font-bold tracking-tight text-indigo-900 dark:text-white">
+                <h5 className="mb-2  text-2xl font-bold tracking-tight text-indigo-900 ">
                 {renderIcon(data.icon)}
                 </h5>
               </div>
@@ -177,7 +177,7 @@ const renderIcon = (iconName: any) => {
               />
               </div>
 
-              <p className="text-center  text-stone-900 text-xl dark:text-gray-400">
+              <p className="text-center  text-stone-900 text-xl ">
                 {data.name}
               </p>
             </div>
@@ -202,7 +202,7 @@ const renderIcon = (iconName: any) => {
                 src={data.img}
               />
             </div>
-            <p className="text-xl text-stone-900 dark:text-gray-400">
+            <p className="text-xl text-stone-900 ">
               {data.name}
             </p>
           </div>

@@ -16,7 +16,7 @@ const AiDetail = () => {
         <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
           <h1
             className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
-          text-indigo-900 dark:text-white "
+          text-indigo-900 "
           >
             รายละเอียด
           </h1>
@@ -35,12 +35,12 @@ const AiDetail = () => {
                 <div className="flex items-center">
                   <h1
                     className=" mb-2 text-3xl font-medium tracking-tight 
-                text-indigo-900 dark:text-white "
+                text-indigo-900  "
                   >
                     ชื่อ AI
                   </h1>
 
-                  <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-lg font-normal">
+                  <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                     Object Detection
                   </span>
                 </div>
@@ -71,13 +71,13 @@ const AiDetail = () => {
                 typesetting industry. Lorem Ipsum has been the industry's{" "}
               </p>
               <div className="mb-2 mt-4">
-                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-lg font-normal">
+                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                   tag1
                 </span>
-                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-lg font-normal">
+                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                   tag2
                 </span>
-                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-lg font-normal">
+                <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                   tag3
                 </span>
               </div>

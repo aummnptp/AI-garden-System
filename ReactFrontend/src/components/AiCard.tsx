@@ -27,7 +27,7 @@ const AiCard :React.FC<AiCardProps> = (props) => {
             {props.name}
           </h1>
        
-          <span className=" mx-2 mb-2 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-xs font-normal">
+          <span className=" mx-2 mb-2 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-xs font-normal">
           {props.type}
           </span>
           <p className=" p-2">
@@ -36,7 +36,7 @@ const AiCard :React.FC<AiCardProps> = (props) => {
           
           <div className=' p-2 mb-2'>
           {props.tags.map((tag) => (
-              <span  className="w-fit bg-sky-500 rounded-[10px] me-2 px-2.5 py-0.5  dark:bg-blue-900 dark:text-blue-300 text-white text-xs font-normal">{tag}</span>
+              <span  className="w-fit bg-sky-500 rounded-[10px] me-2 px-2.5 py-0.5   text-white text-xs font-normal">{tag}</span>
             ))}
             </div>
             <div className="flex justify-center"> 

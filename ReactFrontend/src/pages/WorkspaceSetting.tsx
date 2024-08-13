@@ -13,7 +13,7 @@ const WorkspaceSetting = () => {
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <h1
               className="p-5 ml-5 text-3xl font-medium tracking-tight 
-          text-indigo-900 dark:text-white "
+          text-indigo-900 "
             >
               Workspace Setting
             </h1>
@@ -46,7 +46,7 @@ const WorkspaceSetting = () => {
             type="button"
             className=" w-fit  bg-indigo-600 hover:bg-blue-800
               focus:ring-4 focus:ring-blue-300 rounded-lg px-5 py-2.5 me-2 
-              dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+              focus:outline-none 
               text-center text-white text-xl font-light"
           >
             บันทึก

@@ -37,7 +37,7 @@ const Sidebar = () => {
       <ul className="font-medium">
         <li>
           <Link to={`/workspaces/${workspaceId}/project-list`}>
-            <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group  focus:ring-4 focus:bg-blue-300  ">
+            <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group  focus:ring-4 focus:bg-blue-300  ">
           <BarsOutlined />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Project List
@@ -48,7 +48,7 @@ const Sidebar = () => {
 
         <li>
         <Link to={`/workspaces/${workspaceId}/history`}>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <HistoryOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace history
@@ -58,7 +58,7 @@ const Sidebar = () => {
         </li>
         <li>
         <Link to={`/workspaces/${workspaceId}/setting`}>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace setting
@@ -96,25 +96,25 @@ const Sidebar = () => {
       </div>
       <ul className="font-medium">
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <ProfileOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">detail</span>
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <FileImageOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">upload image</span>
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <PlaySquareOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">upload video</span>
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <FileDoneOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project history
@@ -122,7 +122,7 @@ const Sidebar = () => {
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
             <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project setting

@@ -13,7 +13,7 @@ function AIlist() {
       <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
         <h1
           className="p-5 ml-5 text-3xl font-medium tracking-tight 
-          text-indigo-900 dark:text-white "
+          text-indigo-900 "
         >
           AI List
         </h1>
@@ -23,7 +23,7 @@ function AIlist() {
             <li className="me-2">
               <a
                 href="#"
-                className="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500"
+                className="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active "
                 aria-current="page"
               >
                AI ทั้งหมด
@@ -32,7 +32,7 @@ function AIlist() {
             <li className="me-2">
               <a
                 href="#"
-                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
               >
                    AI ที่ได้รับสิทธิ 
               </a>
@@ -40,7 +40,7 @@ function AIlist() {
             <li className="me-2">
               <a
                 href="#"
-                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
               >
                 AI ที่ยังไม่ได้รับสิทธิ
               </a>
@@ -52,19 +52,19 @@ function AIlist() {
           <input
             type="text"
             id="first_name"
-            className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
             placeholder="ค้นหาชื่อโปรเจค"
             required
           />
           <button
             type="button"
-            className=" rounded-[15px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className=" rounded-[15px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2  focus:outline-none "
           >
             ประเภท <SortAscendingOutlined />
           </button>
           <button
-            type="button"
-            className="   h-fit rounded-[15px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            type="button" 
+            className="   h-fit rounded-[15px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 focus:outline-none "
           >
             tag <ControlOutlined/>
           </button>

@@ -18,7 +18,7 @@ function AdminAi() {
           {/* Top card (create sort workspace name) */}
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
           <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 dark:text-black">
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
                 AI List
               </h1>
               <Link to="/admin/createai" className="p-2  text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-800 rounded-[15px]">
@@ -30,20 +30,20 @@ function AdminAi() {
               <input
                 type="text"
                 id="first_name"
-                className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
                 placeholder="ค้นหาชื่อโปรเจค"
                 required
               />
               <div>
               <button
                 type="button"
-                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
               >
                 ประเภท <SortAscendingOutlined />
               </button>
               <button
                 type="button"
-                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
               >
                 tag <ControlOutlined />
               </button></div>
