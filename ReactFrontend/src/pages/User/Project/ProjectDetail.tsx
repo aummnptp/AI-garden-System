@@ -1,18 +1,19 @@
 import React from "react";
-import Sidebar from "../components/Sidebar";
-import ProjectImage from "../components/card/ProjectLetterImage";
+import Sidebar from "../../../components/Sidebar";
+import ProjectImage from "../../../components/card/ProjectLetterImage";
 
 
-import {  ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import MiniFooter from "../components/MiniFooter";
-import Barchart from "../components/BarChart";
+import {  ExclamationCircleOutlined, InfoCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import MiniFooter from "../../../components/MiniFooter";
+import Barchart from "../../../components/chart/BarChart";
 
-import DoughnutChart from "../components/chart/doughnutChart";
-import SummaryCard from "../components/chart/sumaryCard";
-import UsageBarChart from "../components/chart/UsageBarChart";
-import SubmitRankTable from "../components/table/SumitRankTable";
+import DoughnutChart from "../../../components/chart/doughnutChart";
+import SummaryCard from "../../../components/chart/sumaryCard";
+import UsageBarChart from "../../../components/chart/UsageBarChart";
+import SubmitRankTable from "../../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
-import ProjectData from "../data/ProjectData";
+import ProjectData from "../../../data/ProjectData";
+import { IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
 
 
 
@@ -24,6 +25,7 @@ interface ProjectCardProps {
     tags:string;
     img:string;
 }
+
 
 const ProjectDetail:React.FC<ProjectCardProps> = () => {
 
@@ -263,11 +265,15 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
               )}
               </div>
 
-       {/* usage */}
+       {/* usage  */}
        <div className="flex  px-10 my-10">
-                  <div className=" w-full   mx-auto">
+                  <div className=" w-full   mx-auto flex">
                     {/* <UsageBarChart /> */}
                     <SubmitRankTable></SubmitRankTable>
+
+                 
+
+
                   </div>
                   <div className="w-[30%] mx-auto">
                     {/* <DoughnutChart /> */}

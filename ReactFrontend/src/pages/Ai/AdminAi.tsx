@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { SendOutlined } from '@ant-design/icons';
-import AiData from "../data/AiData";
-import AiCard from "../components/AiCard";
+import AiData from "../../data/AiData";
+import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
-import MiniFooter from "../components/MiniFooter";
+import MiniFooter from "../../components/MiniFooter";
 
 function AdminAi() {
   return (

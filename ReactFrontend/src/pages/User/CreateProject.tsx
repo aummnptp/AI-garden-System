@@ -1,11 +1,10 @@
 import React from 'react'
 
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../../components/Sidebar'
 import { Input } from "antd";
-import AiData from '../data/AiData';
-import CreateProjectCard from '../components/CreateProjectCard';
+import AiData from '../../data/AiData';
+import CreateProjectCard from '../../components/card/CreateProjectCard';
 import { Link, useParams } from 'react-router-dom';
-import Workspace from './Workspace';
 const { TextArea } = Input;
 
 

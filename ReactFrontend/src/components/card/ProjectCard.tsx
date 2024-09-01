@@ -1,5 +1,5 @@
 import React from 'react'
-import ProjectImage from './card/ProjectLetterImage';
+import ProjectImage from './ProjectLetterImage';
 interface ProjectCardProps {
 
     name:string;

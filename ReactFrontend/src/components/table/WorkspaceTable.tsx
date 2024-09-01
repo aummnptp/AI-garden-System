@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import ProjectImage from './card/ProjectLetterImage';
+import ProjectImage from '../card/ProjectLetterImage';
 import { FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
 import { CameraOutlined, PictureOutlined, PlaySquareOutlined } from '@ant-design/icons';
 

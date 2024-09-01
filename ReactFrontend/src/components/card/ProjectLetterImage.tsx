@@ -1,4 +1,5 @@
 
+// แสดงตัวหนังสือแทนรูปเมื่อไม่มีรูป 
 import React from 'react'
 import stringToColor from '../../function/util';
 

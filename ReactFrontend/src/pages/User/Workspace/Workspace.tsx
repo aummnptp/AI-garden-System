@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 // component
-import WorkspaceCard from "../components/WorkspaceCard";
-import InvitedCard from "../components/InvitedCard";
-import CreateWorkspace from "../components/popup/CreateWorkspace";
+import WorkspaceCard from "../../../components/card/WorkspaceCard";
+import InvitedCard from "../../../components/card/InvitedCard";
+import CreateWorkspace from "../../../components/popup/CreateWorkspace";
 
 import {DownOutlined, UpOutlined}  from '@ant-design/icons';
 
 // mockup data
-import MyWorkspaceData from "../data/WorkspaceData";
+import MyWorkspaceData from "../../../data/WorkspaceData";
 import { Link } from "react-router-dom";
-import MiniFooter from "../components/MiniFooter";
+import MiniFooter from "../../../components/MiniFooter";
 
 function Workspace() {
   // my workspace show
@@ -50,7 +50,7 @@ function Workspace() {
               font-medium rounded-[15px] text-sm px-5 py-2.5 me-2 mb-2 
               focus:outline-none  absolute top-0 right-0 my-6 mr-6">+ Create Workspace</button>
 
-              <div className=" w-[95%] h-[0px] border border-zinc-300 mx-auto" ></div>
+              <div className=" w-[95%] h-[0px] border border-zinc-300 mx-auto" />
               {/* show more bar */}
               <div onClick={toggleWorkspaceRow} className=" mx-auto my-2 w-[95%] flex items-center space-x-2 px-2 hover:bg-gray-100 rounded-[5px]" >
                 {showWorkspaceRow ?(

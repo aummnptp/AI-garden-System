@@ -1,38 +1,32 @@
 import React from "react";
-import MiniFooter from "../components/MiniFooter";
+import MiniFooter from "../../components/MiniFooter";
 import { Link } from "react-router-dom";
-import '../Admin.css';  // อย่าลืม import ไฟล์ CSS
+import Sidebar from "../../components/Sidebar";
 
-function Admin() {
+function AdminDashboard() {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* Sidebar */}
-        <div className="w-1/5 bg-neutral-200 h-full"></div>
+        <Sidebar></Sidebar>
         
         {/* Main Content */}
-        <div className="flex-1 p-4">
+        <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* Header with Cards */}
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center ">
           <Link to="/admin/admin-ai">
-            <div className="card">
-              <div className="icon">👤</div>
+          <div className="mx-auto  relative bg-white rounded-[5px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50 ">
               <div className="title">User lists</div>
-              <div className="count">30</div>
             </div>
             </Link>
             <Link to="/admin/admin-ai">
-            <div className="card">
-              <div className="icon">🤖</div>
+            <div className="mx-auto  relative bg-white rounded-[5px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50 ">
               <div className="title">AI lists</div>
-              <div className="count">24</div>
             </div>
             </Link>
             <Link to="/admin/admin-ai">
-            <div className="card">
-              <div className="icon">📂</div>
+            <div className="mx-auto  relative bg-white rounded-[5px] border border-zinc-400 grid grid-cols-12 hover:bg-gray-50 ">
               <div className="title">Workspaces</div>
-              <div className="count">80</div>
             </div>
             </Link>
           </div>
@@ -45,4 +39,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default AdminDashboard;

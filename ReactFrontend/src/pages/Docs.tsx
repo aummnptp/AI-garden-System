@@ -481,6 +481,9 @@ const EditContent = (index: number, subIndex: number | null) => {
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Doc side bar */}
       <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
+      <h1 className=" w-[95%] ml-2 text-black text-3xl font-normal  ">Documentation</h1>
+      
+      <div className=" w-[95%]  border border-zinc-300 mx-auto my-2 mb-4" />
         <div className="flex justify-end">
           <button
             onClick={handleTitleAdd}
@@ -490,6 +493,7 @@ const EditContent = (index: number, subIndex: number | null) => {
             <PlusCircleOutlined />
             Add New Heading
           </button>
+          
         </div>
         {docDatas.map((doc, index) => (
           <div key={index} className="flex justify-between items-center mb-2">

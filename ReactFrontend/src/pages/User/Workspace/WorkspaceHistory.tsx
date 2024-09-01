@@ -1,8 +1,8 @@
 import React from 'react'
-import Sidebar from '../components/Sidebar'
-import MiniFooter from '../components/MiniFooter'
-import CustomizedTables from '../components/Table'
-import EnhancedTable from '../components/WorkspaceTable'
+import Sidebar from '../../../components/Sidebar'
+import MiniFooter from '../../../components/MiniFooter'
+import CustomizedTables from '../../../components/table/Table'
+import EnhancedTable from '../../../components/table/WorkspaceTable'
 
 const WorkspaceHistory = () => {
   return (

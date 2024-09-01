@@ -1,6 +1,7 @@
 import { FacebookFilled, MailFilled } from '@ant-design/icons'
 import React from 'react'
 
+
 function Footer() {
   return (
     
@@ -18,18 +19,19 @@ function Footer() {
                   <span className="  text-2xl font-medium ">AI Garden System</span>
              
           </div >
-              <div className="bg-red-100"> 
+              <div className=""> 
                   <h2 className=" text-2xl font-medium  ">Contact Us</h2>
                 
                     <div className='flex gap-6'>
-                          <div className=""><a className='text-gray-500  text-3xl'  href="https://www.facebook.com/ITLadkrabang" ><FacebookFilled  />  </a> </div>
+                          <div className=""><a className='text-gray-500  text-3xl hover:text-black  '  href="https://www.facebook.com/ITLadkrabang" ><i className="bi bi-facebook"></i>  </a> </div>
                 
-                          <div className=""><a className='text-gray-500  text-3xl' href="mailto:IT@kmitl.ac.th"><MailFilled /></a></div>
+                          <div className=""><a className='text-gray-500  text-3xl hover:text-black ' href="mailto:IT@kmitl.ac.th"><i className="bi bi-envelope-fill"></i></a></div>
                  
-                          <div className=""><a className='text-gray-500 ' href="https://line.me/th/">Line</a></div>
+                          <div className=""><a className='text-gray-500  text-3xl hover:text-black ' href="https://line.me/th/"><i className="bi bi-line"></i></a></div>
                    
-                          <div className=""><a className='text-gray-500 '>School of IT building. </a> </div>
                     </div>
+                    
+                          <div className=""><a className='text-gray-500 '>School of IT building. </a> </div>
                     
 
                 

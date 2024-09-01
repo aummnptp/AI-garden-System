@@ -1,7 +1,7 @@
 import React from "react";
 
 import AiData from "../data/AiData";
-import AiCard from "../components/AiCard";
+import AiCard from "../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../components/MiniFooter";
 

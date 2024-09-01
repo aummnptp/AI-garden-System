@@ -2,7 +2,7 @@ import React from 'react'
 import MiniFooter from '../../components/MiniFooter'
 import { ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import SummaryCard from '../../components/chart/sumaryCard'
-import Barchart from '../../components/BarChart'
+import Barchart from '../../components/chart/BarChart'
 import DoughnutChart from '../../components/chart/doughnutChart'
 import UsageBarChart from '../../components/chart/UsageBarChart'
 
