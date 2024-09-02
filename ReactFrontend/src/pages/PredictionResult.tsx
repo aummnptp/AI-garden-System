@@ -67,6 +67,7 @@ const PredictionResult: React.FC = () => {
                     <div>
                       <strong>ไม่มีข้อมูลการพยากรณ์</strong>
                     </div>
+               
                   )}
                 </div>
               </div>

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 // component
-import WorkspaceCard from "../../../components/card/WorkspaceCard";
-import InvitedCard from "../../../components/card/InvitedCard";
-import CreateWorkspace from "../../../components/popup/CreateWorkspace";
+import WorkspaceCard from "../../components/card/WorkspaceCard";
+import InvitedCard from "../../components/card/InvitedCard";
+import CreateWorkspace from "../../components/popup/CreateWorkspace";
 
 import {DownOutlined, UpOutlined}  from '@ant-design/icons';
 
 // mockup data
-import MyWorkspaceData from "../../../data/WorkspaceData";
+import MyWorkspaceData from "../../data/WorkspaceData";
 import { Link } from "react-router-dom";
-import MiniFooter from "../../../components/MiniFooter";
+import MiniFooter from "../../components/MiniFooter";
 
 function Workspace() {
   // my workspace show
@@ -38,8 +38,8 @@ function Workspace() {
           {/* My Worksspace Container */}
           <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
             
-              <h1  className="  p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
-              text-indigo-900  ">My Workspace
+              <h1  className="  p-5 ml-5 mb-2 text-3xl font-medium tracking-tight  text-indigo-900  ">
+                My Workspace
               </h1>
              
               {/* create button */}
@@ -60,7 +60,7 @@ function Workspace() {
                 ):( <UpOutlined style={{color:'#999',fontSize:"24px"}}/>)
                 }
                 <p className="text-center text-zinc-500 text-xl leading-[49px]">  {showWorkspaceRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
-                <div className="w-[88%] h-[0px] border border-zinc-300"></div>
+                <div className="w-[85%] h-[0px] border border-zinc-300"/>
               </div>
               {/* My wokspace Card group */}
               <div className={` grid grid-cols-3 gap-4 w-fit pb-8 pt-2`}>  

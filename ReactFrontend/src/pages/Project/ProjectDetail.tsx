@@ -1,18 +1,18 @@
 import React from "react";
-import Sidebar from "../../../components/Sidebar";
-import ProjectImage from "../../../components/card/ProjectLetterImage";
+import Sidebar from "../../components/Sidebar";
+import ProjectImage from "../../components/card/ProjectLetterImage";
 
 
 import {  ExclamationCircleOutlined, InfoCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import MiniFooter from "../../../components/MiniFooter";
-import Barchart from "../../../components/chart/BarChart";
+import MiniFooter from "../../components/MiniFooter";
+import Barchart from "../../components/chart/BarChart";
 
-import DoughnutChart from "../../../components/chart/doughnutChart";
-import SummaryCard from "../../../components/chart/sumaryCard";
-import UsageBarChart from "../../../components/chart/UsageBarChart";
-import SubmitRankTable from "../../../components/table/SubmitRankTable";
+import DoughnutChart from "../../components/chart/doughnutChart";
+import SummaryCard from "../../components/chart/sumaryCard";
+import UsageBarChart from "../../components/chart/UsageBarChart";
+import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
-import ProjectData from "../../../data/ProjectData";
+import ProjectData from "../../data/ProjectData";
 import { IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
 
 

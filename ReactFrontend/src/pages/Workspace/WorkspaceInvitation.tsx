@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 
 import {
   Autocomplete,
@@ -66,22 +66,7 @@ const WorkspaceInvitation = () => {
     },
   ]);
 
-  const [pendingDatas, setPendingData] = useState<memberData[]>([
-    // {
-    //   id: 1,
-    //   firstName: "Somchai",
-    //   lastName: "Chobngam",
-    //   email: "Putthipong@gmail.com",
-    //   role: "Project owner",
-    // },
-    // {
-    //   id: 2,
-    //   firstName: "JoJo",
-    //   lastName: "Banana",
-    //   email: "Apple@gmail.com",
-    //   role: "Member",
-    // },
-  ]);
+  const [pendingDatas, setPendingData] = useState<memberData[]>([]);
 
   const [userDatas, setUserData] = useState<memberData[]>([
     {
@@ -220,8 +205,8 @@ const WorkspaceInvitation = () => {
                       >
                         <div className="flex items-center ">
                           <img
-                            className="w-12 h-12 rounded-full  border-2"
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
+                            className="w-10 h-10 rounded-full  border-2"
+                            src="/images/homeImage/profile.webp"
                           />
                           <div className="ml-2">
                             <p className="text-indigo-900 text-xl font-medium">
@@ -278,8 +263,8 @@ const WorkspaceInvitation = () => {
                     >
                       <div className="flex items-center ">
                         <img
-                          className="w-12 h-12 rounded-full  border-2"
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
+                          className="w-10 h-10 rounded-full  border-2"
+                          src="/images/homeImage/profile.webp"
                         />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-xl font-medium">

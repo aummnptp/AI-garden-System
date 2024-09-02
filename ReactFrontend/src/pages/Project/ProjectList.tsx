@@ -1,10 +1,10 @@
 import { TextField } from "@mui/material";
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import ProjectCard from "../../../components/card/ProjectCard";
-import ProjectData from "../../../data/ProjectData";
-import MiniFooter from "../../../components/MiniFooter";
-import Sidebar from "../../../components/Sidebar";
+import ProjectCard from "../../components/card/ProjectCard";
+import ProjectData from "../../data/ProjectData";
+import MiniFooter from "../../components/MiniFooter";
+import Sidebar from "../../components/Sidebar";
 
 const ProjectList = () => {
   const { workspaceId } = useParams<{ workspaceId?: string }>();
@@ -68,7 +68,7 @@ const ProjectList = () => {
           </div>
           <div className="py-10  mt-16 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">
         {workspace?.details.map(data => (
-              <Link key={data.id} to={`/workspaces/${workspaceId}/project-list/${data.id}/detail`}>
+              <Link key={data.id} to={`/workspaces/${workspaceId}/project/${data.id}/detail`}>
                 <ProjectCard
                   name={data.name}
                   desc={data.desc}

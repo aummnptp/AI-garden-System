@@ -4,9 +4,9 @@ import React from 'react'
 import { Link, useParams, useLocation } from 'react-router-dom'
 
 const Sidebar = () => {
-  let {workspaceId} = useParams()
+  let {workspaceId,projectId} = useParams()
   const location = useLocation();
-  const isProjectPage = location.pathname.includes('/detail');
+  const isProjectPage = location.pathname.includes('/project/');
   
   return (
     <div className="px-3 pt-6 pb-24 h-full w-2/12 bg-white shadow border  fixed z-40 overflow-y-scroll ">
@@ -114,12 +114,14 @@ const Sidebar = () => {
           </div>
         </li>
         <li>
+        <Link to={`/workspaces/${workspaceId}/project/${projectId}/history`}>
           <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
           <FileDoneOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project history
             </span>
           </div>
+          </Link>
         </li>
         <li>
           <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">

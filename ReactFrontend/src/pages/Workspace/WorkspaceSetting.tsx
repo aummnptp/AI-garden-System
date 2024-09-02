@@ -1,5 +1,5 @@
 import React, {  useState } from 'react';
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../components/Sidebar";
 
 import { Button, FormControl, FormHelperText, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -71,6 +71,7 @@ const WorkspaceSetting = () => {
               <TextField
                   id="standard-number"
                   placeholder='workspace name'
+                  defaultValue={"Workspace Name"}
                   // label="Number"
                   // InputLabelProps={{
                     //   shrink: true,
@@ -88,6 +89,7 @@ const WorkspaceSetting = () => {
                      placeholder='workspace description'
                   multiline
                   rows={4}
+                  defaultValue={"รายละเอียด ........"}
                   // label="Number"
                   // InputLabelProps={{
                   //   shrink: true,
