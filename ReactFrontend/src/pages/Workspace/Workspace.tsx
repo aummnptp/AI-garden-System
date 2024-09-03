@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-// component
+
 import WorkspaceCard from "../../components/card/WorkspaceCard";
 import InvitedCard from "../../components/card/InvitedCard";
 import CreateWorkspace from "../../components/popup/CreateWorkspace";
@@ -13,6 +13,8 @@ import MiniFooter from "../../components/MiniFooter";
 
 function Workspace() {
   // my workspace show
+  const [myWorkspace, setMyWorkspace] = useState(MyWorkspaceData); 
+  const [invitedWorkspace, setInvitedWorkspace]= useState(MyWorkspaceData); 
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
   const toggleWorkspaceRow = () => {
     setShowWorkspaceRow(!showWorkspaceRow); // สลับค่าของ showSecondRow กับ true/false
@@ -94,7 +96,7 @@ function Workspace() {
               </div>
             {/* invited wokspace Card */}
             <div className={`grid grid-cols-3 gap-4 pb-8 pt-2`}>  
-                {MyWorkspaceData.map((data, index)=>(
+                {myWorkspace.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
                 <Link to={`/workspaces/${data.id}/project-list`}>
                   <InvitedCard  id={data.id} name={data.name} desc={data.desc} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 

@@ -18,18 +18,24 @@ function AdminDashboard() {
       
             <div className="pt-10 pb-5 h-fit w-full flex justify-self-center relative px-40">
             <Link to={`#`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex py-20 justify-center relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-                <h1 className="font-medium text-indigo-800 text-2xl my-5">User List</h1>
+              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
+              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />
+                <h1 className="font-medium text-indigo-800 text-2xl my-auto">User List</h1>
+                   <div/>
               </div>
               </Link>
               <Link to={`/admin/admin-ai`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex py-20 justify-center relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-                <h1 className="font-medium text-indigo-800 text-2xl my-5">AI List</h1>
+              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
+              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />                
+              <h1 className="font-medium text-indigo-800 text-2xl my-auto">AI List</h1>
+                 <div/>
               </div>
               </Link>
               <Link to={`#`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex py-20 justify-center relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-                <h1 className="font-medium text-indigo-800 text-2xl my-5">Workspace</h1>
+              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
+              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />
+              <h1 className="font-medium text-indigo-800 text-2xl my-auto">Workspace</h1>
+              <div/>
               </div>
               </Link>
             </div>

@@ -3,6 +3,7 @@ import { Button, TextField } from '@mui/material';
 import { Modal } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
+import { Reorder } from "framer-motion"
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { Editor } from '@tinymce/tinymce-react';
 
@@ -476,7 +477,15 @@ const EditContent = (index: number, subIndex: number | null) => {
   
       }
     };
-    
+
+// drag n drop
+const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
+  const updatedDocDatas = [...docDatas];
+  updatedDocDatas[index].subTitle = newSubTitles;
+  setDocDatas(updatedDocDatas);
+};
+
+const [items, setItems] = useState([0, 1, 2, 3])
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Doc side bar */}
@@ -495,7 +504,9 @@ const EditContent = (index: number, subIndex: number | null) => {
           </button>
           
         </div>
+        <Reorder.Group axis="y" values={docDatas} onReorder={setDocDatas}>
         {docDatas.map((doc, index) => (
+           <Reorder.Item key={doc.id} value={doc} className="">
           <div key={index} className="flex justify-between items-center mb-2">
             {docDatas[index].showInput === false ? (
               <div className="w-full">
@@ -514,7 +525,13 @@ const EditContent = (index: number, subIndex: number | null) => {
                 {/* subtitle list */}
                 <div className="">
                   <ul>
+                  <Reorder.Group
+            axis="y"
+            values={doc.subTitle}
+            onReorder={(newSubTitles) => handleSubTitleReorder(index, newSubTitles)}
+          >
                     {docDatas[index]?.subTitle?.map((subTitle, subIndex) => (
+                     <Reorder.Item key={subTitle.subId} value={subTitle} className="">
                       <div>
                         {docDatas[index].subTitle[subIndex].showInput ===
                         false ? (
@@ -668,7 +685,9 @@ const EditContent = (index: number, subIndex: number | null) => {
                           </>
                         ) : null}
                       </div>
+                      </Reorder.Item>
                     ))}
+                  </Reorder.Group>
                   </ul>
                   <div   onClick={() => handleSubTitleAdd(index)}
                   className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 ">
@@ -797,7 +816,9 @@ const EditContent = (index: number, subIndex: number | null) => {
               </>
             ) : null}
           </div>
+          </Reorder.Item>
         ))}
+           </Reorder.Group>
       </div>
 
       {/* content container */}
@@ -835,7 +856,8 @@ const EditContent = (index: number, subIndex: number | null) => {
                 apiKey="ncaou3be6pfqi22ceukdz7cyc2cf3nz3qhj33rqb8b5j8kxy"
                 init={{
                   plugins:
-                    "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                  // "" ,
+                  "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
                   toolbar:
                     "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
                   tinycomments_mode: "embedded",
@@ -897,7 +919,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                   text-indigo-900 "
                     >
                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                        ละทิ้งการปลี่ยนแปลงหรือไม่
+                        Discard Change?
                       </span>
                     </h1>
                   </div>
@@ -909,7 +931,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                       type="button"
                       onClick={() => AbandonEditing()}
                     >
-                      ละทิ้ง
+                      Discard
                     </button>
 
                     <button
@@ -917,7 +939,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                       type="button"
                       onClick={(e) => hideWarningModal(e)}
                     >
-                      แก้ไขต่อไป
+                 Continue editing
                     </button>
                   </div>
                 </div>
@@ -943,7 +965,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                   text-indigo-900 "
                     >
                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                        ต้องการบันทึกหรือไม่
+                      Do you want to save it?
                       </span>
                     </h1>
                   </div>
@@ -958,7 +980,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                         editAtIndex[0].subIndex
                       )}
                     >
-                      บันทึก
+                      Save
                     </button>
 
                     <button
@@ -966,7 +988,7 @@ const EditContent = (index: number, subIndex: number | null) => {
                       type="button"
                       onClick={(e) => hideSaveEditorModal(e)}
                     >
-                      ไม่
+                      No
                     </button>
                   </div>
                 </div>

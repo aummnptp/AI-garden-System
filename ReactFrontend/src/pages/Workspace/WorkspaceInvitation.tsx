@@ -298,9 +298,9 @@ const WorkspaceInvitation = () => {
                     renderOption={(props, option) => (
                       <li {...props}>
                         <img
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
+                            src="/images/homeImage/profile.webp"
                           alt="profile"
-                          style={{ width: 30, height: 30, marginRight: 10 }}
+                          style={{ width: 30, height: 30, marginRight: 10 ,  borderRadius: "9999px"}}
                         />
                         {`${option.firstName} ${option.lastName} (${option.email})`}
                       </li>
@@ -327,7 +327,10 @@ const WorkspaceInvitation = () => {
                     sx={{ width: "85%", marginRight: "5px" }}
                   />
 
-                  <Button variant="contained" sx={{ my: "5px" }} onClick={handleInviteButton}>
+                  <Button variant="contained" sx={{ my: "5px" ,backgroundColor:"#4f46e5" ,  
+                  "&:hover": { 
+                     backgroundColor: "#3730a3" // สีที่ต้องการเมื่อ hover
+                   }  }} onClick={handleInviteButton}>
                     Send Invites
                   </Button>
                 </div>
@@ -371,7 +374,10 @@ const WorkspaceInvitation = () => {
                       className="bg-white"
                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
                     />
-                    <Button variant="contained" sx={{ my: "5px" }}>
+                    <Button variant="contained" sx={{ my: "5px",backgroundColor:"#4f46e5" ,  
+                       "&:hover": { 
+                      backgroundColor: "#3730a3" // สีที่ต้องการเมื่อ hover
+                   }  }}>
                       download
                     </Button>
                   </div>
