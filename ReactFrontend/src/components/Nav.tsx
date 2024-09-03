@@ -2,6 +2,7 @@
 
 import { Button } from '@mui/material';
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 
 interface NotiData {
@@ -26,7 +27,13 @@ function Nav() {
       workspace: "KMITL",
       
     },
-    
+    {
+      id: 3,
+      firstName: "Apple",
+      lastName: "Banana",
+      workspace: "KMITL",
+      
+    },
    
 
  
@@ -66,8 +73,9 @@ function Nav() {
   return (
     <nav className="bg-white   w-full sticky z-20 top-0 start-0 border-b border-gray-200 ">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+      <Link to={`/`} className="">
         <a
-          href="/"
+         
           className="flex items-center space-x-3 rtl:space-x-reverse md:order-2"
         >
           <img
@@ -78,13 +86,16 @@ function Nav() {
             AI Garden System
           </span>
         </a>
+        </Link>
         <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-3">
+        <Link to={`/admin/dashboard`} className="">
           <a
-            href="/admin/dashboard"
+          
             className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
           >
             Admin Console
           </a>
+          </Link>
         </div>
 
         <div className="flex md:order-3 space-x2 md:space-x-0 rtl:space-x-reverse">
@@ -143,10 +154,13 @@ function Nav() {
                 variant="contained"
                 color="success"
                 style={{ marginRight: '8px' }}
+                size="small"
               >
                 ยอมรับ
               </Button>
-              <Button variant="outlined" color="error">ปฎิเสธ</Button>
+              <Button 
+               onClick={() => handleAccept(index)}
+              variant="outlined" color="error" size="small">ปฎิเสธ</Button>
             </div>
           </div>
         </div>
@@ -191,28 +205,33 @@ function Nav() {
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
             <li>
+            <Link to={`/workspaces`} className="">
               <a
-                href="/workspaces"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
               >
                 Workspace
               </a>
+              </Link>
             </li>
             <li>
+            <Link to={`/docs`} className="">
               <a
-                href="/docs"
+
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
               >
                 Document
               </a>
+              </Link>
             </li>
             <li>
+              <Link  to={`/ai-list`}>
               <a
                 href="/ai-list"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-              >
+                >
                 AI List
               </a>
+              </Link>
             </li>
           </ul>
         </div>

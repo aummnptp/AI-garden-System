@@ -1,18 +1,17 @@
 
-// import Nav from './components/Nav'
-// import Footer from './components/Footer'
-// import { Link } from "react-router-dom";
-// import Home from './pages/Home';
+import {Routes, Route,Link,NavLink} from 'react-router-dom'
+import Home from './pages/Home';
 
-// function App() {
+function App() {
 
-//   return (
-//     <>
-//     <Nav />
-//     <Home/>
-//     <Footer/>
-//   </>
-//   )
-// }
+  return (
+    <main>
+        <Routes>
+            <Route index element={<Home/>}/>
+           
+        </Routes>
+    </main>
+  )
+}
 
-// export default App
+export default App

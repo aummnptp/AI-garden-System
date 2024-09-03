@@ -27,9 +27,14 @@ import AiDetail from './pages/Ai/AiDetail.tsx'
 import WorkspaceInvitation from './pages/Workspace/WorkspaceInvitation.tsx'
 import ProjectHistory from './pages/Project/ProjectHistory.tsx'
 import CustomInput from './pages/CustomInput.tsx'
+import Layout from './Layout.tsx'
+
 //  React router path here
 const router = createBrowserRouter([
-  
+  {
+    path: "/",
+    element: <Layout />,  // Set Layout as the main element
+    children: [
   {
     path: "/",
     element: <Home/>,
@@ -107,11 +112,12 @@ const router = createBrowserRouter([
     path: "/customInput",
     element: <CustomInput/>,
   },
+  ],
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Nav/>
       <RouterProvider router={router}/>
   </React.StrictMode>,
 )
