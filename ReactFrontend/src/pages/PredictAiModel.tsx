@@ -4,6 +4,7 @@ import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
 
 const PredictAiModel: React.FC = () => {
+  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const { modelId } = useParams<{ modelId: string }>();
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -23,43 +24,55 @@ const PredictAiModel: React.FC = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-  
-      fetch(`http://localhost:5000/predict/${modelId}`, {
-        method: 'POST',
-        body: formData,
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          navigate('/workspaces/1/project-list/1/detail/test/1/result', {
+
+      try {
+        const response = await fetch(`http://localhost:5000/predict/${modelId}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          navigate(`/workspaces/${workspaceId}/project-list/${projectId}/detail/test/${modelId}/result`, {
             state: {
               prediction: data,
               image: imageUrl,
               fileName: file.name
             }
           });
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+        } else if (contentType && contentType.includes('image/jpeg')) {
+          const blob = await response.blob();
+          const imageObjectURL = URL.createObjectURL(blob);
+          navigate(`/workspaces/${workspaceId}/project-list/${projectId}/detail/test/${modelId}/result`, {
+            state: {
+              prediction: null,
+              image: imageObjectURL,
+              fileName: file.name
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-      <Sidebar></Sidebar>
-        <div className="w-1/5 bg-neutral-200 h-full"></div>
-        <div className="w-4/5 items-center justify-center h-full grid grid-cols-1">
+        <Sidebar />
+        
+        <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
@@ -74,14 +87,15 @@ const PredictAiModel: React.FC = () => {
               </div>
               {imageUrl && <img src={imageUrl} alt="Preview" className="w-1/2 mx-auto mt-4" />}
               <div className="flex justify-end">
-              <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-                ยืนยัน
-              </button></div>
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded">
+                  ยืนยัน
+                </button>
+              </div>
             </form>
           </div>
         </div>
       </div>
-      <MiniFooter></MiniFooter>
+      <MiniFooter />
     </>
   );
 };

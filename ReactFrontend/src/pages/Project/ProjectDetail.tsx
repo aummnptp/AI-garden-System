@@ -166,7 +166,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
       <div className="mt-2 w-full border border-zinc-300" />
     </div>
   </div>
-      <Link to={`/workspaces/1/project-list/1/detail/test/1`} className="ml-16 mt-2">
+      <Link to={`/workspaces/${workspaceId}/project-list/${projectId}/detail/test/${projectId}`} className="ml-16 mt-2">
         <button
           type="button"
           className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 "

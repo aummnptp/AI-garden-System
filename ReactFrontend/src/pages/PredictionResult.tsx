@@ -6,24 +6,25 @@ import { PictureOutlined } from '@ant-design/icons';
 
 const PredictionResult: React.FC = () => {
   const location = useLocation();
-  const { prediction = {}, image, fileName } = location.state || {}; // ดึงข้อมูลการพยากรณ์และภาพจาก state
-
+  const state = location.state || {}; // ให้ state เป็น object เปล่าๆ ถ้าไม่มีค่า
+  const { prediction, image, fileName } = state; // ดึงข้อมูลการพยากรณ์และภาพจาก state
+  
   console.log("Prediction Data:", prediction);
   console.log("Image Data:", image);
   console.log("File Name:", fileName);
 
   // แปลงข้อมูลการพยากรณ์เป็นรายการที่แสดงผล
-  const resultEntries = Object.entries(prediction);
+  const resultEntries = prediction ? Object.entries(prediction) : [];
 
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
-        <Sidebar></Sidebar>
+        <Sidebar />
         {/* Sidebar placeholder */}
-        <div className="w-1/5 bg-neutral-200 h-full"></div>
+        
 
         {/* Main content */}
-        <div className="w-4/5 items-center justify-center h-full grid grid-cols-1">
+        <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
@@ -33,22 +34,22 @@ const PredictionResult: React.FC = () => {
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
 
             {/* Prediction result display */}
-            <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
-
-              <div className="flex justify-between items-start p-5">
-                {/* Display the uploaded image */}
-                <div className="flex justify-center mb-8">
+            <div className="mt-10 pb-5 h-fit w-full bg-white rounded-[15px] justify-center relative">
+              <div className="w-full flex justify-center p-5">
+                {/* Display the uploaded or returned image */}
+                <div className="justify-center mb-8">
                   {image ? (
-                    <img src={image} alt="Uploaded" className="w-80 h-80 object-cover rounded-lg" />
+                    <img src={image} alt="Uploaded or Result" className="w-full h-80 object-fill rounded-lg" />
                   ) : (
                     <div className="w-80 h-80 flex items-center justify-center bg-gray-300 rounded-lg">
                       <span>ไม่สามารถแสดงภาพได้</span>
                     </div>
                   )}
                 </div>
-
                 {/* Display the prediction details */}
-                <div className="text-center space-y-2 w-full">
+                
+              </div>
+              <div className="text-center space-y-2 w-full">
                   <div className="flex items-center justify-center mb-4">
                     <PictureOutlined
                       style={{ color: "#4F46E5", fontSize: "2em" }} // คุณสามารถปรับสีและขนาดได้ตามต้องการ
@@ -58,11 +59,14 @@ const PredictionResult: React.FC = () => {
                   </div>
 
                   {resultEntries.length > 0 ? (
-                    resultEntries.map(([key, value], index) => (
-                      <div key={index}>
-                        <strong>{key}:</strong> {typeof value === 'string' || typeof value === 'number' ? value : 'ไม่มีข้อมูล'}
-                      </div>
-                    ))
+                    <div className="grid grid-cols-1 gap-4">
+                      {resultEntries.map(([key, value], index) => (
+                        <div key={index} className="flex justify-between items-center border-b border-gray-300 pb-2">
+                          <strong className="text-indigo-900">{key}:</strong>
+                          <span>{typeof value === 'string' || typeof value === 'number' ? value : 'ไม่มีข้อมูล'}</span>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <div>
                       <strong>ไม่มีข้อมูลการพยากรณ์</strong>
@@ -70,9 +74,6 @@ const PredictionResult: React.FC = () => {
                
                   )}
                 </div>
-              </div>
-
-
             </div>
           </div>
         </div>

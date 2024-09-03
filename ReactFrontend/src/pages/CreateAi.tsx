@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
+import AdminSidebar from "../components/AdminSidebar";
 
 const CreateAiProject = () => {
   const [aiName, setAiName] = useState('');
@@ -74,6 +75,7 @@ const CreateAiProject = () => {
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
         {/* Sidebar placeholder */}
+        <AdminSidebar></AdminSidebar>
         <div className="w-1/5 bg-neutral-200 h-full"></div>
 
         {/* Main content */}
@@ -114,6 +116,7 @@ const CreateAiProject = () => {
                   <option value="Object Detection">Object Detection</option>
                   <option value="Regression">Regression</option>
                   <option value="Segmentation">Segmentation</option>
+                  <option value="Segmentation">Classification</option>
                 </select>
               </div>
               <div className="form-group">

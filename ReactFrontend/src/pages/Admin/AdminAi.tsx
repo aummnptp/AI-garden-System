@@ -4,13 +4,19 @@ import { SendOutlined } from '@ant-design/icons';
 import AiData from "../../data/AiData";
 import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
+<<<<<<< Updated upstream:ReactFrontend/src/pages/Admin/AdminAi.tsx
 import MiniFooter from "../../components/MiniFooter";
+=======
+import MiniFooter from "../components/MiniFooter";
+import AdminSidebar from "../components/AdminSidebar";
+>>>>>>> Stashed changes:ReactFrontend/src/pages/AdminAi.tsx
 
 function AdminAi() {
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
         {/* Slidebar placeholder */}
+        <AdminSidebar></AdminSidebar>
         <div className="w-1/5 bg-neutral-200 h-full"></div>
 
         {/* Main content */}
