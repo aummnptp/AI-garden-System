@@ -1,7 +1,7 @@
 import React from "react";
 import MiniFooter from "../../components/MiniFooter";
 import { Link } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
+import AdminSidebar from "../../components/AdminSidebar";
 import AiRequestTable from "../../components/table/AiRequestTable";
 
 function AdminDashboard() {
@@ -9,7 +9,7 @@ function AdminDashboard() {
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* Sidebar */}
-        <Sidebar></Sidebar>
+        <AdminSidebar></AdminSidebar>
 
         {/* Main Content */}
         <div className=" w-10/12 ml-auto bg-neutral-100 items-center pb-32  h-full min-h-screen">

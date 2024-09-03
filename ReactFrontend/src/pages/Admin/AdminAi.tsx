@@ -4,12 +4,8 @@ import { SendOutlined } from '@ant-design/icons';
 import AiData from "../../data/AiData";
 import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
-<<<<<<< Updated upstream:ReactFrontend/src/pages/Admin/AdminAi.tsx
 import MiniFooter from "../../components/MiniFooter";
-=======
-import MiniFooter from "../components/MiniFooter";
-import AdminSidebar from "../components/AdminSidebar";
->>>>>>> Stashed changes:ReactFrontend/src/pages/AdminAi.tsx
+import AdminSidebar from "../../components/AdminSidebar";
 
 function AdminAi() {
   return (
@@ -69,7 +65,9 @@ function AdminAi() {
                 img={data.img}
                 type={data.type}
               />
+              
             ))}
+            
             
           </div>
         </div>
