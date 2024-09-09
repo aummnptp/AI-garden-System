@@ -266,7 +266,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
               </div>
 
        {/* usage  */}
-       <div className="flex  px-10 my-10">
+       <div className="flex  my-10 ">
                   <div className=" w-full   mx-auto flex">
                     {/* <UsageBarChart /> */}
                     <SubmitRankTable></SubmitRankTable>
@@ -274,9 +274,6 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
                  
 
 
-                  </div>
-                  <div className="w-[30%] mx-auto">
-                    {/* <DoughnutChart /> */}
                   </div>
                 </div>
 

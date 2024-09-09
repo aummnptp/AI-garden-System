@@ -5,13 +5,19 @@ import SummaryCard from '../../components/chart/sumaryCard'
 import Barchart from '../../components/chart/BarChart'
 import DoughnutChart from '../../components/chart/doughnutChart'
 import UsageBarChart from '../../components/chart/UsageBarChart'
+import { useParams } from 'react-router-dom'
 
 const AiDetail = () => {
+  const { ai_id } = useParams<{ ai_id?: string }>();
+  if (typeof ai_id === 'undefined') {
+    // Handle the case where workspaceId is undefined
+    return <div>No workspace ID provided</div>;
+  }
   return (
     <>
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* content container */}
-      <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
+      <div className=" w-full ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
         {/* top card (create sort workspace name) */}
         <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
           <h1
@@ -103,116 +109,19 @@ const AiDetail = () => {
             </div>
             <div className="ml-3 w-full bg-r">
               <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
-                เริ่มต้นใช้งาน
+                การใช้งาน
               </h1>
               <div className="mt-6 w-full border border-zinc-300" />
+              <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
+                
+                ทดลองใช้งาน
+              </h1>
               
             </div>
           </div>
         </div>
 
-        <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
-          {/* bottom content (dashboard chart graph) */}
-          <div className="flex items-center my-10">
-            <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center ">
-              <ScheduleOutlined style={{ color: "#fff", fontSize: "2em" }} />
-            </div>
-            <div className="ml-3 w-full bg-r">
-              <h1 className="text-indigo-900 text-2xl font-medium mb-[-10px]">
-                สถิติโดยรวมของ AI
-              </h1>
-              <div className="mt-6 w-full border border-zinc-300" />
-            </div>
-          </div>
 
-          <div className="">
-            {/* Sumary Content Row1 */}
-            <div className="grid grid-cols-3 px-10">
-              <SummaryCard
-                icon={
-                  <UserOutlined style={{ color: "#fff", fontSize: "2em" }} />
-                }
-                label="จำนวนผู้ใช้ทั้งหมด"
-                value="512"
-                inputType="ผู้ใช้"
-                disable={true}
-              />
-              <SummaryCard
-                icon={
-                  <PictureOutlined
-                    style={{ color: "#fff", fontSize: "2em" }}
-                  />
-                }
-                label="ประมวลผลด้วยภาพ"
-                value="5.32k"
-                inputType="ภาพ"
-                disable={true}
-              />
-              <SummaryCard
-                icon={
-                  <VideoCameraOutlined
-                    style={{ color: "#fff", fontSize: "2em" }}
-                  />
-                }
-                label="ประมวลผลด้วยวิดีโอ"
-                value=""
-                inputType="วิดีโอ"
-                disable={false}
-              />
-            </div>
-
-            {/* Sumary Content Row/ */}
-            <div className="grid grid-cols-2 px-10 my-4">
-              {/* create date card */}
-              <div className="flex h-full items-center  bg-white shadow rounded-md m-2">
-              <div className="w-2 h-full bg-indigo-900 rounded-tl-[15px] rounded-bl-[15px]" />
-              <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center">
-                {/* icon */}
-              </div>
-                <div className="ml-4">
-                  <div className="py-4">
-                  <p className="text-gray-600">วันที่สร้าง</p>
-                  <span className="text-indigo-900 text-2xl font-bold">
-                    2 มิถุนายน 2567
-                  </span>
-                  </div>
-                </div>
-              </div>
-                {/* update date card */}
-                <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
-                <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
-                <div className="ml-4">
-                <div className="py-4">
-                  <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
-                  <span className="text-indigo-900 text-2xl font-bold">
-                    15 มิถุนายน 2567
-                  </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex ">
-                <div className="w-[70%] mx-auto">
-                  <Barchart />
-                </div>
-                <div className="w-[30%] mx-auto">
-                  <DoughnutChart />
-                </div>
-              </div>
-              {/* usage */}
-              <div className="flex ">
-                <div className="w-[70%] mx-auto">
-                  <UsageBarChart />
-                </div>
-                <div className="w-[30%] mx-auto">
-                  {/* <DoughnutChart /> */}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     <MiniFooter></MiniFooter>

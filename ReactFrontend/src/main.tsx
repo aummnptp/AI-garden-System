@@ -11,7 +11,7 @@ import { createBrowserRouter,RouterProvider,Route ,Link } from 'react-router-dom
 import Home from './pages/Home.tsx'
 import Nav from './components/Nav.tsx'
 import ProjectList from './pages/Project/ProjectList.tsx'
-import AIlist from './pages/AiList.tsx'
+
 import CreateProject from './pages/Project/CreateProject.tsx'
 import ProjectDetail from './pages/Project/ProjectDetail.tsx'
 import WorkspaceHistory from './pages/Workspace/WorkspaceHistory.tsx'
@@ -28,6 +28,8 @@ import WorkspaceInvitation from './pages/Workspace/WorkspaceInvitation.tsx'
 import ProjectHistory from './pages/Project/ProjectHistory.tsx'
 import CustomInput from './pages/CustomInput.tsx'
 import Layout from './Layout.tsx'
+import AIlist from './pages/Ai/AiList.tsx'
+import AIDemo from './pages/Ai/AIDemo.tsx'
 
 //  React router path here
 const router = createBrowserRouter([
@@ -91,8 +93,12 @@ const router = createBrowserRouter([
     element: <AIlist/>,
   },
   {
-    path: "/ai-list/detail",
+    path: "/ai/:ai_id/detail",
     element: <AiDetail/>,
+  },
+  {
+    path: "/ai/:ai_id/demo",
+    element: <AIDemo/>,
   },
   {
     path: "/admin/dashboard",

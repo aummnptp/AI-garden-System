@@ -1,11 +1,15 @@
 import React from "react";
 
-import AiData from "../data/AiData";
-import AiCard from "../components/card/AiCard";
+
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
-import MiniFooter from "../components/MiniFooter";
+import AiCard from "../../components/card/AiCard";
+import MiniFooter from "../../components/MiniFooter";
+import AiData from "../../data/AiData";
+import { Link } from "react-router-dom";
+
 
 function AIlist() {
+
   return (
     <>
     <div className=" bg-neutral-100  items-center justify-center h-full pb-32 grid grid-cols-1">
@@ -75,6 +79,8 @@ function AIlist() {
       <div className="mt-16 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
         {/* card */}
         {AiData.map((data) => (
+              <Link to={`/ai/${data.id}/detail`}>
+
           <AiCard
             id={data.id}
             name={data.name}
@@ -82,7 +88,8 @@ function AIlist() {
             tags={data.tags}
             img={data.img}
             type={data.type}
-          ></AiCard>
+            ></AiCard>
+            </Link>
         ))}
       </div>
     </div>

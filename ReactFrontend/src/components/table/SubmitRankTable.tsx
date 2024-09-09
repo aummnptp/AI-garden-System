@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
+
+import React, {  useState } from 'react';import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -8,148 +8,158 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TrophyFilled } from '@ant-design/icons';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { ImageList, ImageListItem, ImageListItemBar, ListSubheader } from '@mui/material';
+import UploadedImage from '../../data/UploadedImage';
+import formatDate from '../../function/formatDate';
+import formatTime from '../../function/formatTime';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-interface SelectedUserData {
-  UserRank: number;
-  submitData: number[];
+
+interface UploadPicture {
+  img: string;
+  title: string;
+  author: string;
+  rows?: number;
+  cols?: number;
+  featured?: boolean;
 }
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+interface UploadData {
+  dateTime: string;
+  uploadPicture: UploadPicture[];
+}
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-  '&:hover': {
-    backgroundColor: theme.palette.action.selected,
-    cursor: 'pointer',
-  },
-}));
+interface UserUpload {
+  UserRank: number;
+  UploadData: UploadData[];
+}
+
+
+
+
+
+
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.common.black,
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+      
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected, 
+      cursor: 'pointer',
+    },
+  }));
+  
 
 function createData(
-  rank: number,
+rank:number,
   name: string,
-  avartar: string,
+  avartar:string,
   submitNumber: number,
-  submitData: number[],
+
 ) {
-  return { rank, name, avartar, submitNumber, submitData };
+  return { rank,name, avartar,submitNumber, };
 }
 
 const rows = [
-  createData(1, 'Frozen yoghurt', '/images/homeImage/puttipong.jpg', 121, [8  ,0, 35, 5, 10, 76, 3, 15,5,5,6,0,0]),
-  createData(2, 'Ice cream sandwich', '/images/homeImage/kittnan.jpeg', 85, [20, 13, 15,0,0,0,0,0,0,0,0,0]),
-  createData(3, 'Eclair', '/images/homeImage/profile.webp', 85, [35, 13, 15,0,0,0,0,0,0,0,0,0]),
-  createData(4, 'Cupcake', '/images/homeImage/profile.webp', 85, [20, 3, 15,0,0,0,0,0,0,0,0,0]),
-  createData(5, 'Gingerbread', '/images/homeImage/profile.webp', 85, [10, 5, 15,0,0,0,0,0,0,0,0,0]),
+  createData(1,'Frozen yoghurt',"/images/homeImage/puttipong.jpg", 85,),
+  createData(2,'Ice cream sandwich',"/images/homeImage/kittnan.jpeg", 70, ),
+  createData(3,'Eclair', "/images/homeImage/profile.webp",14, ),
+  createData(4,'Cupcake', "/images/homeImage/profile.webp",14, ),
+  createData(5,'Gingerbread', "/images/homeImage/profile.webp",12, ),
 ];
 
+
 export default function SubmitRankTable() {
-  const [selectedUser, setSelectedUser] = useState<SelectedUserData | null>(null);
 
-  const handleShowSubmit = (row: any) => {
-    const filtered = rows.find((user) => user.rank === row);
-    if (filtered) {
-      setSelectedUser({ UserRank: filtered.rank, submitData: filtered.submitData });
-    }
+
+  const [showSubmit,setShowSubmit] = useState(false);
+  const [filteredUser, setFilteredUser] = useState<UserUpload | null>(null);
+  const handleShowSubmit = (row :number) => {
+    const filtered = UploadedImage.filter(user => user.UserRank === row);
+    console.log(row)
+      setFilteredUser(filtered[0]); 
+    setShowSubmit(true); // แสดงข้อมูล
   };
 
-  const chartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'],
-    datasets: [
-      {
-        label: 'จำนวนการประมวลผลรายเดือน',
-        data: selectedUser?.submitData || [],
-        fill: false,
-        backgroundColor: 'rgba(138,43,226,0.6)',
-        borderColor: 'rgba(138,43,226,1)',
-        tension: 0.4,
-      },
-    ],
-  };
 
-  const chartOptions = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
+
+
 
   return (
-    <div className="w-full  flex ">
-      <div className='w-[100%]'>
+    <div className=" w-full   mx-auto flex  ">
+      <div className='mx-4  px-4'>
       <TableContainer component={Paper}>
-        <Table aria-label="customized table">
+        <Table sx={{width: '100%' }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell>อันดับ</StyledTableCell>
-              <StyledTableCell>ชื่อ</StyledTableCell>
-              <StyledTableCell align="center">จำนวนการประมวลผล (ภาพ)</StyledTableCell>
+              <StyledTableCell>ชื่อ </StyledTableCell>
+              <StyledTableCell align="center">
+                จำนวนการประมวลผล (ภาพ)
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <StyledTableRow key={row.rank} onClick={() => handleShowSubmit(row.rank)}>
+              <StyledTableRow key={row.rank}     onClick={() => handleShowSubmit(row.rank)}>
                 <StyledTableCell component="th" scope="row">
                   <span
-                    className={`text-3xl font-bold ${row.rank <= 3 ? 'text-indigo-600' : ''}`}
+                    className={`text-3xl font-bold ${
+                      row.rank <= 3 ? "text-indigo-600" : ""
+                    }`}
                   >
+                    {" "}
                     {row.rank}
                   </span>
                   {row.rank <= 3 && (
                     <TrophyFilled
                       style={{
-                        fontSize: '1.525rem',
+                        fontSize: "1.525rem",
                         color:
                           row.rank === 1
-                            ? '#FFD700'
+                            ? "#FFD700"
                             : row.rank === 2
-                            ? '#C0C0C0'
-                            : '#CD7F32',
+                            ? "#C0C0C0"
+                            : "#CD7F32",
                       }}
                     />
                   )}
                 </StyledTableCell>
                 <StyledTableCell>
-                  <div className="flex items-center w-fit">
+                  <div className="flex items-center w-fit ">
                     <img
                       className="w-10 h-10 rounded-full border-2"
                       src={row.avartar}
                     />
                     <div className="ml-2">
-                      <p className="text-indigo-900 text-lg font-medium">{row.name}</p>
+                      <p className="text-indigo-900 text-lg font-medium">
+                        {row.name}
+                      </p>
                     </div>
                   </div>
                 </StyledTableCell>
                 <StyledTableCell align="center">
-                  <p className="text-black text-xl font-medium">{row.submitNumber}</p>
+                  <p className="text-black text-xl font-medium">
+                    {row.submitNumber}
+                  </p>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -157,10 +167,57 @@ export default function SubmitRankTable() {
         </Table>
       </TableContainer>
       </div>
-      {selectedUser && (
-        <div className="my-auto  w-[1000px] ">
-          <Line data={chartData} options={chartOptions} />
-        </div>
+{/*  */}
+  {showSubmit && filteredUser && (
+    
+      <div className='px-4 border rounded-[5px] sha '>
+       <div className="flex items w-full py-5 sticky top- z-10">
+                <img
+                  className="w-10 h-10 rounded-full  border-2"
+                  src={rows[0].avartar}
+                />
+                <div className="ml-2">
+                  <p className="text-indigo-900 text-lg font-medium">
+                    {rows[0].name}
+                  </p>
+                </div>
+              </div>
+      <ImageList sx={{ width: "100%", maxHeight: 350 }}>
+       
+          {filteredUser.UploadData.map((data) => (
+            <>
+              <ImageListItem key={`subheader-${data.dateTime}`} cols={2}>
+                <ListSubheader component="div">
+                วันที่ {formatDate(new Date(data.dateTime))}  {" "}
+                  <div  className='flex items-center'>
+                  เวลา: {formatTime(new Date(data.dateTime))} น.
+                
+                  <div className="w-[75%] h-[0px] border border-zinc-300 mx-auto  ml-2" />
+                  </div>
+                  </ListSubheader>
+          
+              </ImageListItem>
+
+              {data.uploadPicture.map((item) => (
+                <ImageListItem key={item.img}>
+                  <img
+                    srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${item.img}?w=248&fit=crop&auto=format`}
+                    alt={item.title}
+                    loading="lazy"
+                  />
+                  <ImageListItemBar
+                    title={item.title}
+                    position="below"
+                  />
+                </ImageListItem>
+              ))}
+            </>
+          ))
+        }
+      </ImageList>
+  
+      </div>
       )}
     </div>
   );
