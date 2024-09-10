@@ -20,7 +20,7 @@ function CreateProject() {
  
      
       {/* create container */}
-      <div className='p-8 col-span-10 mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self relative '>
+      <div className='p-8 col-span-10 mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self relative '>
         <h1 className="text-indigo-900 text-4xl font-medium font-['Roboto'] leading-loose">สร้างโปรเจคใหม่</h1>
         <div className="mb-10 h-[0px] border border-zinc-300 mx-auto"/>
           <label className='mt-10 text-black text-2xl font-medium'> ชื่อโปรเจค </label>

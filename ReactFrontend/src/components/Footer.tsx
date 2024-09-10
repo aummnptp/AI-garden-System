@@ -43,14 +43,7 @@ function Footer() {
                   </a>
                 </div>
 
-                <div className="">
-                  <a
-                    className="text-gray-500  text-2xl hover:text-blue-700 "
-                    href="https://line.me/th/"
-                  >
-                    <i className="bi bi-line"></i>
-                  </a>
-                </div>
+
                 <div className="">
                   <a
                     className="text-gray-500  text-2xl hover:text-blue-700 "
@@ -69,7 +62,7 @@ function Footer() {
               </div>
 
               <div className=" flex">
-                <text className="text-gray-500 text-center ">School of IT building. </text>{" "}
+                <text className="text-gray-500 text-center ">IT KMITL building.  </text>{" "}
               </div>
             </div>
 

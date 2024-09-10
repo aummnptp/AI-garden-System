@@ -185,7 +185,7 @@ const renderIcon = (iconName: any) => {
         </div>
 
         {/* dev */}
-        <div className="ml-10 mt-10 flex flex-row items-center space-x-4 p-4">
+        <div className="ml-10 mt-4 flex flex-row items-center space-x-4 p-4">
           <h1 className=" text-3xl font-medium leading-none tracking-tight text-white md:text-2xl">
             Dev ทีม
           </h1>

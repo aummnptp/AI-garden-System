@@ -14,7 +14,7 @@ function AIlist() {
     <>
     <div className=" bg-neutral-100  items-center justify-center h-full pb-32 grid grid-cols-1">
       {/* top card (create sort workspace name) */}
-      <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
+      <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
         <h1
           className="p-5 ml-5 text-3xl font-medium tracking-tight 
           text-indigo-900 "
@@ -76,7 +76,7 @@ function AIlist() {
       </div>
 
       {/* card container */}
-      <div className="mt-16 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
+      <div className="mt-4 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
         {/* card */}
         {AiData.map((data) => (
               <Link to={`/ai/${data.id}/detail`}>

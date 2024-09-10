@@ -12,7 +12,7 @@ const WorkspaceHistory = () => {
       <Sidebar></Sidebar>
       {/* content container */}
       <div className=" w-10/12 ml-auto  flex flex-col items-center pb-32  h-full min-h-screen">
-      <div className="mt-5 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">
+      <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">
         <h1
           className="p-5 ml-5 text-3xl font-medium tracking-tight 
           text-indigo-900  "

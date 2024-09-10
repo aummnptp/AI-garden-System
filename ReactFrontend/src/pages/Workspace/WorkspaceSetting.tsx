@@ -24,7 +24,7 @@ const WorkspaceSetting = () => {
         <Sidebar></Sidebar>
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
-          <div className="mt-5 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
+          <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
             <h1
               className="p-5  text-3xl font-medium tracking-tight 
           text-indigo-900 "

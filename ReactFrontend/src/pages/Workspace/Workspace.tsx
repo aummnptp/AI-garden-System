@@ -38,7 +38,7 @@ function Workspace() {
         <CreateWorkspace showModal={showModal} setShowModal={setShowModal} />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
-          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
+          <div className="mt-4 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
             
               <h1  className="  p-5 ml-5 mb-2 text-3xl font-medium tracking-tight  text-indigo-900  ">
                 My Workspace
@@ -78,7 +78,7 @@ function Workspace() {
          
 
           {/* Invited Worksapce Container */}
-          <div className="mt-16 h-fit w-11/12 bg-white rounded-[15px]  justify-self-center relative">
+          <div className="mt-8 h-fit w-11/12 bg-white rounded-[15px]  justify-self-center relative">
               <h1  className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
               text-indigo-900  ">Invited Workspace
               </h1>

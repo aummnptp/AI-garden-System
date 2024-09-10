@@ -1,25 +1,19 @@
 import { Button } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 
-const ImageUploader: React.FC = () => {
+interface ImageUploaderProps {
+    image: File;
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
     const [rotation, setRotation] = useState<number>(0); // state for rotation
     const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for grayscale
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setSelectedImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
-    const handleRotateLeft = () => {
+    const handleRotateLeft = () => {    
         setRotation((prev) => prev - 90);
     };
 
@@ -31,6 +25,17 @@ const ImageUploader: React.FC = () => {
         setIsGrayscale((prev) => !prev);
     };
 
+
+    useEffect(() => {
+        if (image) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result as string); // แปลงไฟล์เป็น base64 string
+            };
+            reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
+        }
+    }, [image]);
+    
     useEffect(() => {
         if (selectedImage && canvasRef.current) {
             const image = new Image();
@@ -70,28 +75,30 @@ const ImageUploader: React.FC = () => {
     }, [selectedImage, rotation, isGrayscale]);
 
     return (
-        <div>
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
+        <div className='flex w-full  '>
+        
             {selectedImage && (
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div className=" px-10 mx-auto w-full  flex items-start ">
               {/* Display Original Image */}
-              <div>
+              <div className=" px-10 mx-auto w-[50%] h-fit pb-10  " >
                   <h3>Original Image:</h3>
                   <img src={selectedImage} alt="Original" style={{ maxWidth: '300px', maxHeight: '300px' }} />
+                  <div className='pt-4 '>
+                     <Button variant='contained' onClick={handleRotateLeft}>Rotate Left (-90°)</Button>
+                     <Button variant='contained' onClick={handleRotateRight}>Rotate Right (+90°)</Button>
+                     <Button variant='contained' onClick={toggleGrayscale}>   {isGrayscale ? 'Remove Grayscale' : 'Apply Grayscale'}</Button>
+                 </div>
               </div>   {/* Display Processed Image */}
-                    <div>
+              <div className=" px-10 mx-auto w-[50%] h-fit pb-10 ">
                         <h3>Processed Image:</h3>
                     <canvas ref={canvasRef}  style={{ maxWidth: '300px', maxHeight: '300px' }}></canvas>
-                    <div>
-                     
-                        <Button variant='contained' onClick={handleRotateLeft}>Rotate Left (-90°)</Button>
-                        <Button variant='contained' onClick={handleRotateRight}>Rotate Right (+90°)</Button>
-                        <Button variant='contained' onClick={toggleGrayscale}>   {isGrayscale ? 'Remove Grayscale' : 'Apply Grayscale'}</Button>
-                    </div>
+            
                     {downloadUrl && (
-                        <Button variant='contained' href={downloadUrl} download="grayscale-image.png">
+                       <div className='pt-4'>
+                        <Button variant='contained' href={downloadUrl} download="customImage.png">
                             <button>Download Image</button>
                         </ Button >
+                        </div>
                     )} 
                     </div>
                 </div>

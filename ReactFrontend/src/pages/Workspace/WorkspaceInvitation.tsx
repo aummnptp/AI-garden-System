@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/Sidebar";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import {
   Autocomplete,
@@ -32,9 +37,10 @@ interface userData {
   role: string;
 }
 
-
 const WorkspaceInvitation = () => {
   let { workspaceId } = useParams();
+  const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
+  const [open, setOpen] = React.useState(false);
   const [memberDatas, setMemberData] = useState<memberData[]>([
     {
       id: 1,
@@ -100,6 +106,7 @@ const WorkspaceInvitation = () => {
   ]);
 
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
+  
   const handleChange = (event: SelectChangeEvent, index: number) => {
     const UpdatedMember = [...memberDatas];
     UpdatedMember[index].role = event.target.value;
@@ -109,43 +116,62 @@ const WorkspaceInvitation = () => {
   const link = "https://www.invite_example.com";
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
-
-    navigator.clipboard.writeText(link)
-    .then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    })
-    .catch(err => {
-      console.error("Failed to copy: ", err);
-    });
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
   };
   const handleInviteButton = () => {
-    
     setPendingData((prevPendingData) => [
       ...prevPendingData,
       ...selectedUsers.filter(
         // เช็คว่าอีเมลของผู้ใช้ไม่ได้อยู่ใน pendingData
-        (user) => !prevPendingData.some((pending) => pending.email === user.email)
+        (user) =>
+          !prevPendingData.some((pending) => pending.email === user.email)
       ),
     ]);
     setSelectedUsers([]);
-    
-  }
-  const handleDeleteMember = (index:number) => {
-    const UpdatedMember = [...memberDatas];
-    UpdatedMember.splice(index, 1);
-    setMemberData(UpdatedMember)
-    // setMemberData()
   };
-  const handleDeletePending = (index:number) => {
+  const handleDeleteMember = (index: number|null) => {
+    if (index === null) return;
+  
+    const updatedMembers = [...memberDatas];
+    updatedMembers.splice(index, 1);
+    setMemberData(updatedMembers);
+    setOpen(false);
+  };
+  
+ 
+ 
+ 
+  const handleDeletePending = (index: number) => {
     const UpdatedPending = [...pendingDatas];
     UpdatedPending.splice(index, 1);
-    setPendingData(UpdatedPending)
+    setPendingData(UpdatedPending);
+    setOpen(false);
     // setMemberData()
   };
   const filteredUserDatas = userDatas.filter(
     (user) => !pendingDatas.some((pending) => pending.email === user.email)
   );
+
+
+
+
+  const handleClickOpen = (index: number) => {
+    setSelectedMemberIndex(index);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -153,7 +179,7 @@ const WorkspaceInvitation = () => {
         <Sidebar></Sidebar>
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
-          <div className="mt-5 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
+          <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
             <h1
               className="p-5  text-3xl font-medium tracking-tight 
           text-indigo-900 "
@@ -186,8 +212,10 @@ const WorkspaceInvitation = () => {
 
             {/* <div className="w-full h-[0px] border border-zinc-300 mx-auto" /> */}
             <div className=" w-[90%] mx-auto items-center mt-2">
-              <div className=" w-full h-fit bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4">
-                <h1 className="text-black text-3xl px-10 pb-4"><i className="bi bi-people-fill"></i> Member</h1>
+              <div className=" w-full h-fit mt-4 bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4">
+                <h1 className="text-black text-3xl px-10 pb-4">
+                  <i className="bi bi-people-fill"></i> Member
+                </h1>
                 {memberDatas
                   .sort((a, b) => {
                     if (a.role === "Project owner" && b.role === "Member")
@@ -233,11 +261,12 @@ const WorkspaceInvitation = () => {
                             </Select>
                           </FormControl>
                           {index !== 0 ? (
-                            <i    onClick={() => handleDeleteMember( index)}
-                            className="bi bi-trash-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"></i>
+                            <i
+                                onClick={() => handleClickOpen(index)}
+                              className="bi bi-trash-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"
+                            ></i>
                           ) : (
                             <i
-                         
                               className="bi bi-trash-fill text-2xl "
                               style={{
                                 visibility: index === 0 ? "hidden" : "visible",
@@ -245,9 +274,31 @@ const WorkspaceInvitation = () => {
                             ></i>
                           )}
                         </div>
+                      
                       </div>
-                    </>
+                    </>         
                   ))}
+                    <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {"ต้องการที่จะลบสมาชิกนี้ออกจาก Workspaceใช่ไหม?"}
+                            </DialogTitle>
+                  
+                            <DialogActions>
+
+                              <Button variant="contained" color="error"  onClick={() => {
+                              handleDeleteMember(selectedMemberIndex);
+                               handleClose();
+                              }}autoFocus >ลบสมาชิก</Button>
+                              <Button  variant="outlined" color="info"onClick={handleClose} >
+                                ไม่
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
               </div>
 
               <div className=" w-full h-fit bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4  my-5">
@@ -276,8 +327,10 @@ const WorkspaceInvitation = () => {
                         </div>
                       </div>
                       <div className="flex items-center">
-                        <i  onClick={() => handleDeletePending( index)}
-                        className="bi bi-trash-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"></i>
+                        <i
+                          onClick={() => handleDeletePending(index)}
+                          className="bi bi-x-circle-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"
+                        ></i>
                       </div>
                     </div>
                   </>
@@ -298,9 +351,14 @@ const WorkspaceInvitation = () => {
                     renderOption={(props, option) => (
                       <li {...props}>
                         <img
-                            src="/images/homeImage/profile.webp"
+                          src="/images/homeImage/profile.webp"
                           alt="profile"
-                          style={{ width: 30, height: 30, marginRight: 10 ,  borderRadius: "9999px"}}
+                          style={{
+                            width: 30,
+                            height: 30,
+                            marginRight: 10,
+                            borderRadius: "9999px",
+                          }}
                         />
                         {`${option.firstName} ${option.lastName} (${option.email})`}
                       </li>
@@ -327,10 +385,17 @@ const WorkspaceInvitation = () => {
                     sx={{ width: "85%", marginRight: "5px" }}
                   />
 
-                  <Button variant="contained" sx={{ my: "5px" ,backgroundColor:"#4f46e5" ,  
-                  "&:hover": { 
-                     backgroundColor: "#3730a3" // สีที่ต้องการเมื่อ hover
-                   }  }} onClick={handleInviteButton}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      my: "5px",
+                      backgroundColor: "#4f46e5",
+                      "&:hover": {
+                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      },
+                    }}
+                    onClick={handleInviteButton}
+                  >
                     Send Invites
                   </Button>
                 </div>
@@ -359,7 +424,10 @@ const WorkspaceInvitation = () => {
                           backgroundColor: "white",
                         }}
                       />
-                      <span className="cursor-pointer  text-xl ml-2  text-blue-500 hover:to-blue-800 hover:font-medium" onClick={handleCopyClick}>
+                      <span
+                        className="cursor-pointer  text-xl ml-2  text-blue-500 hover:to-blue-800 hover:font-medium"
+                        onClick={handleCopyClick}
+                      >
                         {copied ? (
                           <i className="bi bi-clipboard-check-fill"></i>
                         ) : (
@@ -374,10 +442,16 @@ const WorkspaceInvitation = () => {
                       className="bg-white"
                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
                     />
-                    <Button variant="contained" sx={{ my: "5px",backgroundColor:"#4f46e5" ,  
-                       "&:hover": { 
-                      backgroundColor: "#3730a3" // สีที่ต้องการเมื่อ hover
-                   }  }}>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        my: "5px",
+                        backgroundColor: "#4f46e5",
+                        "&:hover": {
+                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                        },
+                      }}
+                    >
                       download
                     </Button>
                   </div>

@@ -1,32 +1,60 @@
 import React, { useState } from 'react';
 import {
     Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Paper, TableContainer,
-    Button
+    Button,tableCellClasses ,
 } from '@mui/material';
 
+
+import formatDate from '../../function/formatDate';
+import formatTime from '../../function/formatTime';
+import { styled } from '@mui/material/styles';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.common.black,
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 interface Data {
     name: string;
-    age: number;
+    ai: string;
     email: string;
     date: Date;
 }
 
-function createData(name: string, age: number, email: string ,date: string,): Data {
-    return { name, age, email , date: new Date(date), };
+function createData(name: string, ai: string, email: string ,date: string,): Data {
+    return { name, ai, email , date: new Date(date), };
 }
 
 const initialRows = [
-    createData('John Doe', 25, 'john@example.com', '2023-06-02T11:30:00'),
-    createData('Jane Smith', 42, 'jane@example.com', '2023-06-02T11:30:00'),
-    createData('Alice Johnson', 30, 'alice@example.com', '2023-06-02T11:30:00'),
+    createData('John Doe', "Ai", 'john@example.com', '2021-06-02T11:30:00'),
+    createData('Jane Smith', "Pet", 'jane@example.com', '2024-09-02T12:30:00'),
+    createData('Alice Johnson', "Heath", 'alice@example.com', '2024-06-02T13:30:00'),
+    createData('Alice Johnson', "Heath", 'alice@example.com', '2024-06-02T13:30:00'),
+    createData('Alice Johnson', "Heath", 'alice@example.com', '2023-06-02T13:30:00'),
 ];
 
 type Order = 'asc' | 'desc';
 
 const SortableTable: React.FC = () => {
     const [rows, setRows] = useState<Data[]>(initialRows);
-    const [order, setOrder] = useState<Order>('asc');
-    const [orderBy, setOrderBy] = useState<keyof Data>('name');
+    const [order, setOrder] = useState<Order>('desc');
+    const [orderBy, setOrderBy] = useState<keyof Data>('date');
 
     const handleRequestSort = (property: keyof Data) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -63,15 +91,46 @@ const SortableTable: React.FC = () => {
         return 0;
     };
     
-
     
+
+    function calculateDaysPassed(dateString: string | Date): string {
+        const givenDate = typeof dateString === 'string' ? new Date(dateString) : dateString; // แปลง string เป็น Date
+        const currentDate = new Date(); // วันที่ปัจจุบัน
+        
+        // ความแตกต่างของเวลาใน milliseconds
+        const timeDifference = currentDate.getTime() - givenDate.getTime();
+        
+        // แปลงความต่างเวลาเป็นจำนวนวัน
+        const daysPassed = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    
+        // ตรวจสอบเงื่อนไข
+    if (daysPassed >= 365) {
+        const yearsPassed = Math.floor(daysPassed / 365);
+        return `เมื่อ ${yearsPassed} ปีที่แล้ว`;
+    } else if (daysPassed >= 30) {
+        const monthsPassed = Math.floor(daysPassed / 30);
+        return `เมื่อ ${monthsPassed} เดือนที่แล้ว`;
+    } else {
+        return `เมื่อ ${daysPassed} วันที่แล้ว`;
+    }
+}
 
     return (
         <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>
+
+                        <StyledTableCell >
+                            <TableSortLabel
+                                active={orderBy === 'ai'}
+                                direction={orderBy === 'ai' ? order : 'asc'}
+                                onClick={() => handleRequestSort('ai')}
+                            >
+                                ชื่อ AI
+                            </TableSortLabel>
+                        </StyledTableCell >
+                        <StyledTableCell >
                             <TableSortLabel
                                 active={orderBy === 'name'}
                                 direction={orderBy === 'name' ? order : 'asc'}
@@ -79,26 +138,17 @@ const SortableTable: React.FC = () => {
                             >
                                 ชื่อผู้ขอใช้งาน
                             </TableSortLabel>
-                        </TableCell>
-                        <TableCell>
-                            <TableSortLabel
-                                active={orderBy === 'age'}
-                                direction={orderBy === 'age' ? order : 'asc'}
-                                onClick={() => handleRequestSort('age')}
-                            >
-                                ชื่อ AI
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell >
+                        {/* <StyledTableCell >
                             <TableSortLabel
                                 active={orderBy === 'email'}
                                 direction={orderBy === 'email' ? order : 'asc'}
                                 onClick={() => handleRequestSort('email')}
                             >
-                                ประเภท AI
+                                อีเมล
                             </TableSortLabel>
-                        </TableCell>
-                        <TableCell>
+                        </StyledTableCell > */}
+                        <StyledTableCell >
                             <TableSortLabel
                                 active={orderBy === 'date'}
                                 direction={orderBy === 'date' ? order : 'asc'}
@@ -106,32 +156,57 @@ const SortableTable: React.FC = () => {
                             >
                                 ถูกขอใช้งานเมื่อ
                             </TableSortLabel>
-                        </TableCell>
-                        <TableCell
-                            align={'center'}>
-                            <TableSortLabel
-                                active={orderBy === 'date'}
-
-                                direction={orderBy === 'date' ? order : 'asc'}
-                                onClick={() => handleRequestSort('date')}
-                            >
-                                สถานะ
-                            </TableSortLabel>
-                        </TableCell>
+                        </StyledTableCell >
+                        <StyledTableCell  align="center">
+            สถานะ
+        </StyledTableCell >
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
                         <TableRow key={index}>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>{row.age}</TableCell>
-                            <TableCell>{row.email}</TableCell>
-                             <TableCell>{row.date.toLocaleString()}</TableCell>
-                             <TableCell>  <div className='mx-auto flex justify-center'>
+                            <StyledTableCell>
+                            <div className="flex items-center my-2 w-fit">
+                          <img
+                            className="w-14 h-14 rounded-[10px] border-2"
+                            src="/images/ai/cat2323.jpg"
+                          />
+                          <div className="ml-2">
+                            <p className="text-black text-lg font-medium">{row.ai}</p>
+                            <p className="text-[#8D9BAE] text-sm font-normal">Classification</p>
+                          </div>
+                        </div>
+                        </StyledTableCell>
+                            <StyledTableCell>
+                            <div className="flex items-center my-2 w-fit">
+                          <img
+                            className="w-10 h-10 rounded-full border-2"
+                            src="/images/homeImage/profile.webp"
+                          />
+                          <div className="ml-2">
+                            <p className="text-black text-lg font-medium">{row.name}</p>
+                       
+                          </div>
+                        </div>
+                            </StyledTableCell>
+                            {/* <StyledTableCell>{row.email}</StyledTableCell> */}
+                    
+                             <StyledTableCell>
+                             <div>
+
+                            <p className="text-black text-lg font-medium"><i className="bi bi-clock-history"></i> {calculateDaysPassed(row.date)}</p>
+                          <text className='text-[#8D9BAE]'>
+                             เวลา: {formatTime(row.date)}
+                             {" "}วันที่: {formatDate(row.date)}
+                            </text>
+                        
+                            </div>
+                             </StyledTableCell>
+                             <StyledTableCell>  <div className='mx-auto flex justify-center'>
                                 
                                 <Button onClick={() => handleAccept(index)} variant="contained" color="success"     style={{ marginRight: '8px' }} >ยอมรับ</Button> <Button variant="outlined" color="error">ปฎิเสธ</Button>
                                 </div>
-                                </TableCell> 
+                                </StyledTableCell> 
                         </TableRow>
                     ))}
                 </TableBody>

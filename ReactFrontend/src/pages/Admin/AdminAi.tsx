@@ -18,7 +18,7 @@ function AdminAi() {
         {/* Main content */}
         <div className="w-4/5 items-center justify-center h-full grid grid-cols-1">
           {/* Top card (create sort workspace name) */}
-          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
+          <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
           <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
                 AI List
@@ -53,7 +53,7 @@ function AdminAi() {
           </div>
 
           {/* Card container */}
-          <div className="mt-16 h-fit w-11/12 grid grid-cols-3 gap-6 bg-white rounded-[15px] justify-self-center relative">
+          <div className="mt-4 h-fit w-11/12 grid grid-cols-3 gap-6 bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
             {AiData.map((data) => (
               <AiCard
