@@ -91,11 +91,14 @@ export default function SubmitRankTable() {
 
 
   const [showSubmit,setShowSubmit] = useState(false);
+  
   const [filteredUser, setFilteredUser] = useState<UserUpload | null>(null);
+  const [selectedRow, setSelectedRow] = useState(0);
   const handleShowSubmit = (row :number) => {
     const filtered = UploadedImage.filter(user => user.UserRank === row);
     console.log(row)
       setFilteredUser(filtered[0]); 
+      setSelectedRow(row-1); 
     setShowSubmit(true); // แสดงข้อมูล
   };
 
@@ -174,11 +177,11 @@ export default function SubmitRankTable() {
        <div className="flex items w-full py-5 sticky top- z-10">
                 <img
                   className="w-10 h-10 rounded-full  border-2"
-                  src={rows[0].avartar}
+                  src={rows[selectedRow].avartar}
                 />
                 <div className="ml-2">
                   <p className="text-indigo-900 text-lg font-medium">
-                    {rows[0].name}
+                    {rows[selectedRow].name}
                   </p>
                 </div>
               </div>

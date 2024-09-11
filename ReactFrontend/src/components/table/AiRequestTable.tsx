@@ -33,20 +33,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 interface Data {
     name: string;
     ai: string;
+    ai_image:string;
     email: string;
     date: Date;
 }
 
-function createData(name: string, ai: string, email: string ,date: string,): Data {
-    return { name, ai, email , date: new Date(date), };
+function createData(name: string, ai: string, ai_image: string, email: string ,date: string,): Data {
+    return { name, ai,  ai_image,email , date: new Date(date), };
 }
 
 const initialRows = [
-    createData('John Doe', "Ai", 'john@example.com', '2021-06-02T11:30:00'),
-    createData('Jane Smith', "Pet", 'jane@example.com', '2024-09-02T12:30:00'),
-    createData('Alice Johnson', "Heath", 'alice@example.com', '2024-06-02T13:30:00'),
-    createData('Alice Johnson', "Heath", 'alice@example.com', '2024-06-02T13:30:00'),
-    createData('Alice Johnson', "Heath", 'alice@example.com', '2023-06-02T13:30:00'),
+    createData('John Doe', "Ai","/images/ai/Object-detection-Real-world-applications-and-benefits.png", 'john@example.com', '2021-06-02T11:30:00'),
+    createData('Jane Smith', "Pet","/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png", 'jane@example.com', '2024-09-02T12:30:00'),
+    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2024-06-02T13:30:00'),
+    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2024-06-02T13:30:00'),
+    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2023-06-02T13:30:00'),
 ];
 
 type Order = 'asc' | 'desc';
@@ -130,13 +131,13 @@ const SortableTable: React.FC = () => {
                                 ชื่อ AI
                             </TableSortLabel>
                         </StyledTableCell >
-                        <StyledTableCell >
+                        <StyledTableCell  >
                             <TableSortLabel
                                 active={orderBy === 'name'}
                                 direction={orderBy === 'name' ? order : 'asc'}
                                 onClick={() => handleRequestSort('name')}
                             >
-                                ชื่อผู้ขอใช้งาน
+                              ชื่อผู้ขอใช้งาน
                             </TableSortLabel>
                         </StyledTableCell >
                         {/* <StyledTableCell >
@@ -169,7 +170,7 @@ const SortableTable: React.FC = () => {
                             <div className="flex items-center my-2 w-fit">
                           <img
                             className="w-14 h-14 rounded-[10px] border-2"
-                            src="/images/ai/cat2323.jpg"
+                            src={row.ai_image}
                           />
                           <div className="ml-2">
                             <p className="text-black text-lg font-medium">{row.ai}</p>
@@ -184,8 +185,8 @@ const SortableTable: React.FC = () => {
                             src="/images/homeImage/profile.webp"
                           />
                           <div className="ml-2">
-                            <p className="text-black text-lg font-medium">{row.name}</p>
-                       
+                            <p className="text-black text-lg font-medium"><i className="bi bi-person-fill"></i>{row.name}</p>
+                            <p className="text-[#8D9BAE] text-sm font-normal">{row.email}</p>
                           </div>
                         </div>
                             </StyledTableCell>

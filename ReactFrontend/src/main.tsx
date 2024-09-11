@@ -31,6 +31,9 @@ import Layout from './Layout.tsx'
 import AIlist from './pages/Ai/AiList.tsx'
 import AIDemo from './pages/Ai/AIDemo.tsx'
 
+
+
+
 //  React router path here
 const router = createBrowserRouter([
   {

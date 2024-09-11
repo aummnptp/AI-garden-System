@@ -80,24 +80,30 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
             {selectedImage && (
               <div className=" px-10 mx-auto w-full  flex items-start ">
               {/* Display Original Image */}
-              <div className=" px-10 mx-auto w-[50%] h-fit pb-10  " >
-                  <h3>Original Image:</h3>
+              {/* <div className=" px-10 mx-auto w-[40%] h-fit pb-10  " >
+                  <h3>รูปภาพต้นฉบับ:</h3>
                   <img src={selectedImage} alt="Original" style={{ maxWidth: '300px', maxHeight: '300px' }} />
-                  <div className='pt-4 '>
-                     <Button variant='contained' onClick={handleRotateLeft}>Rotate Left (-90°)</Button>
-                     <Button variant='contained' onClick={handleRotateRight}>Rotate Right (+90°)</Button>
-                     <Button variant='contained' onClick={toggleGrayscale}>   {isGrayscale ? 'Remove Grayscale' : 'Apply Grayscale'}</Button>
-                 </div>
-              </div>   {/* Display Processed Image */}
-              <div className=" px-10 mx-auto w-[50%] h-fit pb-10 ">
-                        <h3>Processed Image:</h3>
+              </div>    */}
+              {/* Display Processed Image */}
+
+              <div className=" px-10 mx-auto w-[40%] h-fit pb-10 ">
+                        <h3>ผลลัพธ์การปรับแต่ง:</h3>
                     <canvas ref={canvasRef}  style={{ maxWidth: '300px', maxHeight: '300px' }}></canvas>
-            
                     {downloadUrl && (
                        <div className='pt-4'>
-                        <Button variant='contained' href={downloadUrl} download="customImage.png">
-                            <button>Download Image</button>
-                        </ Button >
+                   
+                    <div className='py-2'>
+                     <Button variant='contained'   sx={{ backgroundColor: "#4f46e5","&:hover": {backgroundColor: "#3730a3", },}}
+                      style={{ marginRight:'0.5rem' }} onClick={handleRotateLeft}><i className="bi bi-arrow-counterclockwise"></i> หมุนซ้าย (-90°)</Button>
+                     <Button variant='contained'   sx={{ backgroundColor: "#4f46e5","&:hover": {backgroundColor: "#3730a3", },}}
+                     onClick={handleRotateRight}><i className="bi bi-arrow-clockwise"></i>หมุนขวา (+90°)</Button>
+                     </div>
+                     <Button variant='contained'   sx={{ backgroundColor: "#4f46e5","&:hover": {backgroundColor: "#3730a3", },}}
+                     style={{ marginRight:'0.5rem' }} onClick={toggleGrayscale}>   {isGrayscale ? 'ลบ Grayscale' : 'ปรับ Grayscale'}</Button>
+                    <Button variant='contained'   sx={{ backgroundColor: "#4f46e5","&:hover": {backgroundColor: "#3730a3", },}}
+                        href={downloadUrl} download="customImage.png">
+                            <button><i className="bi bi-download"></i> ดาวน์โหลด รูปภาพ</button>
+                   </ Button >
                         </div>
                     )} 
                     </div>

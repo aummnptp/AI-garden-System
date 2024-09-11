@@ -2,8 +2,10 @@ import React, { ChangeEvent, DragEvent, useState } from 'react'
 import { ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { useParams } from 'react-router-dom'
 import MiniFooter from '../../components/MiniFooter'
-import { Button } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material'
 import ImageUploader from '../../components/ImageUploader'
+import PaddingThenResizeUploader from '../../components/PaddingThenResizeUploader'
+import ResizeThenPaddingUploader from '../../components/ResizeThenPaddingUploader'
 
 
 
@@ -12,7 +14,7 @@ const AIDemo = () => {
   const [uploadStep,setUploadStep] =useState(1);
   const [image, setImage] = useState<File | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(null);
-
+  const [open, setOpen] = React.useState(false);
   // 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -30,6 +32,28 @@ const AIDemo = () => {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
+
+
+
+
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleToCustomStep = () => {
+    if (image === null) {
+      handleClickOpen();  // เรียกฟังก์ชันเปิด dialog หรือ popup
+    } else {
+      setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
+      setCustomImage(image);
+      setImage(null);
+    }
+  };
+  
 
   return (
     <>
@@ -92,15 +116,16 @@ const AIDemo = () => {
                 <div
                 onClick={() =>{  setImage(null)}
             }// ฟังก์ชันสำหรับจัดการการคลิกเพื่อปิดรูปภาพ
-                  className="absolute top-[-2rem] right-[-2rem] bg-gray-800 text-white rounded-full h-8 w-8 flex items-center justify-center p-1 hover:bg-red-500 cursor-pointer"
+                  className="absolute top-[-1rem] right-[-1rem] bg-gray-800 text-white rounded-full h-8 w-8 flex items-center justify-center p-1 hover:bg-red-500 cursor-pointer"
                 >
                   <i className="bi bi-x-lg"></i>
                   </div>
                     <img
                       src={URL.createObjectURL(image)}
                       alt="Uploaded"
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full "
                       />
+
                   </div>
                 ) : (
                   <label htmlFor="file-upload"         
@@ -113,6 +138,7 @@ const AIDemo = () => {
                     >
                     <i className="bi bi-folder-fill text-blue-500 text-4xl mb-4"></i>
                     <p className="text-gray-500">คุณยังไม่ได้อัปโหลดรูปภาพ</p>
+                    <p className="text-gray-500">กดเพื่อเลือก หรือ ลากไฟล์มาวางที่นี่</p>
                   </div>
                   <input
                     id="file-upload"
@@ -197,27 +223,57 @@ const AIDemo = () => {
           ) : null}
           {customImage && <ImageUploader image={customImage} />}
           <div className='mt-4 flex justify-end '>
-          {uploadStep >=2 &&  <Button variant='contained' size='large'   sx={{ mr: 2 }}   onClick={() =>{ setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
-  
+          {uploadStep >=2 &&  <Button variant='outlined' size='large' color='warning'   sx={{ mr: 2 }}   onClick={() =>{ setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
               setImage(customImage);
               setCustomImage(null)}
               
-            }> ย้อนอดีต</Button>}
-              <Button variant='contained' size='large'  onClick={() =>{ setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
-              setCustomImage(image);
-              setImage(null)}
-              
-            }> ไปกันต่อ</Button>
+            }> ย้อนกลับ</Button>}
+              <Button variant='contained' size='large'    
+              sx={{
+                      backgroundColor: "#4f46e5",
+                      "&:hover": {
+                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      },
+              }}  onClick={handleToCustomStep}>    {uploadStep == 2 ? ("ประมวลผล") : ("ถัดไป")}</Button>
             </div>
-  
+            
+            <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {"กรุณาอัปโหลดภาพก่อน"}
+                            </DialogTitle>
+                  
+                            <DialogActions>
+
+                              <Button variant="contained"  size='large'    sx={{
+                      my: "5px",
+                      backgroundColor: "#4f46e5",
+                      "&:hover": {
+                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      },
+              
+              }}   onClick={() => {
+                               handleClose();
+                              }}autoFocus >ตกลง</Button>
+                            </DialogActions>
+                          </Dialog>
           </div>
                
           </div>
 
           {/* detail conatiner */}
-          {/* <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative  ">
-          {customImage && <ImageUploader image={customImage} />}
-          </div> */}
+          <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative  ">
+          {customImage && 
+          
+          <div>
+          {/* <PaddingThenResizeUploader image={customImage} /> */}
+          <ResizeThenPaddingUploader image={customImage} />
+          </div>}
+          </div>
         </div>
       </div>
       <MiniFooter></MiniFooter>

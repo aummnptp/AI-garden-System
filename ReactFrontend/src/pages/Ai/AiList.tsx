@@ -79,8 +79,7 @@ function AIlist() {
       <div className="mt-4 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
         {/* card */}
         {AiData.map((data) => (
-              <Link to={`/ai/${data.id}/detail`}>
-
+    
           <AiCard
             id={data.id}
             name={data.name}
@@ -89,7 +88,7 @@ function AIlist() {
             img={data.img}
             type={data.type}
             ></AiCard>
-            </Link>
+     
         ))}
       </div>
     </div>
