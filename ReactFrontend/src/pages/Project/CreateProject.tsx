@@ -5,6 +5,7 @@ import { Input } from "antd";
 import AiData from '../../data/AiData';
 import CreateProjectCard from '../../components/card/CreateProjectCard';
 import { Link, useParams } from 'react-router-dom';
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 const { TextArea } = Input;
 
 
@@ -36,7 +37,18 @@ function CreateProject() {
                       placeholder="คำอธิบายworkspace"
                          className="my-4 mb-16"
                     />
-          
+          <FormControl>
+      <FormLabel id="demo-row-radio-buttons-group-label">ประเภท</FormLabel>
+      <RadioGroup
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="row-radio-buttons-group"
+      >
+        <FormControlLabel value="รูปภาพและวิดีโอ " control={<Radio />} label="รูปภาพ และ วิดีโอ " />
+        <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
+        <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
+      </RadioGroup>
+    </FormControl>
           {/* select ai section */}
           <p className='ml-4 mb-6 text-black text-2xl font-medium'> เลือก AI ที่ต้องการใช้งาน</p>
           

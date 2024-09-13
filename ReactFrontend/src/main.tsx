@@ -30,6 +30,7 @@ import CustomInput from './pages/CustomInput.tsx'
 import Layout from './Layout.tsx'
 import AIlist from './pages/Ai/AiList.tsx'
 import AIDemo from './pages/Ai/AIDemo.tsx'
+import UserList from './pages/Admin/UserList.tsx'
 
 
 
@@ -116,6 +117,11 @@ const router = createBrowserRouter([
     path: "/admin/createai",
     element: <CreateAi/>,
   },
+  {
+    path: "/admin/userlist",
+    element: <UserList/>,
+  },
+
 
   {
     path: "/customInput",
