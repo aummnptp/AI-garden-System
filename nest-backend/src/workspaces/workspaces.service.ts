@@ -1,26 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Workspace } from './entities/workspace.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class WorkspacesService {
-  create(createWorkspaceDto: CreateWorkspaceDto) {
-    return 'This action adds a new workspace';
+  constructor(
+    @InjectRepository(Workspace)
+    private workspaceRepository: Repository<Workspace>,
+  ) {}
+
+  create(createWorkspaceDto: CreateWorkspaceDto): Promise<Workspace> {
+    const newWorkspace = this.workspaceRepository.create(createWorkspaceDto);
+    return this.workspaceRepository.save(newWorkspace);
   }
 
-  findAll() {
-    return `This action returns all workspaces`;
+  // อ่าน workspace ทั้งหมด
+  findAll(): Promise<Workspace[]> {
+    return this.workspaceRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} workspace`;
+  // อ่าน workspace ตาม id
+  findOne(id: number): Promise<Workspace | null> {
+    return this.workspaceRepository.findOneBy({ id });
   }
 
+  // อัปเดต workspace
   update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
-    return `This action updates a #${id} workspace`;
+    return this.workspaceRepository.update(id, updateWorkspaceDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} workspace`;
+  // ลบ workspace
+  remove(id: number): Promise<void> {
+    return this.workspaceRepository.delete(id).then(() => undefined);
   }
 }
