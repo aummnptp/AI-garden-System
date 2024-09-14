@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { ConfigModule } from '@nestjs/config';
       logging: true,
     }),
     WorkspacesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

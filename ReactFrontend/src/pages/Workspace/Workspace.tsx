@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import WorkspaceCard from "../../components/card/WorkspaceCard";
 import InvitedCard from "../../components/card/InvitedCard";
@@ -10,12 +10,14 @@ import {DownOutlined, UpOutlined}  from '@ant-design/icons';
 import MyWorkspaceData from "../../data/WorkspaceData";
 import { Link } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
+import axios from "axios";
 
 function Workspace() {
   // my workspace show
-  const [myWorkspace, setMyWorkspace] = useState(MyWorkspaceData); 
-  const [invitedWorkspace, setInvitedWorkspace]= useState(MyWorkspaceData); 
+  const [myWorkspace, setMyWorkspace] = useState([]); 
+  const [invitedWorkspace, setInvitedWorkspace]= useState([]); 
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
+  const [showModal, setShowModal] = useState(false);
   const toggleWorkspaceRow = () => {
     setShowWorkspaceRow(!showWorkspaceRow); // สลับค่าของ showSecondRow กับ true/false
   };
@@ -27,8 +29,21 @@ function Workspace() {
   };
 
 
-  const [showModal, setShowModal] = useState(false);
+ useEffect(() => {
+    // ดึงข้อมูลจาก API
+    axios.get("http://localhost:3000/workspaces/") // URL ของ backend ที่สร้างไว้ใน NestJS
+      .then(response => {
+        setMyWorkspace(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the workspace data!", error);
+      });
+  }, []);
 
+
+
+
+  console.log(myWorkspace)
 
   return (
     <>
@@ -65,11 +80,13 @@ function Workspace() {
                 <div className="w-[85%] h-[0px] border border-zinc-300"/>
               </div>
               {/* My wokspace Card group */}
-              <div className={` grid grid-cols-3 gap-4 w-fit pb-8 pt-2`}>  
-                {MyWorkspaceData.map((data, index)=>(
+              <div className={` grid grid-cols-3 pb-8 pt-2 `}>  
+                {myWorkspace.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showWorkspaceRow && index >= 3 ? 'hidden' : ''}`}>
+             
                    <Link to={`/workspaces/${data.id}/project-list`}>
-                  <WorkspaceCard  id={data.id} name={data.name} desc={data.desc} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
+                  <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
+                  members={[]} createAt={""} updateAt={""} /> 
                    </Link>
               </div>
                 ))}
@@ -95,14 +112,14 @@ function Workspace() {
                 <div className="w-[88%] h-[0px] border border-zinc-300"></div>
               </div>
             {/* invited wokspace Card */}
-            <div className={`grid grid-cols-3 gap-4 pb-8 pt-2`}>  
-                {myWorkspace.map((data, index)=>(
+            <div className={`grid grid-cols-3 pb-8 pt-2`}>  
+                {/* {myWorkspaceData.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
                 <Link to={`/workspaces/${data.id}/project-list`}>
-                  <InvitedCard  id={data.id} name={data.name} desc={data.desc} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
+                  <InvitedCard  id={data.id} name={data.name} desc={data.description} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
                 </Link>
               </div>
-                ))}
+                ))} */}
               </div>
 
           </div>

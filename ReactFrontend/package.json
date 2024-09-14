@@ -16,6 +16,7 @@
     "@mui/material": "^5.16.0",
     "@tinymce/tinymce-react": "^5.1.1",
     "antd": "^5.19.1",
+    "axios": "^1.7.7",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.3",
     "framer-motion": "^11.3.31",
