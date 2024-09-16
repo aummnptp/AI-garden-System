@@ -98,10 +98,10 @@ const renderIcon = (iconName: any) => {
             </Link>
           </div>
         </div>
-        <div className=" right-item  p-20 col-span-2">
+        <div className=" right-item  p-20 col-span-2 ">
           <img
-            className=" h-[100%] w-[90%] "
-            src="/images/logo/slothlogo.png"
+            className=" h-[100%] w-[100%]  "
+            src="/images/logo/Dr.sloth.png"
           />
         </div>
       </div>

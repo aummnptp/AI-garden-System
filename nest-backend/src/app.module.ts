@@ -5,6 +5,11 @@ import { AppService } from './app.service';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
+import { Workspace } from './workspaces/entities/workspace.entity';
+
+
 
 
 @Module({
@@ -16,13 +21,15 @@ import { AuthModule } from './auth/auth.module';
       port: parseInt(<string> process.env.POSTGRES_PORT),
       password: process.env.POSTGRES_PASSWORD,
       username: process.env.POSTGRES_USER,
-      autoLoadEntities: true,
+      entities:[User,Workspace],
+      // autoLoadEntities: true,
       database: process.env.POSTGRES_DATABASE,
       synchronize: true, // อย่าลืมปิดในการใช้งาน production
       logging: true,
     }),
     WorkspacesModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

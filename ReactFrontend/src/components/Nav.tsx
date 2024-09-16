@@ -80,8 +80,8 @@ function Nav() {
           className="flex items-center space-x-3 rtl:space-x-reverse md:order-2"
         >
           <img
-            className="w-10 h-10 rounded-full  "
-            src="/images/logo/navlogo.png"
+            className="w-12 h-12 rounded-full  "
+            src="/images/logo/IMG_3713.png"
           />
           <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap ">
             AI Garden System
