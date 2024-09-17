@@ -29,17 +29,19 @@ function Workspace() {
   };
 
 
- useEffect(() => {
-    // ดึงข้อมูลจาก API
-    axios.get("http://localhost:3000/workspaces/") // URL ของ backend ที่สร้างไว้ใน NestJS
+  const fetchWorkspaces = () => {
+    axios.get("http://localhost:3000/workspaces/")
       .then(response => {
         setMyWorkspace(response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the workspace data!", error);
       });
-  }, []);
+  };
 
+  useEffect(() => {
+    fetchWorkspaces(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
 
 
 
@@ -50,7 +52,7 @@ function Workspace() {
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
 
         {/* popup */}
-        <CreateWorkspace showModal={showModal} setShowModal={setShowModal} />
+        <CreateWorkspace showModal={showModal} setShowModal={setShowModal} fetchWorkspaces={fetchWorkspaces} />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
           <div className="mt-4 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">

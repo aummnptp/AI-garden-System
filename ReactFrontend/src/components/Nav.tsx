@@ -1,9 +1,10 @@
 
 
 import { Button } from '@mui/material';
+import axios from 'axios';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 
 interface NotiData {
   id: number;
@@ -38,9 +39,16 @@ function Nav() {
 
  
   ]);
-  const [isLogin ,setIsLogin] = useState(true)
+  const [isAuthenticated ,setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
     
@@ -70,6 +78,33 @@ function Nav() {
 
 
   };
+  
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/user', {
+          withCredentials: true, 
+        });
+        setUser(response.data);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Not logged in or session expired', error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  console.log("hello:",user)
+
+  
+
+  const handleLogout = async () => {
+    await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
+    setIsAuthenticated(false);
+    setUser(null);
+  };
 
   return (
     <nav className="bg-white   w-full sticky z-20 top-0 start-0 border-b border-gray-200 ">
@@ -94,7 +129,7 @@ function Nav() {
         
 
         <div className="flex md:order-3 space-x2 md:space-x-0 rtl:space-x-reverse">
-          {isLogin ? (
+          {isAuthenticated ? (
             <div className="flex relative">
               <div
                 className="relative flex items-center p-4 ml-3 hover:bg-gray-100 cursor-pointer rounded-lg hover:text-blue-700"
@@ -169,29 +204,51 @@ function Nav() {
                   </div>
                 </div>
               )}
-              <div
-                className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer
-                rounded-lg"
-              >
-                <img
-                  className="w-10 h-10 rounded-full border-2"
-                  src="/images/homeImage/profile.webp"
-                />
-                <div className="ml-2">
-                  <text className="text-black text-lg font-normal">
-                    Kittinana
-                  </text>
-                </div>
-              </div>
+         <div className="relative">
+      {/* Button to toggle menu */}
+      <div
+        className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer rounded-lg"
+        onClick={toggleMenu}
+      >
+        <img
+          className="w-10 h-10 rounded-full border-2"
+          src={user.picture}
+          alt="User"
+        />
+        <div className="ml-2">
+          <span className="text-black text-lg font-normal">{user.name}</span>
+        </div>
+      </div>
+
+      {/* Dropdown menu */}
+      {isProfileOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-3">
+          <div className="text-gray-400 text-sm">
+            {user.email}
+          </div>
+          <div className="mt-2 border-t border-gray-200">
+            <button
+              className="w-full flex items-center justify-between text-gray-700 hover:bg-gray-100 px-2 py-1 rounded-lg mt-2"
+              onClick={handleLogout}
+            >
+              <span>Logout</span>
+              <span className="text-xl">↩</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
             </div>
           ) : (
+      
             <a
-              href="#"
+              href="http://localhost:3000/auth/google/login"
               type="button"
               className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-[15px] text-sm px-4 py-2 text-center "
             >
               Sign In
             </a>
+     
           )}
         </div>
         <div

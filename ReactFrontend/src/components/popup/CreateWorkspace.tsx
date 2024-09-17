@@ -2,25 +2,41 @@ import React, { useState } from 'react'
 
 import { Input } from "antd";
 import { CloseOutlined } from '@ant-design/icons';
+import axios from 'axios';
 const { TextArea } = Input;
 
 
 interface CreateWorkspaceProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  
+  fetchWorkspaces: () => void;
 }
 
 
-export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setShowModal}) => {
-  
+export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setShowModal, fetchWorkspaces}) => {
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const handleCloseModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) {
       setShowModal(false);
     }
   };
 
-
+  const handleSubmit = () => {
+    axios
+      .post(
+        "http://localhost:3000/workspaces/create",
+        { name: name, description: description },
+        { withCredentials: true }
+      )
+      .then(() => {
+        setShowModal(false); // ปิด modal
+        fetchWorkspaces(); // ดึงข้อมูล workspace ใหม่
+      })
+      .catch((error) => {
+        console.error("Error creating workspace:", error);
+      });
+  };
   return (
     <>
       {showModal ? (
@@ -58,6 +74,8 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
                     placeholder="Workspace Name"
                     variant="filled"
                     className="my-4"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                   <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
                   <TextArea
@@ -65,6 +83,8 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
                     rows={4}
                     variant="filled"
                     placeholder="คำอธิบาย workspace"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                 </div>
                 {/*footer*/}
@@ -72,9 +92,9 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
                   <button
                     className="bg-indigo-600 text-white hover:bg-indigo-700  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={handleSubmit}
                   >
-                    ยืนยัน
+                    สร้าง
                   </button>
                 </div>
               </div>

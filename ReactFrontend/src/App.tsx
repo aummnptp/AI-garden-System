@@ -1,17 +1,16 @@
 
-import {Routes, Route,Link,NavLink} from 'react-router-dom'
-import Home from './pages/Home';
+// import {Routes, Route,Link,NavLink} from 'react-router-dom'
+// import Home from './pages/Home';
 
-function App() {
+// function App() {
 
-  return (
-    <main>
-        <Routes>
-            <Route index element={<Home/>}/>
-           
-        </Routes>
-    </main>
-  )
-}
+//   return (
+//     <main>
+//         <Routes>
+//             <Route index element={<Home/>}/>
+//         </Routes>
+//     </main>
+//   )
+// }
 
-export default App
+// export default App

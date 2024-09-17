@@ -10,10 +10,14 @@ export class WorkspacesService {
   constructor(
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
+    
   ) {}
 
-  create(createWorkspaceDto: CreateWorkspaceDto): Promise<Workspace> {
-    const newWorkspace = this.workspaceRepository.create(createWorkspaceDto);
+  create(createWorkspaceDto: CreateWorkspaceDto, userEmail: string): Promise<Workspace> {
+    const newWorkspace = this.workspaceRepository.create({
+      ...createWorkspaceDto,
+      createByEmail: userEmail, // เพิ่มค่าผู้ใช้ที่สร้าง workspace
+    });
     return this.workspaceRepository.save(newWorkspace);
   }
 

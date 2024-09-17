@@ -23,9 +23,10 @@ export class AuthController{
     res.cookie('access_token', accessToken, {
       httpOnly: true,
     });
-    return {
-      message: 'Login Successful',
-    };
+    res.redirect(`http://localhost:5173`)
+    // return {
+    //   message: 'Login Successful',
+    // };
   }
   
   @Get('logout')
