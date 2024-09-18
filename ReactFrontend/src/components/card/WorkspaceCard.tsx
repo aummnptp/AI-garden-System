@@ -1,6 +1,8 @@
 import React from 'react'
 
 import {MoreOutlined}  from '@ant-design/icons';
+import calculateDaysPassed from '../../function/caculatedDaysPassed';
+import { AvatarGroup } from '@mui/material';
 
 interface WorkspaceCardProps {
   id: number;
@@ -8,7 +10,7 @@ interface WorkspaceCardProps {
   desc: string;
   members: { name: string; avatar: string }[];
   createAt:string;
-  updateAt:string;
+  updatedAt:string;
 }
 
 const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
@@ -25,23 +27,28 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
               </h1>
               <p className='text-neutral-700 pr-4'>{props.desc}</p>
               <div
-              className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center"><MoreOutlined style={{color:'#999'}}/></div>
+              className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center">
+                {/* <MoreOutlined style={{color:'#999'}}/> */}
+                </div>
             </div>
             {/* lower content */}
             <div className='grid grid-cols-3 bg'>
               <div className='col-span-2'>
                 <p className='text-black text-xs font-normal'>{props.members.length} member</p>
-                <p className='text-black text-xs font-normal'>{props.createAt}</p>
+                <p className='text-black text-xs font-normal'>{calculateDaysPassed(props.updatedAt)}</p>
               </div>
-            <div className="flex -space-x-2">
+            <div className="flex -space-x-2 justify-end pr-2">
+  
               {props.members.slice(0, 2).map((member, index) => (
                 <img 
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                src={member.avatar} 
-                alt={member.name} 
+                // src={member.avatar} 
+                src="images/homeImage/profile.webp"
+                alt={member.name}
                 />
               ))}
+
               {props.members.length > 2 && (
                 <div className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-sm font-medium text-gray-700">
                   +{props.members.length - 2}

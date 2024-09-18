@@ -30,6 +30,8 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
         { withCredentials: true }
       )
       .then(() => {
+        setName('');
+        setDescription('');
         setShowModal(false); // ปิด modal
         fetchWorkspaces(); // ดึงข้อมูล workspace ใหม่
       })
@@ -71,7 +73,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
                 <span className="font-medium tracking-tight text-indigo-900">ชื่อ workspace</span>
                 <span className="ml-2 text-red-500 text-sm">*</span>
                   <Input
-                    placeholder="Workspace Name"
+                    placeholder="ชื่อ Workspace"
                     variant="filled"
                     className="my-4"
                     value={name}

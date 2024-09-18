@@ -61,8 +61,8 @@ const renderIcon = (iconName: any) => {
   return (
     <div className="">
       {/* hero section */}
-      <div className="pt-24 grid grid-cols-5 gap-1 h-[100%] relative bg-neutral-100 ">
-        <div className="col-span-3 left-item mb-28 ">
+      <div className=" grid grid-cols-7 gap-1 h-[100%] relative bg-neutral">
+        <div className="col-span-4 left-item mb-28 pt-24  ">
           <div className="m-24">
             <div className="flex">
               <div className="flex items-center">
@@ -88,7 +88,7 @@ const renderIcon = (iconName: any) => {
                 เริ่มใช้งาน
               </button>
             </Link>
-            <Link to={`/documents`}>
+            <Link to={`/docs`}>
               <button
                 type="button"
                 className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
@@ -98,7 +98,7 @@ const renderIcon = (iconName: any) => {
             </Link>
           </div>
         </div>
-        <div className=" right-item  p-20 col-span-2 ">
+        <div className=" right-item  p-11 col-span-3 mr-10  ">
           <img
             className=" h-[100%] w-[100%]  "
             src="/images/logo/Dr.sloth.png"

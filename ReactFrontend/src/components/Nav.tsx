@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 import axios from 'axios';
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { Cookies, withCookies } from 'react-cookie';
 
 interface NotiData {
   id: number;
@@ -82,7 +82,7 @@ function Nav() {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/user', {
+        const response = await axios.get('http://localhost:3000/user/profile', {
           withCredentials: true, 
         });
         setUser(response.data);
@@ -96,16 +96,14 @@ function Nav() {
     checkLoginStatus();
   }, []);
 
-  console.log("hello:",user)
+ 
 
   
 
   const handleLogout = async () => {
-    await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
-    setIsAuthenticated(false);
-    setUser(null);
+    document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    window.location.href = '/';
   };
-
   return (
     <nav className="bg-white   w-full sticky z-20 top-0 start-0 border-b border-gray-200 ">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
@@ -222,7 +220,7 @@ function Nav() {
 
       {/* Dropdown menu */}
       {isProfileOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-3">
+        <div className="absolute right-0 mt-2 w-fit bg-white shadow-lg rounded-lg p-3">
           <div className="text-gray-400 text-sm">
             {user.email}
           </div>

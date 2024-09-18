@@ -1,9 +1,11 @@
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import Sidebar from "../../components/Sidebar";
 
-import { Button, FormControl, FormHelperText, MenuItem, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogTitle, FormControl, FormHelperText, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Link, useParams } from 'react-router-dom';
+import { Link, redirect, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { SaveOutlined } from '@ant-design/icons';
 interface memberData {
   id:number
   firstName: string;
@@ -16,6 +18,79 @@ interface memberData {
 
 const WorkspaceSetting = () => {
   let {workspaceId} = useParams();
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [open, setOpen] = React.useState(false);
+  useEffect(() => {
+    const fetchWorkspace = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/workspaces/${workspaceId}`);
+        const { name, description } = response.data;
+        setName(name);
+        setDescription(description);
+        
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:', error);
+      }
+    };
+  
+    fetchWorkspace();
+  }, [workspaceId]);
+
+
+    // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
+    const handleSave = async () => {
+      try {
+        const payload = {
+          name,
+          description,
+        };
+  
+        // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
+        const response = await axios.patch(`http://localhost:3000/workspaces/${workspaceId}`, payload);
+        window.location.href = '/workspaces';
+        // จัดการเมื่ออัปเดตสำเร็จ
+        console.log('อัปเดต Workspace สำเร็จ:', response.data);
+        // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
+        // navigate(`/workspaces/${workspaceId}`);
+  
+      } catch (error) {
+        // จัดการข้อผิดพลาด
+        console.error('เกิดข้อผิดพลาดในการอัปเดต Workspace:', error);
+        alert('เกิดข้อผิดพลาดในการอัปเดต Workspace');
+      }
+    };
+
+
+    const handleModalDelete=()=>{
+      setOpen(true);
+    }
+
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+    const handleDelte = async () => {
+      try {
+        const payload = {
+          name,
+          description,
+        };
+  
+        // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
+        const response = await axios.delete(`http://localhost:3000/workspaces/${workspaceId}`);
+        window.location.href = '/workspaces';
+        // จัดการเมื่ออัปเดตสำเร็จ
+        console.log('ลบ Workspace สำเร็จ:', response.data);
+        // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
+        // navigate(`/workspaces/${workspaceId}`);
+  
+      } catch (error) {
+        // จัดการข้อผิดพลาด
+        console.error('เกิดข้อผิดพลาดในการลบ Workspace:', error);
+        alert('เกิดข้อผิดพลาดในการลบ Workspace');
+      }
+    };
 
   return (
     <>
@@ -76,6 +151,8 @@ const WorkspaceSetting = () => {
                   // InputLabelProps={{
                     //   shrink: true,
                     // }}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     />
                 </div>
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
@@ -90,6 +167,8 @@ const WorkspaceSetting = () => {
                   multiline
                   rows={4}
                   defaultValue={"รายละเอียด ........"}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   // label="Number"
                   // InputLabelProps={{
                   //   shrink: true,
@@ -100,16 +179,50 @@ const WorkspaceSetting = () => {
           </div>
         </div>
 
-        <div className="pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
+        <div className=" pl-[20%] justify-between pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
+        <button
+                  onClick={handleModalDelete
+                  }
+                  type="button"
+                  className=" bg-red-500  hover:bg-red-600  rounded-lg px-5 py-2.5 me-2 
+            focus:outline-none 
+            text-center text-white text-xl font-light "
+                >
+                 Delete Workspace
+                </button>
+          
           <button
             type="button"
             className=" w-fit  bg-indigo-600 hover:bg-blue-800
-              focus:ring-4 focus:ring-blue-300 rounded-lg px-5 py-2.5 me-2 
-              focus:outline-none 
-              text-center text-white text-xl font-light"
-          >
-            save
+            focus:ring-4 focus:ring-blue-300 rounded-lg px-5 py-2.5 me-2 
+            focus:outline-none 
+            text-center text-white text-xl font-light"
+            onClick={handleSave}
+            >
+      
+            Save
           </button>
+          <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                          >
+                            <DialogTitle id="alert-dialog-title">
+                              {"Want to delete a Workspace?"}
+                            </DialogTitle>
+                  
+                            <DialogActions>
+
+                              <Button variant="contained" color="error"  onClick={() => {
+                              handleDelte();
+                               handleClose();
+                              }}autoFocus >Delete </Button>
+                              <Button  variant="outlined" color="info"onClick={handleClose} >
+                                No
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
         </div>
       </div>
     </>

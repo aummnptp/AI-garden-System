@@ -21,7 +21,7 @@ export class AuthController{
 
     const { accessToken } = await this.authService.googleLogin(req); //  save to cookie
     res.cookie('access_token', accessToken, {
-      httpOnly: true,
+      // httpOnly: true,
     });
     res.redirect(`http://localhost:5173`)
     // return {
@@ -32,9 +32,10 @@ export class AuthController{
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('jwt token', {
-      httpOnly: true,
+      // httpOnly: true,
     });
-    return res.json({ message: 'Successfully logged out' });
+    res.redirect(`http://localhost:5173`)
+    // return res.json({ message: 'Successfully logged out' });
   }
 
 

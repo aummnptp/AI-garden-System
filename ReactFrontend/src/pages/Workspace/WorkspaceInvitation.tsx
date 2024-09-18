@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -20,12 +20,14 @@ import {
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 
 interface memberData {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
+  picture:string;
   role: string;
 }
 
@@ -34,6 +36,7 @@ interface userData {
   firstName: string;
   lastName: string;
   email: string;
+  picture:string;
   role: string;
 }
 
@@ -41,71 +44,28 @@ const WorkspaceInvitation = () => {
   let { workspaceId } = useParams();
   const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
   const [open, setOpen] = React.useState(false);
-  const [memberDatas, setMemberData] = useState<memberData[]>([
-    {
-      id: 1,
-      firstName: "Putthipong",
-      lastName: "Chobngam",
-      email: "Putthipong@gmail.com",
-      role: "Project owner",
-    },
-    {
-      id: 2,
-      firstName: "Apple",
-      lastName: "Banana",
-      email: "Apple@gmail.com",
-      role: "Member",
-    },
-    {
-      id: 3,
-      firstName: "Kittinan",
-      lastName: "Charearnsong",
-      email: "Kittinana@gmail.com",
-      role: "Project owner",
-    },
-    {
-      id: 1,
-      firstName: "Member",
-      lastName: "LastName",
-      email: "Member@gmail.com",
-      role: "Member",
-    },
-  ]);
-
-  const [pendingDatas, setPendingData] = useState<memberData[]>([]);
-
-  const [userDatas, setUserData] = useState<memberData[]>([
-    {
-      id: 1,
-      firstName: "Putthipong",
-      lastName: "Chobngam",
-      email: "Putthipong@gmail.com",
-      role: "Project owner",
-    },
-    {
-      id: 2,
-      firstName: "Apple",
-      lastName: "Banana",
-      email: "Apple@gmail.com",
-      role: "Member",
-    },
-    {
-      id: 3,
-      firstName: "Kittinan",
-      lastName: "Charearnsong",
-      email: "Kittinana@gmail.com",
-      role: "Project owner",
-    },
-    {
-      id: 1,
-      firstName: "Member",
-      lastName: "LastName",
-      email: "Member@gmail.com",
-      role: "Member",
-    },
-  ]);
-
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
+  const [userDatas, setUserData] = useState<memberData[]>([]);
+  const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
+  const [memberDatas, setMemberData] = useState<memberData[]>([]);
+
+  const fetchUserData = () => {
+    axios.get("http://localhost:3000/user", {
+      withCredentials: true, 
+    })
+      .then(response => {
+        setUserData(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the workspace data!", error);
+      });
+  };
+
+      useEffect(() => {
+          fetchUserData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+        }, []);
+        console.log(userDatas)
+
   
   const handleChange = (event: SelectChangeEvent, index: number) => {
     const UpdatedMember = [...memberDatas];
@@ -127,6 +87,7 @@ const WorkspaceInvitation = () => {
       });
   };
   const handleInviteButton = () => {
+  
     setPendingData((prevPendingData) => [
       ...prevPendingData,
       ...selectedUsers.filter(
@@ -171,6 +132,20 @@ const WorkspaceInvitation = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const fetchMembers = () => {
+    axios.get(`http://localhost:3000/workspaces/${workspaceId}/members-profiles`)
+      .then(response => {
+        setMemberData(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the workspace data!", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchMembers(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
 
   return (
     <>
@@ -218,9 +193,9 @@ const WorkspaceInvitation = () => {
                 </h1>
                 {memberDatas
                   .sort((a, b) => {
-                    if (a.role === "Project owner" && b.role === "Member")
+                    if (a.role === "owner" && b.role === "member")
                       return -1;
-                    if (a.role === "Member" && b.role === "Project owner")
+                    if (a.role === "member" && b.role === "owner")
                       return 1;
                     return 0;
                   })
@@ -234,11 +209,11 @@ const WorkspaceInvitation = () => {
                         <div className="flex items-center ">
                           <img
                             className="w-10 h-10 rounded-full  border-2"
-                            src="/images/homeImage/profile.webp"
+                            src={member.picture}
                           />
                           <div className="ml-2">
                             <p className="text-indigo-900 text-xl font-medium">
-                              {member.firstName} {member.lastName}
+                            {member.name} 
                             </p>
                             <p className="text-gray-400 text-lg ">
                               email: {member.email}
@@ -254,8 +229,8 @@ const WorkspaceInvitation = () => {
                               inputProps={{ "aria-label": "Without label" }}
                               disabled={index === 0}
                             >
-                              <MenuItem value={"Member"}>Member</MenuItem>
-                              <MenuItem value={"Project owner"}>
+                              <MenuItem value={"member"}>Member</MenuItem>
+                              <MenuItem value={"owner"}>
                                 Project owner
                               </MenuItem>
                             </Select>
@@ -315,11 +290,12 @@ const WorkspaceInvitation = () => {
                       <div className="flex items-center ">
                         <img
                           className="w-10 h-10 rounded-full  border-2"
-                          src="/images/homeImage/profile.webp"
+                          src={member.picture}
+                          // src="/images/homeImage/profile.webp"
                         />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-xl font-medium">
-                            {member.firstName} {member.lastName}
+                            {member.name}
                           </p>
                           <p className="text-gray-400 text-lg ">
                             Email: {member.email}
@@ -351,7 +327,7 @@ const WorkspaceInvitation = () => {
                     renderOption={(props, option) => (
                       <li {...props}>
                         <img
-                          src="/images/homeImage/profile.webp"
+                          src={option.picture}
                           alt="profile"
                           style={{
                             width: 30,
@@ -360,7 +336,7 @@ const WorkspaceInvitation = () => {
                             borderRadius: "9999px",
                           }}
                         />
-                        {`${option.firstName} ${option.lastName} (${option.email})`}
+                        {`${option.name} (${option.email})`}
                       </li>
                     )}
                     value={selectedUsers}
@@ -377,7 +353,7 @@ const WorkspaceInvitation = () => {
                     renderTags={(value: memberData[], getTagProps) =>
                       value.map((option, index) => (
                         <Chip
-                          label={`${option.firstName} ${option.lastName}`}
+                          label={`${option.name}`}
                           {...getTagProps({ index })}
                         />
                       ))

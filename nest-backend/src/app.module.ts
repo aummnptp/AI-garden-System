@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Workspace } from './workspaces/entities/workspace.entity';
+import { InvitationModule } from './invitation/invitation.module';
 
 
 
@@ -30,6 +31,7 @@ import { Workspace } from './workspaces/entities/workspace.entity';
     WorkspacesModule,
     AuthModule,
     UserModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

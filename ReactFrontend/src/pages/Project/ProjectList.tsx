@@ -1,19 +1,41 @@
 import { TextField } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProjectCard from "../../components/card/ProjectCard";
 import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
+import axios from "axios";
 
 const ProjectList = () => {
   const { workspaceId } = useParams<{ workspaceId?: string }>();
+  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   if (typeof workspaceId === 'undefined') {
     // Handle the case where workspaceId is undefined
     return <div>No workspace ID provided</div>;
+
   }
   const id = parseInt(workspaceId, 10);
   const workspace = ProjectData.find(ws => ws.workspaceId === id);
+
+  const fetchData = () => {
+    axios.all([
+      axios.get(`http://localhost:3000/workspaces/${id}`),
+  
+    ])
+    .then(axios.spread((workspaceResponse) => {
+      setWorkspaceDetail(workspaceResponse.data);
+   
+    }))
+    .catch(error => {
+      console.error("There was an error fetching the data!", error);
+    });
+  };
+
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
+  console.log(workspaceDetail)
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -23,7 +45,7 @@ const ProjectList = () => {
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
             <h1 className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight text-indigo-900 ">
-              Workspace Name {workspaceId}
+              {workspaceDetail.name}
             </h1>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"/>
             <div className="m-6 flex justify-between">

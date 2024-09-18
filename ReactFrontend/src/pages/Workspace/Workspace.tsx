@@ -67,7 +67,7 @@ function Workspace() {
               type="button"
               className="h-fit w-fit text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 
               font-medium rounded-[15px] text-sm px-5 py-2.5 me-2 mb-2 
-              focus:outline-none  absolute top-0 right-0 my-6 mr-6">+ Create Workspace</button>
+              focus:outline-none  absolute top-0 right-0 my-6 mr-6">+ สร้าง Workspace</button>
 
               <div className=" w-[95%] h-[0px] border border-zinc-300 mx-auto" />
               {/* show more bar */}
@@ -88,7 +88,7 @@ function Workspace() {
              
                    <Link to={`/workspaces/${data.id}/project-list`}>
                   <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
-                  members={[]} createAt={""} updateAt={""} /> 
+                  members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} /> 
                    </Link>
               </div>
                 ))}

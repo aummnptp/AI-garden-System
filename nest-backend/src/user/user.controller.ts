@@ -13,25 +13,26 @@ export class UserController {
     return this.userService.create(registerDTO);
   }
 
-  // @UseGuards(JwtGuard)
-  // @Get()    
-  // findAll() {
-  //   return this.userService.findAll();
-  // }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UseGuards(JwtGuard)
+  @Get()    
+  findAll() {
+    return this.userService.findAll();
   }
 
+  // @Get('/getUser/:id')
+  // findOne(@Param('id') id: string) {
+  //   return this.userService.findOne(+id);
+  // }
 
+s
   @UseGuards(JwtGuard)  
-  @Get()    
+  @Get('profile')    
   async  getProfile(@Request() req) {
     console.log  (req)
     const user= await this.userService.findByEmail(req.user.email)
     return user;
     // return this.userService.findAll();
   }
+ 
 
 }
