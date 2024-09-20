@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 interface ImageUploaderProps {
     image: File;
+    onProcessedImage: (processedImageUrl: string) => void; 
 }
 
-const ResizeThenPaddingUploader: React.FC<ImageUploaderProps> = ({ image }) => {
+const ResizeUploader: React.FC<ImageUploaderProps> = ({ image,  onProcessedImage }) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
     const [padding, setPadding] = useState<number>(0); // state for padding
@@ -27,6 +28,7 @@ const ResizeThenPaddingUploader: React.FC<ImageUploaderProps> = ({ image }) => {
         if (selectedImage && canvasRef.current) {
             const image = new Image();
             image.src = selectedImage;
+            
             image.onload = () => {
                 const canvas = canvasRef.current!;
                 const ctx = canvas.getContext('2d');
@@ -37,19 +39,11 @@ const ResizeThenPaddingUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                 ctx?.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
                 ctx?.drawImage(image, 0, 0, resizeWidth, resizeHeight);
 
-                // Step 2: Add Padding
-                const paddedCanvas = document.createElement('canvas');
-                const paddedCtx = paddedCanvas.getContext('2d');
-                const paddedWidth = resizeWidth + padding * 2;
-                const paddedHeight = resizeHeight + padding * 2;
-                paddedCanvas.width = paddedWidth;
-                paddedCanvas.height = paddedHeight;
-
-                paddedCtx?.clearRect(0, 0, paddedWidth, paddedHeight);
-                paddedCtx?.drawImage(canvas, padding, padding);
-
-                const downloadUrl = paddedCanvas.toDataURL('image/png');
+             
+                const processedImageUrl = canvas.toDataURL('image/png');
                 setDownloadUrl(downloadUrl);
+                onProcessedImage(processedImageUrl); 
+             
             };
         }
     }, [selectedImage, padding, resizeWidth, resizeHeight]);
@@ -66,8 +60,6 @@ const ResizeThenPaddingUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                         </Button>
                     )}
                     <div>
-                        <label>Padding (px):</label>
-                        <input type="number" value={padding} onChange={(e) => setPadding(Number(e.target.value))} />
                         <label>Resize Width (px):</label>
                         <input type="number" value={resizeWidth} onChange={(e) => setResizeWidth(Number(e.target.value))} />
                         <label>Resize Height (px):</label>
@@ -79,4 +71,4 @@ const ResizeThenPaddingUploader: React.FC<ImageUploaderProps> = ({ image }) => {
     );
 };
 
-export default ResizeThenPaddingUploader;
+export default ResizeUploader;

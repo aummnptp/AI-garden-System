@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom'
 import MiniFooter from '../../components/MiniFooter'
 import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material'
 import ImageUploader from '../../components/ImageUploader'
-import PaddingThenResizeUploader from '../../components/PaddingThenResizeUploader'
-import ResizeThenPaddingUploader from '../../components/ResizeThenPaddingUploader'
+import PaddingUploader from '../../components/PaddingThenResizeUploader'
+import ResizeUploader from '../../components/ResizeUploader'
+import ImageUploaderRetest from '../../components/addresize'
+import ImageCustomer from '../../components/ImageUploader'
 
 
 
@@ -13,7 +15,11 @@ import ResizeThenPaddingUploader from '../../components/ResizeThenPaddingUploade
 const AIDemo = () => {
   const [uploadStep,setUploadStep] =useState(1);
   const [image, setImage] = useState<File | null>(null);
-  const [customImage, setCustomImage] = useState<File | null>(null);
+  // first step of customimage for rotate grayscale
+  const [customImage, setCustomImage] = useState<File | null>(image);
+  const [customResizingImage, setCustomResizingImage] = useState<File | null>(null);
+
+
   const [open, setOpen] = React.useState(false);
   // 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -33,10 +39,7 @@ const AIDemo = () => {
     e.preventDefault();
   };
 
-
-
-
-
+  
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -53,7 +56,7 @@ const AIDemo = () => {
       setImage(null);
     }
   };
-  
+
 
   return (
     <>
@@ -103,14 +106,12 @@ const AIDemo = () => {
             </div>       
             {/* 
              */}
-            <div className='w-full h-full px-10 '>
+            <div className='w-full h-full px-10'>
             {uploadStep == 1 ? (
               <>
             <div className="flex  ">
             <div className=" px-10 mx-auto w-[50%] h-fit pb-10 ">
-          
                 <div className='w-96 h-96 text-center  flex flex-col items-center justify-center '>
-
                 {image ? (
                   <div className="relative text-center  flex flex-col items-center justify-center  ">
                 <div
@@ -221,7 +222,11 @@ const AIDemo = () => {
            
           </>
           ) : null}
-          {customImage && <ImageUploader image={customImage} />}
+          {/* upload step 2 customimaage */}
+          {customImage && <ImageCustomer image={customImage}  />}
+          {/* {customImage && <ImageCustomerRetest image={customImage} />} */}
+         {customResizingImage &&  <ResizeUploader image={customResizingImage}  onProcessedImage={handleProcessedResizeImage} />}
+         {/* {customPaddingImage &&  <PaddingUploader image={customPaddingImage} />} */}
           <div className='mt-4 flex justify-end '>
           {uploadStep >=2 &&  <Button variant='outlined' size='large' color='warning'   sx={{ mr: 2 }}   onClick={() =>{ setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
               setImage(customImage);
@@ -262,17 +267,12 @@ const AIDemo = () => {
                             </DialogActions>
                           </Dialog>
           </div>
-               
+        
           </div>
 
           {/* detail conatiner */}
           <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative  ">
-          {customImage && 
           
-          <div>
-          {/* <PaddingThenResizeUploader image={customImage} /> */}
-          <ResizeThenPaddingUploader image={customImage} />
-          </div>}
           </div>
         </div>
       </div>

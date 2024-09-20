@@ -23,13 +23,13 @@ import AdminAi from './pages/Admin/AdminAi.tsx'
 import PredictAiModel from './pages/PredictAiModel.tsx'
 import PredictionResult from './pages/PredictionResult.tsx';
 import Docs from './pages/Docs.tsx'
-import AiDetail from './pages/Ai/AiDetail.tsx'
+import AiDetail from './pages/Ai/AiDetailPage.tsx'
 import WorkspaceInvitation from './pages/Workspace/WorkspaceInvitation.tsx'
 import ProjectHistory from './pages/Project/ProjectHistory.tsx'
 import CustomInput from './pages/CustomInput.tsx'
 import Layout from './Layout.tsx'
-import AIlist from './pages/Ai/AiList.tsx'
-import AIDemo from './pages/Ai/AIDemo.tsx'
+import AIlist from './pages/Ai/AiListPage.tsx'
+import AIDemo from './pages/Ai/AIDemoPage.tsx'
 import UserList from './pages/Admin/UserList.tsx'
 
 
