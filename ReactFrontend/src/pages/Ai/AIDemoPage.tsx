@@ -17,7 +17,6 @@ const AIDemo = () => {
   const [image, setImage] = useState<File | null>(null);
   // first step of customimage for rotate grayscale
   const [customImage, setCustomImage] = useState<File | null>(image);
-  const [customResizingImage, setCustomResizingImage] = useState<File | null>(null);
 
 
   const [open, setOpen] = React.useState(false);
@@ -225,7 +224,7 @@ const AIDemo = () => {
           {/* upload step 2 customimaage */}
           {customImage && <ImageCustomer image={customImage}  />}
           {/* {customImage && <ImageCustomerRetest image={customImage} />} */}
-         {customResizingImage &&  <ResizeUploader image={customResizingImage}  onProcessedImage={handleProcessedResizeImage} />}
+         {/* {customResizingImage &&  <ResizeUploader image={customResizingImage}  onProcessedImage={handleProcessedResizeImage} />} */}
          {/* {customPaddingImage &&  <PaddingUploader image={customPaddingImage} />} */}
           <div className='mt-4 flex justify-end '>
           {uploadStep >=2 &&  <Button variant='outlined' size='large' color='warning'   sx={{ mr: 2 }}   onClick={() =>{ setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
@@ -251,9 +250,7 @@ const AIDemo = () => {
                             <DialogTitle id="alert-dialog-title">
                               {"กรุณาอัปโหลดภาพก่อน"}
                             </DialogTitle>
-                  
                             <DialogActions>
-
                               <Button variant="contained"  size='large'    sx={{
                       my: "5px",
                       backgroundColor: "#4f46e5",
