@@ -129,7 +129,7 @@ const AIDemo = () => {
                   </div>
                 ) : (
                   <label htmlFor="file-upload"         
-                  className="  flex flex-col items-center justify-center p-6 border-2 border-dashed border-blue-500 rounded-lg w-96 h-96 bg-gray-50 cursor-pointer">
+                  className="  flex flex-col items-center justify-center p-6 border-2 border-dashed border-blue-500 rounded-lg w-96 h-96 bg-gray-50 cursor-pointer mt-10">
                   <div
                     onDrop={handleDrop}
                     onDragOver={handleDragOver} 

@@ -30,7 +30,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image ,onCropDone,onCropCan
 
   return (
     <div className="w-full flex  items-center space-y-4  ">
-        <div className="relative w-[50%] h-[350px] mx-auto bg-red-100 ">
+        <div className="relative w-[50%] h-[350px] mx-auto  ">
             <Cropper
           image={image}
           aspect={aspectRatio}

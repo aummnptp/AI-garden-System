@@ -106,7 +106,7 @@ const renderIcon = (iconName: any) => {
         </div>
       </div>
       {/* section 4 card */}
-      <div className=" h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
+      <div className=" h-[5%] bg-gradient-to-b from-indigo-800 to-indigo-600 border border-black ">
         <h1 className="ml-24 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
           ประเภทของ AI ในระบบ
         </h1>
@@ -154,7 +154,7 @@ const renderIcon = (iconName: any) => {
         </div>
       </div>
       {/* developer team section */}
-      <div className=" pb-10 h-[5%] bg-gradient-to-b from-indigo-600 to-indigo-800 border border-black ">
+      <div className=" pb-10 h-[5%] bg-gradient-to-b from-indigo-800 to-indigo-600 border border-black ">
         <h1 className="ml-10 mt-8 text-3xl font-medium leading-none tracking-tight text-white md:text-3xl">
           Developer Team / ทีมผู้พัฒนา
         </h1>

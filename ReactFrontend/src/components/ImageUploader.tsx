@@ -34,7 +34,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [imageWidthValue, setImageWidthValue] = useState<number>(300); // width for resizing
   const [imageHeightValue, setIMageHeightValue] = useState<number>(300); // height for resizing
   const [isPadding, setIsPadding] = useState<boolean>(false); // state for resizing
-  const [padding, setPadding] = useState<number>(0); // width for resizing
+  const [paddingWidth, setPaddingWidth] = useState<number>(0); // width for resizing
+  const [paddingHeight, setPaddingHeight] = useState<number>(0); // width for resizing
   const [isCropping, setIsCropping] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -132,16 +133,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
         ctx?.translate(canvas.width / 2, canvas.height / 2); // ย้ายจุดศูนย์กลาง canvas ไปตรงกลาง
 
         // การ Flip ต้องทำก่อนการหมุน
+        ctx?.rotate(angleInRadians);
         if (flipHorizontal) {
           ctx?.scale(-1, 1); // Flip แนวนอน
         }
-
+        
         if (flipVertical) {
           ctx?.scale(1, -1); // Flip แนวตั้ง
         }
 
         // หมุนภาพตามค่าที่ได้
-        ctx?.rotate(angleInRadians);
 
         // วาดภาพที่ Flip และหมุนแล้ว
         ctx?.drawImage(image, -image.width / 2, -image.height / 2);
@@ -210,17 +211,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
         const canvas = canvasRef.current!;
         const ctx = canvas.getContext("2d");
 
-        const paddedWidth = image.width + padding * 2;
-        const paddedHeight = image.height + padding * 2;
+        const paddedWidth = image.width + paddingWidth * 2;
+        const paddedHeight = image.height + paddingHeight * 2;
         canvas.width = paddedWidth;
         canvas.height = paddedHeight;
 
         ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx?.drawImage(image, padding, padding);
+        ctx?.drawImage(image, paddingWidth, paddingHeight);
       };
     }
-  }, [padding, isPadding]);
+  }, [paddingWidth,paddingHeight, isPadding]);
 
   const handleSaveResize = () => {
     if (selectedImage && canvasRef.current) {
@@ -231,7 +232,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setFlipHorizontal(false);
       setFlipVertical(false);
       setRotation(0);
-      setPadding(0);
+      setPaddingWidth(0);
+      setPaddingHeight(0);
       setImageWidthValue(resizeWidth);
       setIMageHeightValue(resizeHeight);
     }
@@ -245,7 +247,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setFlipHorizontal(false);
       setFlipVertical(false);
       setRotation(0);
-      setPadding(0);
+      setPaddingWidth(0);
+      setPaddingHeight(0);
     }
   };
 
@@ -291,16 +294,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
               )}
             </div>
           ) : (
-            <div className=" px-10 mx-auto w-full h-fit pb-10 flex ">
-              <div className=" w-[60%] flex   h-fit pt-20 flex-col ">
-                <div className=" h-[400px]  bg-red-300">
+            <div className=" px-10 mx-auto w-full h-fit pb-10 flex  ">
+              <div className=" w-[70%] flex h-fit  flex-col ">
+                <div className=" h-[400px]  flex items-center justify-center ">
                 <canvas
-                  className=" mx-auto max-w-[500px] max-h-[500px] border-2 border-dashed border-gray-400  justify-center  "
+                  className=" mx-auto max-w-[500px]  max-h-[500px] border-2 border-dashed border-gray-400  justify-center  "
                   ref={canvasRef}
                   style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"150px" ,minHeight:"150px"}}
                 ></canvas>
                 </div>
-                <div className="flex gap-6 py-6 mx-auto">
+        
+              <div className="flex gap-6  mx-auto">
                   <div
                     onClick={handleCropping}
                     className="flex items-center justify-center w-28 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
@@ -308,111 +312,111 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                     <Crop />
                     <p className="text-center text-sm font-medium">Crop</p>
                   </div>
-                  {/* <div
+                  
+                  <div
                     onClick={()=>{}}
                     className="flex items-center justify-center w-28 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
                     >
                     <RestartAlt />
                     <p         className="text-center text-sm font-medium">Reset Image</p>
-                  </div> */}
+                  </div>
                 </div>
               </div>
 
               {onProcessUrl && (
-                <div className="pt-4  w-[40%] ">
-                  <div className=" w-full px-2 ">
+                <div className="w-[40%] border rounded-[5px] ">
+                  <div className=" w-full px-2 mx-auto ">
                     <TabContext value={value}>
                       <Box sx={{ borderBottom: 1, borderColor: "divider" , }}>
                         <TabList
                           onChange={handleChange}
-                          aria-label="lab API tabs example"
+                          aria-label="Edit Tab"
+                          sx={{ display: 'flex', justifyContent: 'space-between' }}
                         >
                           <Tab
                             icon={<ThreeSixty />}
-                            label="Flip & Rotation"
+                            label="Rotation"
                             value="1"
+                            sx={{ flexGrow: 1 }}
                             onClick={handleCancleCustomState}
                           />
                           <Tab
                             icon={<FormatSize />}
                             label="Resize"
                             value="2"
+                            sx={{ flexGrow: 1 }}
                             onClick={handleResize}
                           />
                           <Tab
                             icon={<ZoomOutMap />}
                             label="Padding"
                             value="3"
+                            sx={{ flexGrow: 1 }}
                             onClick={handlePadding}
                           />
+                          
                         </TabList>
                       </Box>
                       <TabPanel value="1">
-                        <div className="">
+                        <div className="w-full">
                           {/* flip zone */}
-                          <p className="text-2xl">Rotate Image</p>
+                          <p className="text-2xl">Rotate & Flip Image</p>
                           <hr className="my-2"></hr>
-                          <div className=" flex gap-10 py-4 ">
+                          <div className=" flex flex-wrap gap-4 justify-between py-4 w-full ">
                             {/* ปุ่ม Flip ซ้าย */}
-                            <div className="flex flex-col items-center justify-center space-y-2 w-fit">
+                            <div className="flex flex-col items-center justify-center space-y-2 w-[20%]">
                               <div
                                 onClick={handleRotateLeft}
-                                className="flex items-center justify-center w-28 h-20 rounded-lg border border-gray-300 shadow-lg  hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                                className=" flex items-center justify-center w-full h-20 rounded-lg border border-gray-300 shadow-lg hover:bg-gray-100 cursor-pointer hover:text-blue-700"
                               >
                                 <RotateLeft fontSize="large" />
                               </div>
-                              <p className="text-center text-sm font-medium">
-                                {" "}
-                                Rotate -90° (Left)
+                              <p className="text-center text-sm font-medium ">
+
+                                RotateLeft {<br></br>}(-90°)
                               </p>
                             </div>
                             {/* ปุ่ม Flip ขวา */}
-                            <div className="flex flex-col items-center justify-center space-y-2 w-fit">
+                            <div className="flex flex-col items-center justify-center space-y-2 w-[20%] ">
                               <div
                                 onClick={handleRotateRight}
-                                className="flex items-center justify-center w-28 h-20 rounded-lg border border-gray-300 shadow-lg  hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                                className="flex items-center justify-center w-full h-20 rounded-lg border border-gray-300 shadow-lg hover:bg-gray-100 cursor-pointer hover:text-blue-700"
                               >
                                 <RotateRight fontSize="large" />
                               </div>
                               <p className="text-center text-sm font-medium">
-                                {" "}
-                                Rotate +90° (Right)
+                             
+                                RotateRight{<br></br>}(+90°)
                               </p>
                             </div>
-                          </div>
-
-                          <div className="py-4">
-                            <p className="text-2xl">Flip Image</p>
-                            <hr className="my-2"></hr>
-                            <div className=" flex gap-10 py-4 ">
-                              {/* ปุ่ม Flip ซ้าย */}
-                              <div className="flex flex-col items-center justify-center space-y-2 w-fit">
+                                {/* ปุ่ม Flip ซ้าย */}
+                                <div className="flex flex-col items-center justify-center space-y-2 w-[20%] ">
                                 <div
                                   onClick={toggleFlipHorizontal}
-                                  className="flex items-center justify-center w-28 h-20 rounded-lg border border-gray-300 shadow-lg  hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                                  className="flex items-center justify-center w-full h-20 rounded-lg border border-gray-300 shadow-lg hover:bg-gray-100 cursor-pointer hover:text-blue-700"
                                 >
                                   <SwapHoriz fontSize="large" />
                                 </div>
                                 <p className="text-center text-sm font-medium">
-                                  {" "}
-                                  flip Horizontal
+                                  
+                                  flip{<br></br>} Horizontal
                                 </p>
                               </div>
                               {/* ปุ่ม Flip ขวา */}
-                              <div className="flex flex-col items-center justify-center space-y-2 w-fit">
+                              <div className="flex flex-col items-center justify-center space-y-2 w-[20%] ">
                                 <div
                                   onClick={toggleFlipVertical}
-                                  className="flex items-center justify-center w-28 h-20 rounded-lg border border-gray-300 shadow-lg  hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                                  className="flex items-center justify-center w-full h-20 rounded-lg border border-gray-300 shadow-lg hover:bg-gray-100 cursor-pointer hover:text-blue-700"
                                 >
                                   <SwapVert fontSize="large" />
                                 </div>
                                 <p className="text-center text-sm font-medium">
-                                  {" "}
-                                  flip Vertical
+                                  flip{<br></br>}Vertical
                                 </p>
+                         
                               </div>
-                            </div>
                           </div>
+
 
                           <Button
                             variant="contained"
@@ -440,7 +444,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                         </div>
                       </TabPanel>
                       <TabPanel value="2">
-                        <div>
+                        <div className="w-full">
                           <p className="text-2xl">Resize Image</p>
                           <hr className="my-2"></hr>
                           {/* โหมดการปรับขนาด (Resize Mode) */}
@@ -478,7 +482,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                         </div>
                       </TabPanel>
                       <TabPanel value="3">
-                        <div>
+                        <div className="w-full">
                           <p className="text-2xl">Padding Image</p>
                           <hr className="my-2"></hr>
                           <text>Image Size:</text>
@@ -489,9 +493,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                           <TextField
                             label="ความกว้าง (px)"
                             type="number"
+                            style={{ marginRight: "0.5rem"  }}
+                            value={paddingWidth}
+                            onChange={(e) => setPaddingWidth(Number(e.target.value))}
+                          />
+                            <TextField
+                            label="ความสูง (px)"
+                            type="number"
                             style={{ marginRight: "0.5rem" }}
-                            value={padding}
-                            onChange={(e) => setPadding(Number(e.target.value))}
+                            value={paddingHeight}
+                            onChange={(e) => setPaddingHeight(Number(e.target.value))}
                           />
                           <Button
                             variant="contained"
