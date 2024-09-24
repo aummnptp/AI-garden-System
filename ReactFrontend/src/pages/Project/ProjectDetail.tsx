@@ -166,13 +166,13 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
       <div className="mt-2 w-full border border-zinc-300" />
     </div>
   </div>
-      <Link to={`/workspaces/${workspaceId}/project-list/${projectId}/detail/test/${projectId}`} className="ml-16 mt-2">
-        <button
-          type="button"
-          className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 "
-        >
-          อัพโหลดรูปภาพ
-        </button>
+      <Link to={`/workspaces/${workspaceId}/project/${projectId}/detail/test/${projectId}`} className="ml-16 mt-2">
+      <button
+      type="button"
+      className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 "
+    >
+      {detail.inputType === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
+    </button>
       </Link>
     </div>
 

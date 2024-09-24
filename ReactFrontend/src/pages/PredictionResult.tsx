@@ -7,10 +7,10 @@ import { PictureOutlined } from '@ant-design/icons';
 const PredictionResult: React.FC = () => {
   const location = useLocation();
   const state = location.state || {}; // ให้ state เป็น object เปล่าๆ ถ้าไม่มีค่า
-  const { prediction, image, fileName } = state; // ดึงข้อมูลการพยากรณ์และภาพจาก state
+  const { prediction, file, fileName } = state; // ดึงข้อมูลการพยากรณ์และภาพจาก state
   
   console.log("Prediction Data:", prediction);
-  console.log("Image Data:", image);
+  console.log("Image Data:", file);
   console.log("File Name:", fileName);
 
   // แปลงข้อมูลการพยากรณ์เป็นรายการที่แสดงผล
@@ -38,8 +38,8 @@ const PredictionResult: React.FC = () => {
               <div className="w-full flex justify-center p-5">
                 {/* Display the uploaded or returned image */}
                 <div className="justify-center mb-8">
-                  {image ? (
-                    <img src={image} alt="Uploaded or Result" className="w-full h-80 object-fill rounded-lg" />
+                  {file ? (
+                    <img src={file} alt="Uploaded or Result" className="w-full h-80 object-fill rounded-lg" />
                   ) : (
                     <div className="w-80 h-80 flex items-center justify-center bg-gray-300 rounded-lg">
                       <span>ไม่สามารถแสดงภาพได้</span>

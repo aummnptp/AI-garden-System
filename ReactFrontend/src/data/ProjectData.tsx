@@ -7,7 +7,7 @@ const ProjectData = [
     details: [
       {
         id: 1,
-        name: "KMITL Project",
+        name: "Classification",
         inputType:"รูปภาพ",
         desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
         ai: AiData[0].name,
@@ -15,15 +15,15 @@ const ProjectData = [
       },
       {
         id: 2,
-        name: "Pet Project",
-        inputType:"วิดีโอ",
+        name: "Obj Detect",
+        inputType:"รูปภาพ",
         desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
         ai: "..",
       },
       {
         id: 3,
-        name: "It67 Project",
-        inputType:"รูปภาพ",
+        name: "regression",
+        inputType:"วิดีโอ",
         desc: "Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the",
         ai: "..",
       },

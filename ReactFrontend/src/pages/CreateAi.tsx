@@ -7,18 +7,26 @@ const CreateAiProject = () => {
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
-  const [responseKeys, setResponseKeys] = useState([{ key: '', type: '' }]);
+  const [responseKeys, setResponseKeys] = useState([{ key: '' }]);
   const [inputDescription, setInputDescription] = useState('');
   const [aiType, setAiType] = useState('Object Detection');
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState<string>('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-
+  const [regressionParams, setRegressionParams] = useState([{ param: '' }]);
 
   const navigate = useNavigate();
 
   const handleAddKey = () => {
-    setResponseKeys([...responseKeys, { key: '', type: '' }]);
+    setResponseKeys([...responseKeys, { key: '' }]);
+  };
+
+  const handleRemoveKey = (index: number) => {
+    if (responseKeys.length > 1) {
+      const newKeys = [...responseKeys];
+      newKeys.splice(index, 1); // ลบ key ที่ index นั้นออก
+      setResponseKeys(newKeys);
+    }
   };
 
   const handleKeyChange = (index: number, field: string, value: string) => {
@@ -26,32 +34,51 @@ const CreateAiProject = () => {
     newKeys[index] = { ...newKeys[index], [field]: value };
     setResponseKeys(newKeys);
   };
-  
+
+  const handleAddRegressionParam = () => {
+    setRegressionParams([...regressionParams, { param: '' }]);
+  };
+
+  const handleRemoveParam = (index: number) => {
+    if (regressionParams.length > 1) {
+      const newParams = [...regressionParams];
+      newParams.splice(index, 1); // ลบ parameter ที่ index นั้นออก
+      setRegressionParams(newParams);
+    }
+  };
+
+  const handleParamChange = (index: number, value: string) => {
+    const newParams = [...regressionParams];
+    newParams[index].param = value;
+    setRegressionParams(newParams);
+  };
+
   const handleTagAdd = () => {
     if (newTag && !tags.includes(newTag)) {
       setTags([...tags, newTag]);
       setNewTag('');
     }
   };
-  
+
   const handleTagRemove = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
-  
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setUploadedFile(event.target.files[0]);
     }
   };
-  
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const modelData = {
       name: aiName,
       description: description,
+      ai_type: aiType,
       api_uri: serviceUri,
       response_keys: responseKeys.map(key => key.key),
+      regression_params: regressionParams.map(param => param.param)
     };
 
     fetch('http://localhost:5000/add_model', {
@@ -64,7 +91,7 @@ const CreateAiProject = () => {
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
-        navigate('/admin'); // Navigate back to admin page after submission
+        navigate('/admin/admin-ai'); // Navigate back to admin page after submission
       })
       .catch(error => {
         console.error('Error:', error);
@@ -116,42 +143,95 @@ const CreateAiProject = () => {
                   <option value="Object Detection">Object Detection</option>
                   <option value="Regression">Regression</option>
                   <option value="Segmentation">Segmentation</option>
-                  <option value="Segmentation">Classification</option>
+                  <option value="Classification">Classification</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label>Service URI</label>
-                <input
-                  type="text"
-                  value={serviceUri}
-                  onChange={(e) => setServiceUri(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div className="form-group">
-                <label>Response Data</label>
-                {responseKeys.map((key, index) => (
-                  <div key={index} className="response-key flex space-x-2 mb-2">
-                    <input
-                      type="text"
-                      placeholder="key name"
-                      value={key.key}
-                      onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
-                      className="w-1/2 p-2 border border-gray-300 rounded-lg"
-                    />
-                    <input
-                      type="text"
-                      placeholder="data type"
-                      value={key.type}
-                      onChange={(e) => handleKeyChange(index, 'type', e.target.value)}
-                      className="w-1/2 p-2 border border-gray-300 rounded-lg"
-                    />
+              
+              {/* Render form based on aiType */}
+              {aiType === 'Classification' || aiType === 'Object Detection' || aiType === 'Segmentation' ? (
+                <div className="form-group">
+                  <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
+                  {responseKeys.map((key, index) => (
+                    <div key={index} className="response-key flex space-x-2 mb-2">
+                      <input
+                        type="text"
+                        placeholder="key name"
+                        value={key.key}
+                        onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      />
+                      {responseKeys.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveKey(index)}
+                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                        >
+                          ลบ
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                    + เพิ่ม Key
+                  </button>
+                </div>
+              ) : aiType === 'Regression' && (
+                
+                <div className="form-group">
+                  <div className="mb-6">
+                  <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
+                  {responseKeys.map((key, index) => (
+                    <div key={index} className="response-key flex space-x-2 mb-2">
+                      <input
+                        type="text"
+                        placeholder="key name"
+                        value={key.key}
+                        onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      />
+                      {responseKeys.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveKey(index)}
+                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                        >
+                          ลบ
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                    + เพิ่ม Key
+                  </button>
                   </div>
-                ))}
-                <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
-                  + Add Key
-                </button>
-              </div>
+                  <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
+                  {regressionParams.map((param, index) => (
+                    <div key={index} className="response-param flex space-x-2 mb-2">
+                      <input
+                        type="text"
+                        placeholder="Parameter"
+                        value={param.param}
+                        onChange={(e) => handleParamChange(index, e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      />
+                      {regressionParams.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveParam(index)}
+                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                        >
+                          ลบ
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                    + เพิ่ม Parameter
+                  </button>
+                </div>
+                
+              )}
+
               <div className="form-group">
                 <label>คำอธิบาย Input ของ AI</label>
                 <textarea
@@ -181,7 +261,7 @@ const CreateAiProject = () => {
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
                     <button type="button" onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-[15px] text-white">
-                      + Add Tag
+                      + เพิ่ม Tag
                     </button>
                   </div>
                 </div>
