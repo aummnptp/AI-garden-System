@@ -75,7 +75,8 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
   };
   return (
     <div className="w-full flex  items-center space-y-4  ">
-      <div className="relative w-[50%] h-[350px] mx-auto  ">
+      <div className="relative w-[50%] mx-auto   h-fit  flex items-center justify-center  py-10">
+    
         <ReactCrop
           crop={crop}
           onChange={(newCrop) => setCrop(newCrop)}
@@ -85,6 +86,8 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
           <img
             src={src}
             onLoad={(e) => onLoad(e.currentTarget)}
+            
+            style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"150px" ,minHeight:"150px"}}
             alt="Crop me"
             //    style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"450px" ,minHeight:"450px"}}
           />

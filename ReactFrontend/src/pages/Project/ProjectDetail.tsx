@@ -13,7 +13,7 @@ import UsageBarChart from "../../components/chart/UsageBarChart";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
 import ProjectData from "../../data/ProjectData";
-import { IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
+import { Button, IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
 
 
 
@@ -167,12 +167,18 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
     </div>
   </div>
       <Link to={`/workspaces/${workspaceId}/project/${projectId}/detail/test/${projectId}`} className="ml-16 mt-2">
-      <button
-      type="button"
-      className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 "
-    >
-      {detail.inputType === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
-    </button>
+      <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+              >
+         {detail.inputType === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
+      </Button>
       </Link>
     </div>
 

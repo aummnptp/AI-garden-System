@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
 import ProjectData from "../data/ProjectData";
+import { Button } from '@mui/material';
 
 const PredictAiModel: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
@@ -126,9 +127,19 @@ const PredictAiModel: React.FC = () => {
               )}
 
               <div className="flex justify-end">
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-                  ยืนยัน
-                </button>
+                <Button
+                type="submit" 
+                variant="contained"
+                size="large"
+                sx={{
+                  backgroundColor: "#3b82f6",
+                  "&:hover": {
+                    backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
+                  },
+                }}
+                >
+                ยืนยัน
+              </Button>
               </div>
             </form>
           </div>

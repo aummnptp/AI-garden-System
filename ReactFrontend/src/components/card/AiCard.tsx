@@ -43,18 +43,18 @@ const AiCard :React.FC<AiCardProps> = (props) => {
             ))}
             </div>
             <div className="flex justify-center"> 
-              <button
-                type="button"
-                className=" items-center text-white bg-indigo-600 rounded-[15px] hover:bg-blue-800
-                font-medium  text-sm px-5 py-2.5 me-2 mb-2">
-                <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ส่งคำขอใช้งาน
-              </button>
-             {/* <Button text={"ส่งคำขอใช้งาน"}>
-
-             </Button> */}
-            {/* <Button variant="contained">Contained</Button> */}
-                {/* <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ส่งคำขอใช้งาน */}
-              {/* </button> */}
+              <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+              >
+              <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ส่งคำขอใช้งาน
+              </Button>
           </div>
           </div>
         </div>

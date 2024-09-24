@@ -11,3 +11,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .no-spinner {
+    -moz-appearance: textfield;
+  }
+  
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

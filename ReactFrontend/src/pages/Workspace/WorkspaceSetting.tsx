@@ -1,11 +1,13 @@
 import React, {  useEffect, useState } from 'react';
 import Sidebar from "../../components/Sidebar";
 
-import { Button, Dialog, DialogActions, DialogTitle, FormControl, FormHelperText, MenuItem, TextField } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogTitle, FormControl, FormHelperText, MenuItem, TextField, Typography } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Link, redirect, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { SaveOutlined } from '@ant-design/icons';
+import { List } from 'antd';
+import { Close, Delete } from '@mui/icons-material';
 interface memberData {
   id:number
   firstName: string;
@@ -95,6 +97,46 @@ const WorkspaceSetting = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
+        {/* confirm modal delete */}
+      <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            
+          >
+          <Box sx={{ textAlign: 'center', padding: '20px' }}>
+            <div className='p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto'> 
+            {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
+            <Close sx={{ fontSize: 40, color: 'red' }} />
+
+            </div>
+     
+            <DialogTitle id="alert-dialog-title"  sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+            Delete Workspace
+           
+          </DialogTitle>
+          <Typography variant="body1" sx={{ marginBottom: '20px', color: '#555' }}>
+          Delete a <strong>"{name}"</strong> from workspace list?
+        </Typography>
+          </Box> 
+            <DialogActions sx={{  padding: '30px'  }}>
+              <Button variant="outlined" color="info" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  handleDelte();
+                  handleClose();
+                }}
+                autoFocus
+              >
+                Delete{" "}
+              </Button>
+            </DialogActions>
+          </Dialog>
         {/* side bar */}
         <Sidebar></Sidebar>
         {/* content container */}
@@ -107,63 +149,58 @@ const WorkspaceSetting = () => {
               Workspace Setting
             </h1>
             <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
-          <div className="flex justify-start  ">
-          {/* sticky top-[10%] bg-white w-full z-50 */}
-          <ul className="flex flex-wrap -mb-px">
-            <li className="me-2">
-            <Link to={`/workspaces/${workspaceId}/setting/edit`}>
-              <a
-                className="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active "
-                aria-current="page"
-              >
-              Edit
-              </a>
-              </Link>
-            </li>
-            <li className="me-2">
-            <Link to={`/workspaces/${workspaceId}/setting/invitation`}>
-              <a
-                href="#"
-                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
-              >
-              Team Member
-              </a>
-              </Link>
-            </li>
-            
-          </ul>
-        </div>
-
-
+            <div className="flex justify-start  ">
+              {/* sticky top-[10%] bg-white w-full z-50 */}
+              <ul className="flex flex-wrap -mb-px">
+                <li className="me-2">
+                  <Link to={`/workspaces/${workspaceId}/setting/edit`}>
+                    <a
+                      className="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active "
+                      aria-current="page"
+                    >
+                      Edit
+                    </a>
+                  </Link>
+                </li>
+                <li className="me-2">
+                  <Link to={`/workspaces/${workspaceId}/setting/invitation`}>
+                    <a
+                      href="#"
+                      className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
+                    >
+                      Team Member
+                    </a>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
             {/* <div className="w-full h-[0px] border border-zinc-300 mx-auto" /> */}
             <div className=" w-[80%] mx-auto items-center pt-8 pb-10">
               <label className="mx-auto flex-col flex text-black text-2xl mb-2  ">
                 Workspace name
               </label>
-              <div className='mx-auto flex-col flex text-black text-2xl mb-10'>
-
-              <TextField
+              <div className="mx-auto flex-col flex text-black text-2xl mb-10">
+                <TextField
                   id="standard-number"
-                  placeholder='workspace name'
+                  placeholder="workspace name"
                   defaultValue={"Workspace Name"}
                   // label="Number"
                   // InputLabelProps={{
-                    //   shrink: true,
-                    // }}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
+                  //   shrink: true,
+                  // }}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
                 {" "}
                 description
-                </label>
-                <div className='mx-auto flex-col flex text-black text-2xl'>
-
+              </label>
+              <div className="mx-auto flex-col flex text-black text-2xl">
                 <TextField
                   id="standard-number"
-                     placeholder='workspace description'
+                  placeholder="workspace description"
                   multiline
                   rows={4}
                   defaultValue={"รายละเอียด ........"}
@@ -180,17 +217,16 @@ const WorkspaceSetting = () => {
         </div>
 
         <div className=" pl-[20%] justify-between pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
-        <button
-                  onClick={handleModalDelete
-                  }
-                  type="button"
-                  className=" bg-red-500  hover:bg-red-600  rounded-lg px-5 py-2.5 me-2 
+          <button
+            onClick={handleModalDelete}
+            type="button"
+            className=" bg-red-500  hover:bg-red-600  rounded-lg px-5 py-2.5 me-2 
             focus:outline-none 
             text-center text-white text-xl font-light "
-                >
-                 Delete Workspace
-                </button>
-          
+          >
+            Delete Workspace
+          </button>
+
           <button
             type="button"
             className=" w-fit  bg-indigo-600 hover:bg-blue-800
@@ -198,31 +234,9 @@ const WorkspaceSetting = () => {
             focus:outline-none 
             text-center text-white text-xl font-light"
             onClick={handleSave}
-            >
-      
+          >
             Save
           </button>
-          <Dialog
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                          >
-                            <DialogTitle id="alert-dialog-title">
-                              {"Want to delete a Workspace?"}
-                            </DialogTitle>
-                  
-                            <DialogActions>
-
-                              <Button variant="contained" color="error"  onClick={() => {
-                              handleDelte();
-                               handleClose();
-                              }}autoFocus >Delete </Button>
-                              <Button  variant="outlined" color="info"onClick={handleClose} >
-                                No
-                              </Button>
-                            </DialogActions>
-                          </Dialog>
         </div>
       </div>
     </>

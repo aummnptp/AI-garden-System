@@ -11,6 +11,7 @@ import MyWorkspaceData from "../../data/WorkspaceData";
 import { Link } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import axios from "axios";
+import { Button } from "@mui/material";
 
 function Workspace() {
   // my workspace show
@@ -55,19 +56,25 @@ function Workspace() {
         <CreateWorkspace showModal={showModal} setShowModal={setShowModal} fetchWorkspaces={fetchWorkspaces} />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
-          <div className="mt-4 h-fit w-11/12 bg-white rounded-[15px]  items-center relative ">
-            
-              <h1  className="  p-5 ml-5 mb-2 text-3xl font-medium tracking-tight  text-indigo-900  ">
+          <div className="mt-4 h-fit w-11/12 bg-white rounded-[15px]  items-center relative  p-6 ">
+            <div className="flex  justify-between  mb-5">
+              <h1  className="ml-5  text-3xl font-medium tracking-tight  text-indigo-900">
                 My Workspace
-              </h1>
-             
-              {/* create button */}
-              <button
+              </h1> 
+              <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
               onClick={() => setShowModal(true)}
-              type="button"
-              className="h-fit w-fit text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 
-              font-medium rounded-[15px] text-sm px-5 py-2.5 me-2 mb-2 
-              focus:outline-none  absolute top-0 right-0 my-6 mr-6">+ สร้าง Workspace</button>
+              >
+             + สร้าง Workspace
+                </Button>
+              </div>
 
               <div className=" w-[95%] h-[0px] border border-zinc-300 mx-auto" />
               {/* show more bar */}
@@ -97,8 +104,8 @@ function Workspace() {
          
 
           {/* Invited Worksapce Container */}
-          <div className="mt-8 h-fit w-11/12 bg-white rounded-[15px]  justify-self-center relative">
-              <h1  className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight 
+          <div className="mt-8 h-fit w-11/12 bg-white rounded-[15px]  justify-self-center relative p-6">
+              <h1  className="ml-5 mb-5 text-3xl font-medium tracking-tight 
               text-indigo-900  ">Invited Workspace
               </h1>
     

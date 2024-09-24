@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProjectCard from "../../components/card/ProjectCard";
@@ -50,26 +50,47 @@ const ProjectList = () => {
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"/>
             <div className="m-6 flex justify-between">
               <div>
-                <button
-                  type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
-                >
+              <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+       
+              >
                   ชื่อsort
-                </button>
-                <button
-                  type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
-                >
+                </Button>
+                <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+       
+              >
                   ประเภท filter
-                </button>
+                </Button>
               </div>
               <Link to={`/workspaces/${workspaceId}/create`}>
-                <button
-                  type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
-                >
-                  + Create New Project
-                </button>
+              <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+       
+              >
+                  + สร้าง Project
+                </Button>
               </Link>
             </div>
             <div className="m-6 flex justify-start gap-4">
@@ -80,12 +101,19 @@ const ProjectList = () => {
                 placeholder="ค้นหาชื่อโปรเจค"
                 required
               />
-              <button
-                type="button"
-                className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
+             <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+       
               >
-                + Add Tag filter
-              </button>
+                  + add tag filter
+                </Button>
             </div>
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">

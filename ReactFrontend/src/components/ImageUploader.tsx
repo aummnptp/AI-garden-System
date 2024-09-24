@@ -1,7 +1,9 @@
 import { Box, Button, Tab, TextField } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import {
+  Contrast,
   Crop,
+  Download,
   FormatSize,
   RestartAlt,
   RotateLeft,
@@ -20,12 +22,16 @@ interface ImageUploaderProps {
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
+  const [originalImage, setOriginalImage] = useState<string | null>(null);
+  // รูปที่กำลังโชว์ ประมวลผล(ยังไม่เซฟ)
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  //  รูปที่เซฟ เตรียมดาวน์โหลด
   const [onProcessUrl, setOnProcessUrl] = useState<string | null>(null);
-  const [imageBfResize, setImageBfResize] = useState<string | null>(null); // State for storing original image before resize
   const [rotation, setRotation] = useState<number>(0); // state for rotation
+  const [imageBfResize, setImageBfResize] = useState<string | null>(null); // State for storing original image before resize
   const [imageBfPadding, setImageBfPadding] = useState<string | null>(null); // State for storing original image before resize
-  const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for grayscale
+  const [imageBfGrayscale, setImageBfGrayscale] = useState<string | null>(null); // State for storing original image before resize
+  const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for ป
   const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false); // state for flip left-right
   const [flipVertical, setFlipVertical] = useState<boolean>(false); // state for flip top-bottom
   const [isResizing, setIsResizing] = useState<boolean>(false); // state for resizing
@@ -37,9 +43,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [paddingWidth, setPaddingWidth] = useState<number>(0); // width for resizing
   const [paddingHeight, setPaddingHeight] = useState<number>(0); // width for resizing
   const [isCropping, setIsCropping] = useState<boolean>(false);
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [value, setValue] = React.useState("1");
+  
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -63,20 +70,41 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const toggleGrayscale = () => {
     setIsGrayscale((prev) => !prev);
   };
+
+  const handleRotationCustomState = () => {
+    handleCancelState()
+  
+  };
+  const handleGrayscale = () => {
+    setImageBfGrayscale(selectedImage);
+    handleCancelState();
+  };
   const handleResize = () => {
     setImageBfResize(selectedImage);
-    handleCanclePadding();
+    handleCancelState();
+    // handleCancelPadding();
+    // handleCancelGrayscale();
     setIsResizing(true); // เข้าสู่โหมด Resize
   };
   const handlePadding = () => {
+    // setIsGrayscale(false)
     setImageBfPadding(selectedImage);
-    handleCancleResize();
+    handleCancelState();
+      
+    // handleCancelResize();
+    // handleCancelGrayscale();
     setIsPadding(true); // เข้าสู่โหมด Resize
   };
   const handleCropping = () => {
-    handleCanclePadding();
-    handleCancleResize();
+    setIsGrayscale(false)
+    // handleCancelPadding();
+    // handleCancelResize();
+    // handleCancelGrayscale();
+    
+    handleCancelState();
+    setValue("1")
     setIsCropping(true); // เข้าสู่โหมด Resize
+    
   };
   const handleResizeWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResizeWidth(parseInt(e.target.value, 10));
@@ -86,142 +114,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
     setResizeHeight(parseInt(e.target.value, 10));
   };
 
-  // โหลดรูปภาพเข้า Component
-  useEffect(() => {
-    if (image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const img = new Image(); // สร้างออบเจ็กต์ Image
-        img.src = reader.result as string; // ตั้ง src ให้กับ base64 string จาก FileReader
-        img.onload = () => {
-          setResizeWidth(img.width); // ตั้งค่า width เป็นขนาดของรูปภาพ
-          setResizeHeight(img.height); // ตั้งค่า height เป็นขนาดของรูปภาพ
-          setImageWidthValue(img.width);
-          setIMageHeightValue(img.height);
-          setSelectedImage(reader.result as string); 
-      
-        };
-      };
-      reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
-    }
-  }, [image]); // useEffect จะทำงานเมื่อ image เปลี่ยนแปลง
 
-  // โหลดรูปภาพเข้า Component
-  useEffect(() => {
-    if (selectedImage && canvasRef.current && !isResizing && !isPadding && !isCropping) {
-      const image = new Image();
-      image.src = selectedImage;
-      console.log(selectedImage)
-      image.onload = () => {
-        const canvas = canvasRef.current!;
-        const ctx = canvas.getContext("2d");
 
-        const angleInRadians = (rotation * Math.PI) / 180;
-        const absCos = Math.abs(Math.cos(angleInRadians));
-        const absSin = Math.abs(Math.sin(angleInRadians));
-
-        // คำนวณขนาดของ canvas หลังจากการหมุน
-        const newCanvasWidth = image.width * absCos + image.height * absSin;
-        const newCanvasHeight = image.width * absSin + image.height * absCos;
-
-        canvas.width = newCanvasWidth;
-        canvas.height = newCanvasHeight;
-
-        ctx?.clearRect(0, 0, canvas.width, canvas.height); // ล้าง canvas เดิม
-
-        ctx?.save();
-        ctx?.translate(canvas.width / 2, canvas.height / 2); // ย้ายจุดศูนย์กลาง canvas ไปตรงกลาง
-
-        // การ Flip ต้องทำก่อนการหมุน
-        ctx?.rotate(angleInRadians);
-        if (flipHorizontal) {
-          ctx?.scale(-1, 1); // Flip แนวนอน
-        }
-        
-        if (flipVertical) {
-          ctx?.scale(1, -1); // Flip แนวตั้ง
-        }
-
-        // หมุนภาพตามค่าที่ได้
-
-        // วาดภาพที่ Flip และหมุนแล้ว
-        ctx?.drawImage(image, -image.width / 2, -image.height / 2);
-        ctx?.restore();
-
-        // ตรวจสอบว่าต้องทำ Grayscale หรือไม่
-        if (isGrayscale) {
-          const imageData = ctx?.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-          if (imageData && ctx) {
-            const data = imageData.data;
-            for (let i = 0; i < data.length; i += 4) {
-              const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-              data[i] = avg; // Red
-              data[i + 1] = avg; // Green
-              data[i + 2] = avg; // Blue
-            }
-            ctx.putImageData(imageData, 0, 0);
-          }
-        }
-
-        // เก็บ URL ของภาพที่ประมวลผลแล้ว
-        const onProcessUrl = canvas.toDataURL("image/png");
-        setOnProcessUrl(onProcessUrl);
-      };
-    }
-  }, [
-    selectedImage,
-    rotation,
-    isGrayscale,
-    flipHorizontal,
-    flipVertical,
-    isResizing,
-    isPadding,
-    isCropping,
-    imageBfResize,
-    imageBfPadding,
-  ]);
-
-  useEffect(() => {
-    if (isResizing && onProcessUrl && canvasRef.current) {
-      const image = new Image();
-      image.src = onProcessUrl;
-      image.onload = () => {
-        const canvas = canvasRef.current!;
-        const ctx = canvas.getContext("2d");
-
-        canvas.width = resizeWidth;
-        canvas.height = resizeHeight;
-
-        ctx?.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-        ctx?.drawImage(image, 0, 0, resizeWidth, resizeHeight); // draw resized image
-      };
-    }
-  }, [resizeWidth, resizeHeight, isResizing]);
-
-  useEffect(() => {
-    if (isPadding && onProcessUrl && canvasRef.current) {
-      const image = new Image();
-      image.src = onProcessUrl;
-      image.onload = () => {
-        const canvas = canvasRef.current!;
-        const ctx = canvas.getContext("2d");
-
-        const paddedWidth = image.width + paddingWidth * 2;
-        const paddedHeight = image.height + paddingHeight * 2;
-        canvas.width = paddedWidth;
-        canvas.height = paddedHeight;
-
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx?.drawImage(image, paddingWidth, paddingHeight);
-      };
-    }
-  }, [paddingWidth,paddingHeight, isPadding]);
 
   const handleSaveResize = () => {
     if (selectedImage && canvasRef.current) {
@@ -246,30 +140,64 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setOnProcessUrl(paddedImageURL); // อัปเดต URL สำหรับดาวน์โหลด
       setFlipHorizontal(false);
       setFlipVertical(false);
+      setImageWidthValue(imageWidthValue+paddingWidth*2);
+      setIMageHeightValue(imageHeightValue+paddingHeight*2);
+      setRotation(0);
+      setPaddingWidth(0);
+      setPaddingHeight(0);
+      
+    }
+  };
+
+  const handleSaveGrayscale = () => {
+    if (selectedImage && canvasRef.current) {
+      const grayscaledImageURL = canvasRef.current.toDataURL("image/png");
+      setSelectedImage(grayscaledImageURL); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
+      setIsPadding(false); // ออกจากโหมด Resize
+      setOnProcessUrl(grayscaledImageURL); // อัปเดต URL สำหรับดาวน์โหลด
+      setIsGrayscale(false)
+      setFlipHorizontal(false);
+      setFlipVertical(false);
       setRotation(0);
       setPaddingWidth(0);
       setPaddingHeight(0);
     }
   };
 
-  const handleCancleResize = () => {
+  const handleCancelState = () => {
     if (isResizing == true) {
-      setOnProcessUrl(imageBfResize);
-      setIsResizing(false); // ออกจากโหมด Resize
-      setSelectedImage(imageBfResize);
+      handleCancelResize()
     }
-  };
-  const handleCanclePadding = () => {
     if (isPadding == true) {
-      setOnProcessUrl(imageBfPadding);
-      setIsPadding(false); // ออกจากโหมด Resize
-      setSelectedImage(imageBfPadding);
+      handleCancelPadding()
+    }
+    if (isGrayscale == true) {
+      handleCancelGrayscale()
+     
+    }
+  }
+  const handleCancelResize = () => {
+    if (isResizing == true) {
+      // setOnProcessUrl(imageBfResize);
+      setSelectedImage(imageBfResize);
+      setIsResizing(false); // ออกจากโหมด Resize
     }
   };
-  const handleCancleCustomState = () => {
-    handleCancleResize();
-    handleCanclePadding();
+  const handleCancelPadding = () => {
+    if (isPadding == true) {
+      // setOnProcessUrl(imageBfPadding);
+      setSelectedImage(imageBfPadding);
+      setIsPadding(false); // ออกจากโหมด Resize
+    }
   };
+  const handleCancelGrayscale = () => {
+    if (isGrayscale == true) {
+      setIsGrayscale(false); // ออกจากโหมด Resize
+      setSelectedImage(imageBfGrayscale);
+      // setOnProcessUrl(imageBfGrayscale);
+    }
+  };
+
   const onCropDone = (croppedImageUrl: string) => {
     setSelectedImage(croppedImageUrl);
     setIsCropping(false);
@@ -281,6 +209,182 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
     setIsCropping(false);
     setSelectedImage(onProcessUrl)
   };
+  const downloadImage = () => {
+    if (onProcessUrl) {
+      const link = document.createElement("a");
+      link.href = onProcessUrl; // Set the link's href to the processed image URL
+      link.download = "processed-image.png"; // Set the download filename
+      document.body.appendChild(link);
+      link.click(); // Simulate the click
+      document.body.removeChild(link); // Clean up the link element
+    } else {
+      console.error("No processed image to download.");
+    }
+  };
+  const onResetImage = () => {
+    if (originalImage) {
+      setSelectedImage(originalImage); // Reset to the original image
+      setOnProcessUrl(originalImage); // Reset the processed image URL
+      setRotation(0); // Reset rotation
+      setFlipHorizontal(false); // Reset flip horizontal
+      setFlipVertical(false); // Reset flip vertical
+      setIsGrayscale(false); // Reset grayscale
+      setIsResizing(false); // Exit resizing mode
+      setIsPadding(false); // Exit padding mode
+      setResizeWidth(imageWidthValue); // Reset resize width
+      setResizeHeight(imageHeightValue); // Reset resize height
+      setPaddingWidth(0); // Reset padding width
+      setPaddingHeight(0); // Reset padding height
+    }
+  };
+
+    // โหลดรูปภาพเข้า Component
+    useEffect(() => {
+      if (image) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const img = new Image(); // สร้างออบเจ็กต์ Image
+          img.src = reader.result as string; // ตั้ง src ให้กับ base64 string จาก FileReader
+          img.onload = () => {
+            setResizeWidth(img.width); // ตั้งค่า width เป็นขนาดของรูปภาพ
+            setResizeHeight(img.height); // ตั้งค่า height เป็นขนาดของรูปภาพ
+            setImageWidthValue(img.width);
+            setIMageHeightValue(img.height);
+            setOriginalImage(reader.result as string); 
+            setSelectedImage(reader.result as string); 
+        
+          };
+        };
+        reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
+      }
+    }, [image]); // useEffect จะทำงานเมื่อ image เปลี่ยนแปลง
+  
+    //  ประมวล rotation
+    useEffect(() => {
+      if (selectedImage && canvasRef.current && !isResizing && !isPadding && !isCropping) {
+        
+        const image = new Image();
+        image.src = selectedImage;
+        image.onload = () => {
+          const canvas = canvasRef.current!;
+          const ctx = canvas.getContext("2d");
+  
+          const angleInRadians = (rotation * Math.PI) / 180;
+          const absCos = Math.abs(Math.cos(angleInRadians));
+          const absSin = Math.abs(Math.sin(angleInRadians));
+  
+          // คำนวณขนาดของ canvas หลังจากการหมุน
+          const newCanvasWidth = image.width * absCos + image.height * absSin;
+          const newCanvasHeight = image.width * absSin + image.height * absCos;
+  
+          canvas.width = newCanvasWidth;
+          canvas.height = newCanvasHeight;
+  
+          ctx?.clearRect(0, 0, canvas.width, canvas.height); // ล้าง canvas เดิม
+  
+          ctx?.save();
+          ctx?.translate(canvas.width / 2, canvas.height / 2); // ย้ายจุดศูนย์กลาง canvas ไปตรงกลาง
+  
+          // การ Flip ต้องทำก่อนการหมุน
+          ctx?.rotate(angleInRadians);
+          if (flipHorizontal) {
+            ctx?.scale(-1, 1); // Flip แนวนอน
+          }
+          
+          if (flipVertical) {
+            ctx?.scale(1, -1); // Flip แนวตั้ง
+          }
+  
+          // หมุนภาพตามค่าที่ได้
+  
+          // วาดภาพที่ Flip และหมุนแล้ว
+          ctx?.drawImage(image, -image.width / 2, -image.height / 2);
+          ctx?.restore();
+ 
+          
+          // เก็บ URL ของภาพที่ประมวลผลแล้ว
+          const onProcessUrl = canvas.toDataURL("image/png");
+          setOnProcessUrl(onProcessUrl);
+        };
+      }
+    }, [
+      selectedImage,
+      rotation,
+      isGrayscale,
+      flipHorizontal,
+      flipVertical,
+      isResizing,
+      isPadding,
+      isCropping,
+    ]);
+    // grayscale
+    useEffect(() => {
+      if (isGrayscale && onProcessUrl && canvasRef.current) {
+        const image = new Image();
+        image.src = onProcessUrl;
+        image.onload = () => {
+          const canvas = canvasRef.current!;
+          const ctx = canvas.getContext("2d");
+    
+          ctx?.clearRect(0, 0, canvas.width, canvas.height); // ล้าง canvas เดิม
+          ctx?.drawImage(image, 0, 0, canvas.width, canvas.height); // วาดภาพ
+    
+          // ตรวจสอบว่าต้องทำ Grayscale หรือไม่
+          const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+          if (imageData && ctx) {
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+              const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+              data[i] = avg; // Red
+              data[i + 1] = avg; // Green
+              data[i + 2] = avg; // Blue
+            }
+            ctx.putImageData(imageData, 0, 0);
+          }
+        };
+      }
+    }, [isGrayscale, ]);
+  
+    // resize
+    useEffect(() => {
+      if (isResizing && onProcessUrl && canvasRef.current) {
+        const image = new Image();
+        image.src = onProcessUrl;
+        image.onload = () => {
+          const canvas = canvasRef.current!;
+          const ctx = canvas.getContext("2d");
+          
+          canvas.width = resizeWidth;
+          canvas.height = resizeHeight;
+  
+          ctx?.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+          ctx?.drawImage(image, 0, 0, resizeWidth, resizeHeight); // draw resized image
+        };
+      }
+    }, [resizeWidth, resizeHeight, isResizing]);
+  
+    // padding
+    useEffect(() => {
+      if (isPadding && onProcessUrl && canvasRef.current) {
+        const image = new Image();
+        image.src = onProcessUrl;
+        image.onload = () => {
+          const canvas = canvasRef.current!;
+          const ctx = canvas.getContext("2d");
+  
+          const paddedWidth = image.width + paddingWidth * 2;
+          const paddedHeight = image.height + paddingHeight * 2;
+          canvas.width = paddedWidth;
+          canvas.height = paddedHeight;
+  
+          ctx?.clearRect(0, 0, canvas.width, canvas.height);
+  
+          ctx?.drawImage(image, paddingWidth, paddingHeight);
+        };
+      
+      }
+    }, [paddingWidth,paddingHeight, isPadding,]);
+    
   return (
     <div className="flex w-full ">
       {selectedImage && (
@@ -295,30 +399,37 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
             </div>
           ) : (
             <div className=" px-10 mx-auto w-full h-fit pb-10 flex  ">
-              <div className=" w-[70%] flex h-fit  flex-col ">
-                <div className=" h-[400px]  flex items-center justify-center ">
+              <div className=" w-[70%] border flex flex-col pb-6 rounded-[5px] ">
+                <div className=" h-fit  flex items-center justify-center  py-10">
                 <canvas
-                  className=" mx-auto max-w-[500px]  max-h-[500px] border-2 border-dashed border-gray-400  justify-center  "
+                  className="    border-2 border-dashed border-gray-400  justify-center  "
                   ref={canvasRef}
                   style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"150px" ,minHeight:"150px"}}
                 ></canvas>
                 </div>
         
               <div className="flex gap-6  mx-auto">
-                  <div
-                    onClick={handleCropping}
-                    className="flex items-center justify-center w-28 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
-                    >
-                    <Crop />
-                    <p className="text-center text-sm font-medium">Crop</p>
-                  </div>
                   
                   <div
-                    onClick={()=>{}}
-                    className="flex items-center justify-center w-28 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                    onClick={onResetImage}
+                    className="flex items-center justify-center w-fit px-2 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
                     >
                     <RestartAlt />
-                    <p         className="text-center text-sm font-medium">Reset Image</p>
+                    <p         className="text-center text-sm font-medium">Reset รูปภาพ</p>
+                  </div>
+                  <div
+                    onClick={handleCropping}
+                    className="flex items-center justify-center w-fit px-2 h-10  rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                    >
+                    <Crop />
+                    <p className="text-center text-sm font-medium">Crop รูปภาพ</p>
+                  </div>
+                  <div
+                    onClick={downloadImage}
+                    className="flex items-center justify-center w-fit h-10 px-2 rounded-lg border border-gray-300   hover:bg-gray-100 cursor-pointer  hover:text-blue-700"
+                    >
+                    <Download />
+                    <p className="text-center text-sm font-medium">Download รูปภาพ</p>
                   </div>
                 </div>
               </div>
@@ -338,19 +449,26 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                             label="Rotation"
                             value="1"
                             sx={{ flexGrow: 1 }}
-                            onClick={handleCancleCustomState}
+                            onClick={handleRotationCustomState}
+                          />
+                          <Tab
+                            icon={<Contrast />}
+                            label="Grayscale"
+                            value="2"
+                            sx={{ flexGrow: 1 }}
+                            onClick={handleGrayscale}
                           />
                           <Tab
                             icon={<FormatSize />}
                             label="Resize"
-                            value="2"
+                            value="3"
                             sx={{ flexGrow: 1 }}
                             onClick={handleResize}
                           />
-                          <Tab
+                            <Tab
                             icon={<ZoomOutMap />}
                             label="Padding"
-                            value="3"
+                            value="4"
                             sx={{ flexGrow: 1 }}
                             onClick={handlePadding}
                           />
@@ -360,7 +478,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                       <TabPanel value="1">
                         <div className="w-full">
                           {/* flip zone */}
-                          <p className="text-2xl">Rotate & Flip Image</p>
+                          <p className="text-2xl">Rotation Image</p>
                           <hr className="my-2"></hr>
                           <div className=" flex flex-wrap gap-4 justify-between py-4 w-full ">
                             {/* ปุ่ม Flip ซ้าย */}
@@ -399,7 +517,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                                 </div>
                                 <p className="text-center text-sm font-medium">
                                   
-                                  flip{<br></br>} Horizontal
+                                  Flip{<br></br>} Horizontal
                                 </p>
                               </div>
                               {/* ปุ่ม Flip ขวา */}
@@ -411,63 +529,85 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                                   <SwapVert fontSize="large" />
                                 </div>
                                 <p className="text-center text-sm font-medium">
-                                  flip{<br></br>}Vertical
+                                  Flip{<br></br>}Vertical
                                 </p>
-                         
                               </div>
                           </div>
-
-
-                          <Button
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "#4f46e5",
-                              "&:hover": { backgroundColor: "#3730a3" },
-                            }}
-                            style={{ marginRight: "0.5rem" }}
-                            onClick={toggleGrayscale}
-                          >
-                            {isGrayscale ? "ลบ Grayscale" : "ปรับ Grayscale"}
-                          </Button>
-
-                          <Button
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "#4f46e5",
-                              "&:hover": { backgroundColor: "#3730a3" },
-                            }}
-                            href={onProcessUrl}
-                            download="customImage.png"
-                          >
-                            ดาวน์โหลด รูปภาพ
-                          </Button>
                         </div>
                       </TabPanel>
                       <TabPanel value="2">
                         <div className="w-full">
+                          <p className="text-2xl">Grayscale</p>
+                          <hr className="my-2"></hr>
+                          <button
+                            className={`flex items-center justify-center my-4 px-2 w-fit max-w-[40%] h-12 rounded-lg border ${
+                              isGrayscale === true
+                                ? "border-blue-700 text-blue-700"
+                                : "border-gray-300"
+                            } hover:bg-gray-100 cursor-pointer hover:text-blue-700`}
+                            onClick={toggleGrayscale}
+                          >
+                        <Contrast /> {isGrayscale ? "ลบ Grayscale" : "ปรับ Grayscale"}
+              
+                          </button>
+                          <Button
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "#4f46e5",
+                              "&:hover": { backgroundColor: "#3730a3" },
+                            }}
+                            style={{ marginRight: "0.5rem" }}
+                            onClick={handleSaveGrayscale}
+                          >
+                              apply
+                          </Button>
+                    
+                        </div>
+                      </TabPanel>
+                      <TabPanel value="3">
+                        <div className="w-full">
                           <p className="text-2xl">Resize Image</p>
                           <hr className="my-2"></hr>
                           {/* โหมดการปรับขนาด (Resize Mode) */}
-                          <text>From:</text>
-                          <p className="text-xl bg-slate-100 text-indigo-600 font-medium rounded-md w-fit px-4 text-brow my-4">
-                            width:{imageWidthValue} x height:
+                          <p>ขนาดปัจจุบัน:</p>
+                          <span className="text-xl bg-slate-100 text-indigo-600 font-medium rounded-md w-fit px-4 text-brow my-4">
+                            width:{imageWidthValue}
+                            </span>
+                            <span className="mx-2">x</span>
+                          <span className="text-xl bg-slate-100 text-indigo-600 font-medium rounded-md w-fit px-4 text-brow my-4">
+                             height:
                             {imageHeightValue} (px)
-                          </p>
-                          <p>To:</p>
-                          <TextField
-                            label="ความกว้าง (px)"
+                          </span>
+                          <p>เปลี่ยนเป็น:</p>
+                          <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
+                            width:{resizeWidth} 
+                          </span>
+                            <span className="mx-2">x</span>
+                          <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
+                          height:
+                            {resizeHeight} (px)
+                          </span>
+                          <div className="flex gap-2 py-4">
+                            <label className="w-[45%]">
+                            ความกว้าง (px)
+                            <input
                             type="number"
                             value={resizeWidth}
                             onChange={handleResizeWidthChange}
-                            style={{ marginRight: "0.5rem" }}
-                          />
-                          <TextField
-                            label="ความสูง (px)"
+                            className="w-full p-2 border border-gray-300 rounded-lg  no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                            />
+                            </label>
+                            <label className="w-[45%]">
+                            ความสูง (px)
+                              <input
                             type="number"
                             value={resizeHeight}
                             onChange={handleResizeHeightChange}
-                          />
-                          <div className="py-4">
+                            className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                            />
+                            </label>
+                          </div>
+                          <div className="">
                             <Button
                               variant="contained"
                               sx={{
@@ -476,34 +616,41 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                               }}
                               onClick={handleSaveResize}
                             >
-                              Resize Image
+                              Apply
                             </Button>
                           </div>
                         </div>
                       </TabPanel>
-                      <TabPanel value="3">
+                      <TabPanel value="4">
                         <div className="w-full">
                           <p className="text-2xl">Padding Image</p>
                           <hr className="my-2"></hr>
-                          <text>Image Size:</text>
-                          <p className="text-xl bg-slate-100 text-indigo-600 font-medium rounded-md w-fit px-4 text-brow my-4">
-                            width:{imageWidthValue} x height:
-                            {imageHeightValue} (px)
+                          <p>ขนาดหลังPadding:</p>
+                       
+                          <p className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
+                            width:{imageWidthValue+paddingWidth*2} x height:
+                            {imageHeightValue+paddingHeight*2} (px)
                           </p>
-                          <TextField
-                            label="ความกว้าง (px)"
+                          <div className="flex gap-2 py-4">
+                            <label className="w-[45%]">
+                            ความกว้าง (px)
+                            <input
                             type="number"
-                            style={{ marginRight: "0.5rem"  }}
                             value={paddingWidth}
                             onChange={(e) => setPaddingWidth(Number(e.target.value))}
-                          />
-                            <TextField
-                            label="ความสูง (px)"
+                            className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                            />
+                            </label>
+                            <label className="w-[45%]">
+                            ความสูง (px)
+                              <input
                             type="number"
-                            style={{ marginRight: "0.5rem" }}
                             value={paddingHeight}
                             onChange={(e) => setPaddingHeight(Number(e.target.value))}
-                          />
+                            className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                            />
+                            </label>
+                          </div>
                           <Button
                             variant="contained"
                             sx={{
@@ -512,7 +659,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                             }}
                             onClick={handleSavePadding}
                           >
-                            บันทึกการปรับขนาด
+                           Apply
                           </Button>
                         </div>
                       </TabPanel>

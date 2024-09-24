@@ -77,24 +77,32 @@ const renderIcon = (iconName: any) => {
               เว็บไซต์สำหรับทำงานประมวลผลภาพและวิดีโอด้วย AI computer vision
             </p>
             <Link to={`/workspaces`}>
-            {/* <Button variant="contained"    size="large">abc</Button> */}
-            {/* <Buttons name='abc' startIcon={RadarChartOutlined}></Buttons> */}
-              <button
-                type="button"
-                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4
-             focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 
-             "
+              <Button
+                variant="contained"
+                size='large'
+                sx={{
+                  backgroundColor: "#4338ca",
+                  "&:hover": {
+                    backgroundColor: "#1e40af", // สีที่ต้องการเมื่อ hover
+                  },
+                }}
               >
-                เริ่มใช้งาน
-              </button>
+              เริ่มใช้งาน
+              </Button>
             </Link>
             <Link to={`/docs`}>
-              <button
-                type="button"
-                className="text-white bg-indigo-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
+            <Button
+                variant="contained"
+                    size='large'
+                sx={{
+                  backgroundColor: "#4338ca",
+                  "&:hover": {
+                    backgroundColor: "#1e40af", // สีที่ต้องการเมื่อ hover
+                  },
+                }}
               >
-                เรียนรู้เพิ่มเติม
-              </button>
+              เรียนรู้เพิ่มเติม
+              </Button>
             </Link>
           </div>
         </div>

@@ -31,9 +31,34 @@ import Layout from './Layout.tsx'
 import AIlist from './pages/Ai/AiListPage.tsx'
 import AIDemo from './pages/Ai/AIDemoPage.tsx'
 import UserList from './pages/Admin/UserList.tsx'
+import { createTheme, ThemeProvider } from '@mui/material'
 
 
 
+
+const theme = createTheme({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          minWidth: "75px", // ปรับขนาดปุ่ม
+          fontWeight: "bold", // ตัวอักษรหนา
+          borderRadius: "20px", // มุมมน
+          // borderRadius: '30px',
+          textTransform: "none", // ไม่ใช้ตัวพิมพ์ใหญ่ทั้งหมด
+          marginLeft: "10px", // ระยะห่างจากปุ่มอื่นๆ
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          // borderRadius: "20px", // มุมมน
+        },
+      },
+    },
+  },
+});
 
 //  React router path here
 const router = createBrowserRouter([
@@ -132,7 +157,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
+  <ThemeProvider theme={theme}>
   <React.StrictMode>
       <RouterProvider router={router}/>
   </React.StrictMode>,
+  </ThemeProvider>
 )

@@ -1,8 +1,6 @@
-import { DeleteOutlined, EditFilled, EditOutlined, MoreOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, MoreOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Button, TextField } from '@mui/material';
-import { Modal } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import ReactQuill from 'react-quill';
 import { Reorder } from "framer-motion"
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { Editor } from '@tinymce/tinymce-react';
@@ -37,17 +35,11 @@ type EditAtIndexType = {
 
 const Docs = () => {
   // ข้อมูลของ Docdata
-  // const [docDatas, setDocDatas] = useState<DocData[]>([
-  //   { title: "AI System Garden", subTitle: null },
-  //   { title: "Workspaces", subTitle: null }
-  // ]);
-
   const [docDatas, setDocDatas] = useState<DocData[]>([
     {
       id: 1,
       title: "AI Garden System",
       contentData: `
-
 <p><span style="color: #353d81;"><strong><span style="font-size: 36pt;">Welcome to AI Garden System</span></strong></span></p>
 <p><span style="font-size: 18pt;">ในแต่ละส่วนของหน้านี้จะเป็นคำอธิบายเกี่ยวกับdocument ที่จะช่วยให้ข้อมูลส่วนต่างๆของเว็บไซต์<br>สามารถกดเลือกแต่ละหัวข้อทางsidebar menu เพื่อดูข้อมูลแต่ละหัวข้อ<br><br></span></p>
 <p><span style="color: #353d81;">&nbsp;</span></p>
@@ -494,14 +486,20 @@ const [items, setItems] = useState([0, 1, 2, 3])
       
       <div className=" w-[95%]  border border-zinc-300 mx-auto my-2 mb-4" />
         <div className="flex justify-end">
-          <button
-            onClick={handleTitleAdd}
-            type="button"
-            className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
-          >
-            <PlusCircleOutlined />
-            Add New Heading
-          </button>
+    
+          <Button
+              variant="contained"
+              size="small"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+              onClick={handleTitleAdd}
+              >
+           <PlusCircleOutlined /> Add New Heading
+      </Button>
           
         </div>
         <Reorder.Group axis="y" values={docDatas} onReorder={setDocDatas}>
@@ -651,32 +649,33 @@ const [items, setItems] = useState([0, 1, 2, 3])
                   text-indigo-900 "
                                     >
                                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                                        คุณยืนยันที่จะลบหัวข้อย่อยนี้ใช่ไหม
+                                        Delete this sub headding ?
                                       </span>
                                     </h1>
                                   </div>
                                   {/*body*/}
                                   {/*footer*/}
                                   <div className=" mx-auto flex items-center justify-end p-6">
-                                    <button
-                                      className="bg-red-500 text-white hover:bg-red-600  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                                      type="button"
-                                      onClick={() =>
-                                        handleSubTitleDelete(index, subIndex)
-                                      }
+                                  <Button
+                                    variant="outlined"
+                                    size="large"
+                                    onClick={(e) =>
+                                      hideSubDeleteModal(e, index, subIndex)
+                                    }
                                     >
-                                      ยืนยัน
-                                    </button>
-
-                                    <button
-                      className="bg hover:bg-gray-100 text-gray-900 bg-white border border-gray-300  font-medium uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                                      onClick={(e) =>
-                                        hideSubDeleteModal(e, index, subIndex)
-                                      }
+                                  Cancel
+                                  </Button>
+                                 
+                                  <Button
+                                    variant="contained"
+                                    size="large"
+                                    color='error'
+                                    onClick={() =>
+                                      handleSubTitleDelete(index, subIndex)
+                                    }
                                     >
-                                      ไม่
-                                    </button>
+                                  Delete
+                                  </Button>
                                   </div>
                                 </div>
                               </div>
@@ -786,28 +785,28 @@ const [items, setItems] = useState([0, 1, 2, 3])
                   text-indigo-900 "
                         >
                           <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                            คุณยืนยันที่จะลบหัวข้อนี้ใช่ไหม
+                            Delete this heading?
                           </span>
                         </h1>
                       </div>
                       {/*body*/}
                       {/*footer*/}
                       <div className=" mx-auto flex items-center justify-end p-6">
-                        <button
-                          className="bg-red-500 text-white hover:bg-red-600  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                          type="button"
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={(e) => hideDeleteModal(e, index)}
+                        >
+                        Cancel
+                      </Button>
+                       <Button
+                          variant="contained"
+                          size="large"
+                          color='error'
                           onClick={() => handleTitleDelete(index)}
-                        >
-                          ยืนยัน
-                        </button>
-
-                        <button
-                      className="bg hover:bg-gray-100 text-gray-900 bg-white border border-gray-300  font-medium uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                          onClick={(e) => hideDeleteModal(e, index)}
-                        >
-                          ไม่
-                        </button>
+                          >
+                        Delete
+                      </Button>
                       </div>
                     </div>
                   </div>
@@ -827,30 +826,36 @@ const [items, setItems] = useState([0, 1, 2, 3])
           {showTextEditor === true ? (
             <div>
               <div className="pr-12 w-[80%] h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-between items-center pl-2">
-                <button
+                <Button
+                variant="contained"
+                size="large"
+                color='error'
                   onClick={() => {
                     if (!showTextEditor) {
                     } else {
                       setShowWarningEdit(true);
                     }
                   }}
-                  type="button"
-                  className=" bg-red-500 text-white hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
                 >
                   <SaveOutlined />
                   Discard Change
-                </button>
+                </Button>
 
-                <button
-                  onClick={() =>
+                <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": {
+                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                  },
+                }}
+                onClick={() =>
                     handleSaveEditorModal()
                   }
-                  type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
                 >
-                  <SaveOutlined />
-                  Save Content
-                </button>
+                  <SaveOutlined />Save Content
+                </Button>
               </div>
               <Editor
                 apiKey="ncaou3be6pfqi22ceukdz7cyc2cf3nz3qhj33rqb8b5j8kxy"
@@ -884,16 +889,22 @@ const [items, setItems] = useState([0, 1, 2, 3])
           ) : (
             <div>
               <div className="pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
-                <button
-                  onClick={() =>
-                    EditContent(editAtIndex[0].index, editAtIndex[0].subIndex)
-                  }
-                  type="button"
-                  className="text-white bg-indigo-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  focus:outline-none "
+                <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": {
+                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                  },
+                }}
+                onClick={() =>
+                      EditContent(editAtIndex[0].index, editAtIndex[0].subIndex)
+                    }
                 >
-                  <EditOutlined />
-                  Edit Document Content
-                </button>
+                <EditOutlined />
+                Edit Document Content
+                </Button>
               </div>
               <div
                 className="pt-5 pl-8"
@@ -926,21 +937,24 @@ const [items, setItems] = useState([0, 1, 2, 3])
                   {/*body*/}
                   {/*footer*/}
                   <div className=" mx-auto flex items-center justify-end p-6">
-                    <button
-                      className="bg-red-500 text-white hover:bg-red-600  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={() => AbandonEditing()}
-                    >
-                      Discard
-                    </button>
-
-                    <button
-                      className="bg hover:bg-gray-100 text-gray-900 bg-white border border-gray-300  font-medium uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={(e) => hideWarningModal(e)}
-                    >
-                 Continue editing
-                    </button>
+                <Button
+                variant="outlined"
+                size="large"
+                // color='error'
+                onClick={(e) => hideWarningModal(e)}
+                >
+                  Continue editing
+                </Button>
+                  <Button
+                variant="contained"
+                size="large"
+                color='error'
+                onClick={() => AbandonEditing()}
+                >
+                   Discard
+                </Button>
+              
+                   
                   </div>
                 </div>
               </div>
@@ -972,24 +986,31 @@ const [items, setItems] = useState([0, 1, 2, 3])
                   {/*body*/}
                   {/*footer*/}
                   <div className=" mx-auto flex items-center justify-end p-6">
-                    <button
-                      className="text-white bg-indigo-600 hover:bg-blue-800  font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={() =>       SaveEditContent(
-                        editAtIndex[0].index,
-                        editAtIndex[0].subIndex
-                      )}
-                    >
-                      Save
-                    </button>
-
-                    <button
-                      className="bg hover:bg-gray-100 text-gray-900 bg-white border border-gray-300  font-medium uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={(e) => hideSaveEditorModal(e)}
-                    >
-                      No
-                    </button>
+                  <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={(e) => hideSaveEditorModal(e)}
+                        >
+                    Cancel
+                </Button>
+                <Button
+                        variant="contained"
+                        size="large"
+                        sx={{
+                          backgroundColor: "#4f46e5",
+                          "&:hover": {
+                            backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                          },
+                        }}
+                        onClick={() =>       SaveEditContent(
+                          editAtIndex[0].index,
+                          editAtIndex[0].subIndex
+                        )}
+                        >
+                       Save
+                </Button>
+                   
+              
                   </div>
                 </div>
               </div>
