@@ -1,142 +1,157 @@
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 
-import { Box, Button, Dialog, DialogActions, DialogTitle, FormControl, FormHelperText, MenuItem, TextField, Typography } from "@mui/material";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Link, redirect, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { SaveOutlined } from '@ant-design/icons';
-import { List } from 'antd';
-import { Close, Delete } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { Link, redirect, useParams } from "react-router-dom";
+import axios from "axios";
+import { SaveOutlined } from "@ant-design/icons";
+import { List } from "antd";
+import { Close, Delete } from "@mui/icons-material";
 interface memberData {
-  id:number
+  id: number;
   firstName: string;
   lastName: string;
-  email:string;
-  role:string;
+  email: string;
+  role: string;
 }
 
-
-
 const WorkspaceSetting = () => {
-  let {workspaceId} = useParams();
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  let { workspaceId } = useParams();
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
+  const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   useEffect(() => {
     const fetchWorkspace = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/workspaces/${workspaceId}`);
+        const response = await axios.get(
+          `http://localhost:3000/workspaces/${workspaceId}`
+        );
         const { name, description } = response.data;
         setName(name);
         setDescription(description);
-        
       } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:', error);
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
       }
     };
-  
+
     fetchWorkspace();
   }, [workspaceId]);
 
+  // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
+  const handleSave = async () => {
+    try {
+      const payload = {
+        name,
+        description,
+      };
 
-    // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
-    const handleSave = async () => {
-      try {
-        const payload = {
-          name,
-          description,
-        };
-  
-        // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
-        const response = await axios.patch(`http://localhost:3000/workspaces/${workspaceId}`, payload);
-        window.location.href = '/workspaces';
-        // จัดการเมื่ออัปเดตสำเร็จ
-        console.log('อัปเดต Workspace สำเร็จ:', response.data);
-        // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
-        // navigate(`/workspaces/${workspaceId}`);
-  
-      } catch (error) {
-        // จัดการข้อผิดพลาด
-        console.error('เกิดข้อผิดพลาดในการอัปเดต Workspace:', error);
-        alert('เกิดข้อผิดพลาดในการอัปเดต Workspace');
-      }
-    };
-
-
-    const handleModalDelete=()=>{
-      setOpen(true);
+      // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
+      const response = await axios.patch(
+        `http://localhost:3000/workspaces/${workspaceId}`,
+        payload
+      );
+      window.location.href = "/workspaces";
+      // จัดการเมื่ออัปเดตสำเร็จ
+      console.log("อัปเดต Workspace สำเร็จ:", response.data);
+      // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
+      // navigate(`/workspaces/${workspaceId}`);
+    } catch (error) {
+      // จัดการข้อผิดพลาด
+      console.error("เกิดข้อผิดพลาดในการอัปเดต Workspace:", error);
+      alert("เกิดข้อผิดพลาดในการอัปเดต Workspace");
     }
+  };
 
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-    const handleDelte = async () => {
-      try {
-        const payload = {
-          name,
-          description,
-        };
-  
-        // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
-        const response = await axios.delete(`http://localhost:3000/workspaces/${workspaceId}`);
-        window.location.href = '/workspaces';
-        // จัดการเมื่ออัปเดตสำเร็จ
-        console.log('ลบ Workspace สำเร็จ:', response.data);
-        // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
-        // navigate(`/workspaces/${workspaceId}`);
-  
-      } catch (error) {
-        // จัดการข้อผิดพลาด
-        console.error('เกิดข้อผิดพลาดในการลบ Workspace:', error);
-        alert('เกิดข้อผิดพลาดในการลบ Workspace');
-      }
-    };
+  const handleModalDelete = () => {
+    setOpen(true);
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleDelte = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/workspaces/${workspaceId}`);
+      window.location.href = "/workspaces";
+      console.log("ลบ Workspace สำเร็จ:", response.data);
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการลบ Workspace:", error);
+      alert("เกิดข้อผิดพลาดในการลบ Workspace");
+    }
+  };
+  const isDeleteDisabled = confirmText !== name;
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* confirm modal delete */}
-      <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            
-          >
-          <Box sx={{ textAlign: 'center', padding: '20px' }}>
-            <div className='p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto'> 
-            {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
-            <Close sx={{ fontSize: 40, color: 'red' }} />
-
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <Box sx={{ textAlign: "center", padding: "20px" }}>
+            <div className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto">
+              {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
+              <Close sx={{ fontSize: 40, color: "red" }} />
             </div>
-     
-            <DialogTitle id="alert-dialog-title"  sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-            Delete Workspace
-           
-          </DialogTitle>
-          <Typography variant="body1" sx={{ marginBottom: '20px', color: '#555' }}>
-          Delete a <strong>"{name}"</strong> from workspace list?
-        </Typography>
-          </Box> 
-            <DialogActions sx={{  padding: '30px'  }}>
-              <Button variant="outlined" color="info" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => {
-                  handleDelte();
-                  handleClose();
-                }}
-                autoFocus
-              >
-                Delete{" "}
-              </Button>
-            </DialogActions>
-          </Dialog>
+
+            <DialogTitle
+              id="alert-dialog-title"
+              sx={{ fontSize: "1.5rem", fontWeight: "bold" }}
+            >
+              Delete Workspace
+            </DialogTitle>
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "20px", color: "#555" }}
+            >
+              Delete a <strong>"{name}"</strong> from workspace list?
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "20px", color: "#555" }}
+            >
+              To confirm, type <strong>"{name}"</strong>  to in the box
+            </Typography>
+            <input
+          type="text"
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}  // อัปเดต confirmText เมื่อผู้ใช้พิมพ์
+          className="w-full p-2 border border-gray-300 rounded-lg no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+        />
+          </Box>
+          <DialogActions sx={{ padding: "30px" }}>
+            <Button variant="outlined" color="info" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleDelte();
+                handleClose();
+              }}
+              autoFocus
+              disabled={isDeleteDisabled}  
+            >
+              Delete{" "}
+            </Button>
+          </DialogActions>
+        </Dialog>
         {/* side bar */}
         <Sidebar></Sidebar>
         {/* content container */}
@@ -217,26 +232,28 @@ const WorkspaceSetting = () => {
         </div>
 
         <div className=" pl-[20%] justify-between pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
-          <button
+          <Button
+            variant="contained"
+            color="error"
+            size="large"
+            style={{ marginRight: "0.5rem" }}
             onClick={handleModalDelete}
-            type="button"
-            className=" bg-red-500  hover:bg-red-600  rounded-lg px-5 py-2.5 me-2 
-            focus:outline-none 
-            text-center text-white text-xl font-light "
           >
             Delete Workspace
-          </button>
+          </Button>
 
-          <button
-            type="button"
-            className=" w-fit  bg-indigo-600 hover:bg-blue-800
-            focus:ring-4 focus:ring-blue-300 rounded-lg px-5 py-2.5 me-2 
-            focus:outline-none 
-            text-center text-white text-xl font-light"
+          <Button
+            size="large"
+            variant="contained"
+            sx={{
+              backgroundColor: "#4f46e5",
+              "&:hover": { backgroundColor: "#3730a3" },
+            }}
+            style={{ marginRight: "0.5rem" }}
             onClick={handleSave}
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </>
