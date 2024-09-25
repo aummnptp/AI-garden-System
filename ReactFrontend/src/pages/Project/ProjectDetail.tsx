@@ -50,7 +50,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
   if (!detail) {
     return <div>ไม่พบรายละเอียดโปรเจก</div>;
   }
-
+  const uploadIcon = detail.inputType === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
 
   return (
     <>
@@ -170,6 +170,7 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
       <Button
               variant="contained"
               size="large"
+              startIcon={uploadIcon}
               sx={{
                 backgroundColor: "#4f46e5",
                 "&:hover": {

@@ -172,7 +172,7 @@ const CreateAiProject = () => {
                     </div>
                   ))}
                   <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
-                    + เพิ่ม Key
+                    + Add Key
                   </button>
                 </div>
               ) : aiType === 'Regression' && (
@@ -201,7 +201,7 @@ const CreateAiProject = () => {
                     </div>
                   ))}
                   <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
-                    + เพิ่ม Key
+                    + Add Key
                   </button>
                   </div>
                   <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
@@ -226,12 +226,20 @@ const CreateAiProject = () => {
                     </div>
                   ))}
                   <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-[15px]">
-                    + เพิ่ม Parameter
+                    + Add Parameter
                   </button>
                 </div>
                 
               )}
-
+              <div className="form-group">
+                <label>Service URI</label>
+                <input
+                  type="text"
+                  value={serviceUri}
+                  onChange={(e) => setServiceUri(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                />
+              </div>
               <div className="form-group">
                 <label>คำอธิบาย Input ของ AI</label>
                 <textarea
@@ -261,7 +269,7 @@ const CreateAiProject = () => {
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
                     <button type="button" onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-[15px] text-white">
-                      + เพิ่ม Tag
+                      + Add Tag
                     </button>
                   </div>
                 </div>

@@ -50,7 +50,7 @@ const PredictAiModel: React.FC = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-
+      console.log(file.size);
       try {
         const response = await fetch(`http://localhost:5000/predict/${modelId}`, {
           method: 'POST',
@@ -64,21 +64,17 @@ const PredictAiModel: React.FC = () => {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const data = await response.json();
+
+          // ดึงค่า prediction, regression_params และ ai_type จาก data
+          const { prediction, regression_params, ai_type } = data;
+
           navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
             state: {
-              prediction: data,
-              file: fileUrl,
-              fileName: file.name
-            }
-          });
-        } else if (contentType && contentType.includes('image/jpeg')) {
-          const blob = await response.blob();
-          const imageObjectURL = URL.createObjectURL(blob);
-          navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
-            state: {
-              prediction: null,
-              file: imageObjectURL,
-              fileName: file.name
+              prediction: prediction,   // ผลลัพธ์การพยากรณ์
+              regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
+              ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
+              file: fileUrl,            // ไฟล์ที่อัปโหลด
+              fileName: file.name       // ชื่อไฟล์ที่อัปโหลด
             }
           });
         }
@@ -118,8 +114,8 @@ const PredictAiModel: React.FC = () => {
                   ) : (
                     <video controls className="w-full">
                       <source src={fileUrl} type="video/mp4" />
-                      <source src={fileUrl} type="video/webm"/>
-                      
+                      <source src={fileUrl} type="video/webm" />
+
                       <p>เบราว์เซอร์ของคุณไม่รองรับการแสดงวิดีโอ <a href={fileUrl}>ดาวน์โหลดวิดีโอที่นี่</a>.</p>
                     </video>
                   )}
@@ -128,18 +124,18 @@ const PredictAiModel: React.FC = () => {
 
               <div className="flex justify-end">
                 <Button
-                type="submit" 
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#3b82f6",
-                  "&:hover": {
-                    backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                  },
-                }}
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    backgroundColor: "#3b82f6",
+                    "&:hover": {
+                      backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
                 >
-                ยืนยัน
-              </Button>
+                  ยืนยัน
+                </Button>
               </div>
             </form>
           </div>
