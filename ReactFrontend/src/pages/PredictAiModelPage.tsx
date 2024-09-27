@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import ProjectData from "../data/ProjectData";
 import { Button } from '@mui/material';
 
-const PredictAiModel: React.FC = () => {
+const PredictAiModelPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const { modelId } = useParams<{ modelId: string }>();
   const [file, setFile] = useState<File | null>(null);
@@ -146,4 +146,4 @@ const PredictAiModel: React.FC = () => {
   );
 };
 
-export default PredictAiModel;
+export default PredictAiModelPage;

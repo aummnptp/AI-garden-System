@@ -4,7 +4,7 @@ import MiniFooter from '../../components/MiniFooter'
 import CustomizedTables from '../../components/table/Table'
 import EnhancedTable from '../../components/table/WorkspaceTable'
 
-const WorkspaceHistory = () => {
+const WorkspaceHistoryPage = () => {
   return (
     <>
     <div className="flex h-full min-h-screen bg-neutral-100">
@@ -42,4 +42,4 @@ const WorkspaceHistory = () => {
   )
 }
 
-export default WorkspaceHistory
+export default WorkspaceHistoryPage

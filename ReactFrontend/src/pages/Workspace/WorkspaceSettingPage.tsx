@@ -27,7 +27,7 @@ interface memberData {
   role: string;
 }
 
-const WorkspaceSetting = () => {
+const WorkspaceSettingPage = () => {
   let { workspaceId } = useParams();
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -260,4 +260,4 @@ const WorkspaceSetting = () => {
   );
 };
 
-export default WorkspaceSetting;
+export default WorkspaceSettingPage;

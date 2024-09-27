@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
 import AdminSidebar from "../components/AdminSidebar";
 
-const CreateAiProject = () => {
+const CreateAiProjectPage = () => {
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
@@ -290,4 +290,4 @@ const CreateAiProject = () => {
   );
 };
 
-export default CreateAiProject;
+export default CreateAiProjectPage;

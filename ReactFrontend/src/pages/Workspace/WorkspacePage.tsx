@@ -13,7 +13,7 @@ import MiniFooter from "../../components/MiniFooter";
 import axios from "axios";
 import { Button } from "@mui/material";
 
-function Workspace() {
+function WorkspacePage() {
   // my workspace show
   const [myWorkspace, setMyWorkspace] = useState([]); 
   const [invitedWorkspace, setInvitedWorkspace]= useState([]); 
@@ -49,7 +49,7 @@ function Workspace() {
   console.log(myWorkspace)
 
   return (
-    <>
+      <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
 
         {/* popup */}
@@ -134,9 +134,9 @@ function Workspace() {
           </div>
         </div>
       </div>
-            <MiniFooter></MiniFooter>
-            </>
+      <MiniFooter></MiniFooter>
+    </>
   );
-}
+};
 
-export default Workspace;
+export default WorkspacePage;

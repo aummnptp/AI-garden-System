@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { Button } from '@mui/material';
 import Buttons from '../components/Button';
 
-function Home() {
+function HomePage() {
 
   const AITypeData = [
     {
@@ -224,4 +224,4 @@ const renderIcon = (iconName: any) => {
   );
 }
 
-export default Home
+export default HomePage

@@ -9,7 +9,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mu
 const { TextArea } = Input;
 
 
-function CreateProject() {
+function CreateProjectPage() {
   let {workspaceId} = useParams()
 
   return (
@@ -92,4 +92,4 @@ function CreateProject() {
   )
 }
 
-export default CreateProject
+export default CreateProjectPage

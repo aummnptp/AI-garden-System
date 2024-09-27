@@ -33,7 +33,7 @@ type EditAtIndexType = {
   subIndex: number | null;
 };
 
-const Docs = () => {
+const DocsPage = () => {
   // ข้อมูลของ Docdata
   const [docDatas, setDocDatas] = useState<DocData[]>([
     {
@@ -1025,4 +1025,4 @@ const [items, setItems] = useState([0, 1, 2, 3])
   );
 };
 
-export default Docs;
+export default DocsPage;

@@ -1,36 +1,33 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-
-import Workspace from './pages/Workspace/Workspace.tsx'
-
 import './index.css'
 import { createBrowserRouter,RouterProvider,Route ,Link } from 'react-router-dom'
 
+
+
 // pag import
-import Home from './pages/Home.tsx'
-import Nav from './components/Nav.tsx'
-import ProjectList from './pages/Project/ProjectList.tsx'
+import WorkspacePage from './pages/Workspace/WorkspacePage.tsx'
+import HomePage from './pages/HomePage.tsx'
+import ProjectListPage from './pages/Project/ProjectListPage.tsx'
+import CreateProjectPage from './pages/Project/CreateProjectPage.tsx'
+import ProjectDetailPage from './pages/Project/ProjectDetailPage.tsx'
+import WorkspaceHistoryPage from './pages/Workspace/WorkspaceHistoryPage.tsx'
+import WorkspaceSettingPage from './pages/Workspace/WorkspaceSettingPage.tsx'
+import AdminDashboardPage from './pages/Admin/AdminDashboardPage.tsx'
+import CreateAiPage from './pages/CreateAiPage.tsx'
+import AdminAiPage from './pages/Admin/AdminAiPage.tsx'
+import PredictAiModelPage from './pages/PredictAiModelPage.tsx'
+import PredictionResultPage from './pages/PredictionResultPage.tsx';
+import DocsPage from './pages/DocsPage.tsx'
+import AiDetailPage from './pages/Ai/AiDetailPage.tsx'
+import WorkspaceInvitationPage from './pages/Workspace/WorkspaceInvitationPage.tsx'
+import ProjectHistoryPage from './pages/Project/ProjectHistoryPage.tsx'
+import AIlistPage from './pages/Ai/AiListPage.tsx'
+import AIDemoPage from './pages/Ai/AIDemoPage.tsx'
+import UserListPage from './pages/Admin/UserListPage.tsx'
 
-import CreateProject from './pages/Project/CreateProject.tsx'
-import ProjectDetail from './pages/Project/ProjectDetail.tsx'
-import WorkspaceHistory from './pages/Workspace/WorkspaceHistory.tsx'
-import WorkspaceSetting from './pages/Workspace/WorkspaceSetting.tsx'
-
-import AdminDashboard from './pages/Admin/AdminDashboard.tsx'
-import CreateAi from './pages/CreateAi.tsx'
-import AdminAi from './pages/Admin/AdminAi.tsx'
-import PredictAiModel from './pages/PredictAiModel.tsx'
-import PredictionResult from './pages/PredictionResult.tsx';
-import Docs from './pages/Docs.tsx'
-import AiDetail from './pages/Ai/AiDetailPage.tsx'
-import WorkspaceInvitation from './pages/Workspace/WorkspaceInvitation.tsx'
-import ProjectHistory from './pages/Project/ProjectHistory.tsx'
-import CustomInput from './pages/CustomInput.tsx'
 import Layout from './Layout.tsx'
-import AIlist from './pages/Ai/AiListPage.tsx'
-import AIDemo from './pages/Ai/AIDemoPage.tsx'
-import UserList from './pages/Admin/UserList.tsx'
 import { createTheme, ThemeProvider } from '@mui/material'
 
 
@@ -68,90 +65,86 @@ const router = createBrowserRouter([
     children: [
   {
     path: "/",
-    element: <Home/>,
+    element: <HomePage/>,
   },
   {
     path: "/docs",
-    element: <Docs/>,
+    element: <DocsPage/>,
   },
   {
     path: "/workspaces",
-    element: <Workspace/>,
+    element: <WorkspacePage/>,
     children:[]
   },
   {
       path: "/workspaces/:workspaceId/project-list",
-    element: <ProjectList/>,
+    element: <ProjectListPage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/history",
-  element: <ProjectHistory/>,
+  element: <ProjectHistoryPage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/detail",
-  element: <ProjectDetail/>,
+  element: <ProjectDetailPage/>,
   },
   {
     path: "/workspaces/:workspaceId/history",
-  element: <WorkspaceHistory/>,
+  element: <WorkspaceHistoryPage/>,
   },
   {
     path: "/workspaces/:workspaceId/setting/edit",
-  element: <WorkspaceSetting/>,
+  element: <WorkspaceSettingPage/>,
   },
   {
     path: "/workspaces/:workspaceId/setting/invitation",
-  element: <WorkspaceInvitation/>,
+  element: <WorkspaceInvitationPage/>,
   },
 
 
   {
     path: "/workspaces/:workspaceId/create",
-    element: <CreateProject/>,
+    element: <CreateProjectPage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/detail/test/:modelId",
-    element: <PredictAiModel/>,
+    element: <PredictAiModelPage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/detail/test/:modelId/result",
-    element: <PredictionResult />,
+    element: <PredictionResultPage />,
   },
   {
     path: "/ai-list",
-    element: <AIlist/>,
+    element: <AIlistPage/>,
   },
   {
     path: "/ai/:ai_id/detail",
-    element: <AiDetail/>,
+    element: <AiDetailPage/>,
   },
   {
     path: "/ai/:ai_id/demo",
-    element: <AIDemo/>,
+    element: <AIDemoPage/>,
   },
   {
     path: "/admin/dashboard",
-    element: < AdminDashboard/>,
+    element: < AdminDashboardPage/>,
   },
   {
     path: "/admin/admin-ai",
-    element: <AdminAi/>,
+    element: <AdminAiPage/>,
   },
   
   {
     path: "/admin/createai",
-    element: <CreateAi/>,
+    element: <CreateAiPage/>,
   },
   {
     path: "/admin/userlist",
-    element: <UserList/>,
+    element: <UserListPage/>,
   },
 
 
-  {
-    path: "/customInput",
-    element: <CustomInput/>,
-  },
   ],
   },
 ]);

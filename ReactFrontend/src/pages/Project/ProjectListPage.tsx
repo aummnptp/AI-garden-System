@@ -7,7 +7,7 @@ import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
 
-const ProjectList = () => {
+const ProjectListPage = () => {
   const { workspaceId } = useParams<{ workspaceId?: string }>();
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   if (typeof workspaceId === 'undefined') {
@@ -135,4 +135,4 @@ const ProjectList = () => {
   );
 };
 
-export default ProjectList;
+export default ProjectListPage;
