@@ -136,7 +136,7 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
                 } hover:bg-gray-100 cursor-pointer hover:text-blue-700`}
                 onClick={() => handleAspectRatioChange(undefined)}
               >
-                ค่าเริ่มต้น
+                กำหนดเอง
               </button>
               <button
                 className={`flex items-center justify-center w-[30%] max-w-[30%] h-10 rounded-lg border ${

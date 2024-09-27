@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, Checkbox, FormControlLabel, Tab, TextField } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Tab, TextField } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Contrast,
@@ -25,22 +25,33 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);  // รูปแรกสุด สำหรับreset
   const [selectedImage, setSelectedImage] = useState<string | null>(null);  // รูปที่กำลังโชว์ ประมวลผล(ยังไม่เซฟ)
   const [onProcessUrl, setOnProcessUrl] = useState<string | null>(null);  //  รูปที่เซฟ เตรียมดาวน์โหลด
-  const [rotation, setRotation] = useState<number>(0); // state for rotation
+  
   const [imageBfResize, setImageBfResize] = useState<string | null>(null); // State for storing original image before resize
   const [imageBfPadding, setImageBfPadding] = useState<string | null>(null); // State for storing original image before resize
   const [imageBfGrayscale, setImageBfGrayscale] = useState<string | null>(null); // State for storing original image before resize
-  const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for ป
+  
+  const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for grayscale
+  const [isResizing, setIsResizing] = useState<boolean>(false); // state for resizing
+  const [isPadding, setIsPadding] = useState<boolean>(false); // state for padding
+  const [isCropping, setIsCropping] = useState<boolean>(false);// state for crop
+
   const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false); // state for flip left-right
   const [flipVertical, setFlipVertical] = useState<boolean>(false); // state for flip top-bottom
-  const [isResizing, setIsResizing] = useState<boolean>(false); // state for resizing
+  const [rotation, setRotation] = useState<number>(0); // state for rotation
+
   const [resizeWidth, setResizeWidth] = useState<number>(300); // width for resizing
   const [resizeHeight, setResizeHeight] = useState<number>(300); // height for resizing
   const [imageWidthValue, setImageWidthValue] = useState<number>(300); // width for resizing
-  const [imageHeightValue, setIMageHeightValue] = useState<number>(300); // height for resizing
-  const [isPadding, setIsPadding] = useState<boolean>(false); // state for resizing
-  const [paddingWidth, setPaddingWidth] = useState<number>(0); // width for resizing
+  const [imageHeightValue, setImageHeightValue] = useState<number>(300); // height for resizing
+  // padding
+  const [paddingSymmetric, setPaddingSymmetric] = useState<number>(0); // width for resizing
   const [paddingHeight, setPaddingHeight] = useState<number>(0); // width for resizing
-  const [isCropping, setIsCropping] = useState<boolean>(false);
+  const [paddingTop, setPaddingTop] = useState<number>(0); // width for resizing
+  const [paddingBottom, setPaddingBottom] = useState<number>(0); // width for resizing
+  const [paddingLeft, setPaddingLeft] = useState<number>(0); // width for resizing
+  const [paddingRight, setPaddingRight] = useState<number>(0); // width for resizing
+  const [paddingMode, setPaddingMode] = React.useState("custom");
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [value, setValue] = React.useState("1");
   const [isSymmetricResize, setIsSymmetricResize] = useState<boolean>(false); // สำหรับการเช็ค Resize
@@ -49,49 +60,65 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [alertTitle ,setAlertTitle]= useState("");
   // const [alertContent ,setAlertContent]= useState("");
 
+
+  const handleNumberChange = (value: string, setter: React.Dispatch<React.SetStateAction<number>>) => {
+    const newValue = parseInt(value, 10);
+    // ตรวจสอบค่าใหม่และตั้งค่าเป็น 0 ถ้าผู้ใช้ลบตัวเลขหรือค่าน้อยกว่า 0
+    if (isNaN(newValue) || newValue < 0) {
+      setter(0); 
+    } else {
+      setter(newValue);
+    }
+  };
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
   const handleResizeWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newWidth = parseInt(e.target.value, 10);
-    setResizeWidth(newWidth);
+    handleNumberChange(e.target.value, setResizeWidth);
 
     if (isSymmetricResize) {
-      setResizeHeight(newWidth); // ถ้าติ๊ก Checkbox, ให้ height เท่ากับ width
+      setResizeHeight(newWidth >= 0 ? newWidth : 0); // ถ้าติ๊ก Checkbox, ให้ height เท่ากับ width
     }
   };
 
   // ฟังก์ชันเมื่อมีการเปลี่ยนแปลงค่า Resize Height
   const handleResizeHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newHeight = parseInt(e.target.value, 10);
-    setResizeHeight(newHeight);
-
+    handleNumberChange(e.target.value, setResizeHeight);
     if (isSymmetricResize) {
-      setResizeWidth(newHeight); // ถ้าติ๊ก Checkbox, ให้ width เท่ากับ height
+      setResizeWidth(newHeight >= 0 ? newHeight : 0); // ถ้าติ๊ก Checkbox, ให้ width เท่ากับ height
     }
   };
 
   // ฟังก์ชันเมื่อมีการเปลี่ยนแปลงค่า Padding Width
-  const handlePaddingWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPaddingWidth = parseInt(e.target.value, 10);
-    setPaddingWidth(newPaddingWidth);
+  const handlePaddingSymmetricChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  handleNumberChange(e.target.value, setPaddingSymmetric);
+ 
+  };
 
-    if (isSymmetricPadding) {
-      setPaddingHeight(newPaddingWidth); // ถ้าติ๊ก Checkbox, ให้ padding height เท่ากับ padding width
-    }
+  const handlePaddingTopChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumberChange(e.target.value, setPaddingTop);
+
   };
 
   // ฟังก์ชันเมื่อมีการเปลี่ยนแปลงค่า Padding Height
-  const handlePaddingHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPaddingHeight = parseInt(e.target.value, 10);
-    setPaddingHeight(newPaddingHeight);
+  const handlePaddingBottomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumberChange(e.target.value, setPaddingBottom);
 
-    if (isSymmetricPadding) {
-      setPaddingWidth(newPaddingHeight); // ถ้าติ๊ก Checkbox, ให้ padding width เท่ากับ padding height
-    }
+ 
+  };
+  const handlePaddingLeftChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumberChange(e.target.value, setPaddingLeft);
+  };
+  // ฟังก์ชันเมื่อมีการเปลี่ยนแปลงค่า Padding Height
+  const handlePaddingRightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumberChange(e.target.value, setPaddingRight);
   };
 
+
+console.log(isGrayscale)
 
   const handleRotateLeft = () => {
     setRotation((prev) => prev - 90);
@@ -123,25 +150,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const handleResize = () => {
     setImageBfResize(selectedImage);
     handleCancelState();
-    // handleCancelPadding();
-    // handleCancelGrayscale();
     setIsResizing(true); // เข้าสู่โหมด Resize
   };
   const handlePadding = () => {
-    // setIsGrayscale(false)
     setImageBfPadding(selectedImage);
     handleCancelState();
-      
-    // handleCancelResize();
-    // handleCancelGrayscale();
+
     setIsPadding(true); // เข้าสู่โหมด Resize
   };
   const handleCropping = () => {
     setIsGrayscale(false)
-    // handleCancelPadding();
-    // handleCancelResize();
-    // handleCancelGrayscale();
-    
     handleCancelState();
     setValue("1")
     setIsCropping(true); // เข้าสู่โหมด Resize
@@ -159,10 +177,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setFlipHorizontal(false);
       setFlipVertical(false);
       setRotation(0);
-      setPaddingWidth(0);
+      setPaddingSymmetric(0);
       setPaddingHeight(0);
       setImageWidthValue(resizeWidth);
-      setIMageHeightValue(resizeHeight);
+      setImageHeightValue(resizeHeight);
 
       setAlertTitle("Apply Resize");
       handleClickOpen();
@@ -176,10 +194,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setOnProcessUrl(paddedImageURL); // อัปเดต URL สำหรับดาวน์โหลด
       setFlipHorizontal(false);
       setFlipVertical(false);
-      setImageWidthValue(imageWidthValue+paddingWidth*2);
-      setIMageHeightValue(imageHeightValue+paddingHeight*2);
+      setImageWidthValue(imageWidthValue+paddingSymmetric*2);
+      setImageHeightValue(imageHeightValue+paddingHeight*2);
       setRotation(0);
-      setPaddingWidth(0);
+      setPaddingSymmetric(0);
       setPaddingHeight(0);
 
       setAlertTitle("Apply Padding");
@@ -198,7 +216,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setFlipHorizontal(false);
       setFlipVertical(false);
       setRotation(0);
-      setPaddingWidth(0);
+      setPaddingSymmetric(0);
       setPaddingHeight(0);
 
       setAlertTitle("Apply Grayscale");
@@ -276,12 +294,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
       setIsGrayscale(false); // Reset grayscale
       setIsResizing(false); // Exit resizing mode
       setIsPadding(false); // Exit padding mode
+      setImageWidthValue(imageWidthValue)
+      setImageHeightValue(imageHeightValue)
       setResizeWidth(imageWidthValue); // Reset resize width
       setResizeHeight(imageHeightValue); // Reset resize height
-      setPaddingWidth(0); // Reset padding width
+      setPaddingSymmetric(0); // Reset padding width
       setPaddingHeight(0); // Reset padding height
       setIsSymmetricResize(false)
       setIsSymmetricPadding(false)
+      setValue("1")
     }
   };
 
@@ -296,7 +317,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
             setResizeWidth(img.width); // ตั้งค่า width เป็นขนาดของรูปภาพ
             setResizeHeight(img.height); // ตั้งค่า height เป็นขนาดของรูปภาพ
             setImageWidthValue(img.width);
-            setIMageHeightValue(img.height);
+            setImageHeightValue(img.height);
             setOriginalImage(reader.result as string); 
             setSelectedImage(reader.result as string); 
         
@@ -349,7 +370,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
           ctx?.restore();
  
           setImageWidthValue(canvas.width);
-          setIMageHeightValue(canvas.height);
+          setImageHeightValue(canvas.height);
           // เก็บ URL ของภาพที่ประมวลผลแล้ว
           const onProcessUrl = canvas.toDataURL("image/png");
           setOnProcessUrl(onProcessUrl);
@@ -392,7 +413,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
         };
       }
     }, [isGrayscale, ]);
-  
+
     // resize
     useEffect(() => {
       if (isResizing && onProcessUrl && canvasRef.current) {
@@ -419,19 +440,62 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
         image.onload = () => {
           const canvas = canvasRef.current!;
           const ctx = canvas.getContext("2d");
-  
-          const paddedWidth = image.width + paddingWidth * 2;
-          const paddedHeight = image.height + paddingHeight * 2;
-          canvas.width = paddedWidth;
-          canvas.height = paddedHeight;
-  
-          ctx?.clearRect(0, 0, canvas.width, canvas.height);
-  
-          ctx?.drawImage(image, paddingWidth, paddingHeight);
-        };
-      
+          if(paddingMode == 'custom'){
+            if (ctx) {
+              // คำนวณความกว้างและความสูงที่รวม padding ด้านซ้าย ขวา บน ล่าง
+              const paddedWidth = image.width + paddingLeft + paddingRight;
+              const paddedHeight = image.height + paddingTop + paddingBottom;
+              canvas.width = paddedWidth;
+              canvas.height = paddedHeight;
+              setImageWidthValue(canvas.width);
+              setImageHeightValue(canvas.height);
+              // ตั้งค่าสีเป็นสีดำ
+              ctx.fillStyle = 'black';
+              // เติมสีดำในพื้นที่ทั้งหมดของ canvas
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              
+              // วาดรูปภาพโดยเริ่มจากตำแหน่งที่กำหนดด้วย padding บนและซ้าย
+              ctx.drawImage(image, paddingLeft, paddingTop);
+            }
+          }
+          if(paddingMode == 'symmetric'){
+            if (ctx) {
+            const paddedWidth = image.width + paddingSymmetric * 2;
+            const paddedHeight = image.height + paddingSymmetric * 2;
+            canvas.width = paddedWidth;
+            canvas.height = paddedHeight;
+            setImageWidthValue(canvas.width);
+            setImageHeightValue(canvas.height);
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+            ctx.drawImage(image, paddingSymmetric, paddingSymmetric);
+            }
+          }
+
+          if (paddingMode === 'square') {
+            if (ctx) {
+              const maxDimension = Math.max(image.width, image.height); //หาว่าwidth || height กว้างกว่า
+              const paddingHorizontal = (maxDimension - image.width) / 2; // Padding ด้านซ้ายและขวา
+              const paddingVertical = (maxDimension - image.height) / 2; // Padding ด้านบนและล่าง
+              // console.log(maxDimension,paddingHorizontal,paddingVertical)
+          
+              // ตั้งค่า canvas ให้มีความกว้างและความสูงเป็น maxDimension
+              canvas.width = maxDimension;
+              canvas.height = maxDimension;
+              setImageWidthValue(canvas.width);
+              setImageHeightValue(canvas.height);
+              // ตั้งค่าสีเป็นสีดำ
+              ctx.fillStyle = 'black';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+              // วาดรูปภาพที่กลาง canvas โดยเพิ่ม padding ด้านซ้าย/ขวา หรือบน/ล่าง
+              ctx.drawImage(image, paddingHorizontal, paddingVertical);
+            }
+          }
+          };
       }
-    }, [paddingWidth,paddingHeight, isPadding,]);
+    }, [paddingLeft, paddingRight, paddingTop, paddingBottom, paddingSymmetric,isPadding,paddingMode]);
     
     const startTimer = () => {
       setTimeout(() => {
@@ -454,13 +518,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   return (
     <div className="flex w-full ">
       {open && (
-            <div className="fixed top-24 left-0 w-full flex justify-center z-50 animate-fade-in-out  ">
-              <Alert severity="info" onClose={handleClose}>
-              <AlertTitle>{alertTitle}</AlertTitle>
-                {/* {alertContent} */}
-              </Alert>
-            </div>
-          )}
+        <div className="fixed top-24 left-0 w-full flex justify-center z-50 animate-fade-in-out  ">
+          <Alert severity="info" onClose={handleClose}>
+            <AlertTitle>{alertTitle}</AlertTitle>
+            {/* {alertContent} */}
+          </Alert>
+        </div>
+      )}
       {selectedImage && (
         <div className="  mx-auto w-full ">
           {/* Display Processed Image */}
@@ -576,8 +640,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                       <TabPanel value="1">
                         <div className="w-full">
                           {/* flip zone */}
-                          <p className="text-2xl">Rotation Image</p>
-                          <hr className="my-2"></hr>
                           <div className=" flex flex-wrap gap-4 justify-between py-4 w-full ">
                             {/* ปุ่ม Flip ซ้าย */}
                             <div className="flex flex-col items-center justify-center space-y-2 w-[20%]">
@@ -632,8 +694,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                       </TabPanel>
                       <TabPanel value="2">
                         <div className="w-full">
-                          <p className="text-2xl">Grayscale</p>
-                          <hr className="my-2"></hr>
                           <button
                             className={`flex items-center justify-center my-4 px-2 w-fit max-w-[40%] h-12 rounded-lg border ${
                               isGrayscale === true
@@ -660,8 +720,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                       </TabPanel>
                       <TabPanel value="3">
                         <div className="w-full">
-                          <p className="text-2xl">Resize Image</p>
-                          <hr className="my-2"></hr>
                           {/* โหมดการปรับขนาด (Resize Mode) */}
 
                           <p className="my-4">ขนาดหลังResize:</p>
@@ -695,18 +753,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                             </label>
                           </div>
                           <div className="">
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={isSymmetricResize}
-                                onChange={(e) =>
-                                  setIsSymmetricResize(e.target.checked)
-                                }
-                                color="primary"
-                              />
-                            }
-                            label="Symmetric Resize"
-                          />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={isSymmetricResize}
+                                  onChange={(e) =>
+                                    setIsSymmetricResize(e.target.checked)
+                                  }
+                                  color="primary"
+                                />
+                              }
+                              label="Symmetric Resize"
+                            />
                             <Button
                               variant="contained"
                               sx={{
@@ -722,49 +780,109 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
                       </TabPanel>
                       <TabPanel value="4">
                         <div className="w-full">
-                          <p className="text-2xl">Padding Image</p>
-                          <hr className="my-2"></hr>
                           <p className="my-4">ขนาดหลังPadding:</p>
                           <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
-                            width:{imageWidthValue + paddingWidth * 2} (px)
+                            width:{imageWidthValue + paddingSymmetric * 2} (px)
                           </span>{" "}
                           <span className="mx-2">x</span>
                           <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
                             height:
                             {imageHeightValue + paddingHeight * 2} (px)
                           </span>
+                          
+                          <FormControl>
+                            <FormLabel id="row-radio-buttons-group-label">
+                              Padding Mode
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              aria-labelledby="row-radio-buttons-group-label"
+                              name="row-radio-buttons-group"
+                               defaultValue="custom"
+                               value={paddingMode} // กำหนดค่าให้ RadioGroup ตาม paddingMode ที่เลือก
+                               onChange={(e) => setPaddingMode(e.target.value)} // อัปเดต paddingMode เมื่อเลือก
+                            >
+                              <FormControlLabel
+                                value="custom"
+                                control={<Radio />}
+                                label="Custom"
+                              />
+                              <FormControlLabel
+                                value="square"
+                                control={<Radio />}
+                                label="Square"
+                              />
+                              <FormControlLabel
+                                value="symmetric"
+                                control={<Radio />}
+                                label="Symmetric"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+                          {paddingMode === 'symmetric' && (
                           <div className="flex gap-2 py-4">
                             <label className="w-[45%]">
-                              ความกว้าง (px)
+                              ขนาด (px)
                               <input
                                 type="number"
-                                value={paddingWidth}
-                                onChange={handlePaddingWidthChange}
+                                value={paddingSymmetric}
+                                onChange={handlePaddingSymmetricChange}
+                                className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                              />
+                            </label>
+                            </div>
+                          )}
+                           {paddingMode === 'square' && (
+                              <div className="w-[45%] p-2"></div>
+                              )}
+                            {paddingMode === 'custom' && (
+                              <>
+                            <div className="flex gap-2 py-4">
+                            <label className="w-[45%]">
+                              บน (px)
+                              <input
+                                type="number"
+                                value={paddingTop}
+                                onChange={handlePaddingTopChange}
                                 className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                               />
                             </label>
                             <label className="w-[45%]">
-                              ความสูง (px)
+                              ล่าง (px)
                               <input
+                               min="1" 
                                 type="number"
-                                value={paddingHeight}
-                                onChange={handlePaddingHeightChange}
+                                value={paddingBottom}
+                                onChange={handlePaddingBottomChange}
                                 className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                               />
                             </label>
-                          </div>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={isSymmetricPadding}
-                                onChange={(e) =>
-                                  setIsSymmetricPadding(e.target.checked)
-                                }
-                                color="primary"
+                            </div>
+                             <div className="flex gap-2 py-4">
+                            <label className="w-[45%]">
+                              ซ้าย (px)
+                              <input
+                                type="number"
+                                value={paddingLeft}
+                                onChange={handlePaddingLeftChange}
+                                className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
                               />
-                            }
-                            label="Symmetric Padding"
-                          />
+                            </label>
+                            <label className="w-[45%]">
+                              ขวา (px)
+                              <input
+                                type="number"
+                                value={paddingRight}
+                                onChange={handlePaddingRightChange}
+                                className="w-full p-2 border border-gray-300 rounded-lg no-spinner  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                              />
+                            </label>
+                            </div>
+                            </>
+                            )}
+                            
+                         
+
                           <Button
                             variant="contained"
                             sx={{
