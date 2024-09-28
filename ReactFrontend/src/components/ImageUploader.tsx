@@ -5,6 +5,7 @@ import {
   Crop,
   Download,
   FormatSize,
+  Margin,
   RestartAlt,
   RotateLeft,
   RotateRight,
@@ -23,6 +24,8 @@ interface ImageUploaderProps {
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);  // รูปแรกสุด สำหรับreset
+  const [originalWidth, setOriginalWidth] = useState<number>(300); // width for resizing
+  const [originalHeight, setOriginalHeight] = useState<number>(300); // height for resizing
   const [selectedImage, setSelectedImage] = useState<string | null>(null);  // รูปที่กำลังโชว์ ประมวลผล(ยังไม่เซฟ)
   const [onProcessUrl, setOnProcessUrl] = useState<string | null>(null);  //  รูปที่เซฟ เตรียมดาวน์โหลด
   
@@ -34,6 +37,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [isResizing, setIsResizing] = useState<boolean>(false); // state for resizing
   const [isPadding, setIsPadding] = useState<boolean>(false); // state for padding
   const [isCropping, setIsCropping] = useState<boolean>(false);// state for crop
+  const [isSymmetricResize, setIsSymmetricResize] = useState<boolean>(false); // สำหรับการเช็ค Resize
 
   const [flipHorizontal, setFlipHorizontal] = useState<boolean>(false); // state for flip left-right
   const [flipVertical, setFlipVertical] = useState<boolean>(false); // state for flip top-bottom
@@ -43,19 +47,20 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [resizeHeight, setResizeHeight] = useState<number>(300); // height for resizing
   const [imageWidthValue, setImageWidthValue] = useState<number>(300); // width for resizing
   const [imageHeightValue, setImageHeightValue] = useState<number>(300); // height for resizing
+  
   // padding
+  
   const [paddingSymmetric, setPaddingSymmetric] = useState<number>(0); // width for resizing
-  const [paddingHeight, setPaddingHeight] = useState<number>(0); // width for resizing
+  const [imagePaddedWidth, setImagePaddedWidth] = useState<number>(300); // width for resizing
+  const [imagePaddedHeight, setImagePaddedHeight] = useState<number>(300); // height for resizing
   const [paddingTop, setPaddingTop] = useState<number>(0); // width for resizing
   const [paddingBottom, setPaddingBottom] = useState<number>(0); // width for resizing
   const [paddingLeft, setPaddingLeft] = useState<number>(0); // width for resizing
   const [paddingRight, setPaddingRight] = useState<number>(0); // width for resizing
-  const [paddingMode, setPaddingMode] = React.useState("custom");
+  const [paddingMode, setPaddingMode] = useState("custom");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [value, setValue] = React.useState("1");
-  const [isSymmetricResize, setIsSymmetricResize] = useState<boolean>(false); // สำหรับการเช็ค Resize
-  const [isSymmetricPadding, setIsSymmetricPadding] = useState<boolean>(false); // สำหรับการเช็ค Padding
+  const [value, setValue] = useState("1");
   const [open, setOpen] = useState(false);
   const [alertTitle ,setAlertTitle]= useState("");
   // const [alertContent ,setAlertContent]= useState("");
@@ -172,13 +177,9 @@ console.log(isGrayscale)
     if (selectedImage && canvasRef.current) {
       const resizedImageUrl = canvasRef.current.toDataURL("image/png");
       setSelectedImage(resizedImageUrl); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
-      setIsResizing(false); // ออกจากโหมด Resize
       setOnProcessUrl(resizedImageUrl); // อัปเดต URL สำหรับดาวน์โหลด
-      setFlipHorizontal(false);
-      setFlipVertical(false);
-      setRotation(0);
-      setPaddingSymmetric(0);
-      setPaddingHeight(0);
+      setIsResizing(false); // ออกจากโหมด Resize
+      onResetInput();
       setImageWidthValue(resizeWidth);
       setImageHeightValue(resizeHeight);
 
@@ -192,13 +193,7 @@ console.log(isGrayscale)
       setSelectedImage(paddedImageURL); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
       setIsPadding(false); // ออกจากโหมด Resize
       setOnProcessUrl(paddedImageURL); // อัปเดต URL สำหรับดาวน์โหลด
-      setFlipHorizontal(false);
-      setFlipVertical(false);
-      setImageWidthValue(imageWidthValue+paddingSymmetric*2);
-      setImageHeightValue(imageHeightValue+paddingHeight*2);
-      setRotation(0);
-      setPaddingSymmetric(0);
-      setPaddingHeight(0);
+      onResetInput();
 
       setAlertTitle("Apply Padding");
       handleClickOpen();
@@ -210,17 +205,40 @@ console.log(isGrayscale)
     if (selectedImage && canvasRef.current) {
       const grayscaledImageURL = canvasRef.current.toDataURL("image/png");
       setSelectedImage(grayscaledImageURL); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
-      setIsPadding(false); // ออกจากโหมด Resize
       setOnProcessUrl(grayscaledImageURL); // อัปเดต URL สำหรับดาวน์โหลด
-      setIsGrayscale(false)
-      setFlipHorizontal(false);
-      setFlipVertical(false);
-      setRotation(0);
-      setPaddingSymmetric(0);
-      setPaddingHeight(0);
+      setIsPadding(false); // ออกจากโหมด Resize
+      onResetInput();
 
       setAlertTitle("Apply Grayscale");
       handleClickOpen();
+    }
+  };
+  const onResetInput = ()=>{
+      setIsGrayscale(false)
+      setFlipHorizontal(false);
+      setFlipVertical(false);
+      setIsSymmetricResize(false);
+      setRotation(0);
+      setPaddingSymmetric(0);
+      setPaddingTop(0);
+      setPaddingBottom(0);
+      setPaddingLeft(0);
+      setPaddingRight(0);
+      setPaddingMode("custom");
+      
+  }
+  const onResetImage = () => {
+    if (originalImage) {
+      setSelectedImage(originalImage); // Reset to the original image
+      setOnProcessUrl(originalImage); // Reset the processed image URL
+
+      onResetInput();
+
+      setIsResizing(false); // Exit resizing mode
+      setIsPadding(false); // Exit padding mode
+      setResizeWidth(originalWidth); // Reset resize width
+      setResizeHeight(originalHeight); // Reset resize height
+      setValue("1")
     }
   };
 
@@ -284,27 +302,7 @@ console.log(isGrayscale)
       console.error("No processed image to download.");
     }
   };
-  const onResetImage = () => {
-    if (originalImage) {
-      setSelectedImage(originalImage); // Reset to the original image
-      setOnProcessUrl(originalImage); // Reset the processed image URL
-      setRotation(0); // Reset rotation
-      setFlipHorizontal(false); // Reset flip horizontal
-      setFlipVertical(false); // Reset flip vertical
-      setIsGrayscale(false); // Reset grayscale
-      setIsResizing(false); // Exit resizing mode
-      setIsPadding(false); // Exit padding mode
-      setImageWidthValue(imageWidthValue)
-      setImageHeightValue(imageHeightValue)
-      setResizeWidth(imageWidthValue); // Reset resize width
-      setResizeHeight(imageHeightValue); // Reset resize height
-      setPaddingSymmetric(0); // Reset padding width
-      setPaddingHeight(0); // Reset padding height
-      setIsSymmetricResize(false)
-      setIsSymmetricPadding(false)
-      setValue("1")
-    }
-  };
+
 
     // โหลดรูปภาพเข้า Component
     useEffect(() => {
@@ -318,9 +316,10 @@ console.log(isGrayscale)
             setResizeHeight(img.height); // ตั้งค่า height เป็นขนาดของรูปภาพ
             setImageWidthValue(img.width);
             setImageHeightValue(img.height);
+            setOriginalWidth(img.width);
+            setOriginalHeight(img.height);
             setOriginalImage(reader.result as string); 
             setSelectedImage(reader.result as string); 
-        
           };
         };
         reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
@@ -352,17 +351,14 @@ console.log(isGrayscale)
   
           ctx?.save();
           ctx?.translate(canvas.width / 2, canvas.height / 2); // ย้ายจุดศูนย์กลาง canvas ไปตรงกลาง
-  
           // การ Flip ต้องทำก่อนการหมุน
           ctx?.rotate(angleInRadians);
           if (flipHorizontal) {
             ctx?.scale(-1, 1); // Flip แนวนอน
           }
-          
           if (flipVertical) {
             ctx?.scale(1, -1); // Flip แนวตั้ง
           }
-  
           // หมุนภาพตามค่าที่ได้
   
           // วาดภาพที่ Flip และหมุนแล้ว
@@ -447,8 +443,8 @@ console.log(isGrayscale)
               const paddedHeight = image.height + paddingTop + paddingBottom;
               canvas.width = paddedWidth;
               canvas.height = paddedHeight;
-              setImageWidthValue(canvas.width);
-              setImageHeightValue(canvas.height);
+              setImagePaddedWidth(canvas.width);
+              setImagePaddedHeight(canvas.height);
               // ตั้งค่าสีเป็นสีดำ
               ctx.fillStyle = 'black';
               // เติมสีดำในพื้นที่ทั้งหมดของ canvas
@@ -464,8 +460,8 @@ console.log(isGrayscale)
             const paddedHeight = image.height + paddingSymmetric * 2;
             canvas.width = paddedWidth;
             canvas.height = paddedHeight;
-            setImageWidthValue(canvas.width);
-            setImageHeightValue(canvas.height);
+            setImagePaddedWidth(canvas.width);
+            setImagePaddedHeight(canvas.height);
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
     
@@ -483,8 +479,8 @@ console.log(isGrayscale)
               // ตั้งค่า canvas ให้มีความกว้างและความสูงเป็น maxDimension
               canvas.width = maxDimension;
               canvas.height = maxDimension;
-              setImageWidthValue(canvas.width);
-              setImageHeightValue(canvas.height);
+              setImagePaddedWidth(canvas.width);
+              setImagePaddedHeight(canvas.height);
               // ตั้งค่าสีเป็นสีดำ
               ctx.fillStyle = 'black';
               ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -780,15 +776,18 @@ console.log(isGrayscale)
                       </TabPanel>
                       <TabPanel value="4">
                         <div className="w-full">
+                          <div className="pb-4">
+
                           <p className="my-4">ขนาดหลังPadding:</p>
                           <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
-                            width:{imageWidthValue + paddingSymmetric * 2} (px)
+                            width:{imagePaddedWidth} (px)
                           </span>{" "}
                           <span className="mx-2">x</span>
-                          <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4">
+                          <span className="text-xl bg-orange-100 text-amber-700 font-medium rounded-md w-fit px-4 text-brow my-4 ">
                             height:
-                            {imageHeightValue + paddingHeight * 2} (px)
+                            {imagePaddedHeight} (px)
                           </span>
+                          </div>
                           
                           <FormControl>
                             <FormLabel id="row-radio-buttons-group-label">

@@ -3,11 +3,15 @@ import React from 'react'
 
 import { Link, useParams, useLocation } from 'react-router-dom'
 
-const Sidebar = () => {
+interface SidebarProps {
+  workspaceName: string; // เพิ่ม props สำหรับ workspaceName
+}
+const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
   let {workspaceId,projectId} = useParams()
   const location = useLocation();
   const isProjectPage = location.pathname.includes('/project/');
-  
+
+  const isActive = (path: string) => location.pathname === path;
   return (
     <div className="px-3 pt-6 pb-24 h-full w-2/12 bg-white shadow border  fixed z-40 overflow-y-scroll ">
       <div className="flex items-center">
@@ -18,7 +22,7 @@ const Sidebar = () => {
           <div className="text-neutral-400 text-base font-medium leading-loose mt-[-12px]">
             In workspace
           </div>
-          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">Kmitl team</h1>
+          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">{workspaceName}</h1>
         </div>
       </div>
       <div className="ml-[7.5%] w-fit ">
@@ -37,7 +41,9 @@ const Sidebar = () => {
       <ul className="font-medium">
         <li>
           <Link to={`/workspaces/${workspaceId}/project-list`}>
-            <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group  focus:ring-4 focus:bg-blue-300  ">
+            <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+              }`}>
           <BarsOutlined />
               <span className="flex-1 ms-3 whitespace-nowrap">
                 Project List
@@ -48,7 +54,9 @@ const Sidebar = () => {
 
         <li>
         <Link to={`/workspaces/${workspaceId}/history`}>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/history`) ? 'bg-blue-100' : ''
+              }`}>
           <HistoryOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace history
@@ -58,7 +66,9 @@ const Sidebar = () => {
         </li>
         <li>
         <Link to={`/workspaces/${workspaceId}/setting/edit`}>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/setting/edit`) ? 'bg-blue-100' : ''
+              }`}>
           <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               Workspace setting
@@ -96,26 +106,34 @@ const Sidebar = () => {
       </div>
       <ul className="font-medium">
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+              }`}>
           <ProfileOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">detail</span>
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+              }`}>
           <FileImageOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">upload image</span>
           </div>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+              }`}>
           <PlaySquareOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">upload video</span>
           </div>
         </li>
         <li>
         <Link to={`/workspaces/${workspaceId}/project/${projectId}/history`}>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project/${projectId}/history`) ? 'bg-blue-100' : ''
+              }`}>
           <FileDoneOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project history
@@ -124,7 +142,9 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <div className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gray-100  group">
+          <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
+                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+              }`}>
             <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project setting
