@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import '../Admin.css';  // อย่าลืม import ไฟล์ CSS
 import AdminSidebar from "../components/AdminSidebar";
 
-function Admin() {
+function AdminPage() {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -47,4 +47,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default AdminPage;

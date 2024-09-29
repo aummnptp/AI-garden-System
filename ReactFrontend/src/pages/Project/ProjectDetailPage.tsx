@@ -27,7 +27,7 @@ interface ProjectCardProps {
 }
 
 
-const ProjectDetail:React.FC<ProjectCardProps> = () => {
+const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
 
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
 
@@ -335,4 +335,4 @@ const ProjectDetail:React.FC<ProjectCardProps> = () => {
   );
 };
 
-export default ProjectDetail;
+export default ProjectDetailPage;

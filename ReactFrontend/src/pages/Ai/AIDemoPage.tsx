@@ -26,7 +26,6 @@ const AIDemo = () => {
   // first step of customimage for rotate grayscale
   const [customImage, setCustomImage] = useState<File | null>(image);
   const [open, setOpen] = React.useState(false);
-  const [progress, setProgress] = useState(100); // ค่าเริ่มต้นของ progress เป็น 100%
 
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
 
@@ -292,9 +291,6 @@ const AIDemo = () => {
               ) : null}
               {/* upload step 2 customimaage */}
               {customImage && <ImageCustomer image={customImage} />}
-              {/* {customImage && <ImageCustomerRetest image={customImage} />} */}
-              {/* {customResizingImage &&  <ResizeUploader image={customResizingImage}  onProcessedImage={handleProcessedResizeImage} />} */}
-              {/* {customPaddingImage &&  <PaddingUploader image={customPaddingImage} />} */}
               <div className="mt-4 flex justify-end ">
                 {uploadStep >= 2 && (
                   <Button

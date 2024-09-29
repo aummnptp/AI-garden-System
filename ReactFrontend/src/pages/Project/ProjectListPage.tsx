@@ -7,7 +7,7 @@ import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
 
-const ProjectList = () => {
+const ProjectListPage = () => {
   const { workspaceId } = useParams<{ workspaceId?: string }>();
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   if (typeof workspaceId === 'undefined') {
@@ -40,7 +40,7 @@ const ProjectList = () => {
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
            {/* side bar */}
-        <Sidebar></Sidebar>
+           <Sidebar workspaceName={workspaceDetail.name} />
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
@@ -135,4 +135,4 @@ const ProjectList = () => {
   );
 };
 
-export default ProjectList;
+export default ProjectListPage;

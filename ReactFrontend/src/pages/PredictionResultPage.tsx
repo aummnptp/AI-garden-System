@@ -6,7 +6,7 @@ import RegressionChart from '../components/chart/RegressionChart'; // Import Reg
 import ProjectData from "../data/ProjectData";
 import { PictureOutlined, VideoCameraOutlined, SaveOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
 
-const PredictionResult: React.FC = () => {
+const PredictionResultPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const { modelId } = useParams<{ modelId: string }>();
   const [note, setNote] = useState(''); // State for note
@@ -170,4 +170,4 @@ const PredictionResult: React.FC = () => {
   );
 };
 
-export default PredictionResult;
+export default PredictionResultPage;

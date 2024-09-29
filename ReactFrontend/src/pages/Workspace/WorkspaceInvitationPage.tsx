@@ -40,7 +40,7 @@ interface userData {
   role: string;
 }
 
-const WorkspaceInvitation = () => {
+const WorkspaceInvitationPage = () => {
   let { workspaceId } = useParams();
   const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
   const [open, setOpen] = React.useState(false);
@@ -441,4 +441,4 @@ const WorkspaceInvitation = () => {
   );
 };
 
-export default WorkspaceInvitation;
+export default WorkspaceInvitationPage;

@@ -7,7 +7,7 @@ import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import ImageUploader from "../../components/ImageUploader";
 
-const ProjectHistory = () => {
+const ProjectHistoryPage = () => {
     const { workspaceId } = useParams<{ workspaceId?: string }>();
     if (typeof workspaceId === 'undefined') {
       // Handle the case where workspaceId is undefined
@@ -138,4 +138,4 @@ const ProjectHistory = () => {
     );
 }
 
-export default ProjectHistory
+export default ProjectHistoryPage
