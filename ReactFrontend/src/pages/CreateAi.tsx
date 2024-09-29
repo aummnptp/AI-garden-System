@@ -164,14 +164,14 @@ const CreateAiProject = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveKey(index)}
-                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                          className="p-2 bg-red-600 text-white rounded-lg"
                         >
                           ลบ
                         </button>
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
                     + Add Key
                   </button>
                 </div>
@@ -193,14 +193,14 @@ const CreateAiProject = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveKey(index)}
-                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                          className="p-2 bg-red-600 text-white rounded-lg"
                         >
                           ลบ
                         </button>
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
                     + Add Key
                   </button>
                   </div>
@@ -218,14 +218,14 @@ const CreateAiProject = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveParam(index)}
-                          className="p-2 bg-red-600 text-white rounded-[15px]"
+                          className="p-2 bg-red-600 text-white rounded-lg"
                         >
                           ลบ
                         </button>
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-[15px]">
+                  <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-lg">
                     + Add Parameter
                   </button>
                 </div>
@@ -253,7 +253,7 @@ const CreateAiProject = () => {
                 <label>Tag ของโปรเจค</label>
                 <div className="tags-input space-y-2">
                   {tags.map((tag, index) => (
-                    <span key={index} className="tag my-1 text-white bg-indigo-600 p-1.5 rounded-[15px] inline-flex items-center">
+                    <span key={index} className="tag my-1 text-white bg-indigo-600 p-1.5 rounded-lg inline-flex items-center">
                       {tag}
                       <button type="button" onClick={() => handleTagRemove(tag)} className="ml-2 text-white text-xl ">
                         &times;
@@ -268,7 +268,7 @@ const CreateAiProject = () => {
                       placeholder="Add tag"
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
-                    <button type="button" onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-[15px] text-white">
+                    <button type="button" onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-lg text-white">
                       + Add Tag
                     </button>
                   </div>
@@ -278,7 +278,7 @@ const CreateAiProject = () => {
                 <label>อัปโหลดไฟล์ภาพที่นี่</label>
                 <input type="file" onChange={handleFileChange} className="w-full p-2 border border-gray-300 rounded-lg" />
               </div>
-              <button type="submit" className="p-2 bg-indigo-600 rounded-[15px] text-white">
+              <button type="submit" className="p-2 bg-indigo-600 rounded-lg text-white">
                 บันทึก
               </button>
             </form>

@@ -54,10 +54,7 @@ def predict(model_id):
 
     # รับไฟล์จาก request (ทั้งภาพและวิดีโอ)
     file = request.files['file']
-    file_extension = os.path.splitext(file.filename)[1].lower()
 
-    if file_extension not in ['.mp4', '.avi', '.mov', '.mkv']:  
-        return jsonify({"message": "Unsupported file type"}), 400
 
     file_bytes = file.read()
 

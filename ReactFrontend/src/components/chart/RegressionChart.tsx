@@ -40,11 +40,11 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) =
           responsive: true,
           plugins: {
             legend: {
-              display: true,
+              display: false,
             },
             title: {
               display: true,
-              text: 'Regression Chart',
+              
             },
           },
           scales: {
