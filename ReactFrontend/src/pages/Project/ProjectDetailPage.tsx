@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 
@@ -14,6 +14,7 @@ import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
 import ProjectData from "../../data/ProjectData";
 import { Button, IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
+import axios from "axios";
 
 
 
@@ -28,17 +29,14 @@ interface ProjectCardProps {
 
 
 const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
-
+  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-
   if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
     // จัดการกรณีที่ workspaceId หรือ projectId เป็น undefined
     return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
   }
-
   const workspaceIdNum = parseInt(workspaceId, 10);
   const projectIdNum = parseInt(projectId, 10);
-
   const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
   
   if (!workspace) {
@@ -52,11 +50,27 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
   }
   const uploadIcon = detail.inputType === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
 
+  const fetchData = () => {
+    axios.all([
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+  
+    ])
+    .then(axios.spread((workspaceResponse) => {
+      setWorkspaceDetail(workspaceResponse.data);
+   
+    }))
+    .catch(error => {
+      console.error("There was an error fetching the data!", error);
+    });
+  };
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar></Sidebar>
+        <Sidebar workspaceName={workspaceDetail.name} />
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* top card (create sort workspace name) */}

@@ -13,11 +13,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
-import { SaveOutlined } from "@ant-design/icons";
-import { List } from "antd";
 import { Close, Delete } from "@mui/icons-material";
 interface memberData {
   id: number;
@@ -33,6 +30,7 @@ const WorkspaceSettingPage = () => {
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
+  
   useEffect(() => {
     const fetchWorkspace = async () => {
       try {
@@ -153,7 +151,7 @@ const WorkspaceSettingPage = () => {
           </DialogActions>
         </Dialog>
         {/* side bar */}
-        <Sidebar></Sidebar>
+      <Sidebar workspaceName={name} />
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">

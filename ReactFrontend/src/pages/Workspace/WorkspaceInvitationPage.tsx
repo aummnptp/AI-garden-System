@@ -48,7 +48,7 @@ const WorkspaceInvitationPage = () => {
   const [userDatas, setUserData] = useState<memberData[]>([]);
   const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
   const [memberDatas, setMemberData] = useState<memberData[]>([]);
-
+  const [workspaceDetail, setWorkspaceDetail] = useState([]);
   const fetchUserData = () => {
     axios.get("http://localhost:3000/user", {
       withCredentials: true, 
@@ -133,25 +133,29 @@ const WorkspaceInvitationPage = () => {
     setOpen(false);
   };
 
-  const fetchMembers = () => {
-    axios.get(`http://localhost:3000/workspaces/${workspaceId}/members-profiles`)
-      .then(response => {
-        setMemberData(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the workspace data!", error);
-      });
+  const fetchData = () => {
+    axios.all([
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}/members-profiles`)
+    ])
+    .then(axios.spread((workspaceResponse) => {
+      setWorkspaceDetail(workspaceResponse.data);
+   
+    }))
+    .catch(error => {
+      console.error("There was an error fetching the data!", error);
+    });
   };
 
   useEffect(() => {
-    fetchMembers(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar></Sidebar>
+        <Sidebar workspaceName={workspaceDetail.name} />
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
