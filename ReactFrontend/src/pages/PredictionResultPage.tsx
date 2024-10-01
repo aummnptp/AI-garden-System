@@ -15,7 +15,7 @@ const PredictionResultPage: React.FC = () => {
 
   const location = useLocation();
   const state = location.state || {};
-  const { prediction, file, fileName, ai_type, regression_params } = state;
+  const { prediction, file, fileName, ai_type, regression_params, response_keys } = state;
 
   if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
     return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
@@ -36,7 +36,18 @@ const PredictionResultPage: React.FC = () => {
     return <div>ไม่พบรายละเอียดโปรเจก</div>;
   }
 
+  
+
   const resultEntries = prediction ? Object.entries(prediction) : [];
+  console.log("Prediction:", prediction);
+  console.log("Response keys:", response_keys);
+  // ฟังก์ชันเพื่อแปลง key เป็น meaning
+  const getMeaningForKey = (key: string) => {
+    console.log("Key being processed:", key);  // ตรวจสอบค่า key ที่รับเข้ามา
+    const keyWithMeaning = response_keys?.find((item: { key: string, meaning: string }) => item.key === key);
+    console.log("Matched key with meaning:", keyWithMeaning);  // ตรวจสอบว่ามีการจับคู่ key กับ meaning หรือไม่
+    return keyWithMeaning ? keyWithMeaning.meaning : key;  // ถ้าไม่มี matching ให้ใช้ key เดิม
+  };
 
   // Handle save note
   const handleSaveNote = () => {
@@ -53,7 +64,7 @@ const PredictionResultPage: React.FC = () => {
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
-        <Sidebar />
+        
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-start items-center p-5">
@@ -106,12 +117,15 @@ const PredictionResultPage: React.FC = () => {
 
                     {resultEntries.length > 0 ? (
                       <div className="grid grid-cols-1 gap-1 text-center">
-                        {resultEntries.map(([key, value], index) => (
-                          <div key={index} className="flex justify-start w-full items-center">
-                            <strong className="text-indigo-900">{key}:</strong>
-                            <span>{typeof value === 'number' ? (Number.isInteger(value) ? value : value.toFixed(2)) : value?.toString() || 'ไม่มีข้อมูล'}</span>
-                          </div>
-                        ))}
+                        {resultEntries.map(([key, value], index) => {
+                          const displayText = getMeaningForKey(key); // แปลง key เป็น meaning
+                          return (
+                            <div key={index} className="flex justify-start w-full items-center">
+                              <strong className="text-indigo-900">{displayText}:</strong>
+                              <span>{typeof value === 'number' ? value.toFixed(2) : value?.toString() || 'ไม่มีข้อมูล'}</span>
+                            </div>
+            );
+          })}
 
                         {/* Note section */}
                         <div className="form-group">

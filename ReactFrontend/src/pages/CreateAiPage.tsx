@@ -7,7 +7,7 @@ const CreateAiProjectPage = () => {
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
-  const [responseKeys, setResponseKeys] = useState([{ key: '' }]);
+  const [responseKeys, setResponseKeys] = useState([{ key: '', meaning: '' }]);
   const [inputDescription, setInputDescription] = useState('');
   const [aiType, setAiType] = useState('Object Detection');
   const [tags, setTags] = useState<string[]>([]);
@@ -18,7 +18,7 @@ const CreateAiProjectPage = () => {
   const navigate = useNavigate();
 
   const handleAddKey = () => {
-    setResponseKeys([...responseKeys, { key: '' }]);
+    setResponseKeys([...responseKeys, { key: '', meaning: '' }]);
   };
 
   const handleRemoveKey = (index: number) => {
@@ -70,6 +70,7 @@ const CreateAiProjectPage = () => {
     }
   };
 
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const modelData = {
@@ -77,10 +78,10 @@ const CreateAiProjectPage = () => {
       description: description,
       ai_type: aiType,
       api_uri: serviceUri,
-      response_keys: responseKeys.map(key => key.key),
+      response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
       regression_params: regressionParams.map(param => param.param)
     };
-
+  
     fetch('http://localhost:5000/add_model', {
       method: 'POST',
       headers: {
@@ -146,7 +147,7 @@ const CreateAiProjectPage = () => {
                   <option value="Classification">Classification</option>
                 </select>
               </div>
-              
+
               {/* Render form based on aiType */}
               {aiType === 'Classification' || aiType === 'Object Detection' || aiType === 'Segmentation' ? (
                 <div className="form-group">
@@ -158,6 +159,13 @@ const CreateAiProjectPage = () => {
                         placeholder="key name"
                         value={key.key}
                         onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      />
+                      <input
+                        type="text"
+                        placeholder="meaning"
+                        value={key.meaning}
+                        onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded-lg"
                       />
                       {responseKeys.length > 1 && (
@@ -176,9 +184,9 @@ const CreateAiProjectPage = () => {
                   </button>
                 </div>
               ) : aiType === 'Regression' && (
-                
+
                 <div className="form-group">
-                  <div className="mb-6">
+                  <div className="form-group">
                   <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
                   {responseKeys.map((key, index) => (
                     <div key={index} className="response-key flex space-x-2 mb-2">
@@ -187,6 +195,13 @@ const CreateAiProjectPage = () => {
                         placeholder="key name"
                         value={key.key}
                         onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                      />
+                      <input
+                        type="text"
+                        placeholder="meaning"
+                        value={key.meaning}
+                        onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded-lg"
                       />
                       {responseKeys.length > 1 && (
@@ -203,7 +218,7 @@ const CreateAiProjectPage = () => {
                   <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
                     + Add Key
                   </button>
-                  </div>
+                </div>
                   <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
                   {regressionParams.map((param, index) => (
                     <div key={index} className="response-param flex space-x-2 mb-2">
@@ -229,7 +244,7 @@ const CreateAiProjectPage = () => {
                     + Add Parameter
                   </button>
                 </div>
-                
+
               )}
               <div className="form-group">
                 <label>Service URI</label>
@@ -248,7 +263,7 @@ const CreateAiProjectPage = () => {
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Tag ของโปรเจค</label>
                 <div className="tags-input space-y-2">
