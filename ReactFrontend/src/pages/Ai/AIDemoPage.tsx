@@ -17,6 +17,17 @@ import {
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
+import DemoPredictResult from "../../components/DemoPredictResult";
+interface Prediction {
+  class_name: string;
+  confidence: number;
+}
+
+interface PredictResult {
+  ai_type: string;
+  prediction: Prediction;
+  regression_params: any | null;
+}
 
 const AIDemo = () => {
   const [uploadStep, setUploadStep] = useState(1);
@@ -25,9 +36,11 @@ const AIDemo = () => {
   const [customImage, setCustomImage] = useState<File | null>(image);
   const [open, setOpen] = React.useState(false);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null); // URL ของรูปที่กำลังแสดง
+  const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
+
 
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-
+  console.log(predictResult)
   const startTimer = () => {
     setTimeout(() => {
       setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -66,6 +79,7 @@ const AIDemo = () => {
   };
 
   const handleToCustomStep = () => {
+ 
     if (image === null) {
       handleClickOpen(); // เรียกฟังก์ชันเปิด dialog หรือ popup
     } else {
@@ -73,6 +87,7 @@ const AIDemo = () => {
       setCustomImage(image);
       setImage(null);
     }
+
   };
 
   const handleProcessUrlChange = (url: string) => {
@@ -85,6 +100,7 @@ const AIDemo = () => {
   };
   
   const handleUpload = async () => {
+    setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
     if (customedImageUrl) {
       try {
         // แปลง URL เป็นไฟล์
@@ -94,7 +110,7 @@ const AIDemo = () => {
         const formData = new FormData();
         formData.append('file', file);
   
-        // ยิง axios เพื่ออัปโหลดไฟล์
+        // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
         const response = await axios.post('http://localhost:5000/predict/1', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -102,6 +118,7 @@ const AIDemo = () => {
         });
   
         console.log('Upload successful', response.data);
+        setPredictResult(response.data); // เก็บผลลัพธ์ใน state
       } catch (error) {
         console.error('Error uploading file', error);
       }
@@ -113,14 +130,14 @@ const AIDemo = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-      {open && (
-                <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
-                  <Alert severity="error" onClose={handleClose}>
-                  <AlertTitle>Error</AlertTitle>
-                    กรุณาอัปโหลดภาพก่อน
-                  </Alert>
-                </div>
-              )}
+        {open && (
+          <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
+            <Alert severity="error" onClose={handleClose}>
+              <AlertTitle>Error</AlertTitle>
+              กรุณาอัปโหลดภาพก่อน
+            </Alert>
+          </div>
+        )}
         {/* content container */}
         <div className=" w-full ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* top card (create sort workspace name) */}
@@ -324,19 +341,24 @@ const AIDemo = () => {
                 </>
               ) : null}
               {/* upload step 2 customimaage */}
-              {customImage && <ImageCustomer image={customImage} onProcessUrlChange={handleProcessUrlChange}  />}
-              <img
-            src={customedImageUrl}
-         
-            style={{
-              maxWidth: "450px",
-              maxHeight: "450px",
-              minWidth: "150px",
-              minHeight: "150px",
-            }}
-            alt="Crop me"
-            //    style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"450px" ,minHeight:"450px"}}
-          />
+              {uploadStep == 2 && customImage && (
+                <ImageCustomer
+                  image={customImage}
+                  onProcessUrlChange={handleProcessUrlChange}
+                />
+              )}
+
+                {uploadStep == 3 &&predictResult ? (
+                     customedImageUrl ? (
+                      <>
+                      {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl}/> */}
+                      
+                      </>
+                      ):(null)
+                      ) : (
+                      null
+                  )}
+
               <button onClick={handleUpload}>Upload Processed Image</button>
               <div className="mt-4 flex justify-end ">
                 {uploadStep >= 2 && (
@@ -369,14 +391,14 @@ const AIDemo = () => {
                   {" "}
                   {uploadStep == 2 ? "ประมวลผล" : "ถัดไป"}
                 </Button>
-             
               </div>
-             
             </div>
           </div>
 
           {/* detail conatiner */}
-          <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative   "></div>
+          <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative   ">
+       
+          </div>
         </div>
       </div>
       <MiniFooter></MiniFooter>

@@ -964,20 +964,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
         </div>
       )}
     </div>
-      <Button
-      variant="contained"
-      size="large"
-      sx={{
-        backgroundColor: "#4f46e5",
-        "&:hover": {
-          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-        },
-      }}
-      // onClick={processImage}
-    >
-      {" "}
-        ลุยโลด
-    </Button>
+      
     </div>
   );
 };
