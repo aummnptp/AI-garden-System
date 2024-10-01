@@ -1,15 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import MiniFooter from '../../components/MiniFooter'
 import CustomizedTables from '../../components/table/Table'
 import EnhancedTable from '../../components/table/WorkspaceTable'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const WorkspaceHistoryPage = () => {
+  let {workspaceId} = useParams()
+  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+  const fetchData = () => {
+    axios.all([
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+  
+    ])
+    .then(axios.spread((workspaceResponse) => {
+      setWorkspaceDetail(workspaceResponse.data);
+   
+    }))
+    .catch(error => {
+      console.error("There was an error fetching the data!", error);
+    });
+  };
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
   return (
     <>
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* side bar */}
-      <Sidebar></Sidebar>
+      <Sidebar workspaceName={workspaceDetail.name} />
       {/* content container */}
       <div className=" w-10/12 ml-auto  flex flex-col items-center pb-32  h-full min-h-screen">
       <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">

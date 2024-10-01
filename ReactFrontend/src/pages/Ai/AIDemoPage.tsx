@@ -13,12 +13,10 @@ import {
   Alert,
   AlertTitle,
   Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  LinearProgress,
+
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
+import axios from "axios";
 
 const AIDemo = () => {
   const [uploadStep, setUploadStep] = useState(1);
@@ -26,6 +24,7 @@ const AIDemo = () => {
   // first step of customimage for rotate grayscale
   const [customImage, setCustomImage] = useState<File | null>(image);
   const [open, setOpen] = React.useState(false);
+  const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null); // URL ของรูปที่กำลังแสดง
 
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
 
@@ -73,6 +72,41 @@ const AIDemo = () => {
       setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
       setCustomImage(image);
       setImage(null);
+    }
+  };
+
+  const handleProcessUrlChange = (url: string) => {
+    setCustomedImageUrl(url); // รับ URL จากคอมโพเนนต์ลูก
+  };
+  const convertUrlToFile = async (url: string, fileName: string): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  };
+  
+  const handleUpload = async () => {
+    if (customedImageUrl) {
+      try {
+        // แปลง URL เป็นไฟล์
+        const file = await convertUrlToFile(customedImageUrl, 'processedImage.jpg');
+        
+        // เตรียม FormData เพื่อส่งไฟล์
+        const formData = new FormData();
+        formData.append('file', file);
+  
+        // ยิง axios เพื่ออัปโหลดไฟล์
+        const response = await axios.post('http://localhost:5000/predict/1', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log('Upload successful', response.data);
+      } catch (error) {
+        console.error('Error uploading file', error);
+      }
+    } else {
+      console.error('No image URL to upload');
     }
   };
 
@@ -290,7 +324,20 @@ const AIDemo = () => {
                 </>
               ) : null}
               {/* upload step 2 customimaage */}
-              {customImage && <ImageCustomer image={customImage} />}
+              {customImage && <ImageCustomer image={customImage} onProcessUrlChange={handleProcessUrlChange}  />}
+              <img
+            src={customedImageUrl}
+         
+            style={{
+              maxWidth: "450px",
+              maxHeight: "450px",
+              minWidth: "150px",
+              minHeight: "150px",
+            }}
+            alt="Crop me"
+            //    style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"450px" ,minHeight:"450px"}}
+          />
+              <button onClick={handleUpload}>Upload Processed Image</button>
               <div className="mt-4 flex justify-end ">
                 {uploadStep >= 2 && (
                   <Button
@@ -322,6 +369,7 @@ const AIDemo = () => {
                   {" "}
                   {uploadStep == 2 ? "ประมวลผล" : "ถัดไป"}
                 </Button>
+             
               </div>
              
             </div>

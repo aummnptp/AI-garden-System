@@ -20,9 +20,10 @@ import TabPanel from "@mui/lab/TabPanel";
 import ImgCropper from "./ImgCropper";
 interface ImageUploaderProps {
   image: File;
+  onProcessUrlChange: (url: string) => void; 
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}) => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);  // รูปแรกสุด สำหรับreset
   const [originalWidth, setOriginalWidth] = useState<number>(300); // width for resizing
   const [originalHeight, setOriginalHeight] = useState<number>(300); // height for resizing
@@ -63,8 +64,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   const [value, setValue] = useState("1");
   const [open, setOpen] = useState(false);
   const [alertTitle ,setAlertTitle]= useState("");
-  // const [alertContent ,setAlertContent]= useState("");
 
+
+ 
+  // const processImage = () => {
+  //   // สมมติว่าคุณทำการประมวลผลและได้ URL ของภาพหลังประมวลผล
+  //   if (onProcessUrl){
+  //     // ส่ง URL กลับไปยังคอมโพเนนต์แม่ผ่านฟังก์ชัน onProcessUrlChange
+  //     onProcessUrlChange(onProcessUrl);
+  //   }
+  // };
 
   const handleNumberChange = (value: string, setter: React.Dispatch<React.SetStateAction<number>>) => {
     const newValue = parseInt(value, 10);
@@ -123,7 +132,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image }) => {
   };
 
 
-console.log(isGrayscale)
 
   const handleRotateLeft = () => {
     setRotation((prev) => prev - 90);
@@ -173,46 +181,69 @@ console.log(isGrayscale)
 
 
 
-  const handleSaveResize = () => {
+  const handleSaveResize = async () => {
     if (selectedImage && canvasRef.current) {
-      const resizedImageUrl = canvasRef.current.toDataURL("image/png");
-      setSelectedImage(resizedImageUrl); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
-      setOnProcessUrl(resizedImageUrl); // อัปเดต URL สำหรับดาวน์โหลด
-      setIsResizing(false); // ออกจากโหมด Resize
-      onResetInput();
-      setImageWidthValue(resizeWidth);
-      setImageHeightValue(resizeHeight);
-
-      setAlertTitle("Apply Resize");
-      handleClickOpen();
+      try {
+       
+        const resizedImageUrl = canvasRef.current.toDataURL("image/png");
+        await setSelectedImage(resizedImageUrl);
+        await setOnProcessUrl(resizedImageUrl); 
+  
+     
+        await setIsResizing(false);
+        await onResetInput();
+        setImageWidthValue(resizeWidth);
+        setImageHeightValue(resizeHeight);
+  
+       
+        setAlertTitle("Apply Resize");
+        handleClickOpen();
+      } catch (error) {
+        console.error("Error in resizing process:", error);
+      }
     }
   };
-  const handleSavePadding = () => {
+  const handleSavePadding = async () => {
     if (selectedImage && canvasRef.current) {
-      const paddedImageURL = canvasRef.current.toDataURL("image/png");
-      setSelectedImage(paddedImageURL); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
-      setIsPadding(false); // ออกจากโหมด Resize
-      setOnProcessUrl(paddedImageURL); // อัปเดต URL สำหรับดาวน์โหลด
-      onResetInput();
-
-      setAlertTitle("Apply Padding");
-      handleClickOpen();
-      
+      try {
+     
+        const paddedImageURL = canvasRef.current.toDataURL("image/png");
+        await setSelectedImage(paddedImageURL); // อัปเดตรูปที่ถูก padding ลงใน selectedImage
+        await setOnProcessUrl(paddedImageURL); // อัปเดต URL สำหรับดาวน์โหลด
+  
+     
+        await setIsPadding(false);
+        await onResetInput();
+  
+       
+        setAlertTitle("Apply Padding");
+        handleClickOpen();
+      } catch (error) {
+        console.error("Error in padding process:", error);
+      }
     }
   };
 
-  const handleSaveGrayscale = () => {
-    if (selectedImage && canvasRef.current) {
+  const handleSaveGrayscale = async () => {
+  if (selectedImage && canvasRef.current) {
+    try {
+      // ขั้นตอนที่ 1: บันทึกภาพที่ถูก grayscale
       const grayscaledImageURL = canvasRef.current.toDataURL("image/png");
-      setSelectedImage(grayscaledImageURL); // อัปเดตรูปที่ถูก resize ลงใน selectedImage
-      setOnProcessUrl(grayscaledImageURL); // อัปเดต URL สำหรับดาวน์โหลด
-      setIsPadding(false); // ออกจากโหมด Resize
-      onResetInput();
+      await setSelectedImage(grayscaledImageURL); // อัปเดตรูปที่ถูก grayscale ลงใน selectedImage
+      await setOnProcessUrl(grayscaledImageURL); // อัปเดต URL สำหรับดาวน์โหลด
 
+      // ขั้นตอนที่ 2: ออกจากโหมด Grayscale และอัปเดต state อื่นๆ
+      await setIsPadding(false); // คุณอาจต้องเปลี่ยนเป็น setIsGrayscale(false)
+      await onResetInput();
+
+      // ขั้นตอนที่ 3: ตั้งค่า alert และแสดงการแจ้งเตือน
       setAlertTitle("Apply Grayscale");
       handleClickOpen();
+    } catch (error) {
+      console.error("Error in grayscale process:", error);
     }
-  };
+  }
+};
   const onResetInput = ()=>{
       setIsGrayscale(false)
       setFlipHorizontal(false);
@@ -276,14 +307,27 @@ console.log(isGrayscale)
     }
   };
 
-  const onCropDone = (croppedImageUrl: string) => {
-    setSelectedImage(croppedImageUrl);
-    setIsCropping(false);
-    console.error("onProcessUrl is null, cannot crop the image.");
-    
-
-    setAlertTitle("Cropped");
-    handleClickOpen();
+  const onCropDone = async (croppedImageUrl: string) => {
+    try {
+      // ขั้นตอนที่ 1: ตั้งค่า selectedImage เป็น croppedImageUrl
+      await setSelectedImage(croppedImageUrl);
+  
+      // ขั้นตอนที่ 2: ปิดการ crop (setIsCropping)
+      await setIsCropping(false);
+  
+      // หาก onProcessUrl เป็น null ให้แสดง error
+      if (!croppedImageUrl) {
+        console.error("onProcessUrl is null, cannot crop the image.");
+        return; // หยุดการทำงานหากไม่มี URL
+      }
+  
+      // ขั้นตอนที่ 3: ตั้งค่า Alert Title และเปิด alert
+      setAlertTitle("Cropped");
+      handleClickOpen();
+  
+    } catch (error) {
+      console.error("Error in cropping process:", error);
+    }
   };
 
   const onCropCancle = () => {
@@ -302,7 +346,12 @@ console.log(isGrayscale)
       console.error("No processed image to download.");
     }
   };
-
+  useEffect(() => {
+    if (onProcessUrl && onProcessUrlChange) {
+      // เรียก callback เมื่อ onProcessUrl เปลี่ยนแปลง
+      onProcessUrlChange(onProcessUrl);
+    }
+  }, [onProcessUrl, onProcessUrlChange]); // ทำงานเมื่อ onProcessUrl เปลี่ยนแปลง
 
     // โหลดรูปภาพเข้า Component
     useEffect(() => {
@@ -320,6 +369,7 @@ console.log(isGrayscale)
             setOriginalHeight(img.height);
             setOriginalImage(reader.result as string); 
             setSelectedImage(reader.result as string); 
+           
           };
         };
         reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
@@ -509,9 +559,11 @@ console.log(isGrayscale)
     if (open) {
       startTimer();
     }
-  
+
+
 
   return (
+    <div>
     <div className="flex w-full ">
       {open && (
         <div className="fixed top-24 left-0 w-full flex justify-center z-50 animate-fade-in-out  ">
@@ -538,6 +590,7 @@ console.log(isGrayscale)
             <div className=" px-10 mx-auto w-full h-fit pb-10 flex  ">
               <div className=" w-[70%] border flex flex-col pb-6 rounded-[5px] ">
                 <div className=" h-fit  flex items-center justify-center  pt-10">
+                  
                   <canvas
                     className="    border-2 border-dashed border-gray-400  justify-center  "
                     ref={canvasRef}
@@ -548,6 +601,13 @@ console.log(isGrayscale)
                       minHeight: "150px",
                     }}
                   ></canvas>
+                   {/* <Skeleton 
+                      variant="rectangular" 
+                      width={450} 
+                      height={450} 
+                      animation="wave" 
+                      style={{ borderRadius: "4px" }} 
+                    /> */}
                 </div>
                 <div className="flex justify-center text-center ">
                   <span className="text-xl bg-slate-100 text-indigo-600 font-medium rounded-md w-fit px-4  my-4">
@@ -898,10 +958,26 @@ console.log(isGrayscale)
                   </div>
                 </div>
               )}
+              
             </div>
           )}
         </div>
       )}
+    </div>
+      <Button
+      variant="contained"
+      size="large"
+      sx={{
+        backgroundColor: "#4f46e5",
+        "&:hover": {
+          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+        },
+      }}
+      // onClick={processImage}
+    >
+      {" "}
+        ลุยโลด
+    </Button>
     </div>
   );
 };

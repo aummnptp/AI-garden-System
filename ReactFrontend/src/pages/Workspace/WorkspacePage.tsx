@@ -51,7 +51,6 @@ function WorkspacePage() {
   return (
       <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
-
         {/* popup */}
         <CreateWorkspace showModal={showModal} setShowModal={setShowModal} fetchWorkspaces={fetchWorkspaces} />
         <div className=" flex flex-col items-center justify-center w-full ">

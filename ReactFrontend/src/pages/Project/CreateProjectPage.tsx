@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Sidebar from '../../components/Sidebar'
 import { Input } from "antd";
@@ -6,23 +6,50 @@ import AiData from '../../data/AiData';
 import CreateProjectCard from '../../components/card/CreateProjectCard';
 import { Link, useParams } from 'react-router-dom';
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
+import axios from 'axios';
 const { TextArea } = Input;
 
 
 function CreateProjectPage() {
   let {workspaceId} = useParams()
+  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+
+
+  const fetchData = () => {
+    axios.all([
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+  
+    ])
+    .then(axios.spread((workspaceResponse) => {
+      setWorkspaceDetail(workspaceResponse.data);
+   
+    }))
+    .catch(error => {
+      console.error("There was an error fetching the data!", error);
+    });
+  };
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
+
+  // ฟังก์ชันที่ใช้เลือกการ์ด
+  const handleSelectCard = (id: number) => {
+    setSelectedCardId(id);
+  };
 
   return (
     <div className='flex h-full min-h-screen bg-neutral-100'>
 
-      <Sidebar></Sidebar>
+      <Sidebar workspaceName={workspaceDetail.name} />
 
-    <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center justify-center h-full pb-32 ">
+      <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen ">
  
-     
+      {/* ml-5 mb-5 text-3xl font-medium tracking-tight 
+      text-indigo-900  */}
       {/* create container */}
-      <div className='p-8 col-span-10 mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self relative '>
-        <h1 className="text-indigo-900 text-4xl font-medium font-['Roboto'] leading-loose">สร้างโปรเจคใหม่</h1>
+      <div className='px-8 py-2 col-span-10 mt-4 pb-5 h-fit  w-[95%] bg-white rounded-[15px] justify-self relative '>
+        <h1 className="text-indigo-900 text-4xl font-medium  leading-loose">สร้างโปรเจคใหม่</h1>
         <div className="mb-10 h-[0px] border border-zinc-300 mx-auto"/>
           <label className='mt-10 text-black text-2xl font-medium'> ชื่อโปรเจค </label>
           <Input
@@ -37,18 +64,18 @@ function CreateProjectPage() {
                       placeholder="คำอธิบายworkspace"
                          className="my-4 mb-16"
                     />
-          <FormControl>
-      <FormLabel id="demo-row-radio-buttons-group-label">ประเภท</FormLabel>
-      <RadioGroup
-        row
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        name="row-radio-buttons-group"
-      >
-        <FormControlLabel value="รูปภาพและวิดีโอ " control={<Radio />} label="รูปภาพ และ วิดีโอ " />
-        <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
-        <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
-      </RadioGroup>
-    </FormControl>
+      <FormControl>
+        <FormLabel id="demo-row-radio-buttons-group-label">ประเภท</FormLabel>
+        <RadioGroup
+          row
+          aria-labelledby="demo-row-radio-buttons-group-label"
+          name="row-radio-buttons-group"
+        >
+          <FormControlLabel value="รูปภาพและวิดีโอ " control={<Radio />} label="รูปภาพ และ วิดีโอ " />
+          <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
+          <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
+        </RadioGroup>
+      </FormControl>
           {/* select ai section */}
           <p className='ml-4 mb-6 text-black text-2xl font-medium'> เลือก AI ที่ต้องการใช้งาน</p>
           
@@ -63,10 +90,14 @@ function CreateProjectPage() {
             </div>
       {/* card ai container */}
       {/* card */}
-      <div className=" h-fit  grid grid-cols-3  justify-self-center relative">
+      <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
         {/* card */}
         {AiData.map((data)=>(
-        <CreateProjectCard id={data.id} name={data.name} aiDesc={data.aiDesc} tags={data.tags} img={data.img} type={data.type}></CreateProjectCard>
+        <CreateProjectCard id={data.id} name={data.name} aiDesc={data.aiDesc} tags={data.tags} img={data.img} type={data.type}
+        isSelected={data.id === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
+        onSelect={() => handleSelectCard(data.id)} // ส่งฟังก์ชัน onClick
+
+        ></CreateProjectCard>
       ))}
        
       </div>

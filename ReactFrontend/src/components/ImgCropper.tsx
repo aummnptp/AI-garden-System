@@ -53,7 +53,7 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
           crop.width! * scaleX,
           crop.height! * scaleY
         );
-        console.log( crop.width! * scaleX,)
+  
 
         // แปลง canvas เป็น Data URL
         

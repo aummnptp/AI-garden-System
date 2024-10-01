@@ -1,5 +1,5 @@
 
-import React, {  useState } from 'react';import { styled } from '@mui/material/styles';
+import React, {  useEffect, useState } from 'react';import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -19,7 +19,7 @@ interface UploadPicture {
   img: string;
   title: string;
   author: string;
-  rows?: number;
+  RankingMemberData?: number;
   cols?: number;
   featured?: boolean;
 }
@@ -78,7 +78,7 @@ rank:number,
   return { rank,name, avartar,submitNumber, };
 }
 
-const rows = [
+const RankingMemberData = [
   createData(1,'Frozen yoghurt',"/images/homeImage/puttipong.jpg", 85,),
   createData(2,'Ice cream sandwich',"/images/homeImage/kittnan.jpeg", 70, ),
   createData(3,'Eclair', "/images/homeImage/profile.webp",14, ),
@@ -90,25 +90,32 @@ const rows = [
 export default function SubmitRankTable() {
 
 
-  const [showSubmit,setShowSubmit] = useState(false);
+  // const [showSubmit,setShowSubmit] = useState(false);
   
-  const [filteredUser, setFilteredUser] = useState<UserUpload | null>(null);
-  const [selectedRow, setSelectedRow] = useState(0);
-  const handleShowSubmit = (row :number) => {
+  const [filteredUser, setFilteredUser] = useState<UserUpload | null>(null); // ค่าเริ่มต้นเป็น null
+  const [selectedRow, setSelectedRow] = useState<number>(1); // ค่าเริ่มต้นเป็นแถวแรก (row 1)
+  const handleShowSubmit = (row: number) => {
     const filtered = UploadedImage.filter(user => user.UserRank === row);
-    console.log(row)
-      setFilteredUser(filtered[0]); 
-      setSelectedRow(row-1); 
-    setShowSubmit(true); // แสดงข้อมูล
+  
+    if (filtered.length > 0) {
+      setFilteredUser(filtered[0]); // เลือกผู้ใช้คนแรกที่กรองได้
+    } else {
+      setFilteredUser(null); // ถ้าไม่พบผู้ใช้ที่ตรงกับ row, ตั้งเป็น null
+    }
+  
+    setSelectedRow(row-1); // ตั้งค่าแถวที่ถูกเลือก
   };
-
-
+  
+  // ใช้ useEffect เพื่อแสดงข้อมูลแถวแรกโดยอัตโนมัติเมื่อหน้าโหลด
+  useEffect(() => {
+    handleShowSubmit(1); // เรียกฟังก์ชันสำหรับแถวแรกเมื่อคอมโพเนนต์ mount
+  }, []); // ทำงานครั้งเดียวเมื่อคอมโพเนนต์ mount
 
 
 
   return (
     <div className=" w-full   mx-auto flex  ">
-      <div className='mx-4  px-4'>
+      <div className='mx-4  px-4 w-[100%] '>
       <TableContainer component={Paper}>
         <Table sx={{width: '100%' }} aria-label="customized table">
           <TableHead>
@@ -121,7 +128,7 @@ export default function SubmitRankTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {RankingMemberData.map((row) => (
               <StyledTableRow key={row.rank}     onClick={() => handleShowSubmit(row.rank)}>
                 <StyledTableCell component="th" scope="row">
                   <span
@@ -170,26 +177,26 @@ export default function SubmitRankTable() {
         </Table>
       </TableContainer>
       </div>
-{/*  */}
-  {showSubmit && filteredUser && (
-    
-      <div className='px-4 border rounded-[5px] sha '>
+    {/*  */}
+      { filteredUser && (
+      <div className='px-4 border rounded-[5px] w[50%] '>
        <div className="flex items w-full py-5 sticky top- z-10">
                 <img
                   className="w-10 h-10 rounded-full  border-2"
-                  src={rows[selectedRow].avartar}
+                  src={RankingMemberData[selectedRow].avartar}
                 />
                 <div className="ml-2">
                   <p className="text-indigo-900 text-lg font-medium">
-                    {rows[selectedRow].name}
+                    {RankingMemberData[selectedRow].name}
                   </p>
                 </div>
               </div>
-      <ImageList sx={{ width: "100%", maxHeight: 350 }}>
+            
+      <ImageList sx={{ width: "100%", maxHeight: 350 }} cols={4} gap={10}>
        
           {filteredUser.UploadData.map((data) => (
             <>
-              <ImageListItem key={`subheader-${data.dateTime}`} cols={2}>
+              <ImageListItem key={`subheader-${data.dateTime}`} cols={4}>
                 <ListSubheader component="div">
                 วันที่ {formatDate(new Date(data.dateTime))}  {" "}
                   <div  className='flex items-center'>
@@ -219,8 +226,8 @@ export default function SubmitRankTable() {
           ))
         }
       </ImageList>
-  
       </div>
+
       )}
     </div>
   );

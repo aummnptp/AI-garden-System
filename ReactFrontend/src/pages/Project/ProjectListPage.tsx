@@ -20,7 +20,7 @@ const ProjectListPage = () => {
 
   const fetchData = () => {
     axios.all([
-      axios.get(`http://localhost:3000/workspaces/${id}`),
+      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
   
     ])
     .then(axios.spread((workspaceResponse) => {
@@ -35,7 +35,7 @@ const ProjectListPage = () => {
   useEffect(() => {
     fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
-  console.log(workspaceDetail)
+
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
