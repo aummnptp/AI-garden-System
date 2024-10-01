@@ -1,28 +1,32 @@
 import { PictureOutlined } from "@ant-design/icons";
 import React from "react";
 
-interface Prediction {
-  class_name: string;
-  confidence: number;
+interface ResponseKey {
+  key: string;
+  meaning: string;
 }
-
 interface PredictResult {
   ai_type: string;
-  prediction: Prediction;
-  regression_params: any | null;
+  prediction: any;
+  regression_params?: any | null;
+  response_keys?: ResponseKey[]; 
 }
 interface DemoPredictResultProps {
-  predictResult: PredictResult | null; // รับผลลัพธ์หรือ null
+  predictResult: PredictResult;
   resultImage: string;
 }
 const DemoPredictResult: React.FC<DemoPredictResultProps> = ({
-  predictResult,
-  resultImage,
+predictResult, resultImage
 }) => {
-  if (!predictResult) {
-    return <p>No prediction result yet.</p>;
-  }
-
+  const resultEntries = Object.entries(predictResult.prediction);
+  const getMeaningForKey = (key: string) => {
+    console.log("Key being processed:", key);
+    const keyWithMeaning = predictResult.response_keys?.find(
+      (item: { key: string; meaning: string }) => item.key === key
+    );
+    console.log("Matched key with meaning:", keyWithMeaning);
+    return keyWithMeaning ? keyWithMeaning.meaning : key; // Use key itself if no meaning is found
+  };
   return (
     <div className="w-full">
       <div className="flex w-full ">
@@ -42,7 +46,7 @@ const DemoPredictResult: React.FC<DemoPredictResultProps> = ({
           <div className="flex justify-start items-center p-0 space-x-4">
             <PictureOutlined style={{ fontSize: "32px", color: "#4f46e5" }} />
             <h1 className="text-3xl font-medium tracking-tight text-indigo-900 mb-0">
-              fileName
+              Image Name
             </h1>
           </div>
           <div className="flex justify-start items-center p-0 space-x-4">
@@ -64,19 +68,35 @@ const DemoPredictResult: React.FC<DemoPredictResultProps> = ({
             </span>
           </div>
           <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
-          <div className="border">
-            <h4>ผลลัพธ์การทำนาย:</h4>
+          <div className="py-4">
             <div>
-              <span className="text-2xl">ชื่อClass: </span>
-              <span className="text-xl">{predictResult.prediction.class_name}</span>
-            </div>
-            <div >
-            <span className="text-2xl">
-              Confidence:
-            </span>
-            <span className="text-xl">
-            {" "}{predictResult.prediction.confidence.toFixed(2)}%
-            </span>
+            <h4 className="text-2xl "> <i className="bi bi-clipboard-check-fill text-blue-600 mr-2"></i> ผลลัพธ์การทำนาย</h4>
+        <table className="min-w-full mt-4 bg-white rounded-lg shadow">
+                {resultEntries.length > 0 ? (
+                  <tbody>
+                    {/* Loop through resultEntries */}
+                    {resultEntries.map(([key, value], index) => {
+                      const displayText = getMeaningForKey(key); // Get the display text (meaning or key)
+                      return (
+                        <tr key={index} className="bg-gray-100 border-b">
+                          <td className="py-3 px-4 text-indigo-800 text-xl font-medium">{displayText}</td>
+                          <td className="py-3 px-4 text-gray-800 text-xl">
+                            {typeof value === 'number' ? value.toFixed(2) : value?.toString() || 'ไม่มีข้อมูล'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td colSpan={2} className="text-center py-4">
+                        ไม่มีข้อมูล
+                      </td>
+                    </tr>
+                  </tbody>
+                )}
+              </table>
             </div>
 
             {predictResult.regression_params ? (

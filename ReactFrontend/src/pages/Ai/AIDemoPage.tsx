@@ -13,11 +13,13 @@ import {
   Alert,
   AlertTitle,
   Button,
+  Skeleton,
 
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/DemoPredictResult";
+
 interface Prediction {
   class_name: string;
   confidence: number;
@@ -25,10 +27,9 @@ interface Prediction {
 
 interface PredictResult {
   ai_type: string;
-  prediction: Prediction;
-  regression_params: any | null;
+  prediction: any;
+  regression_params?: any | null;
 }
-
 const AIDemo = () => {
   const [uploadStep, setUploadStep] = useState(1);
   const [image, setImage] = useState<File | null>(null);
@@ -40,7 +41,7 @@ const AIDemo = () => {
 
 
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-  console.log(predictResult)
+
   const startTimer = () => {
     setTimeout(() => {
       setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -79,14 +80,22 @@ const AIDemo = () => {
   };
 
   const handleToCustomStep = () => {
- 
-    if (image === null) {
-      handleClickOpen(); // เรียกฟังก์ชันเปิด dialog หรือ popup
-    } else {
-      setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
+    if(uploadStep===1){
+      if (image === null) {
+        handleClickOpen(); // เรียกฟังก์ชันเปิด dialog หรือ popup
+      } 
+      else {
+        setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
+        setCustomImage(image);
+        setImage(null);
+      }
+    }    
+    else {
+      setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
       setCustomImage(image);
       setImage(null);
     }
+   
 
   };
 
@@ -100,30 +109,37 @@ const AIDemo = () => {
   };
   
   const handleUpload = async () => {
-    setUploadStep((prevStep) => Math.min(prevStep + 1, 4));
-    if (customedImageUrl) {
-      try {
-        // แปลง URL เป็นไฟล์
-        const file = await convertUrlToFile(customedImageUrl, 'processedImage.jpg');
-        
-        // เตรียม FormData เพื่อส่งไฟล์
-        const formData = new FormData();
-        formData.append('file', file);
-  
-        // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-        const response = await axios.post('http://localhost:5000/predict/1', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-  
-        console.log('Upload successful', response.data);
-        setPredictResult(response.data); // เก็บผลลัพธ์ใน state
-      } catch (error) {
-        console.error('Error uploading file', error);
+    setUploadStep(3);
+    try {
+      if (!customedImageUrl) {
+        console.error('No image URL to upload');
+        return;
       }
-    } else {
-      console.error('No image URL to upload');
+  
+      // แปลง URL เป็นไฟล์
+      const file = await convertUrlToFile(customedImageUrl, 'processedImage.jpg');
+      
+      // เตรียม FormData เพื่อส่งไฟล์
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
+      const response = await axios.post('http://localhost:5000/predict/1', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      console.log('Upload successful', response.data);
+  
+      // เก็บผลลัพธ์ใน state
+      setPredictResult(response.data);
+  
+      // เปลี่ยน uploadStep เป็น 4 หลังจากอัปโหลดเสร็จสมบูรณ์
+      setUploadStep(4);
+  
+    } catch (error) {
+      console.error('Error uploading file', error);
     }
   };
 
@@ -187,7 +203,7 @@ const AIDemo = () => {
                 <span
                   className={uploadStep >= 2 ? "text-black" : "text-gray-400"}
                 >
-                  ปรับแต่ง
+                  ปรับแต่งภาพ
                 </span>
               </div>
               {/* Line between Step 2 and Step 3 */}
@@ -197,17 +213,37 @@ const AIDemo = () => {
                 <div
                   className={`rounded-full h-8 w-8 flex items-center justify-center 
                     ${
-                      uploadStep >= 3
+                      uploadStep > 3
                         ? "bg-green-500"
                         : uploadStep === 3
                         ? "bg-blue-500"
                         : "bg-gray-400"
                     } text-white`}
                 >
-                  {uploadStep >= 3 ? <i className="bi bi-check"></i> : 3}
+                  {uploadStep >3 ? <i className="bi bi-check"></i> : 3}
                 </div>
                 <span
-                  className={uploadStep >= 3 ? "text-black" : "text-gray-400"}
+                  className={uploadStep > 3 ? "text-black" : "text-gray-400"}
+                >
+                  ประมวลผล
+                </span>
+              </div>
+              <div className="flex-1 h-0.5 bg-gray-300 mx-2"></div>
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center 
+                    ${
+                      uploadStep >= 4
+                        ? "bg-green-500"
+                        : uploadStep === 4
+                        ? "bg-blue-500"
+                        : "bg-gray-400"
+                    } text-white`}
+                >
+                  {uploadStep >= 4 ? <i className="bi bi-check"></i> : 4}
+                </div>
+                <span
+                  className={uploadStep >= 4 ? "text-black" : "text-gray-400"}
                 >
                   เสร็จสิ้น
                 </span>
@@ -219,8 +255,8 @@ const AIDemo = () => {
               {uploadStep == 1 ? (
                 <>
                   <div className="flex  ">
-                    <div className=" px-10 mx-auto w-[50%] h-fit pb-10 ">
-                      <div className="w-96 h-96 text-center  flex flex-col items-center justify-center ">
+                    <div className=" px-10 mx-auto w-[50%] h-fit pb-10  ">
+                      <div className=" text-center  h-full flex flex-col items-center justify-center ">
                         {image ? (
                           <div className="relative text-center  flex flex-col items-center justify-center  ">
                             <div
@@ -347,36 +383,51 @@ const AIDemo = () => {
                   onProcessUrlChange={handleProcessUrlChange}
                 />
               )}
+                   {uploadStep == 3 &&(
+  
+          <div className="w-full">
+      <div className="flex w-full ">
+        <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex justify-center ">
+        <Skeleton variant="rectangular" width={300} height={300} />
+        </div>
+        <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex flex-col justify-center ">
+        <Skeleton variant="text" width={"100%"} height={30} />
+        <Skeleton variant="text" width={"100%"} height={20} />
+        <Skeleton variant="text" width={"100%"} height={30} />
+        <Skeleton variant="text" width={"100%"} height={20} />
+    
+        </div>
+      </div>
+      </div>
+              )}
+            {uploadStep == 4 && predictResult ? (
+              customedImageUrl ? (
+              <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl}/>
+              ):(null)
+              ):(null)}
 
-                {uploadStep == 3 &&predictResult ? (
-                     customedImageUrl ? (
-                      <>
-                      {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl}/> */}
-                      
-                      </>
-                      ):(null)
-                      ) : (
-                      null
-                  )}
-
-              <button onClick={handleUpload}>Upload Processed Image</button>
+           
               <div className="mt-4 flex justify-end ">
-                {uploadStep >= 2 && (
+                {uploadStep == 2 && (
                   <Button
                     variant="outlined"
                     size="large"
                     color="warning"
                     sx={{ mr: 2 }}
                     onClick={() => {
-                      setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
-                      setImage(customImage);
-                      setCustomImage(null);
-                    }}
+
+                        setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
+                        setImage(customImage);
+                        setCustomImage(null);
+                     
+                    }
+                  }
                   >
                     {" "}
                     ย้อนกลับ
                   </Button>
                 )}
+                {uploadStep < 2 && (
                 <Button
                   variant="contained"
                   size="large"
@@ -389,8 +440,74 @@ const AIDemo = () => {
                   onClick={handleToCustomStep}
                 >
                   {" "}
-                  {uploadStep == 2 ? "ประมวลผล" : "ถัดไป"}
+                  ถัดไป
                 </Button>
+                 )}
+                     {uploadStep == 2 && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  onClick={handleUpload}
+                >
+                  {" "}
+                  ประมวลผล
+                </Button>
+
+                  )}
+                {uploadStep == 4 && (
+                  <div className=" w-full flex  justify-between">
+                    <div className=" w-[50%] justify-center flex">
+                     <Button
+                     variant="outlined"
+                       size="large"
+                  onClick={() => {
+                    setUploadStep(1);
+                    setImage(null);
+                    setPredictResult(null);
+                    setCustomImage(null);}
+                  }
+                  >
+                  {" "}
+                  ลองอีกครั้ง
+                </Button>
+                  <Button
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+               
+                  >
+                  {" "}
+                  ขอใช้งาน
+                </Button>
+                </div>
+                    <Button
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                
+                  >
+                  {" "}
+                  กลับไปยังหน้ารายชื่อ AI
+                </Button>
+                  </div>
+                
+                      )}
               </div>
             </div>
           </div>

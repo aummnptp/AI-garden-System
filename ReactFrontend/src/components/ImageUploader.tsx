@@ -18,6 +18,15 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import ImgCropper from "./ImgCropper";
+interface PredictResult {
+  ai_type: string;
+  prediction: Prediction;
+  regression_params?: any | null;
+}
+interface Prediction {
+  class_name: string;
+  confidence: number;
+}
 interface ImageUploaderProps {
   image: File;
   onProcessUrlChange: (url: string) => void; 
