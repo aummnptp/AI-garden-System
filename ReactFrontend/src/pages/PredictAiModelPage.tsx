@@ -66,7 +66,7 @@ const PredictAiModelPage: React.FC = () => {
           const data = await response.json();
 
           // ดึงค่า prediction, regression_params และ ai_type จาก data
-          const { prediction, regression_params, ai_type } = data;
+          const { prediction, regression_params, ai_type, response_keys } = data;
 
           navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
             state: {
@@ -74,7 +74,8 @@ const PredictAiModelPage: React.FC = () => {
               regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
               ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
               file: fileUrl,            // ไฟล์ที่อัปโหลด
-              fileName: file.name       // ชื่อไฟล์ที่อัปโหลด
+              fileName: file.name,
+              response_keys: response_keys       // ชื่อไฟล์ที่อัปโหลด
             }
           });
         }
