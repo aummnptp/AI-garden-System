@@ -74,7 +74,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
   const [open, setOpen] = useState(false);
   const [alertTitle ,setAlertTitle]= useState("");
 
-
+  const [isLoadingImage, setIsLoadingImage] = React.useState(false);
  
   // const processImage = () => {
   //   // สมมติว่าคุณทำการประมวลผลและได้ URL ของภาพหลังประมวลผล
@@ -265,6 +265,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
       setPaddingLeft(0);
       setPaddingRight(0);
       setPaddingMode("custom");
+      setValue("1")
       
   }
   const onResetImage = () => {
@@ -363,12 +364,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
   }, [onProcessUrl, onProcessUrlChange]); // ทำงานเมื่อ onProcessUrl เปลี่ยนแปลง
 
     // โหลดรูปภาพเข้า Component
-    useEffect(() => {
+    const processImage = () => {
       if (image) {
         const reader = new FileReader();
-        reader.onloadend = () => {
-          const img = new Image(); // สร้างออบเจ็กต์ Image
-          img.src = reader.result as string; // ตั้ง src ให้กับ base64 string จาก FileReader
+        reader.onloadend = async () => {
+          const img = new Image();
+          img.src = reader.result as string;
           img.onload = () => {
             setResizeWidth(img.width); // ตั้งค่า width เป็นขนาดของรูปภาพ
             setResizeHeight(img.height); // ตั้งค่า height เป็นขนาดของรูปภาพ
@@ -376,13 +377,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
             setImageHeightValue(img.height);
             setOriginalWidth(img.width);
             setOriginalHeight(img.height);
-            setOriginalImage(reader.result as string); 
-            setSelectedImage(reader.result as string); 
-           
+            setOriginalImage(reader.result as string);
+            setSelectedImage(reader.result as string);
           };
         };
         reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
       }
+    };
+    useEffect(() => {
+      processImage();
     }, [image]); // useEffect จะทำงานเมื่อ image เปลี่ยนแปลง
   
     //  ประมวล rotation
@@ -601,7 +604,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image,onProcessUrlChange}
                 <div className=" h-fit  flex items-center justify-center  pt-10">
                   
                   <canvas
-                    className="    border-2 border-dashed border-gray-400  justify-center  "
+                    className="    border-2 border-dashed border-gray-400 justify-center  "
                     ref={canvasRef}
                     style={{
                       maxWidth: "450px",

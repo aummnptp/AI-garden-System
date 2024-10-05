@@ -140,8 +140,7 @@ function Nav() {
               {notiData.length}
             </span>
           )}
- 
-              </div>
+          </div>
               {showNotifications && (
                 <div
                   ref={modalRef}

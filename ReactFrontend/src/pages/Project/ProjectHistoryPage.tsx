@@ -43,9 +43,9 @@ const ProjectHistoryPage = () => {
                 />
                 <div className="ml-2">
                   <text className="text-black text-lg font-normal">
-                    ชื่อสกุล
+                    John Doe
                   </text>
-                  <text className="text-black text-lg font-normal"> จำนวน</text>
+                  <text className="text-black text-lg font-normal"> 20 รูปภาพ</text>
                 </div>
               </div>
 
@@ -53,78 +53,78 @@ const ProjectHistoryPage = () => {
                 <div  className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                    <p>abc</p>
+                    <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>
                 <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>image_name</p>
                 </div>    <div className=" mb-8">
                   <img
                     className="w-28 h-28 mr-6  border-2"
-                    src="/images/homeImage/profile.webp"
+                    src="\images\testphoto.avif"
                     />
-                     <p>ชื่อรูป</p>
+                     <p>รูปหล่อ</p>
                 </div>
                 
    

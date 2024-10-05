@@ -159,7 +159,7 @@ const WorkspaceSettingPage = () => {
               className="p-5  text-3xl font-medium tracking-tight 
           text-indigo-900 "
             >
-              Workspace Setting
+             <i className="bi bi-pencil-fill"></i>  Workspace Setting
             </h1>
             <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
             <div className="flex justify-start  ">
@@ -219,10 +219,6 @@ const WorkspaceSettingPage = () => {
                   defaultValue={"รายละเอียด ........"}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  // label="Number"
-                  // InputLabelProps={{
-                  //   shrink: true,
-                  // }}
                 />
               </div>
             </div>
@@ -253,6 +249,7 @@ const WorkspaceSettingPage = () => {
             Save
           </Button>
         </div>
+        
       </div>
     </>
   );

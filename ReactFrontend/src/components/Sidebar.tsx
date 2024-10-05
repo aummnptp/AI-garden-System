@@ -142,14 +142,16 @@ const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
           </Link>
         </li>
         <li>
+        <Link to={`/workspaces/${workspaceId}/project/${projectId}/setting`}>
           <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
-                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+                isActive(`/workspaces/${workspaceId}/project/${workspaceId}/setting`) ? 'bg-blue-100' : ''
               }`}>
             <SettingOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">
               project setting
             </span>
           </div>
+          </Link>
         </li>
         
       </ul>

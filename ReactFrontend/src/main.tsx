@@ -29,6 +29,8 @@ import UserListPage from './pages/Admin/UserListPage.tsx'
 
 import Layout from './Layout.tsx'
 import { createTheme, ThemeProvider } from '@mui/material'
+import ProjectSetting from './pages/Project/ProjectSettingPage.tsx'
+import ProjectAccessManagePage from './pages/Project/ProjectAccessManagePage.tsx'
 
 
 
@@ -105,6 +107,14 @@ const router = createBrowserRouter([
   {
     path: "/workspaces/:workspaceId/create",
     element: <CreateProjectPage/>,
+  },
+  {
+    path: "/workspaces/:workspaceId/project/:projectId/setting",
+    element: <ProjectSetting/>,
+  },
+  {
+    path: "/workspaces/:workspaceId/project/:projectId/setting/access",
+    element: <ProjectAccessManagePage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/detail/test/:modelId",

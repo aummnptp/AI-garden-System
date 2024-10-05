@@ -163,7 +163,7 @@ const WorkspaceInvitationPage = () => {
               className="p-5  text-3xl font-medium tracking-tight 
           text-indigo-900 "
             >
-              Workspace Setting
+                 <i className="bi bi-pencil-fill"></i>   Workspace Setting
             </h1>
             <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
             <div className="flex justify-start  ">
@@ -285,7 +285,7 @@ const WorkspaceInvitationPage = () => {
                   Pending invitation ({pendingDatas.length})
                 </h1>
                 {pendingDatas.map((member, index) => (
-                  <>
+                  <div>
                     <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
                     <div
                       key={index}
@@ -313,7 +313,7 @@ const WorkspaceInvitationPage = () => {
                         ></i>
                       </div>
                     </div>
-                  </>
+                  </div>
                 ))}
               </div>
 
