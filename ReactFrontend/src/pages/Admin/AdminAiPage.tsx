@@ -23,8 +23,10 @@ function AdminAi() {
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
                 AI List
               </h1>
+
               <Link to="/admin/createai" className="p-2  text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-800 rounded-[15px]">
                 + Create New AI 
+
               </Link>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>

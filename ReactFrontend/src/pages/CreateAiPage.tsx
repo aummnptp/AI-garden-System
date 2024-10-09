@@ -17,6 +17,42 @@ const CreateAiProjectPage = () => {
 
   const navigate = useNavigate();
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setUploadedFile(file);
+  
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      try {
+        if (!serviceUri) {
+          alert('กรุณาใส่ Service URI ก่อน');
+          return;
+        }
+  
+        const response = await fetch(serviceUri, {
+          method: 'POST',
+          body: formData,
+        });
+        
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          console.log('Response from API:', data);
+          // เพิ่มโค้ดจัดการกับผลลัพธ์ที่ได้จาก API
+        } else {
+          console.log('Response is not JSON');
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+    } else {
+      alert('กรุณาเลือกไฟล์ก่อน');
+    }
+  };
+
   const handleAddKey = () => {
     setResponseKeys([...responseKeys, { key: '', meaning: '' }]);
   };
@@ -81,7 +117,7 @@ const CreateAiProjectPage = () => {
       response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
       regression_params: regressionParams.map(param => param.param)
     };
-  
+
     fetch('http://localhost:5000/add_model', {
       method: 'POST',
       headers: {
@@ -147,11 +183,42 @@ const CreateAiProjectPage = () => {
                   <option value="Classification">Classification</option>
                 </select>
               </div>
+              <div className="form-group">
+                <label style={{ display: 'block' }}>Service URI</label>
+                <input
+                  type="text"
+                  value={serviceUri}
 
+                  onChange={(e) => setServiceUri(e.target.value)}
+                  className="w-80 p-2 border border-gray-300 rounded-lg"
+                />
+                <input
+                  type="file"
+                  onChange={handleUri}
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  className="w-30 p-2 ml-2 text-white bg-indigo-600 rounded-lg"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()} // เปิดหน้าต่างเลือกไฟล์เมื่อคลิกปุ่ม
+                  className="p-2 ml-2 bg-indigo-600 text-white rounded-lg"
+                >
+                  ทดสอบ Uri
+                </button>
+
+              </div>
               {/* Render form based on aiType */}
               {aiType === 'Classification' || aiType === 'Object Detection' || aiType === 'Segmentation' ? (
                 <div className="form-group">
                   <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
+                  <select
+
+                    onChange={(e) => setAiType(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  >
+
+                  </select>
                   {responseKeys.map((key, index) => (
                     <div key={index} className="response-key flex space-x-2 mb-2">
                       <input
@@ -187,38 +254,38 @@ const CreateAiProjectPage = () => {
 
                 <div className="form-group">
                   <div className="form-group">
-                  <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
-                  {responseKeys.map((key, index) => (
-                    <div key={index} className="response-key flex space-x-2 mb-2">
-                      <input
-                        type="text"
-                        placeholder="key name"
-                        value={key.key}
-                        onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                      />
-                      <input
-                        type="text"
-                        placeholder="meaning"
-                        value={key.meaning}
-                        onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                      />
-                      {responseKeys.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveKey(index)}
-                          className="p-2 bg-red-600 text-white rounded-lg"
-                        >
-                          ลบ
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
-                    + Add Key
-                  </button>
-                </div>
+                    <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
+                    {responseKeys.map((key, index) => (
+                      <div key={index} className="response-key flex space-x-2 mb-2">
+                        <input
+                          type="text"
+                          placeholder="key name"
+                          value={key.key}
+                          onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                          className="w-full p-2 border border-gray-300 rounded-lg"
+                        />
+                        <input
+                          type="text"
+                          placeholder="meaning"
+                          value={key.meaning}
+                          onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
+                          className="w-full p-2 border border-gray-300 rounded-lg"
+                        />
+                        {responseKeys.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveKey(index)}
+                            className="p-2 bg-red-600 text-white rounded-lg"
+                          >
+                            ลบ
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
+                      + Add Key
+                    </button>
+                  </div>
                   <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
                   {regressionParams.map((param, index) => (
                     <div key={index} className="response-param flex space-x-2 mb-2">
@@ -246,15 +313,7 @@ const CreateAiProjectPage = () => {
                 </div>
 
               )}
-              <div className="form-group">
-                <label>Service URI</label>
-                <input
-                  type="text"
-                  value={serviceUri}
-                  onChange={(e) => setServiceUri(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-              </div>
+
               <div className="form-group">
                 <label>คำอธิบาย Input ของ AI</label>
                 <textarea
