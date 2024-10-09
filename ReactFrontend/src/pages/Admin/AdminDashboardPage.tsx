@@ -3,6 +3,7 @@ import MiniFooter from "../../components/MiniFooter";
 import { Link } from "react-router-dom";
 import AdminSidebar from "../../components/AdminSidebar";
 import AiRequestTable from "../../components/table/AiRequestTable";
+import { Desk, PeopleAltOutlined, PsychologyOutlined } from "@mui/icons-material";
 
 function AdminDashboard() {
   return (
@@ -17,26 +18,28 @@ function AdminDashboard() {
           <div className="">
       
             <div className="pt-10 pb-5 h-fit w-full flex justify-self-center relative px-40">
-            <Link to={`/admin/userlist`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />
-                <h1 className="font-medium text-indigo-800 text-2xl my-auto">User List</h1>
-                   <div/>
-              </div>
+                <Link to={`/admin/userlist`} className="w-[30%] mx-auto">
+                <div className="h-[184px] w-full flex flex-col justify-center items-center bg-white rounded-[5px] border border-zinc-400 hover:bg-gray-50 relative">
+                  <div className="w-2.5 h-full bg-indigo-600 absolute left-0 top-0 rounded-tl-[5px] rounded-bl-[5px]" />
+                  <PeopleAltOutlined className="text-indigo-800 text-7xl mb-4" fontSize="large" />
+                  <h1 className="font-medium text-indigo-800 text-2xl">User list</h1>
+                </div>
               </Link>
+
               <Link to={`/admin/admin-ai`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />                
-              <h1 className="font-medium text-indigo-800 text-2xl my-auto">AI List</h1>
-                 <div/>
-              </div>
+                <div className="h-[184px] w-full flex flex-col justify-center items-center bg-white rounded-[5px] border border-zinc-400 hover:bg-gray-50 relative">
+                  <div className="w-2.5 h-full bg-indigo-600 absolute left-0 top-0 rounded-tl-[5px] rounded-bl-[5px]" />
+                  <PsychologyOutlined className="text-indigo-800 text-7xl mb-4" fontSize="large" />
+                  <h1 className="font-medium text-indigo-800 text-2xl">AI list</h1>
+                </div>
               </Link>
+
               <Link to={`#`} className="w-[30%] mx-auto">
-              <div className=" h-fit w-full flex justify-between relative bg-white rounded-[5px] border border-zinc-400  hover:bg-gray-50 ">
-              <div className="w-2.5 h-[184px] bg-indigo-600 rounded-tl-[5px] rounded-bl-[5px]" />
-              <h1 className="font-medium text-indigo-800 text-2xl my-auto">Workspace</h1>
-              <div/>
-              </div>
+                <div className="h-[184px] w-full flex flex-col justify-center items-center bg-white rounded-[5px] border border-zinc-400 hover:bg-gray-50 relative">
+                  <div className="w-2.5 h-full bg-indigo-600 absolute left-0 top-0 rounded-tl-[5px] rounded-bl-[5px]" />
+                  <Desk className="text-indigo-800 text-7xl mb-4"  fontSize="large"/>
+                  <h1 className="font-medium text-indigo-800 text-2xl">Workspace</h1>
+                </div>
               </Link>
             </div>
             <div className=" pb-5 h-fit w-[90%]  relative bg-white rounded-[15px]  mx-auto">

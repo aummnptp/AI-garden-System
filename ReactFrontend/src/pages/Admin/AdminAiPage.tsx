@@ -10,21 +10,21 @@ import AdminSidebar from "../../components/AdminSidebar";
 function AdminAi() {
   return (
     <>
-      <div className="flex bg-neutral-100 h-full pb-32">
+      <div className="flex bg-neutral-100 h-full pb-32  min-h-screen ">
         {/* Slidebar placeholder */}
         <AdminSidebar></AdminSidebar>
-        <div className="w-1/5 bg-neutral-200 h-full"></div>
+   
 
         {/* Main content */}
-        <div className="w-4/5 items-center justify-center h-full grid grid-cols-1">
+        <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* Top card (create sort workspace name) */}
-          <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
+          <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
           <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
                 AI List
               </h1>
               <Link to="/admin/createai" className="p-2  text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-800 rounded-[15px]">
-                + New AI Project
+                + Create New AI 
               </Link>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
@@ -53,7 +53,7 @@ function AdminAi() {
           </div>
 
           {/* Card container */}
-          <div className="mt-4 h-fit w-11/12 grid grid-cols-3 gap-6 bg-white rounded-[15px] justify-self-center relative">
+          <div className="mt-4 h-fit  w-[95%] grid grid-cols-3  bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
             {AiData.map((data) => (
               <AiCard

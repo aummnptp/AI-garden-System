@@ -44,7 +44,7 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
                 // src={member.avatar} 
-                src="images/homeImage/profile.webp"
+                src="/images/homeImage/profile.webp"
                 alt={member.name}
                 />
               ))}

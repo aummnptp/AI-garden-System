@@ -36,7 +36,7 @@ const CreateProjectCard :React.FC<CreateProjectCardProps> = (props) => {
           <p className=" px-4 py-2">
           {props.aiDesc}
           </p>
-          <FormControl>
+          {/* <FormControl>
         <FormLabel id="demo-row-radio-buttons-group-label">ประเภท</FormLabel>
         <RadioGroup
           row
@@ -48,7 +48,7 @@ const CreateProjectCard :React.FC<CreateProjectCardProps> = (props) => {
           <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
           <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
         </RadioGroup>
-      </FormControl>
+      </FormControl> */}
           <div className='  mb-4'>
           {props.tags.map((tag) => (
               <span  className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">{tag}</span>

@@ -20,7 +20,6 @@ const AiCard :React.FC<AiCardProps> = (props) => {
           <img
             className=" w-full h-48 
             object-cover"
-            
             src={props.img}
             />
         <div className='px-4'>

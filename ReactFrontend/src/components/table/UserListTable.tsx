@@ -9,6 +9,7 @@ import formatDate from '../../function/formatDate';
 import formatTime from '../../function/formatTime';
 import { styled } from '@mui/material/styles';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
+import { Link } from 'react-router-dom';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
@@ -31,22 +32,24 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 interface Data {
+  id:number;
   name: string;
-
   email: string;
+  ai:number;
+  workspace:number;
   date: Date;
 }
 
-function createData(name: string, email: string ,date: string,): Data {
-  return { name,email, date: new Date(date), };
+function createData(  id:number,name: string, email: string ,ai:number,workspace:number,date: string,): Data {
+  return { id,name,email,ai,workspace, date: new Date(date), };
 }
 
 const initialRows = [
-  createData('John Doe', 'john@example.com', '2021-06-02T11:30:00'),
-  createData('Jane Smith', 'jane@example.com', '2024-09-02T12:30:00'),
-  createData('Alice Johnson', 'alice@example.com', '2024-06-02T13:30:00'),
-  createData('Alice Johnson', 'alice@example.com', '2024-06-02T13:30:00'),
-  createData('Alice Johnson', 'alice@example.com', '2023-06-02T13:30:00'),
+  createData(1,'John Doe', 'john@example.com', 5,2,'2021-06-02T11:30:00'),
+  createData(2,'Jane Smith', 'jane@example.com', 4,1, '2024-09-02T12:30:00'),
+  createData(3,'Alice Johnson', 'alice@example.com', 4,1, '2024-06-02T13:30:00'),
+  createData(4,'Alice Johnson', 'alice@example.com', 4,3, '2024-06-02T13:30:00'),
+  createData(5,'Alice Johnson', 'alice@example.com', 4,2, '2023-06-02T13:30:00'),
 ];
 
 type Order = 'asc' | 'desc';
@@ -100,15 +103,13 @@ const UserListTable = () => {
           <Table>
               <TableHead>
                   <StyledTableRow>
-
-
                       <StyledTableCell  >
                           <TableSortLabel
                               active={orderBy === 'name'}
                               direction={orderBy === 'name' ? order : 'asc'}
                               onClick={() => handleRequestSort('name')}
                           >
-                            สิทธิ์ AI
+                            ชื่อผู้ใช้
                           </TableSortLabel>
                       </StyledTableCell >
                       {/* <StyledTableCell >
@@ -120,25 +121,35 @@ const UserListTable = () => {
                               อีเมล
                           </TableSortLabel>
                       </StyledTableCell > */}
-                      <StyledTableCell >
+                      <StyledTableCell align='center'>
                           <TableSortLabel
                               active={orderBy === 'date'}
                               direction={orderBy === 'date' ? order : 'asc'}
-                              onClick={() => handleRequestSort('date')}
-                          >
-                              ถูกขอใช้งานเมื่อ
+                              onClick={() => handleRequestSort('ai')}
+                           >
+                              จำนวน AI ที่ใช้งานได้
                           </TableSortLabel>
                       </StyledTableCell >
                       <StyledTableCell  align="center">
-          สถานะ
-      </StyledTableCell >
+                      <TableSortLabel
+                              active={orderBy === 'date'}
+                              direction={orderBy === 'date' ? order : 'asc'}
+                              onClick={() => handleRequestSort('workspace')}
+                           >
+                        Workspaceที่สร้าง
+                        </TableSortLabel>
+                      </StyledTableCell >
+                      <StyledTableCell  align="center">
+                                  จัดการ
+                      </StyledTableCell >
                   </StyledTableRow>
               </TableHead>
               <TableBody>
-                  {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
+               {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
+            
                       <StyledTableRow key={index}>
-             
                           <StyledTableCell>
+                
                           <div className="flex items-center my-2 w-fit">
                         <img
                           className="w-10 h-10 rounded-full border-2"
@@ -149,26 +160,26 @@ const UserListTable = () => {
                           <p className="text-[#8D9BAE] text-sm font-normal">{row.email}</p>
                         </div>
                       </div>
+              
                           </StyledTableCell>
-                           <StyledTableCell>{row.email}</StyledTableCell>
+                           <StyledTableCell align='center'>        {row.workspace}</StyledTableCell>
                   
-                           <StyledTableCell>
-                           <div>
+                           <StyledTableCell align='center'>
+                       
 
-                          <p className="text-black text-lg font-medium"><i className="bi bi-clock-history"></i> {calculateDaysPassed(row.date)}</p>
-                        <text className='text-[#8D9BAE]'>
-                           เวลา: {formatTime(row.date)}
-                           {" "}วันที่: {formatDate(row.date)}
-                          </text>
                       
-                          </div>
+                          {row.ai}
+                      
+                  
                            </StyledTableCell>
-                           <StyledTableCell>  <div className='mx-auto flex justify-center'>
-                              
-                              <Button onClick={() => handleAccept(index)} variant="contained" color="success"     style={{ marginRight: '8px' }} >ยอมรับ</Button> <Button variant="outlined" color="error">ปฎิเสธ</Button>
+                           <StyledTableCell >  <div className='mx-auto flex justify-center'>
+                           <Link key={row.id} to={`/admin/user/${row.id}`}>
+                              <Button  variant="contained" color="info"     style={{ marginRight: '8px' }} >รายละเอียด</Button> 
+                              </Link>
                               </div>
-                              </StyledTableCell> 
+                              </StyledTableCell>
                       </StyledTableRow>
+          
                   ))}
               </TableBody>
           </Table>

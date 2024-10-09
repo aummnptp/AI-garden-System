@@ -31,6 +31,7 @@ import Layout from './Layout.tsx'
 import { createTheme, ThemeProvider } from '@mui/material'
 import ProjectSetting from './pages/Project/ProjectSettingPage.tsx'
 import ProjectAccessManagePage from './pages/Project/ProjectAccessManagePage.tsx'
+import UserDetailPage from './pages/Admin/UserDetailPage.tsx'
 
 
 
@@ -153,6 +154,11 @@ const router = createBrowserRouter([
     path: "/admin/userlist",
     element: <UserListPage/>,
   },
+  {
+    path: "/admin/user/:userId",
+    element: <UserDetailPage/>,
+  },
+
 
 
   ],

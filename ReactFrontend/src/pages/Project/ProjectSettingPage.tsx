@@ -13,22 +13,35 @@ const ProjectSetting = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   const [image, setImage] = useState<File | null>(null);
-  useEffect(() => {
-    const fetchWorkspace = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/workspaces/${workspaceId}/project`
-        );
-        const { name, description } = response.data;
-        setName(name);
-        setDescription(description);
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
-      }
-    };
 
-    fetchWorkspace();
-  }, [workspaceId]);
+  // สำหรับ demo รูป *****
+  const initialImageUrl = "/images/ai/dermpic.jpg"; // URL ของรูปเริ่มต้น
+  useEffect(() => {
+    const fetchImage = async () => {
+      const response = await fetch(initialImageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "default-image.jpg", { type: blob.type });
+      setImage(file);
+    };
+  
+    fetchImage();
+  }, []);
+  // useEffect(() => {
+  //   const fetchWorkspace = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:3000/workspaces/${workspaceId}/project`
+  //       );
+  //       const { name, description } = response.data;
+  //       setName(name);
+  //       setDescription(description);
+  //     } catch (error) {
+  //       console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
+  //     }
+  //   };
+
+  //   fetchWorkspace();
+  // }, [workspaceId]);
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();

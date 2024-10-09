@@ -50,7 +50,7 @@ const ProjectAccessManagePage = () => {
                 <Link
                   to={`/workspaces/${workspaceId}/project/${projectId}/setting/access`}
                 >
-                  <a className="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
+                  <a className="inline-block p-4  text-blue-600 border-b-2 border-blue-600 rounded-t-lg active">
                     Access Management
                   </a>
                 </Link>

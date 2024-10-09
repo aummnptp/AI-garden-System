@@ -383,7 +383,7 @@ const AIDemo = () => {
                   onProcessUrlChange={handleProcessUrlChange}
                 />
               )}
-                   {uploadStep == 3 &&(
+              {uploadStep == 3 &&(
   
           <div className="w-full">
       <div className="flex w-full ">
