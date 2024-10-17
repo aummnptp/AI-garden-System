@@ -316,11 +316,11 @@ const AIDemo = () => {
                             className=" mb-2 text-3xl font-medium tracking-tight 
                 text-indigo-900  "
                           >
-                            ชื่อ AI
+                          Example Healh AI
                           </h1>
 
                           <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                            Object Detection
+                            Classification
                           </span>
                         </div>
                         <div className=" w-full border border-zinc-300" />
@@ -370,9 +370,8 @@ const AIDemo = () => {
                     </span>
                   </div>
                   <p className="ml-3">
-                    รูปภาพที่นำมาอัพโหลด
-                    ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง ได้แก่สุนัข
-                    แมว นก กระต่าย เต่า เท่านั้น{" "}
+                  ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้
+                  ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค{" "}
                   </p>
                 </>
               ) : null}

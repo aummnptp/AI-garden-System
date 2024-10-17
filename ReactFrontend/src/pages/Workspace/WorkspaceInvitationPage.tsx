@@ -24,8 +24,7 @@ import axios from "axios";
 
 interface memberData {
   id: number;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   picture:string;
   role: string;
@@ -33,8 +32,7 @@ interface memberData {
 
 interface userData {
   id: number;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   picture:string;
   role: string;
@@ -47,7 +45,36 @@ const WorkspaceInvitationPage = () => {
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
   const [userDatas, setUserData] = useState<memberData[]>([]);
   const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
-  const [memberDatas, setMemberData] = useState<memberData[]>([]);
+  const [memberDatas, setMemberData] = useState<memberData[]>([
+    {
+      id: 1,
+     name: "Putthipong Chobngam",
+      email: "Putthipong@gmail.com",
+      role: "owner",
+      picture:"/images/homeImage/profile.webp",
+    },
+    {
+      id: 2,
+      name: "Apple Banana",
+      email: "Apple@gmail.com",
+      role: "member",
+      picture:"/images/homeImage/profile.webp",
+    },
+    {
+      id: 3,
+      name: "Kittinan Charearnsong",
+      email: "Kittinana@gmail.com",
+      role: "owner",
+      picture:"/images/homeImage/profile.webp",
+    },
+    {
+      id: 4,
+      name: "Member LastName",
+      email: "Member@gmail.com",
+      role: "member",
+      picture:"/images/homeImage/profile.webp",
+    },
+  ]);
   const [workspaceDetail, setWorkspaceDetail] = useState([]);
   const fetchUserData = () => {
     axios.get("http://localhost:3000/user", {
@@ -213,7 +240,12 @@ const WorkspaceInvitationPage = () => {
                         <div className="flex items-center ">
                           <img
                             className="w-10 h-10 rounded-full  border-2"
-                            src={member.picture}
+                            src={member.picture|| "/images/homeImage/profile.webp"}
+                            alt="User"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null; // ป้องกัน loop error
+                              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                            }}
                           />
                           <div className="ml-2">
                             <p className="text-indigo-900 text-xl font-medium">
@@ -294,8 +326,12 @@ const WorkspaceInvitationPage = () => {
                       <div className="flex items-center ">
                         <img
                           className="w-10 h-10 rounded-full  border-2"
-                          src={member.picture}
-                          // src="/images/homeImage/profile.webp"
+                          src={member.picture|| "/images/homeImage/profile.webp"}
+                          alt="User"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null; // ป้องกัน loop error
+                            e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                          }}
                         />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-xl font-medium">
@@ -331,7 +367,12 @@ const WorkspaceInvitationPage = () => {
                     renderOption={(props, option) => (
                       <li {...props}>
                         <img
-                          src={option.picture}
+                          src={option.picture|| "/images/homeImage/profile.webp"}
+                          alt="User"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null; // ป้องกัน loop error
+                            e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                          }}
                           alt="profile"
                           style={{
                             width: 30,

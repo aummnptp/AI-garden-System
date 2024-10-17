@@ -19,7 +19,7 @@ function AIlist() {
           className="p-5 ml-5 text-3xl font-medium tracking-tight 
           text-indigo-900 "
         >
-          AI List
+          รายชื่อ AI 
         </h1>
         <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto "></div>
         <div className="m-6 flex justify-start">
@@ -57,7 +57,7 @@ function AIlist() {
             type="text"
             id="first_name"
             className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
-            placeholder="ค้นหาชื่อโปรเจค"
+            placeholder="ค้นหา AI"
             required
           />
           <button

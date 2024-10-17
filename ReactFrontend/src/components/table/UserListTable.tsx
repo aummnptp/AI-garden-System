@@ -10,6 +10,7 @@ import formatTime from '../../function/formatTime';
 import { styled } from '@mui/material/styles';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
 import { Link } from 'react-router-dom';
+import { Desk, PsychologyOutlined } from '@mui/icons-material';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
@@ -99,20 +100,20 @@ const UserListTable = () => {
 
 
   return (
-      <TableContainer component={Paper}>
-          <Table>
-              <TableHead>
-                  <StyledTableRow>
-                      <StyledTableCell  >
-                          <TableSortLabel
-                              active={orderBy === 'name'}
-                              direction={orderBy === 'name' ? order : 'asc'}
-                              onClick={() => handleRequestSort('name')}
-                          >
-                            ชื่อผู้ใช้
-                          </TableSortLabel>
-                      </StyledTableCell >
-                      {/* <StyledTableCell >
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <StyledTableRow>
+            <StyledTableCell>
+              <TableSortLabel
+                active={orderBy === "name"}
+                direction={orderBy === "name" ? order : "asc"}
+                onClick={() => handleRequestSort("name")}
+              >
+                ชื่อผู้ใช้
+              </TableSortLabel>
+            </StyledTableCell>
+            {/* <StyledTableCell >
                           <TableSortLabel
                               active={orderBy === 'email'}
                               direction={orderBy === 'email' ? order : 'asc'}
@@ -121,69 +122,89 @@ const UserListTable = () => {
                               อีเมล
                           </TableSortLabel>
                       </StyledTableCell > */}
-                      <StyledTableCell align='center'>
-                          <TableSortLabel
-                              active={orderBy === 'date'}
-                              direction={orderBy === 'date' ? order : 'asc'}
-                              onClick={() => handleRequestSort('ai')}
-                           >
-                              จำนวน AI ที่ใช้งานได้
-                          </TableSortLabel>
-                      </StyledTableCell >
-                      <StyledTableCell  align="center">
-                      <TableSortLabel
-                              active={orderBy === 'date'}
-                              direction={orderBy === 'date' ? order : 'asc'}
-                              onClick={() => handleRequestSort('workspace')}
-                           >
-                        Workspaceที่สร้าง
-                        </TableSortLabel>
-                      </StyledTableCell >
-                      <StyledTableCell  align="center">
-                                  จัดการ
-                      </StyledTableCell >
-                  </StyledTableRow>
-              </TableHead>
-              <TableBody>
-               {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
-            
-                      <StyledTableRow key={index}>
-                          <StyledTableCell>
-                
-                          <div className="flex items-center my-2 w-fit">
-                        <img
-                          className="w-10 h-10 rounded-full border-2"
-                          src="/images/homeImage/profile.webp"
-                        />
-                        <div className="ml-2">
-                          <p className="text-black text-lg font-medium"><i className="bi bi-person-fill"></i>{row.name}</p>
-                          <p className="text-[#8D9BAE] text-sm font-normal">{row.email}</p>
-                        </div>
-                      </div>
-              
-                          </StyledTableCell>
-                           <StyledTableCell align='center'>        {row.workspace}</StyledTableCell>
+            <StyledTableCell align="center">
+              <TableSortLabel
+                active={orderBy === "date"}
+                direction={orderBy === "date" ? order : "asc"}
+                onClick={() => handleRequestSort("ai")}
+              >
+                จำนวน AI ที่ใช้งานได้
+              </TableSortLabel>
+            </StyledTableCell>
+            <StyledTableCell align="center">
+              <TableSortLabel
+                active={orderBy === "date"}
+                direction={orderBy === "date" ? order : "asc"}
+                onClick={() => handleRequestSort("workspace")}
+              >
+                Workspaceที่สร้าง
+              </TableSortLabel>
+            </StyledTableCell>
+            <StyledTableCell align="center">จัดการ</StyledTableCell>
+          </StyledTableRow>
+        </TableHead>
+        <TableBody>
+          {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
+            <StyledTableRow key={index}>
+              <StyledTableCell>
+                <div className="flex items-center my-2 w-fit">
+                  <img
+                    className="w-10 h-10 rounded-full border-2"
+                    src="/images/homeImage/profile.webp"
+                  />
+                  <div className="ml-2">
+                    <p className="text-black text-lg font-medium">
+                      <i className="bi bi-person-fill"></i>
+                      {row.name}
+                    </p>
+                    <p className="text-[#8D9BAE] text-sm font-normal">
+                      {row.email}
+                    </p>
+                  </div>
+                </div>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                {" "}
+                <PsychologyOutlined /> 
+                <span className='text-black text-lg font-medium'> มีสิทธิ์ 
+                </span>
+                <span className='text-indigo-800 text-xl font-medium'> 
+                  {" "}{row.ai}
+                   </span>
                   
-                           <StyledTableCell align='center'>
-                       
+              </StyledTableCell>
 
-                      
-                          {row.ai}
-                      
-                  
-                           </StyledTableCell>
-                           <StyledTableCell >  <div className='mx-auto flex justify-center'>
-                           <Link key={row.id} to={`/admin/user/${row.id}`}>
-                              <Button  variant="contained" color="info"     style={{ marginRight: '8px' }} >รายละเอียด</Button> 
-                              </Link>
-                              </div>
-                              </StyledTableCell>
-                      </StyledTableRow>
+              <StyledTableCell align="center">     
+           
+                <Desk /> 
+                <span className='text-black text-lg font-medium'>ทั้งหมด</span>
+                <span className='text-indigo-800 text-xl font-medium'> 
+                {" "}{row.workspace}
+                </span>
           
-                  ))}
-              </TableBody>
-          </Table>
-      </TableContainer>
+             
+                  
+             
+                </StyledTableCell>
+              <StyledTableCell>
+                {" "}
+                <div className="mx-auto flex justify-center">
+                  <Link key={row.id} to={`/admin/user/${row.id}`}>
+                    <Button
+                      variant="contained"
+                      color="info"
+                      style={{ marginRight: "8px" }}
+                    >
+                      รายละเอียด
+                    </Button>
+                  </Link>
+                </div>
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

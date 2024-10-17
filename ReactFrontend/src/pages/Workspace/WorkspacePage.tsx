@@ -117,17 +117,17 @@ function WorkspacePage() {
                 ):( <UpOutlined style={{color:'#999',fontSize:"24px"}}/>)
                 }
                 <p className="text-center text-zinc-500 text-xl leading-[49px]">  {showInvitedRow ? 'ย่อรายละเอียด' : 'แสดงเพิ่มเติม'}</p>
-                <div className="w-[88%] h-[0px] border border-zinc-300"></div>
+                <div className="w-[85%] h-[0px] border border-zinc-300"></div>
               </div>
             {/* invited wokspace Card */}
             <div className={`grid grid-cols-3 pb-8 pt-2`}>  
-                {/* {myWorkspaceData.map((data, index)=>(
+                {MyWorkspaceData.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
                 <Link to={`/workspaces/${data.id}/project-list`}>
                   <InvitedCard  id={data.id} name={data.name} desc={data.description} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
                 </Link>
               </div>
-                ))} */}
+                ))}
               </div>
 
           </div>

@@ -106,14 +106,16 @@ const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
       </div>
       <ul className="font-medium">
         <li>
+        <Link to={`/workspaces/${workspaceId}/project/${projectId}/detail`}>
           <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
-                isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
+                isActive(`/workspaces/${workspaceId}/project/${projectId}/detail`) ? 'bg-blue-100' : ''
               }`}>
           <ProfileOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">detail</span>
           </div>
+          </Link>
         </li>
-        <li>
+        {/* <li>
           <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
                 isActive(`/workspaces/${workspaceId}/project-list`) ? 'bg-blue-100' : ''
               }`}>
@@ -128,7 +130,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
           <PlaySquareOutlined />
             <span className="flex-1 ms-3 whitespace-nowrap">upload video</span>
           </div>
-        </li>
+        </li> */}
         <li>
         <Link to={`/workspaces/${workspaceId}/project/${projectId}/history`}>
           <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${

@@ -6,6 +6,8 @@ import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
+import AdminAiCard from "../../components/card/AdminAiCard";
+import { Button } from "@mui/material";
 
 function AdminAi() {
   return (
@@ -21,11 +23,21 @@ function AdminAi() {
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
           <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                AI List
+                รายชื่อ AI 
               </h1>
 
-              <Link to="/admin/createai" className="p-2  text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-800 rounded-[15px]">
+              <Link to="/admin/createai" >
+                  <Button
+                           variant="contained"
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  >
                 + Create New AI 
+                </Button>
 
               </Link>
             </div>
@@ -35,7 +47,7 @@ function AdminAi() {
                 type="text"
                 id="first_name"
                 className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
-                placeholder="ค้นหาชื่อโปรเจค"
+                placeholder="ค้นหาชื่อAI"
                 required
               />
               <div>
@@ -58,7 +70,7 @@ function AdminAi() {
           <div className="mt-4 h-fit  w-[95%] grid grid-cols-3  bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
             {AiData.map((data) => (
-              <AiCard
+              <AdminAiCard
                 key={data.id}
                 id={data.id}
                 name={data.name}

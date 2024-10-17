@@ -17,7 +17,7 @@ function CreateProjectPage() {
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [uploadStep, setUploadStep] = useState(1);
-  
+  const [seletedAI, setSelectedAI] = useState();
   const fetchData = () => {
     axios.all([
       axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
@@ -213,11 +213,11 @@ function CreateProjectPage() {
           <img
             className=" w-full h-48  
             object-cover"
-            src={"/images/ai/Object-detection-Real-world-applications-and-benefits.png"}
+            src={"/images/ai/healthAi.webp"}
             />
 
           <h1 className=" py-2 text-black text-[25px] font-semibold">
-            {`AI Name`}
+            {`Health Example AI`}
           </h1>
        
           <span className="  mb-2 w-fit bg-sky-500 rounded-[15px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">
@@ -257,7 +257,21 @@ function CreateProjectPage() {
         </div>
         {/* bottom ba  */}
         <div className="pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
-          <Button
+          {uploadStep ==3?(
+            <Link to={`/workspaces/${workspaceId}/project-list`}>
+            <Button
+            size="large"
+            variant="contained"
+            sx={{
+              backgroundColor: "#4f46e5",
+              "&:hover": { backgroundColor: "#3730a3" },
+            }}
+            style={{ marginRight: "0.5rem" }}
+            >
+            Create
+          </Button>
+          </Link>
+          ):(<Button
             size="large"
             variant="contained"
             sx={{
@@ -270,7 +284,7 @@ function CreateProjectPage() {
             }}
           >
             Next Step
-          </Button>
+          </Button>)}
 
           {/* <Link to={`/workspaces/${workspaceId}/project-list`}>
       </Link> */}

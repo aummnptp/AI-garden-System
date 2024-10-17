@@ -207,11 +207,15 @@ function Nav() {
         className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer rounded-lg"
         onClick={toggleMenu}
       >
-        <img
-          className="w-10 h-10 rounded-full border-2"
-          src={user.picture}
-          alt="User"
-        />
+                <img
+            className="w-10 h-10 rounded-full border-2"
+            src={user.picture || "/images/homeImage/profile.webp"}
+            alt="User"
+            onError={(e) => {
+              e.currentTarget.onerror = null; // ป้องกัน loop error
+              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+            }}
+          />
         <div className="ml-2">
           <span className="text-black text-lg font-normal">{user.name}</span>
         </div>
