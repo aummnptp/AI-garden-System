@@ -7,13 +7,14 @@ const CreateAiProjectPage = () => {
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
-  const [responseKeys, setResponseKeys] = useState([{ key: '', meaning: '' }]);
+  const [responseKeys, setResponseKeys] = useState([{ key: '', meaning: '', displayFormat: '' }]);
   const [inputDescription, setInputDescription] = useState('');
   const [aiType, setAiType] = useState('Object Detection');
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState<string>('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [regressionParams, setRegressionParams] = useState([{ param: '' }]);
+  const [selectOptions, setSelectOptions] = useState<string[]>([]);
 
   const navigate = useNavigate();
 
@@ -22,26 +23,29 @@ const CreateAiProjectPage = () => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setUploadedFile(file);
-  
+
       const formData = new FormData();
       formData.append('file', file);
-  
+
       try {
         if (!serviceUri) {
           alert('กรุณาใส่ Service URI ก่อน');
           return;
         }
-  
+
         const response = await fetch(serviceUri, {
           method: 'POST',
           body: formData,
         });
-        
+
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const data = await response.json();
           console.log('Response from API:', data);
-          // เพิ่มโค้ดจัดการกับผลลัพธ์ที่ได้จาก API
+
+          // ดึงคีย์จากข้อมูลที่ได้จาก API
+          const keys = Object.keys(data);
+          setSelectOptions(keys); // เก็บคีย์ใน state เพื่อแสดงใน <select>
         } else {
           console.log('Response is not JSON');
         }
@@ -54,7 +58,7 @@ const CreateAiProjectPage = () => {
   };
 
   const handleAddKey = () => {
-    setResponseKeys([...responseKeys, { key: '', meaning: '' }]);
+    setResponseKeys([...responseKeys, { key: '', meaning: '', displayFormat: '' }]);
   };
 
   const handleRemoveKey = (index: number) => {
@@ -208,111 +212,87 @@ const CreateAiProjectPage = () => {
                 </button>
 
               </div>
-              {/* Render form based on aiType */}
-              {aiType === 'Classification' || aiType === 'Object Detection' || aiType === 'Segmentation' ? (
-                <div className="form-group">
-                  <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
-                  <select
 
-                    onChange={(e) => setAiType(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  >
 
-                  </select>
-                  {responseKeys.map((key, index) => (
-                    <div key={index} className="response-key flex space-x-2 mb-2">
-                      <input
-                        type="text"
-                        placeholder="key name"
-                        value={key.key}
-                        onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                      />
-                      <input
-                        type="text"
-                        placeholder="meaning"
-                        value={key.meaning}
-                        onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                      />
-                      {responseKeys.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveKey(index)}
-                          className="p-2 bg-red-600 text-white rounded-lg"
-                        >
-                          ลบ
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
-                    + Add Key
-                  </button>
-                </div>
-              ) : aiType === 'Regression' && (
+              <div className="form-group">
+                <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
 
-                <div className="form-group">
-                  <div className="form-group">
-                    <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
-                    {responseKeys.map((key, index) => (
-                      <div key={index} className="response-key flex space-x-2 mb-2">
-                        <input
-                          type="text"
-                          placeholder="key name"
-                          value={key.key}
-                          onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-lg"
-                        />
-                        <input
-                          type="text"
-                          placeholder="meaning"
-                          value={key.meaning}
-                          onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-lg"
-                        />
-                        {responseKeys.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveKey(index)}
-                            className="p-2 bg-red-600 text-white rounded-lg"
-                          >
-                            ลบ
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
-                      + Add Key
-                    </button>
+                {responseKeys.map((key, index) => (
+                  <div key={index} className="response-key flex space-x-2 mb-2">
+
+                    {/* ช่อง select สำหรับความหมาย (meaning) */}
+                    <input
+                      type="text"
+                      placeholder="meaning"
+                      value={key.meaning}
+                      onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    <select
+                      value={key.key}
+                      onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value="">Select Key</option>
+                      {selectOptions.map((option, i) => (
+                        <option key={i} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Select สำหรับ Display Format */}
+                    <select
+                      value={key.displayFormat || ''}
+                      onChange={(e) => handleKeyChange(index, 'displayFormat', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value="">Select Display Format</option>
+                      <option value="Text">Text</option>
+                      <option value="Chart">Chart</option>
+                    </select>
+
+                    {responseKeys.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveKey(index)}
+                        className="p-2 bg-red-600 text-white rounded-lg"
+                      >
+                        ลบ
+                      </button>
+                    )}
                   </div>
-                  <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
-                  {regressionParams.map((param, index) => (
-                    <div key={index} className="response-param flex space-x-2 mb-2">
-                      <input
-                        type="text"
-                        placeholder="Parameter"
-                        value={param.param}
-                        onChange={(e) => handleParamChange(index, e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg"
-                      />
-                      {regressionParams.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveParam(index)}
-                          className="p-2 bg-red-600 text-white rounded-lg"
-                        >
-                          ลบ
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-lg">
-                    + Add Parameter
-                  </button>
-                </div>
-
-              )}
+                ))}
+                <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
+                  + Add Key
+                </button>
+              </div>
+              <div style={{ display: 'none' }}>
+                <label >Regression Parameters (สำหรับพล็อตกราฟ)</label>
+                {regressionParams.map((param, index) => (
+                  <div key={index} className="response-param flex space-x-2 mb-2">
+                    <input
+                      type="text"
+                      placeholder="Parameter"
+                      value={param.param}
+                      onChange={(e) => handleParamChange(index, e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    {regressionParams.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveParam(index)}
+                        className="p-2 bg-red-600 text-white rounded-lg"
+                      >
+                        ลบ
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-lg">
+                  + Add Parameter
+                </button>
+              </div>
 
               <div className="form-group">
                 <label>คำอธิบาย Input ของ AI</label>
