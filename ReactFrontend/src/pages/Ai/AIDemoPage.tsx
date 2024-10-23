@@ -20,10 +20,7 @@ import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/DemoPredictResult";
 
-interface Prediction {
-  class_name: string;
-  confidence: number;
-}
+
 
 interface PredictResult {
   ai_type: string;
@@ -35,6 +32,7 @@ const AIDemo = () => {
   const [image, setImage] = useState<File | null>(null);
   // first step of customimage for rotate grayscale
   const [customImage, setCustomImage] = useState<File | null>(image);
+  
   const [open, setOpen] = React.useState(false);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null); // URL ของรูปที่กำลังแสดง
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
