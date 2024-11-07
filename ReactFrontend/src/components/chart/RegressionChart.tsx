@@ -38,6 +38,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) =
         data: newChartData,
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               display: false,
@@ -81,7 +82,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) =
   }, [regressionParams]);
 
   return (
-    <div className="w-full h-80">
+    <div className="w-full h-[400px]">
       <canvas id="regressionChart"></canvas> {/* ใช้ ID สำหรับ canvas */}
     </div>
   );

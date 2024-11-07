@@ -103,7 +103,7 @@ const PredictAiModelPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="m-6 space-y-4">
               {!fileUrl ? (
                 <div className="form-group">
-                  <label>{detail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label>
+                  
                   <label
                     htmlFor="file-upload"
                     className="mx-auto flex flex-col items-center justify-center w-[90%] p-6 border-2 border-dashed border-blue-500 rounded-lg h-96 bg-gray-50 cursor-pointer mt-10"
