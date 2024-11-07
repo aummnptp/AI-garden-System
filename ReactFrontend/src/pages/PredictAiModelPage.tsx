@@ -31,17 +31,24 @@ const PredictAiModelPage: React.FC = () => {
     return <div>ไม่พบรายละเอียดโปรเจก</div>;
   }
 
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setFile(file);
+      const fileUrl = URL.createObjectURL(file);
+      setFileUrl(fileUrl);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
-    setFile(selectedFile);
     if (selectedFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFileUrl(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setFileUrl(null);
+      setFile(selectedFile);
+      const fileUrl = URL.createObjectURL(selectedFile);
+      setFileUrl(fileUrl);
     }
   };
 
@@ -50,7 +57,7 @@ const PredictAiModelPage: React.FC = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      console.log(file.size);
+
       try {
         const response = await fetch(`http://localhost:5000/predict/${modelId}`, {
           method: 'POST',
@@ -61,24 +68,19 @@ const PredictAiModelPage: React.FC = () => {
           throw new Error('Network response was not ok');
         }
 
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
+        const data = await response.json();
+        const { prediction, regression_params, ai_type, response_keys } = data;
 
-          // ดึงค่า prediction, regression_params และ ai_type จาก data
-          const { prediction, regression_params, ai_type, response_keys } = data;
-
-          navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
-            state: {
-              prediction: prediction,   // ผลลัพธ์การพยากรณ์
-              regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
-              ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
-              file: fileUrl,            // ไฟล์ที่อัปโหลด
-              fileName: file.name,
-              response_keys: response_keys       // ชื่อไฟล์ที่อัปโหลด
-            }
-          });
-        }
+        navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
+          state: {
+            prediction,
+            regression_params,
+            ai_type,
+            file: fileUrl,
+            fileName: file.name,
+            response_keys,
+          },
+        });
       } catch (error) {
         console.error('Error:', error);
       }
@@ -99,16 +101,30 @@ const PredictAiModelPage: React.FC = () => {
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
             <form onSubmit={handleSubmit} className="m-6 space-y-4">
-              <div className="form-group">
-                <label>{detail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
-                />
-              </div>
-              {fileUrl && (
+              {!fileUrl ? (
+                <div className="form-group">
+                  <label>{detail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label>
+                  <label
+                    htmlFor="file-upload"
+                    className="mx-auto flex flex-col items-center justify-center w-[90%] p-6 border-2 border-dashed border-blue-500 rounded-lg h-96 bg-gray-50 cursor-pointer mt-10"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                  >
+                    <div className="flex flex-col items-center justify-center text-center w-full h-full">
+                      <i className="bi bi-folder-fill text-blue-500 text-4xl mb-4"></i>
+                      <p className="text-gray-500">คุณยังไม่ได้อัปโหลดไฟล์</p>
+                      <p className="text-gray-500">กดเพื่อเลือก หรือ ลากไฟล์มาวางที่นี่</p>
+                    </div>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              ) : (
                 <div className="w-1/2 mx-auto mt-4">
                   {detail.inputType === 'รูปภาพ' ? (
                     <img src={fileUrl} alt="Preview" className="w-full h-auto" />
@@ -116,7 +132,6 @@ const PredictAiModelPage: React.FC = () => {
                     <video controls className="w-full">
                       <source src={fileUrl} type="video/mp4" />
                       <source src={fileUrl} type="video/webm" />
-
                       <p>เบราว์เซอร์ของคุณไม่รองรับการแสดงวิดีโอ <a href={fileUrl}>ดาวน์โหลดวิดีโอที่นี่</a>.</p>
                     </video>
                   )}
@@ -130,9 +145,7 @@ const PredictAiModelPage: React.FC = () => {
                   size="large"
                   sx={{
                     backgroundColor: "#3b82f6",
-                    "&:hover": {
-                      backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                    },
+                    "&:hover": { backgroundColor: "#2563eb" },
                   }}
                 >
                   ยืนยัน

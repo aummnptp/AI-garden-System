@@ -64,7 +64,7 @@ const PredictionResultPage: React.FC = () => {
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
-        
+      <Sidebar />
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-start items-center p-5">
@@ -127,44 +127,7 @@ const PredictionResultPage: React.FC = () => {
             );
           })}
 
-                        {/* Note section */}
-                        <div className="form-group">
-                          <div className="flex justify-center items-center space-x-2">
-                            <label className="font-bold">Note</label>
-                            {isEditing ? (
-                              <>
-                                <button
-                                  onClick={handleSaveNote}
-                                  className="text-green-500 hover:text-green-700"
-                                >
-                                  <SaveOutlined style={{ fontSize: '18px' }} />
-                                </button>
-                                <button
-                                  onClick={handleCancel}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <CloseOutlined style={{ fontSize: '18px' }} />
-                                </button>
-                              </>
-                            ) : (
-                              <button
-                                onClick={() => setIsEditing(true)}
-                                className="text-indigo-500 hover:text-indigo-700"
-                              >
-                                <EditOutlined style={{ fontSize: '18px' }} />
-                              </button>
-                            )}
-                          </div>
-                          {isEditing ? (
-                            <textarea
-                              value={note}
-                              onChange={(e) => setNote(e.target.value)}
-                              className="w-full p-2 border border-gray-300 rounded-lg"
-                            />
-                          ) : (
-                            <p className="text-left">{savedNote || 'ไม่มีบันทึก'}</p>
-                          )}
-                        </div>
+                        
 
                       </div>
                     ) : (
