@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Workspace } from './workspaces/entities/workspace.entity';
 import { InvitationModule } from './invitation/invitation.module';
+import { AIModel } from './ai/entities/ai-model.entity';
+import { AIModelModule } from './ai/ai-model.module';
 
 
 
@@ -22,7 +24,7 @@ import { InvitationModule } from './invitation/invitation.module';
       port: parseInt(<string> process.env.POSTGRES_PORT),
       password: process.env.POSTGRES_PASSWORD,
       username: process.env.POSTGRES_USER,
-      entities:[User,Workspace],
+      entities:[User,Workspace,AIModel],
       // autoLoadEntities: true,
       database: process.env.POSTGRES_DATABASE,
       synchronize: true, // อย่าลืมปิดในการใช้งาน production
@@ -32,6 +34,7 @@ import { InvitationModule } from './invitation/invitation.module';
     AuthModule,
     UserModule,
     InvitationModule,
+    AIModelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
