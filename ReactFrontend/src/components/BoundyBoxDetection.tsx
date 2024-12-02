@@ -55,11 +55,14 @@ const ObjectDetectionOverlay: React.FC<DemoPredictResultProps> = ({
         predictResult.prediction.detections.forEach((detection) => {
           context.beginPath();
           context.rect(
+            // ตำแหน่งวาด x,y เริ่ม
             detection.x1,
             detection.y1,
+             // ตำแหน่งวาด x,y จบ
             detection.x2 - detection.x1,
             detection.y2 - detection.y1
           );
+          // ตั้งค่าความกรอ
           context.lineWidth = 2;
           context.strokeStyle = "red";
           context.fillStyle = "rgba(255, 0, 0, 0.2)";
@@ -82,28 +85,30 @@ const ObjectDetectionOverlay: React.FC<DemoPredictResultProps> = ({
     <div className="w-full">
       <div className="flex w-full ">
         <div className="w-[100%] text-center space-y-2 border rounded-[5px] p-10 justify-center">
-          <div className="w-full flex justify-end py-1"> 
-          <Button onClick={toggleBoxes}
-            variant="contained"
-            size="large"
-            sx={{
-              backgroundColor: "#4f46e5",
-              "&:hover": {
-                backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-              },}}
-              >
-            {showBoxes ? (
-              <>
-                <i className="bi bi-eye"></i>Hide
-              </>
-            ) : (
-              <>
-                <i className="bi bi-eye-slash"></i> Show
-              </>
-            )}{" "}
-            Bounding Boxes
-          </Button>
-            </div>
+          <div className="w-full flex justify-end py-1">
+            <Button
+              onClick={toggleBoxes}
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+            >
+              {showBoxes ? (
+                <>
+                  <i className="bi bi-eye"></i>Hide
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-eye-slash"></i> Show
+                </>
+              )}{" "}
+              Bounding Boxes
+            </Button>
+          </div>
           <canvas
             ref={canvasRef}
             style={{
@@ -151,25 +156,35 @@ const ObjectDetectionOverlay: React.FC<DemoPredictResultProps> = ({
               {predictResult.prediction.detections.length > 0 ? (
                 predictResult.prediction.detections.map((detection, index) => (
                   <tr key={index} className="bg-gray-100 border-b">
-                    <td className="py-3 px-4 text-indigo-800 text-xl font-medium">
-                      {getMeaningForKey("detections")}
+                    {" "}
+                    <th className="py-3 px-4 text-indigo-800 text-2xl font-medium">
+                      {" "}
+                      {getMeaningForKey("detections") + ' '+(index + 1)}
+                    </th>{" "}
+                    <td className="py-3 px-4 text-gray-800 text-xl">
+                      <text className="py-3 px-4 text-indigo-600 text-xl font-medium">Label:</text>
+                      {` ${detection.label}
+                      `}
                     </td>
                     <td className="py-3 px-4 text-gray-800 text-xl">
-                      {`Label: ${
-                        detection.label
-                      }, Confidence: ${detection.confidence.toFixed(2)}`}
+                    <text className="py-3 px-4 text-indigo-600 text-xl font-medium">Confidence:</text>
+                      {`
+                       ${detection.confidence.toFixed(2)}`}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
+                  {" "}
                   <td colSpan={2} className="text-center py-4">
-                    ไม่มีข้อมูล
-                  </td>
+                    {" "}
+                    ไม่มีข้อมูล{" "}
+                  </td>{" "}
                 </tr>
               )}
             </tbody>
           </table>
+
           {predictResult.regression_params && (
             <p>
               Regression Params:{" "}
