@@ -32,7 +32,7 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import ProjectSetting from './pages/Project/ProjectSettingPage.tsx'
 import ProjectAccessManagePage from './pages/Project/ProjectAccessManagePage.tsx'
 import UserDetailPage from './pages/Admin/UserDetailPage.tsx'
-
+import Videotest from './pages/Videotest.tsx'
 
 
 
@@ -159,6 +159,10 @@ const router = createBrowserRouter([
     element: <UserDetailPage/>,
   },
 
+  {
+    path: "/videotest",
+    element: <Videotest/>,
+  },
 
 
   ],

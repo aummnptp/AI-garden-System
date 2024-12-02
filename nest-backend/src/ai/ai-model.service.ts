@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AIModel } from './entities/ai-model.entity';
 import axios from 'axios';
-
+import * as FormData from 'form-data';
+import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 
 @Injectable()
@@ -21,33 +22,40 @@ export class AIModelService {
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
   }
+
+  
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-  return{};
-    // const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
-    // if (!model) {
-    //   throw new NotFoundException('Model not found!');
-    // }
-
-    // const response = await axios.post(model.api_uri, {
-    //   headers: { 'Content-Type': file.mimetype },
-    //   data: file.buffer,
-    // });
-
-    // const responseKeysWithMeaning = model.responseKeys
-    //   .map((item) => {
-    //     const [key, meaning] = item.split(':');
-    //     return { key, meaning };
-    //   });
-
-    // const filteredResponse = this.filterResponse(response.data, responseKeysWithMeaning);
-    // const regressionParams = response.data[model.regression_params];
-
-    // return {
-    //   prediction: filteredResponse,
-    //   regression_params: regressionParams,
-    //   ai_type: model.ai_type,
-    //   response_keys: responseKeysWithMeaning,
-    // };
+    const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
+    if (!model) {
+      throw new NotFoundException('Model not found!');
+    }
+  
+    // สร้าง FormData และเพิ่มข้อมูล
+    const formData = new FormData();
+    formData.append('file', file.buffer, file.originalname); // เพิ่มไฟล์
+    // หากมีข้อมูลเพิ่มเติมสามารถเพิ่มได้
+    // formData.append('other_field', 'value');
+  
+    try {
+      // ใช้ formData และตั้งค่า headers
+      const response = await axios.post(model.api_uri, formData, {
+        headers: {
+          ...formData.getHeaders(), // Headers ที่สร้างจาก FormData
+        },
+      });
+  
+      const responseKeysWithMeaning = model.responseKeys;
+      const filteredResponse = this.filterResponse(response.data, responseKeysWithMeaning);
+  
+      return {
+        prediction: filteredResponse,
+        ai_type: model.ai_type,
+        response_keys: responseKeysWithMeaning,
+      };
+    } catch (error) {
+      console.error('Error during prediction:', error.response?.data || error.message);
+      throw new Error('Failed to process prediction request.');
+    }
   }
 
   private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {

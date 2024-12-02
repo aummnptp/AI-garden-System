@@ -13,6 +13,7 @@
     "@ant-design/icons": "^5.3.7",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "@mui/icons-material": "^6.1.1",
     "@mui/lab": "^6.0.0-beta.10",
     "@mui/material": "^6.1.1",
@@ -21,8 +22,11 @@
     "axios": "^1.7.7",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.3",
+    "dnm-react-video-cut": "^2.3.19",
     "framer-motion": "^11.3.31",
     "js-cookie": "^3.0.5",
+    "nouislider": "^15.8.1",
+    "nouislider-react": "^3.4.2",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-chartjs-2": "^5.2.0",
@@ -33,6 +37,7 @@
     "react-image-crop": "^11.0.7",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.24.1"
+
   },
   "devDependencies": {
     "@iconify-icon/react": "^2.1.0",
