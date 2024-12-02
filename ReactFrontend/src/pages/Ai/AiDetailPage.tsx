@@ -116,7 +116,7 @@ const AiDetail = () => {
               </div>
             </div>
             <div className=' w-full px-10'>
-              <Link to={`/ai/1/demo`}>
+              <Link to={`/ai/${ai_id}/demo`}>
                 <Button
                   variant="contained"
                   size="large"
