@@ -19,6 +19,7 @@ import {
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/DemoPredictResult";
+import BoundyBoxDetection from "../../components/BoundyBoxDetection";
 
 interface Prediction {
   class_name: string;
@@ -39,9 +40,9 @@ const AIDemo = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null); // URL ของรูปที่กำลังแสดง
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
 
-
+  const { ai_id } = useParams<{ ai_id?: string }>();
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-
+  
   const startTimer = () => {
     setTimeout(() => {
       setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -124,7 +125,7 @@ const AIDemo = () => {
       formData.append('file', file);
   
       // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-      const response = await axios.post('http://localhost:5000/predict/1', formData, {
+      const response = await axios.post(`http://localhost:5000/predict/${ai_id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -220,7 +221,7 @@ const AIDemo = () => {
                         : "bg-gray-400"
                     } text-white`}
                 >
-                  {uploadStep >3 ? <i className="bi bi-check"></i> : 3}
+                  {uploadStep > 3 ? <i className="bi bi-check"></i> : 3}
                 </div>
                 <span
                   className={uploadStep > 3 ? "text-black" : "text-gray-400"}
@@ -316,7 +317,7 @@ const AIDemo = () => {
                             className=" mb-2 text-3xl font-medium tracking-tight 
                 text-indigo-900  "
                           >
-                          Example Healh AI
+                            Example Healh AI
                           </h1>
 
                           <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
@@ -370,8 +371,8 @@ const AIDemo = () => {
                     </span>
                   </div>
                   <p className="ml-3">
-                  ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้
-                  ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค{" "}
+                    ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้
+                    ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค{" "}
                   </p>
                 </>
               ) : null}
@@ -382,30 +383,41 @@ const AIDemo = () => {
                   onProcessUrlChange={handleProcessUrlChange}
                 />
               )}
-              {uploadStep == 3 &&(
-  
-          <div className="w-full">
-      <div className="flex w-full ">
-        <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex justify-center ">
-        <Skeleton variant="rectangular" width={300} height={300} />
-        </div>
-        <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex flex-col justify-center ">
-        <Skeleton variant="text" width={"100%"} height={30} />
-        <Skeleton variant="text" width={"100%"} height={20} />
-        <Skeleton variant="text" width={"100%"} height={30} />
-        <Skeleton variant="text" width={"100%"} height={20} />
-    
-        </div>
-      </div>
-      </div>
+              {uploadStep == 3 && (
+                <div className="w-full">
+                  <div className="flex w-full ">
+                    <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex justify-center ">
+                      <Skeleton
+                        variant="rectangular"
+                        width={300}
+                        height={300}
+                      />
+                    </div>
+                    <div className=" w-[50%] text-center space-y-2  border rounded-[5px] p-10  flex flex-col justify-center ">
+                      <Skeleton variant="text" width={"100%"} height={30} />
+                      <Skeleton variant="text" width={"100%"} height={20} />
+                      <Skeleton variant="text" width={"100%"} height={30} />
+                      <Skeleton variant="text" width={"100%"} height={20} />
+                    </div>
+                  </div>
+                </div>
               )}
-            {uploadStep == 4 && predictResult ? (
-              customedImageUrl ? (
-              <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl}/>
-              ):(null)
-              ):(null)}
+              {uploadStep === 4 && predictResult ? (
+                customedImageUrl ? (
+                  predictResult.ai_type === "Classification" ? (
+                    <DemoPredictResult
+                      predictResult={predictResult}
+                      resultImage={customedImageUrl}
+                    />
+                  ) : predictResult.ai_type === "Object Detection" ? (
+                    <BoundyBoxDetection
+                      resultImage={customedImageUrl}
+                      predictResult={predictResult}
+                    />
+                  ) : null
+                ) : null
+              ) : null}
 
-           
               <div className="mt-4 flex justify-end ">
                 {uploadStep == 2 && (
                   <Button
@@ -414,107 +426,98 @@ const AIDemo = () => {
                     color="warning"
                     sx={{ mr: 2 }}
                     onClick={() => {
-
-                        setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
-                        setImage(customImage);
-                        setCustomImage(null);
-                     
-                    }
-                  }
+                      setUploadStep((prevStep) => Math.min(prevStep - 1, 4));
+                      setImage(customImage);
+                      setCustomImage(null);
+                    }}
                   >
                     {" "}
                     ย้อนกลับ
                   </Button>
                 )}
                 {uploadStep < 2 && (
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-                  onClick={handleToCustomStep}
-                >
-                  {" "}
-                  ถัดไป
-                </Button>
-                 )}
-                     {uploadStep == 2 && (
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-                  onClick={handleUpload}
-                >
-                  {" "}
-                  ประมวลผล
-                </Button>
-
-                  )}
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      backgroundColor: "#4f46e5",
+                      "&:hover": {
+                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      },
+                    }}
+                    onClick={handleToCustomStep}
+                  >
+                    {" "}
+                    ถัดไป
+                  </Button>
+                )}
+                {uploadStep == 2 && (
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      backgroundColor: "#4f46e5",
+                      "&:hover": {
+                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      },
+                    }}
+                    onClick={handleUpload}
+                  >
+                    {" "}
+                    ประมวลผล
+                  </Button>
+                )}
                 {uploadStep == 4 && (
                   <div className=" w-full flex  justify-between">
                     <div className=" w-[50%] justify-center flex">
-                     <Button
-                     variant="outlined"
-                       size="large"
-                  onClick={() => {
-                    setUploadStep(1);
-                    setImage(null);
-                    setPredictResult(null);
-                    setCustomImage(null);}
-                  }
-                  >
-                  {" "}
-                  ลองอีกครั้ง
-                </Button>
-                  <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-               
-                  >
-                  {" "}
-                  ขอใช้งาน
-                </Button>
-                </div>
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={() => {
+                          setUploadStep(1);
+                          setImage(null);
+                          setPredictResult(null);
+                          setCustomImage(null);
+                        }}
+                      >
+                        {" "}
+                        ลองอีกครั้ง
+                      </Button>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        sx={{
+                          backgroundColor: "#4f46e5",
+                          "&:hover": {
+                            backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                          },
+                        }}
+                      >
+                        {" "}
+                        ขอใช้งาน
+                      </Button>
+                    </div>
                     <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-                
-                  >
-                  {" "}
-                  กลับไปยังหน้ารายชื่อ AI
-                </Button>
+                      variant="contained"
+                      size="large"
+                      sx={{
+                        backgroundColor: "#4f46e5",
+                        "&:hover": {
+                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                        },
+                      }}
+                    >
+                      {" "}
+                      กลับไปยังหน้ารายชื่อ AI
+                    </Button>
                   </div>
-                
-                      )}
+                )}
               </div>
             </div>
           </div>
 
           {/* detail conatiner */}
-          <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative   ">
-       
-          </div>
+          <div className="mt-4 pb-5 h-full w-11/12 bg-white rounded-[15px] justify-self-center relative   "></div>
         </div>
       </div>
       <MiniFooter></MiniFooter>

@@ -250,6 +250,8 @@ const CreateAiProjectPage = () => {
                       <option value="">Select Display Format</option>
                       <option value="Text">Text</option>
                       <option value="Chart">Chart</option>
+                      <option value="Boundy_Box">Boundy Box</option>
+                      {/* <option value="Segment">Segment</option> */}
                     </select>
 
                     {responseKeys.length > 1 && (
