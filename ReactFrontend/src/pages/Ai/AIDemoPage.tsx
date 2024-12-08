@@ -22,6 +22,7 @@ import DemoPredictResult from "../../components/DemoPredictResult";
 import ObjectDetectionResultComponent from "../../components/ObjectDetectionResultComponent";
 import SegmentationResultComponent from "../../components/SegmentationResultComponent";
 
+
 interface Prediction {
   class_name: string;
   confidence: number;
@@ -32,6 +33,10 @@ interface PredictResult {
   prediction: any;
   regression_params?: any | null;
 }
+
+
+
+
 const AIDemo = () => {
   const [uploadStep, setUploadStep] = useState(1);
   const [image, setImage] = useState<File | null>(null);
