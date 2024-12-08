@@ -23,7 +23,7 @@ interface DemoPredictResultProps {
   resultImage: string;
 }
 
-const ObjectDetectionOverlay: React.FC<DemoPredictResultProps> = ({
+const ObjectDetectionResultComponent: React.FC<DemoPredictResultProps> = ({
   predictResult,
   resultImage,
 }) => {
@@ -197,4 +197,4 @@ const ObjectDetectionOverlay: React.FC<DemoPredictResultProps> = ({
   );
 };
 
-export default ObjectDetectionOverlay;
+export default ObjectDetectionResultComponent;

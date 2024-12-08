@@ -19,7 +19,8 @@ import {
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/DemoPredictResult";
-import BoundyBoxDetection from "../../components/BoundyBoxDetection";
+import ObjectDetectionResultComponent from "../../components/ObjectDetectionResultComponent";
+import SegmentationResultComponent from "../../components/SegmentationResultComponent";
 
 interface Prediction {
   class_name: string;
@@ -410,10 +411,15 @@ const AIDemo = () => {
                       resultImage={customedImageUrl}
                     />
                   ) : predictResult.ai_type === "Object Detection" ? (
-                    <BoundyBoxDetection
+                    <ObjectDetectionResultComponent
                       resultImage={customedImageUrl}
                       predictResult={predictResult}
                     />
+                  ):
+                   predictResult.ai_type === "Segmentation" ? (
+                    <SegmentationResultComponent
+                    resultImage={customedImageUrl}
+                    predictResult={predictResult}/>
                   ) : null
                 ) : null
               ) : null}
