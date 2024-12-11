@@ -25,7 +25,7 @@ export class CreateAIModelDto {
   
   @IsOptional()
   @IsString()
-  input_desc: string;
+  readonly input_desc: string;
 
   @IsOptional()
   @IsArray() 

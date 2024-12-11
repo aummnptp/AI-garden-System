@@ -131,7 +131,7 @@ const AIDemo = () => {
       formData.append('file', file);
   
       // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-      const response = await axios.post(`http://localhost:5000/predict/${ai_id}`, formData, {
+      const response = await axios.post(`http://localhost:3000/ai-models/predict/${ai_id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

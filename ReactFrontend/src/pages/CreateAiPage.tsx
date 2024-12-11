@@ -121,8 +121,8 @@ const CreateAiProjectPage = () => {
       response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
       regression_params: regressionParams.map(param => param.param)
     };
-
-    fetch('http://localhost:5000/add_model', {
+    // ****************** อย่าลืมใส่ alertหรือ try catchตอนไม่เจอด้วย
+    fetch('http://localhost:3000/ai-models/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

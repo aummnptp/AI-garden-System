@@ -19,7 +19,7 @@ export class AIModel {
   @Column("simple-array")
   ai_tag: string[];
 
-  @Column()
+  @Column({ length: 200, nullable: true })
   input_desc: string;
 
   @Column()
