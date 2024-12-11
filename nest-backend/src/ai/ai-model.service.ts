@@ -14,21 +14,44 @@ export class AIModelService {
     private aiModelRepository: Repository<AIModel>,
   ) {}
 
-  async addModel(createAIModelDto: CreateAIModelDto): Promise<string> {
+  async addModel(createAIModelDto: CreateAIModelDto, file: Express.Multer.File): Promise<string> {
+    let responseKeys = [];
+  
+    if (typeof createAIModelDto.response_keys === 'string') {
+      try {
+        responseKeys = JSON.parse(createAIModelDto.response_keys);
+      } catch (error) {
+        throw new Error('Invalid JSON format for response_keys');
+      }
+    } else if (Array.isArray(createAIModelDto.response_keys)) {
+      responseKeys = createAIModelDto.response_keys;
+    }
+  
     const newModel = this.aiModelRepository.create({
-      ...createAIModelDto,
+      name: createAIModelDto.name,
+      description: createAIModelDto.description,
+      ai_type: createAIModelDto.ai_type,
+      api_uri: createAIModelDto.api_uri,
+      input_desc: createAIModelDto.input_desc,
+      ai_tag: createAIModelDto.ai_tag || [],
+      response_keys: responseKeys.map((key) => ({
+        key: key.key,
+        meaning: key.meaning,
+      })),
     });
   
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
   }
-
+  
+  
   
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
     const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
+    
   
     // สร้าง FormData และเพิ่มข้อมูล
     const formData = new FormData();
@@ -44,7 +67,7 @@ export class AIModelService {
         },
       });
   
-      const responseKeysWithMeaning = model.responseKeys;
+      const responseKeysWithMeaning = model.response_keys;
       const filteredResponse = this.filterResponse(response.data, responseKeysWithMeaning);
   
       return {

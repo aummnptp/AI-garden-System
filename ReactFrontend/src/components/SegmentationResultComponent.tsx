@@ -4,7 +4,7 @@ import { PictureOutlined } from "@ant-design/icons";
 
 interface SegmentationDetection {
   label: string;
-  [key: string]: number | string;
+  polygon: number[][];
 }
 
 interface PredictResult {
@@ -24,61 +24,113 @@ const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showSegments, setShowSegments] = useState(true);
 
-  const getMeaningForKey = (key: string) => {
-    return key === "detections" ? "ผลลัพธ์ที่" : key;
-  };
+    const getMeaningForKey = (key: string) => {
+      return key === "detections" ? "ผลลัพธ์ที่" : key;
+    };
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
-  
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-  
-    const image = new Image();
-    image.src = resultImage;
-    image.onload = () => {
-      // ตั้งค่าขนาดของ canvas ตามขนาดของ image
-      canvas.width = image.width;
-      canvas.height = image.height;
-      context.drawImage(image, 0, 0, image.width, image.height);
-  
-      if (showSegments) {
-        // วาดแต่ละ class จากผลการ segmentation
-        predictResult.prediction.detections.forEach((detection) => {
-          const { label, polygon } = detection;
-  
-          // วาด polygon บน canvas
-          context.fillStyle = "rgba(0, 255, 0, 0.3)"; // สีที่ใช้ในการเติม
-          context.strokeStyle = "green"; // สีที่ใช้ในการวาดเส้น
-          context.lineWidth = 2;
-  
-          context.beginPath();
-          polygon.forEach(([x, y], index) => {
-            if (index === 0) {
-              context.moveTo(x, y);
-            } else {
-              context.lineTo(x, y);
+    useEffect(() => {
+      if (!canvasRef.current) return;
+    
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+    
+      const image = new Image();
+      image.src = resultImage;
+      image.onload = () => {
+        // ตั้งค่าขนาดของ canvas
+        const canvasWidth = 1152;
+        const canvasHeight = 640;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+    
+        if (showSegments) {
+          // วาดแต่ละ class จากผลการ segmentation
+          predictResult.prediction.detections.forEach((detection) => {
+            const { label, polygon } = detection;
+    
+            // วาด polygon บน canvas
+            context.fillStyle = "rgba(0, 255, 0, 0.3)"; // สีที่ใช้ในการเติม
+            context.strokeStyle = "green"; // สีที่ใช้ในการวาดเส้น
+            context.lineWidth = 2;
+    
+            context.beginPath();
+            polygon.forEach(([x, y], index) => {
+              if (index === 0) {
+                context.moveTo(x, y);
+              } else {
+                context.lineTo(x, y);
+              }
+            });
+            context.closePath();
+            context.fill();
+            context.stroke();
+    
+            // หากต้องการแสดง label
+            if (polygon.length > 0) {
+              const [x, y] = polygon[0]; // ใช้พิกัดจุดแรกเป็นตำแหน่ง label
+              context.font = "20px Arial";
+              context.fillStyle = "green";
+              context.fillText(label, x, y - 5);
             }
           });
-          context.closePath();
-          context.fill();
-          context.stroke();
-  
-          // หากต้องการแสดง label
-          if (polygon.length > 0) {
-            const [x, y] = polygon[0]; // ใช้พิกัดจุดแรกเป็นตำแหน่ง label
-            context.font = "20px Arial";
-            context.fillStyle = "green";
-            context.fillText(label, x, y - 5);
-          }
-        });
-      }
-    };
-  }, [resultImage, predictResult, showSegments]);
-  
+        }
+      };
+    }, [resultImage, predictResult, showSegments]);
+    
 
+  // useEffect(() => {
+  //   if (!canvasRef.current) return;
 
+  //   const canvas = canvasRef.current;
+  //   const context = canvas.getContext("2d");
+  //   if (!context) return;
+
+  //   const image = new Image();
+  //   image.src = resultImage;
+  //   image.onload = () => {
+  //     // ตั้งค่าขนาดของ canvas ตามขนาดของ image
+  //     // canvas.width = image.width;
+  //     // canvas.height = image.height;
+  //     canvas.width = 1152;
+  //     canvas.height =  640;
+
+  //     context.drawImage(image, 0, 0, image.width, image.height);
+
+  //     if (showSegments) {
+  //       // วาดแต่ละ class จากผลการ segmentation
+  //       predictResult.prediction.detections.forEach((detection) => {
+  //         const { label, polygon } = detection;
+
+  //         // วาด polygon บน canvas
+  //         context.fillStyle = "rgba(0, 255, 0, 0.3)"; // สีที่ใช้ในการเติม
+  //         context.strokeStyle = "green"; // สีที่ใช้ในการวาดเส้น
+  //         context.lineWidth = 2;
+
+  //         context.beginPath();
+  //         polygon.forEach(([x, y], index) => {
+  //           if (index === 0) {
+  //             context.moveTo(x, y);
+  //           } else {
+  //             context.lineTo(x, y);
+  //           }
+  //         });
+  //         context.closePath();
+  //         context.fill();
+  //         context.stroke();
+
+  //         // หากต้องการแสดง label
+  //         if (polygon.length > 0) {
+  //           const [x, y] = polygon[0]; // ใช้พิกัดจุดแรกเป็นตำแหน่ง label
+  //           context.font = "20px Arial";
+  //           context.fillStyle = "green";
+  //           context.fillText(label, x, y - 5);
+  //         }
+  //       });
+  //     }
+  //   };
+  // }, [resultImage, predictResult, showSegments]);
 
   const toggleSegments = () => {
     setShowSegments(!showSegments);
@@ -123,6 +175,9 @@ const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
               minHeight: "640px",
             }}
           />
+    
+
+
         </div>
       </div>
       <div className="w-[100%] border rounded-[5px] p-10">

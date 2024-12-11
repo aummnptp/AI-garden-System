@@ -11,15 +11,31 @@ export class AIModel {
   @Column({ length: 200, nullable: true })
   description: string;
 
+  // @Column({ length: 200, nullable: true })
+  // image_path: string;
   @Column()
   ai_type: string;
+
+  @Column("simple-array")
+  ai_tag: string[];
+
+  @Column()
+  input_desc: string;
 
   @Column()
   api_uri: string;
 
   @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-  responseKeys: { key: string; meaning: string }[]; // รูปแบบ Array ของ JSON object
+  response_keys: { key: string; meaning: string }[]; // รูปแบบ Array ของ JSON object
+  
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
+
   // @Column()
-  // response_keys: string[];
+  // create_by: string[];
 
 }

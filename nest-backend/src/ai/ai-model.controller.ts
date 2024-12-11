@@ -18,8 +18,9 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
   
     
     @Post('add')
-    async addModel(@Body() createAIModelDto: CreateAIModelDto) {
-      const message = await this.aiModelService.addModel(createAIModelDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async addModel(@UploadedFile() file: Express.Multer.File, @Body() createAIModelDto: CreateAIModelDto):Promise<any> {     
+      const message = await this.aiModelService.addModel(createAIModelDto, file);
       return { message };
     } 
     @Get()
@@ -32,10 +33,7 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
   
     @Post('predict/:id')
     @UseInterceptors(FileInterceptor('file'))
-    async predict(
-      @Param('id') id: number,
-      @UploadedFile() file: Express.Multer.File,
-    ): Promise<any> {
+    async predict(@Param('id') id: number,@UploadedFile() file: Express.Multer.File,): Promise<any> {
       return this.aiModelService.predict(id, file);
     }
   }

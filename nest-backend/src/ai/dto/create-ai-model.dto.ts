@@ -22,9 +22,18 @@ export class CreateAIModelDto {
 
   @IsString()
   readonly api_uri: string;
+  
+  @IsOptional()
+  @IsString()
+  input_desc: string;
 
+  @IsOptional()
+  @IsArray() 
+  @IsString({ each: true })
+  readonly ai_tag?: string[];
+  
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ResponseKeyDto)
-  readonly responseKeys: ResponseKeyDto[];
+  readonly response_keys: ResponseKeyDto[];
 }
