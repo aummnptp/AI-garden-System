@@ -52,7 +52,7 @@ const AiCard :React.FC<AiCardProps> = (props) => {
                 },
               }}
               >
-              <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ส่งคำขอใช้งาน
+              <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ดูรายละเอียด
               </Button>
           </div>
           </div>

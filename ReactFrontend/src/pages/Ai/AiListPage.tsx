@@ -55,7 +55,7 @@ function AIlist() {
             <li className="me-2">
               <a
                 href="#"
-                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
+                className="inline-block cursor-not-allowed p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
               >
                    AI ที่ได้รับสิทธิ 
               </a>
@@ -63,7 +63,7 @@ function AIlist() {
             <li className="me-2">
               <a
                 href="#"
-                className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
+                className="inline-block cursor-not-allowed p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 "
               >
                 AI ที่ยังไม่ได้รับสิทธิ
               </a>
@@ -75,19 +75,19 @@ function AIlist() {
           <input
             type="text"
             id="first_name"
-            className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
+            className="w-6/12 h-fit  cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
             placeholder="ค้นหา AI"
             required
           />
           <button
             type="button"
-            className=" rounded-[15px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2  focus:outline-none "
+            className=" rounded-[15px] cursor-not-allowed  bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2  focus:outline-none "
           >
             ประเภท <SortAscendingOutlined />
           </button>
           <button
             type="button" 
-            className="   h-fit rounded-[15px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 focus:outline-none "
+            className="   h-fit rounded-[15px] cursor-not-allowed bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 focus:outline-none "
           >
             tag <ControlOutlined/>
           </button>

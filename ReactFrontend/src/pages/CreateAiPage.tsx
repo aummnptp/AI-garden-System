@@ -15,7 +15,7 @@ const CreateAiProjectPage = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [regressionParams, setRegressionParams] = useState([{ param: '' }]);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-
+console.log(tags)
   const navigate = useNavigate();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -118,6 +118,7 @@ const CreateAiProjectPage = () => {
       description: description,
       ai_type: aiType,
       api_uri: serviceUri,
+      ai_tag:tags,
       input_desc:inputDescription,
       response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
       regression_params: regressionParams.map(param => param.param)

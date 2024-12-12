@@ -7,7 +7,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import {
   Alert,
@@ -520,9 +520,9 @@ const AIDemo = () => {
                         }}
                       >
                         {" "}
-                        ลองอีกครั้ง
+                        ทดลองอีกครั้ง
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="contained"
                         size="large"
                         sx={{
@@ -534,8 +534,9 @@ const AIDemo = () => {
                       >
                         {" "}
                         ขอใช้งาน
-                      </Button>
+                      </Button> */}
                     </div>
+                     <Link to={`/ai-list`}>
                     <Button
                       variant="contained"
                       size="large"
@@ -545,10 +546,11 @@ const AIDemo = () => {
                           backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
                         },
                       }}
-                    >
+                      >
                       {" "}
                       กลับไปยังหน้ารายชื่อ AI
                     </Button>
+                      </Link>
                   </div>
                 )}
               </div>
