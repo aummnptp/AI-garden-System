@@ -2,6 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { PictureOutlined } from "@ant-design/icons";
 
+
+
+
 interface SegmentationDetection {
   label: string;
   polygon: number[][];
@@ -15,11 +18,22 @@ interface PredictResult {
 interface DemoPredictResultProps {
   predictResult: PredictResult;
   resultImage: string;
+  aiDataProp: aiDataProp; 
 }
 
+interface aiDataProp {
+  id:number;
+  name:string;
+  description: string;
+  img:string;
+  input_desc:string;
+  ai_type: string;
+  ai_tag:string[];
+}
 const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
   predictResult,
   resultImage,
+  aiDataProp, 
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showSegments, setShowSegments] = useState(true);
@@ -168,8 +182,8 @@ const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
           className ="self-center flex mx-auto "
             ref={canvasRef}
             style={{
-              width: " 60%",
-               height: "100%"
+              width: " 40%",
+               height: "auto"
               // maxWidth: "1152px",
               // minWidth: "1152px",
               
@@ -183,25 +197,27 @@ const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
         <div className="flex justify-start items-center p-0 space-x-4">
           <PictureOutlined style={{ fontSize: "32px", color: "#4f46e5" }} />
           <h1 className="text-3xl font-medium tracking-tight text-indigo-900 mb-0">
-            Image Name 
+            Image
           </h1>
         </div>
         <div className="flex justify-start items-center p-0 space-x-4">
-          <span className="text-gray-600 text-lg">AI Name</span>
+          <span className="text-gray-600 text-lg">{aiDataProp.name}</span>
           <span className="text-gray-400">|</span>
-          <span className="text-gray-400 text-lg">{predictResult.ai_type}</span>
+          <span className="text-gray-400 text-lg">{aiDataProp.name}</span>
         </div>
-        <div className="flex justify-start mb-2 mt-4">
-          <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-            tag1
-          </span>
-          <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-            tag2
-          </span>
-          <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-            tag3
-          </span>
-        </div>
+        <div className="flex justify-start mb-2 mt-4 ">
+          {aiDataProp.ai_tag.map((tag: string, index: number) => (
+            <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
+              {tag}
+            </span>
+            ))}
+            {/* <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
+              tag2
+            </span>
+            <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
+              tag3
+            </span> */}
+          </div>
         <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
         <div className="py-4">
           <h4 className="text-2xl">

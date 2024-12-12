@@ -441,7 +441,7 @@ const AIDemo = () => {
                   predictResult.ai_type === "Classification" ? (
                     <DemoPredictResult
                       predictResult={predictResult}
-                      resultImage={customedImageUrl}
+                      resultImage={customedImageUrl}  aiDataProp={aiData}
                     />
                   ) : predictResult.ai_type === "Object Detection" ? (
                     <ObjectDetectionResultComponent
@@ -451,8 +451,8 @@ const AIDemo = () => {
                   ):
                    predictResult.ai_type === "Segmentation" ? (
                     <SegmentationResultComponent
-                    resultImage={customedImageUrl}
-                    predictResult={predictResult}/>
+                    resultImage={customedImageUrl} 
+                    predictResult={predictResult} aiDataProp={aiData}/>
                   ) : null
                 ) : null
               ) : null}
