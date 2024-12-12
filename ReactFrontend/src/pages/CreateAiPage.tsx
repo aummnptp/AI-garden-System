@@ -118,6 +118,7 @@ const CreateAiProjectPage = () => {
       description: description,
       ai_type: aiType,
       api_uri: serviceUri,
+      input_desc:inputDescription,
       response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
       regression_params: regressionParams.map(param => param.param)
     };

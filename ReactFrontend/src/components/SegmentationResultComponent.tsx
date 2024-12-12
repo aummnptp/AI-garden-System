@@ -169,7 +169,7 @@ const SegmentationResultComponent: React.FC<DemoPredictResultProps> = ({
             ref={canvasRef}
             style={{
               width: " 60%",
-              height: "auto",
+               height: "100%"
               // maxWidth: "1152px",
               // minWidth: "1152px",
               

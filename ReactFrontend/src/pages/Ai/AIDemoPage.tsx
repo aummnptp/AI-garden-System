@@ -48,7 +48,24 @@ const AIDemo = () => {
 
   const { ai_id } = useParams<{ ai_id?: string }>();
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-  
+  const [aiData, setAiData] = useState<any>(null);
+
+  useEffect(() => {
+    if (ai_id) {
+      axios.get(`http://localhost:3000/ai-models/${ai_id}`)
+        .then(response => {
+          setAiData(response.data);
+        })
+        .catch(error => {
+          console.error('There was an error fetching the AI data!', error);
+        });
+    }
+  }, [ai_id]);
+
+  if (!aiData) {
+    return <div>Loading...</div>;
+  }
+
   const startTimer = () => {
     setTimeout(() => {
       setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -323,18 +340,18 @@ const AIDemo = () => {
                             className=" mb-2 text-3xl font-medium tracking-tight 
                 text-indigo-900  "
                           >
-                            Example Healh AI
+                          {aiData.name}
                           </h1>
 
                           <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                            Classification
+                          {aiData.ai_type}
                           </span>
                         </div>
                         <div className=" w-full border border-zinc-300" />
                       </div>
                       {/* ai creater */}
                       <div className="flex items-center my-4">
-                        <img
+                        {/* <img
                           className="w-10 h-10 rounded-full border-2 "
                           src="/images/homeImage/puttipong.jpg"
                         />
@@ -345,20 +362,28 @@ const AIDemo = () => {
                           <p className="text-indigo-900 text-base font-medium">
                             ผู้สร้าง
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                       <p className=" text-neutral-700 text-lg font-normal">
                         รายละเอียด
                       </p>
                       <p>
-                        Lorem Ipsum is simply dummy text of the printing and
+                      {aiData.description}
+                        {/* Lorem Ipsum is simply dummy text of the printing and
                         typesetting industry. Lorem Ipsum has been the
                         industry's Lorem Ipsum is simply dummy text of the
                         printing and typesetting industry. Lorem Ipsum has been
-                        the industry's{" "}
+                        the industry's{" "} */}
                       </p>
                       <div className="mb-2 mt-4">
-                        <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
+                            <div className="mb-2 mt-4">
+                        {aiData.ai_tag.map((tag: string, index: number) => (
+                          <span key={index} className="w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                        {/* <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                           tag1
                         </span>
                         <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
@@ -366,7 +391,7 @@ const AIDemo = () => {
                         </span>
                         <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                           tag3
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   </div>
@@ -377,9 +402,12 @@ const AIDemo = () => {
                     </span>
                   </div>
                   <p className="ml-3">
+            {aiData.input_desc}
+            </p>
+                  {/* <p className="ml-3">
                     ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้
                     ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค{" "}
-                  </p>
+                  </p> */}
                 </>
               ) : null}
               {/* upload step 2 customimaage */}

@@ -23,6 +23,19 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
       const message = await this.aiModelService.addModel(createAIModelDto, file);
       return { message };
     } 
+
+
+    @Get()
+    findAll() {
+      return this.aiModelService.findAll();
+    }
+
+    
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+      return this.aiModelService.findOne(+id);
+    }
+  
     @Get()
     // async GetAi(@Body() data: any): Promise<{ message: string }> {
       async GetAi(): Promise<{ message: string }> {

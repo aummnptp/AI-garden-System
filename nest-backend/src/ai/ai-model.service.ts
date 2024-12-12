@@ -81,6 +81,16 @@ export class AIModelService {
     }
   }
 
+  findAll(): Promise<AIModel[]> {
+    return this.aiModelRepository.find();
+  }
+
+  // อ่าน AIModel ตาม id
+  findOne(id: number): Promise<AIModel | null> {
+    return this.aiModelRepository.findOneBy({ id });
+  }
+
+
   private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
     const filteredResponse = {};
     responseKeysWithMeaning.forEach(({ key }) => {
