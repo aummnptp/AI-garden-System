@@ -15,47 +15,82 @@ const CreateAiProjectPage = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [regressionParams, setRegressionParams] = useState([{ param: '' }]);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-console.log(tags)
+
   const navigate = useNavigate();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  
+
+  
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      setUploadedFile(file);
+        const file = event.target.files[0];
+        setUploadedFile(file);
 
-      const formData = new FormData();
-      formData.append('file', file);
+        const formData = new FormData();
+        formData.append('file', file);
 
-      try {
-        if (!serviceUri) {
-          alert('กรุณาใส่ Service URI ก่อน');
-          return;
+        try {
+            if (!serviceUri) {
+                alert('กรุณาใส่ Service URI ก่อน');
+                return;
+            }
+
+            const response = await fetch(serviceUri, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                console.log('Response from API:', data);
+
+                // ฟังก์ชันดึง keys จาก JSON (ระดับ 1 และ 2)
+                const extractKeys = (obj, parentKey = '') => {
+                  const keys = [];
+                  Object.keys(obj).forEach((key) => {
+                      const fullPath = parentKey ? `${parentKey}.${key}` : key;
+                      
+                      if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                          // Object at level 1, add the current key and recurse for nested objects
+                          keys.push(fullPath);
+                          keys.push(...extractKeys(obj[key], fullPath));
+                      } else if (Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === 'object') {
+                          // Array of objects (like detections), add the array key itself, then recurse into first object
+                          keys.push(fullPath);
+                          keys.push(...extractKeys(obj[key][0], fullPath));
+                      } else if (Array.isArray(obj[key]) && !Array.isArray(obj[key][0])) {
+                          // Array of primitives (like polygon), just add the key once
+                          keys.push(fullPath);
+                      } else {
+                          // Base case, just add the key
+                          keys.push(fullPath);
+                      }
+                  });
+                  return keys;
+              };
+              
+
+                // ดึง keys ทั้งหมดที่ต้องการ
+                const keys = extractKeys(data);
+                setSelectOptions(keys); // อัปเดต select options
+            } else {
+                console.log('Response is not JSON');
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
         }
-
-        const response = await fetch(serviceUri, {
-          method: 'POST',
-          body: formData,
-        });
-
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
-          console.log('Response from API:', data);
-
-          // ดึงคีย์จากข้อมูลที่ได้จาก API
-          const keys = Object.keys(data);
-          setSelectOptions(keys); // เก็บคีย์ใน state เพื่อแสดงใน <select>
-        } else {
-          console.log('Response is not JSON');
-        }
-      } catch (error) {
-        console.error('Error uploading file:', error);
-      }
     } else {
-      alert('กรุณาเลือกไฟล์ก่อน');
+        alert('กรุณาเลือกไฟล์ก่อน');
     }
-  };
+};
+
+  
+  
+  
+  
 
   const handleAddKey = () => {
     setResponseKeys([...responseKeys, { key: '', meaning: '', displayFormat: '' }]);
@@ -252,6 +287,9 @@ console.log(tags)
                       <option value="">Select Display Format</option>
                       <option value="Text">Text</option>
                       <option value="Chart">Chart</option>
+                      <option value="ObjectDetection">Object Detection</option>
+                      <option value="Segmentation">Segmentation</option>
+
                     </select>
 
                     {responseKeys.length > 1 && (

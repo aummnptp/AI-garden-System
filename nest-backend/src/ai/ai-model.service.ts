@@ -37,6 +37,7 @@ export class AIModelService {
       response_keys: responseKeys.map((key) => ({
         key: key.key,
         meaning: key.meaning,
+        displayFormat: key.displayFormat,
       })),
     });
   

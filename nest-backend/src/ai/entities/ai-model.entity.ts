@@ -26,7 +26,7 @@ export class AIModel {
   api_uri: string;
 
   @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-  response_keys: { key: string; meaning: string }[]; // รูปแบบ Array ของ JSON object
+  response_keys: { key: string; meaning: string ,displayFormat:string}[]; // รูปแบบ Array ของ JSON object
   
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -2,6 +2,7 @@ import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import ProjectImage from './ProjectLetterImage';
 
 interface AiCardProps {
     id:number;
@@ -17,6 +18,21 @@ const AiCard :React.FC<AiCardProps> = (props) => {
     <Link to={`/ai/${props.id}/detail`}>
   
     <div className="mx-auto mt-10 pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
+    {/* {props.img ? (
+          //  <div className='mx-2 w-fit h-fit  flex items-center  '>
+          //    <img
+          //    className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
+          //    src={props.img}
+          //    alt={`${props.name} project`}
+          //    />
+          //     </div>
+            ) : ( */}
+              
+              {/* <ProjectImage
+              projectName={props.name}
+              className="  w-full h-[186px] rounded-[10px]  border-2 flex items-center justify-center text-white font-medium text-3xl"
+              /> */}
+            {/* )} */}
           <img
             className=" w-full h-48 
             object-cover"

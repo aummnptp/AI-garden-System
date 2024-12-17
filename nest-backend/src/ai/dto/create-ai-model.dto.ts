@@ -7,6 +7,10 @@ class ResponseKeyDto {
 
   @IsString()
   meaning: string;
+
+  @IsString()
+  displayFormat: string;
+  
 }
 
 export class CreateAIModelDto {
