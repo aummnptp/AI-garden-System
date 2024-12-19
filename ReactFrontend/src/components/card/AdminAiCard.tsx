@@ -14,9 +14,9 @@ interface AdminAiCardProps {
   }
 const AdminAiCard:React.FC<AdminAiCardProps> = (props) => { 
     return (
-        <Link to={`/ai/${props.id}/detail`}>
+        <Link to={`/admin/updateai/${props.id}`}>
       
-        <div className="mx-auto mt-10 pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
+        <div className="mx-auto mt-10  pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
         
               <img
                 className=" w-full h-48 

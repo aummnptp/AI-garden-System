@@ -49,11 +49,12 @@ export class WorkspacesController {
   }
   @Delete(':id/remove-member')
   async removeMember(@Param('id') id: string, @Body('email') userEmail: string) {
+    // เปลี่ยนuserEmail เป็น role
     return this.workspacesService.removeMember(+id, userEmail);
   }
 
   @Get(':id/members-profiles')
-  async getMembersProfiles(@Param('id') id: string): Promise<User[]> {
+  async getMembersProfiles(@Param('id') id: string): Promise<User []> {
     return this.workspacesService.getMembersProfiles(+id);
   }
 }

@@ -30,7 +30,9 @@ predictResult, resultImage ,aiDataProp,
 }) => {
   const resultEntries = Object.entries(predictResult.prediction);
   const getMeaningForKey = (key: string) => {
+   
     console.log("Key being processed:", key);
+    
     const keyWithMeaning = predictResult.response_keys?.find(
       (item: { key: string; meaning: string }) => item.key === key
     );

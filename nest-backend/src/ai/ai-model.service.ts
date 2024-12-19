@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
+import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 
 @Injectable()
 export class AIModelService {
@@ -91,6 +92,9 @@ export class AIModelService {
     return this.aiModelRepository.findOneBy({ id });
   }
 
+  remove(id: number): Promise<void> {
+    return this.aiModelRepository.delete(id).then(() => undefined);
+  }
 
   private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
     const filteredResponse = {};
@@ -99,4 +103,15 @@ export class AIModelService {
     });
     return filteredResponse;
   }
+
+   async update(id: number, updateAIModelDto: UpdateAIModelDto):Promise<string> {
+    const existingModel = await  this.aiModelRepository.findOne({where: {id}})
+    if (!existingModel){
+      throw new NotFoundException(`AI Model with Id ${id} not found`)
+    }
+
+      await this.aiModelRepository.update(id, updateAIModelDto);
+      return 'Model updated successfully!';
+    }
+  
 }

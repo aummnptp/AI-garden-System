@@ -6,7 +6,7 @@ import ProjectData from "../data/ProjectData";
 import { Button, Skeleton } from '@mui/material';
 import ImageUploader from '../components/ImageUploader';
 import axios from 'axios';
-import DemoPredictResult from '../components/DemoPredictResult';
+import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
 import AddNoteDialog from '../components/ืNoteDialog';
 

@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
-import DemoPredictResult from "../../components/DemoPredictResult";
-import ObjectDetectionResultComponent from "../../components/ObjectDetectionResultComponent";
-import SegmentationResultComponent from "../../components/SegmentationResultComponent";
+import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
+import ObjectDetectionResultComponent from "../../components/aiDisplay/ObjectDetectionResultComponent";
+import SegmentationResultComponent from "../../components/aiDisplay/SegmentationResultComponent";
 
 
 interface Prediction {

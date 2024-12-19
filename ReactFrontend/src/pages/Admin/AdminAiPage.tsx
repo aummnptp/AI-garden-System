@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { SendOutlined } from '@ant-design/icons';
-import AiData from "../../data/AiData";
-import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
+import axios from "axios";
 
 function AdminAi() {
+
+  const [AIData, setAIData] = useState([]);
+  const fetchAIData = () => {
+    axios.get("http://localhost:3000/ai-models/")
+      .then(response => {
+        setAIData(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the workspace data!", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
+
+
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32  min-h-screen ">
@@ -69,15 +84,15 @@ function AdminAi() {
           {/* Card container */}
           <div className="mt-4 h-fit  w-[95%] grid grid-cols-3  bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
-            {AiData.map((data) => (
+            
+            {AIData.map((data) => (
               <AdminAiCard
-                key={data.id}
-                id={data.id}
-                name={data.name}
-                aiDesc={data.aiDesc}
-                tags={data.tags}
-                img={data.img}
-                type={data.type}
+              id={data.id}
+              name={data.name}
+              aiDesc={data.description}
+              tags={data.ai_tag}
+              img={"/images/ai/healthAi.webp"}
+              type={data.ai_type}
               />
               
             ))}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MiniFooter from '../components/MiniFooter';
-import AdminSidebar from "../components/AdminSidebar";
+import MiniFooter from '../..//components/MiniFooter';
+import AdminSidebar from "../../components/AdminSidebar";
 
 const CreateAiProjectPage = () => {
   const [aiName, setAiName] = useState('');

@@ -7,10 +7,14 @@ import {
     UseInterceptors,
     Get,
     Request,
+    Delete,
+    Patch,
   } from '@nestjs/common';
   import { FileInterceptor } from '@nestjs/platform-express';
   import { AIModelService } from './ai-model.service';
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
+import { AIModel } from './entities/ai-model.entity';
+import { UpdateAIModelDto } from './dto/update-ai-model.dto';
   
   @Controller('ai-models')
   export class AIModelController {
@@ -23,7 +27,14 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
       const message = await this.aiModelService.addModel(createAIModelDto, file);
       return { message };
     } 
+    
+    @Patch(':id/update-ai') 
+    @UseInterceptors(FileInterceptor('file'))
 
+    async updateAI(@UploadedFile() file: Express.Multer.File, @Param('id') id:string,@Body() updateAIModelDto: UpdateAIModelDto):Promise<any>{
+      const message = await this.aiModelService.update(+id, updateAIModelDto );
+      return { message };
+    }
 
     @Get()
     findAll() {
@@ -47,7 +58,16 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
     @Post('predict/:id')
     @UseInterceptors(FileInterceptor('file'))
     async predict(@Param('id') id: number,@UploadedFile() file: Express.Multer.File,): Promise<any> {
-      return this.aiModelService.predict(id, file);
+      return this.aiModelService.predict(+id, file);
     }
+
+    @Delete(':id/remove-ai')
+    async removeAI(@Param('id') id:string ){
+      return this.aiModelService.remove(+id);
+    }
+
+
+
+
   }
   

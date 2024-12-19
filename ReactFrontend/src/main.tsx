@@ -15,7 +15,8 @@ import ProjectDetailPage from './pages/Project/ProjectDetailPage.tsx'
 import WorkspaceHistoryPage from './pages/Workspace/WorkspaceHistoryPage.tsx'
 import WorkspaceSettingPage from './pages/Workspace/WorkspaceSettingPage.tsx'
 import AdminDashboardPage from './pages/Admin/AdminDashboardPage.tsx'
-import CreateAiPage from './pages/CreateAiPage.tsx'
+import CreateAiPage from './pages/Admin/CreateAiPage.tsx'
+import UpdateAiPage from './pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from './pages/Admin/AdminAiPage.tsx'
 import PredictAiModelPage from './pages/PredictAiModelPage.tsx'
 import PredictionResultPage from './pages/PredictionResultPage.tsx';
@@ -150,6 +151,12 @@ const router = createBrowserRouter([
     path: "/admin/createai",
     element: <CreateAiPage/>,
   },
+
+  {
+    path: "/admin/updateai/:ai_id",
+    element: <UpdateAiPage/>,
+  },
+
   {
     path: "/admin/userlist",
     element: <UserListPage/>,

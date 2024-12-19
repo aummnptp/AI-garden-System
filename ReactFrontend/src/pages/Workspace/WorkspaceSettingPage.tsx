@@ -31,20 +31,20 @@ const WorkspaceSettingPage = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   
+  const fetchWorkspace = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/workspaces/${workspaceId}`
+      );
+      const { name, description } = response.data;
+      setName(name);
+      setDescription(description);
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
+    }
+  };
+  
   useEffect(() => {
-    const fetchWorkspace = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/workspaces/${workspaceId}`
-        );
-        const { name, description } = response.data;
-        setName(name);
-        setDescription(description);
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
-      }
-    };
-
     fetchWorkspace();
   }, [workspaceId]);
 

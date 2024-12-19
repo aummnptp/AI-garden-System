@@ -24,10 +24,7 @@ function AIlist() {
   useEffect(() => {
     fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
-
-
-
-  console.log(AIData)
+ 
 
   return (
     <>
