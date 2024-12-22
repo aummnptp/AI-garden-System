@@ -14,6 +14,21 @@ const UserDetailPage = () => {
 
   const [myWorkspace, setMyWorkspace] = useState([]); 
 
+  const [UserData, setUserData] = useState([]);
+  const fetchAIData = () => {
+    axios.get("http://localhost:3000/user/")
+      .then(response => {
+        setUserData(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the user data!", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  }, []);
+
   const fetchWorkspaces = () => {
     axios.get("http://localhost:3000/workspaces/")
       .then(response => {
