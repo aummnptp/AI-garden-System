@@ -12,8 +12,13 @@ export class UserController {
   create(@Body() registerDTO: RegisterDTO) {
     return this.userService.create(registerDTO);
   }
-
-  @UseGuards(JwtGuard)
+  
+  @Get(':id')
+    findOne(@Param('id') id: string) {
+      return this.userService.findOne(+id);
+    }
+    
+  // @UseGuards(JwtGuard)
   @Get()    
   findAll() {
     return this.userService.findAll();
@@ -24,8 +29,8 @@ export class UserController {
   //   return this.userService.findOne(+id);
   // }
 
-s
-  @UseGuards(JwtGuard)  
+
+  // @UseGuards(JwtGuard)  
   @Get('profile')    
   async  getProfile(@Request() req) {
     console.log  (req)

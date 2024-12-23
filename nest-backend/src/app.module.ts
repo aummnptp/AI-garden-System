@@ -9,8 +9,8 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Workspace } from './workspaces/entities/workspace.entity';
 import { InvitationModule } from './invitation/invitation.module';
-
-
+import { AIModelModule } from './ai/ai-model.module';
+import { AIModel } from './ai/entities/ai-model.entity';
 
 
 @Module({
@@ -19,19 +19,19 @@ import { InvitationModule } from './invitation/invitation.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
-      port: parseInt(<string> process.env.POSTGRES_PORT),
-      password: process.env.POSTGRES_PASSWORD,
+      port: parseInt(<string>process.env.POSTGRES_PORT),
       username: process.env.POSTGRES_USER,
-      entities:[User,Workspace],
-      // autoLoadEntities: true,
+      password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      synchronize: true, // อย่าลืมปิดในการใช้งาน production
+      entities: [User, Workspace, AIModel], // เพิ่ม AIModel ที่นี่
+      synchronize: true, // ปิดในการใช้งาน production
       logging: true,
     }),
     WorkspacesModule,
     AuthModule,
     UserModule,
     InvitationModule,
+    AIModelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
