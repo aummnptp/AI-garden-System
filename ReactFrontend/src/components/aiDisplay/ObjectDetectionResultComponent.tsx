@@ -1,99 +1,89 @@
-import React, { useRef, useEffect, useState } from "react";
-import { PictureOutlined } from "@ant-design/icons";
-import { Button } from "@mui/material";
-import ObjectDetectionDraw from "./ObjectDetectionDraw";
+import React from "react";
+import ObjectDetectionDraw from "./ImageDetectionResultDraw";
+import { ClassNames } from "@emotion/react";
 import TextResultDisplay from "./TextResultDisplay";
-
-interface Detection {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  confidence: number;
-  label: string;
-}
 
 interface PredictResult {
   ai_type: string;
-  prediction: { detections: Detection[] };
-  // regression_params?: any | null;
-  response_keys?: { key: string; meaning: string }[];
+  prediction: { [key: string]: any };
+  response_keys?: { key: string; meaning: string; displayFormat: string }[];
 }
 
-interface DemoPredictResultProps {
+interface ObjectDetectionResultComponentProps {
   predictResult: PredictResult;
   resultImage: string;
 }
 
-const ObjectDetectionResultComponent: React.FC<DemoPredictResultProps> = ({
+const ObjectDetectionResultComponent: React.FC<ObjectDetectionResultComponentProps> = ({
   predictResult,
   resultImage,
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [showBoxes, setShowBoxes] = useState(true);
 
-  const getMeaningForKey = (key: string) => {
-    const keyWithMeaning = predictResult.response_keys?.find(
-      (item) => item.key === key
-    );
-    console.log("key",keyWithMeaning)
-    return keyWithMeaning ? keyWithMeaning.meaning : key; // Use key itself if no meaning is found
-  };
+  let PredictDrawData = null;
+  let ai_text_type = null;
+  
+  // ถ้าตีย์มี displayFormat data ให้ PredictDrawData = display format data ตัวนั้น
+  const searchDrawKey = predictResult.response_keys?.find(
+    (responseKey) =>
+      responseKey.displayFormat === "objectdetection" || 
+      responseKey.displayFormat === "segmentation"
+  );
+  
+  if (searchDrawKey) {
+    // กำหนด `ai_text_type` จาก `displayFormat`
+    ai_text_type = searchDrawKey.displayFormat;
+  
+    // แยก key ออกเป็นส่วนย่อย (เช่น detections.position)
+    const keyParts = searchDrawKey.key.split(".");
+    let data = predictResult.prediction;
+  
+    // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
+    for (const part of keyParts) {
+      data = data?.[part];
+      if (!data) break;
+    }
+  
+    // กำหนดค่าให้ PredictDrawData
+    PredictDrawData = data;
+  }
+  
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    if (!context) return;
+  const textKeys = predictResult.response_keys?.filter(
+    (responseKey) => responseKey.displayFormat === "text"
+  );
+  console.log(textKeys)
 
-    const image = new Image();
-    image.src = resultImage;
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      context.drawImage(image, 0, 0);
+  // สร้างข้อมูลที่เหมาะสมสำหรับ TextResultDisplay
+  const textData = textKeys?.map((textKey) => {
+    const keyParts = textKey.key.split(".");
+    let data = predictResult.prediction;
 
-      if (showBoxes) {
-        predictResult.prediction.detections.forEach((detection) => {
-          context.beginPath();
-          context.rect(
-            // ตำแหน่งวาด x,y เริ่ม
-            detection.x1,
-            detection.y1,
-             // ตำแหน่งวาด x,y จบ
-            detection.x2 - detection.x1,
-            detection.y2 - detection.y1
-          );
-          // ตั้งค่าความกรอ
-          context.lineWidth = 2;
-          context.strokeStyle = "red";
-          context.fillStyle = "rgba(255, 0, 0, 0.2)";
-          context.fill();
-          context.stroke();
+    // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
+    for (const part of keyParts) {
+      data = data?.[part];
+      if (!data) break;
+    }
 
-          context.font = "30px Kanit";
-          context.fillStyle = "red";
-          context.fillText  (`${detection.label}`+`${detection.confidence}`, detection.x1, detection.y1 - 12, detection.confidence);
-        });
-      }
+    return {
+      meaning: textKey.meaning,
+      value: data,
     };
-  }, [resultImage, predictResult, showBoxes]);
-  
-  const toggleBoxes = () => {
-    setShowBoxes(!showBoxes);
-  };
-  
+  });
+
+ 
+
   return (
     <div className="w-full">
-      <div className="flex w-full  ">
-        {/* โซนแสดงภาพ */}
-      <ObjectDetectionDraw detections={predictResult.prediction.detections} InputImage={resultImage}/>
-      </div>
-      <TextResultDisplay predictResult={predictResult} />
- 
-      <div className="flex justify-center">
-      </div>
+      <div className="flex w-full flex-wrap">
+        {/* Render each response key */}
+        <ObjectDetectionDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
+          
+    
+           <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        
+        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
+        </div>
     </div>
   );
 };

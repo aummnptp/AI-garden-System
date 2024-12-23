@@ -126,6 +126,7 @@ const AIDemo = () => {
   const handleProcessUrlChange = (url: string) => {
     setCustomedImageUrl(url); // รับ URL จากคอมโพเนนต์ลูก
   };
+  
   const convertUrlToFile = async (url: string, fileName: string): Promise<File> => {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -438,22 +439,22 @@ const AIDemo = () => {
               )}
               {uploadStep === 4 && predictResult ? (
                 customedImageUrl ? (
-                  predictResult.ai_type === "Classification" ? (
-                    <DemoPredictResult
-                      predictResult={predictResult}
-                      resultImage={customedImageUrl}  aiDataProp={aiData}
-                    />
-                  ) : predictResult.ai_type === "Object Detection" ? (
+                  // predictResult.ai_type === "Classification" ? (
+                  //   <DemoPredictResult
+                  //     predictResult={predictResult}
+                  //     resultImage={customedImageUrl}  aiDataProp={aiData}
+                  //   />
+                  // ) : predictResult.ai_type === "Object Detection" ? (
                     <ObjectDetectionResultComponent
                       resultImage={customedImageUrl}
                       predictResult={predictResult}
                     />
-                  ):
-                   predictResult.ai_type === "Segmentation" ? (
-                    <SegmentationResultComponent
-                    resultImage={customedImageUrl} 
-                    predictResult={predictResult} aiDataProp={aiData}/>
-                  ) : null
+                  // ):
+                  //  predictResult.ai_type === "Segmentation" ? (
+                  //   <SegmentationResultComponent
+                  //   resultImage={customedImageUrl} 
+                  //   predictResult={predictResult} aiDataProp={aiData}/>
+                  // ) : null
                 ) : null
               ) : null}
 

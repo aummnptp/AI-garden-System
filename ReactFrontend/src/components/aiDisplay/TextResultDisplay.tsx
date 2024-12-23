@@ -1,31 +1,52 @@
-import { PictureOutlined } from '@ant-design/icons';
-import React from 'react'
+import { PictureOutlined } from "@ant-design/icons";
+import React from "react";
 
-
-interface Prediction{
- label: string;
- confidence: number;
+interface Prediction {
+  [key: string]: any;
 }
 
-interface PredictResult{
-    ai_type:string;
-    prediction:{ detections: Prediction[]};
-    response_keys?: { key: string;meaning: string}[];
-}
-interface TextResultDisplayProps{
-    predictResult: PredictResult;
+interface ResponseKey {
+  key: string;
+  meaning: string;
+  displayFormat?: string;
 }
 
-const TextResultDisplay: React.FC<TextResultDisplayProps> = ({ predictResult }) => {  
-    
-    
-    const getMeaningForKey = (key:string) =>{
-        const keyWithMeaning = predictResult.response_keys?.find((item)=>item.key === key);
-        return keyWithMeaning ? keyWithMeaning.meaning : key;
-    };
-    return (
+interface PredictResult {
+  ai_type: string;
+  prediction: {
+    detections?: Prediction[];
+    [key: string]: any;
+  };
+  response_keys?: {
+    key: string;
+    meaning: string;
+    displayFormat?: string;
+  }[];
+}
 
-    <div className="w-[100%] border rounded-[5px] p-10">
+interface TextResultDisplayProps {
+  predictResult: PredictResult;
+  tags?: string[];
+}
+
+const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
+  predictResult,
+  tags = [],
+}) => {
+  const getMeaningForKey = (key: string) => {
+    const keyWithMeaning = predictResult.response_keys?.find(
+      (item) => item.key === key
+    );
+    return keyWithMeaning ? keyWithMeaning.meaning : key;
+  };
+
+  const detections = predictResult.prediction.detections || [];
+  const isDetectionBased = detections.length > 0;
+
+  const formatValue = (value: any) => { if (typeof value === "number") { return value.toFixed(2); } return value; };
+
+  return (
+    <div className="w-full border rounded-[5px] p-10">
       <div className="flex justify-start items-center p-0 space-x-4">
         <PictureOutlined style={{ fontSize: "32px", color: "#4f46e5" }} />
         <h1 className="text-3xl font-medium tracking-tight text-indigo-900 mb-0">
@@ -35,18 +56,17 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({ predictResult }) 
       <div className="flex justify-start items-center p-0 space-x-4">
         <span className="text-gray-600 text-lg">AI Name</span>
         <span className="text-gray-400">|</span>
-        <span className="text-gray-400 text-lg">{predictResult.ai_type}</span>
+        {/* <span className="text-gray-400 text-lg">{predictResult.ai_type}</span> */}
       </div>
-      <div className="flex justify-start mb-2 mt-4">
-        <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-          tag1
-        </span>
-        <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-          tag2
-        </span>
-        <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-          tag3
-        </span>
+      <div className="flex justify-start mb-2 mt-4 flex-wrap gap-2">
+        {tags.map((tag, index) => (
+          <span
+            key={index}
+            className="w-fit bg-indigo-600 rounded-[5px] px-2.5 py-0.5 text-white text-lg font-normal"
+          >
+            {tag}
+          </span>
+        ))}
       </div>
       <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
       <div className="py-4">
@@ -54,34 +74,77 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({ predictResult }) 
           <i className="bi bi-clipboard-check-fill text-blue-600 mr-2"></i> ผลลัพธ์การทำนาย
         </h4>
         <table className="min-w-full mt-4 bg-white rounded-lg shadow">
-          <tbody>
-            {predictResult.prediction.detections.length > 0 ? (
-              predictResult.prediction.detections.map((detection, index) => (
-                <tr key={index} className="bg-gray-100 border-b">
-                  <th className="py-3 px-4 text-indigo-800 text-2xl font-medium">
-                    {getMeaningForKey("predictions") + " " + (index + 1)}
+          <thead>
+            <tr className="bg-indigo-600 text-white">
+              <th className="py-3 px-4 text-left text-lg font-medium"></th>
+              {isDetectionBased ? (
+                Object.keys(detections[0] || {}).filter(key => {
+                  const fullKey = `detections.${key}`;
+                  const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
+                  return keyItem?.displayFormat === 'text';
+                }).map((key) => (
+                  <th key={key} className="py-3 px-4 text-left text-lg font-medium">
+                    {getMeaningForKey(`detections.${key}`)}
                   </th>
-                  <td className="py-3 px-4 text-gray-800 text-xl">
-                    <span className="py-3 px-4 text-indigo-600 text-xl font-medium">Label:</span>
-                    {` ${detection.label}`}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800 text-xl">
-                    <span className="py-3 px-4 text-indigo-600 text-xl font-medium">Confidence:</span>
-                    {` ${detection.confidence.toFixed(2)}`}
+                ))
+              ) : (
+                predictResult.response_keys?.filter(keyItem => keyItem.displayFormat === 'text').map((keyItem) => (
+                  <th key={keyItem.key} className="py-3 px-4 text-left text-lg font-medium">
+                    {keyItem.meaning}
+                  </th>
+                ))
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {isDetectionBased ? (
+              detections.length > 0 ? (
+                detections.map((detection, index) => (
+                  <tr key={index} className="bg-gray-100 border-b">
+                    <td className="py-3 px-4 text-indigo-800 text-2xl font-medium">
+                      {index + 1}
+                    </td>
+                    {Object.keys(detection).filter(key => {
+                      const fullKey = `detections.${key}`;
+                      const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
+                      return keyItem?.displayFormat === 'text';
+                    }).map((key) => (
+                      <td key={key} className="py-3 px-4 text-gray-800 text-xl">
+                        {Array.isArray(detection[key])
+                          ? detection[key].map((coord: number[], coordIndex: number) => (
+                              <div key={coordIndex}>{coord.join(", ")}</div>
+                            ))
+                          : formatValue(detection[key]) || "-"}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={Object.keys(detections[0] || {}).filter(key => {
+                    const fullKey = `detections.${key}`;
+                    const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
+                    return keyItem?.displayFormat === 'text';
+                  }).length + 1} className="text-center py-4">
+                    ไม่มีข้อมูล
                   </td>
                 </tr>
-              ))
+              )
             ) : (
-              <tr>
-                <td colSpan={2} className="text-center py-4">ไม่มีข้อมูล</td>
+              <tr className="bg-gray-100 border-b">
+                <td className="py-3 px-4 text-indigo-800 text-2xl font-medium">1</td>
+                {predictResult.response_keys?.filter(keyItem => keyItem.displayFormat === 'text').map((keyItem) => (
+                  <td key={keyItem.key} className="py-3 px-4 text-gray-800 text-xl">
+                    {predictResult.prediction[keyItem.key] !== undefined ?formatValue( predictResult.prediction[keyItem.key]) : "-"}
+                  </td>
+                ))}
               </tr>
             )}
           </tbody>
         </table>
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default TextResultDisplay
+export default TextResultDisplay;

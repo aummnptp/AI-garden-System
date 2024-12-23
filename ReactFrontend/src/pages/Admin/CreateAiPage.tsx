@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MiniFooter from '../..//components/MiniFooter';
 import AdminSidebar from "../../components/AdminSidebar";
+import { Button } from '@mui/material';
 
 const CreateAiProjectPage = () => {
   const [aiName, setAiName] = useState('');
@@ -15,13 +16,18 @@ const CreateAiProjectPage = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [regressionParams, setRegressionParams] = useState([{ param: '' }]);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
+  const [predictResult, setPredictResult] = useState<{response_keys:string[],prediction:{}}>();
 
   const navigate = useNavigate();
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   
-
+useEffect(() => {
+    const responseKeysArray = responseKeys.map((keyObj) => keyObj);
+    setPredictResult((prev) => ({ ...prev, response_keys: responseKeysArray }));
+  }, [responseKeys]);
+  
   
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -48,27 +54,28 @@ const CreateAiProjectPage = () => {
                 console.log('Response from API:', data);
 
                 // ฟังก์ชันดึง keys จาก JSON (ระดับ 1 และ 2)
-                const extractKeys = (obj, parentKey = '') => {
-                  const keys = [];
+                       // ฟังก์ชันดึง keys จาก JSON (ระดับ 1 และ 2)
+                const extractKeys = (obj: any, parentKey = '', depth = 1, maxDepth = 2) => {
+                  const keys: string[] = [];
+                  if (depth > maxDepth) return keys;
+              
                   Object.keys(obj).forEach((key) => {
                       const fullPath = parentKey ? `${parentKey}.${key}` : key;
-                      
+              
                       if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-                          // Object at level 1, add the current key and recurse for nested objects
+                          // Object, add the current key and recurse if within maxDepth
                           keys.push(fullPath);
-                          keys.push(...extractKeys(obj[key], fullPath));
+                          keys.push(...extractKeys(obj[key], fullPath, depth + 1, maxDepth));
                       } else if (Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === 'object') {
-                          // Array of objects (like detections), add the array key itself, then recurse into first object
+                          // Array of objects, add the array key itself and recurse if within maxDepth
                           keys.push(fullPath);
-                          keys.push(...extractKeys(obj[key][0], fullPath));
-                      } else if (Array.isArray(obj[key]) && !Array.isArray(obj[key][0])) {
-                          // Array of primitives (like polygon), just add the key once
-                          keys.push(fullPath);
+                          keys.push(...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth));
                       } else {
-                          // Base case, just add the key
+                          // Base case or array of primitives, just add the key
                           keys.push(fullPath);
                       }
                   });
+              
                   return keys;
               };
               
@@ -189,13 +196,13 @@ const CreateAiProjectPage = () => {
           <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                เพิ่มโปรเจค AI
+                Add New AI
               </h1>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
             <form onSubmit={handleSubmit} className="m-6 space-y-4">
               <div className="form-group">
-                <label>ชื่อ AI</label>
+                <label>AI name</label>
                 <input
                   type="text"
                   value={aiName}
@@ -204,7 +211,7 @@ const CreateAiProjectPage = () => {
                 />
               </div>
               <div className="form-group">
-                <label>คำอธิบาย</label>
+                <label>AI description</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -212,7 +219,7 @@ const CreateAiProjectPage = () => {
                 />
               </div>
               <div className="form-group">
-                <label>ประเภท AI</label>
+                <label>AI type</label>
                 <select
                   value={aiType}
                   onChange={(e) => setAiType(e.target.value)}
@@ -240,13 +247,21 @@ const CreateAiProjectPage = () => {
                   style={{ display: 'none' }}
                   className="w-30 p-2 ml-2 text-white bg-indigo-600 rounded-lg"
                 />
-                <button
-                  type="button"
+                <Button
+                  variant="contained"
+                  style={{ marginRight: "8px" }}
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  size="large"
                   onClick={() => fileInputRef.current?.click()} // เปิดหน้าต่างเลือกไฟล์เมื่อคลิกปุ่ม
                   className="p-2 ml-2 bg-indigo-600 text-white rounded-lg"
                 >
-                  ทดสอบ Uri
-                </button>
+                  Test URI
+                </Button>
 
               </div>
 
@@ -293,19 +308,32 @@ const CreateAiProjectPage = () => {
                     </select>
 
                     {responseKeys.length > 1 && (
-                      <button
-                        type="button"
+                      <Button
+                      variant="contained"
+                      style={{ marginRight: "8px" }}
+                      color="error"
+                      size="large"
                         onClick={() => handleRemoveKey(index)}
                         className="p-2 bg-red-600 text-white rounded-lg"
                       >
-                        ลบ
-                      </button>
+                        remove
+                      </Button>
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
+               <Button
+                                variant="contained"
+                                style={{ marginRight: "8px" }}
+                                sx={{
+                                  backgroundColor: "#4f46e5",
+                                  "&:hover": {
+                                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                                  },
+                                }}
+                                size="large"
+               onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
                   + Add Key
-                </button>
+                </Button>
               </div>
               <div style={{ display: 'none' }}>
                 <label >Regression Parameters (สำหรับพล็อตกราฟ)</label>
@@ -319,13 +347,16 @@ const CreateAiProjectPage = () => {
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
                     {regressionParams.length > 1 && (
-                      <button
-                        type="button"
+                       <Button
+                                            variant="contained"
+                                            style={{ marginRight: "8px" }}
+                                            color="error"
+                                            size="large"
                         onClick={() => handleRemoveParam(index)}
                         className="p-2 bg-red-600 text-white rounded-lg"
                       >
                         ลบ
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))}
@@ -335,7 +366,7 @@ const CreateAiProjectPage = () => {
               </div>
 
               <div className="form-group">
-                <label>คำอธิบาย Input ของ AI</label>
+                <label>AI input description (คำอธิบายรูปภาพหรือวิดีโอที่ AI นำไปวิเคราะห์)</label>
                 <textarea
                   value={inputDescription}
                   onChange={(e) => setInputDescription(e.target.value)}
@@ -344,7 +375,7 @@ const CreateAiProjectPage = () => {
               </div>
 
               <div className="form-group">
-                <label>Tag ของโปรเจค</label>
+                <label>Tag AI</label>
                 <div className="tags-input space-y-2">
                   {tags.map((tag, index) => (
                     <span key={index} className="tag my-1 text-white bg-indigo-600 p-1.5 rounded-lg inline-flex items-center">
@@ -362,19 +393,41 @@ const CreateAiProjectPage = () => {
                       placeholder="Add tag"
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
-                    <button type="button" onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-lg text-white">
+                      <Button
+                                       variant="contained"
+                                       style={{ marginRight: "8px" }}
+                                       sx={{
+                                         backgroundColor: "#4f46e5",
+                                         "&:hover": {
+                                           backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                                         },
+                                       }}
+                                       size="small"
+                    onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-lg text-white">
                       + Add Tag
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
               <div className="form-group">
-                <label>อัปโหลดไฟล์ภาพที่นี่</label>
+                <label>AI Picture</label>
                 <input type="file" onChange={handleFileChange} className="w-full p-2 border border-gray-300 rounded-lg" />
               </div>
-              <button type="submit" className="p-2 bg-indigo-600 rounded-lg text-white">
-                บันทึก
-              </button>
+              <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
+
+                 <Button
+                                  variant="contained"
+                                  style={{ marginRight: "8px" }}
+                                  sx={{
+                                    backgroundColor: "#4f46e5",
+                                    "&:hover": {
+                                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                                    },
+                                  }}
+                                  size="large" type="submit" className="p-2 bg-indigo-600 rounded-lg text-white">
+                Add New AI
+              </Button>
+              </div>
             </form>
           </div>
         </div>

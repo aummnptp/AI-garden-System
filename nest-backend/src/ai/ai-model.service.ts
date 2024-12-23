@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AIModel } from './entities/ai-model.entity';
@@ -48,41 +48,6 @@ export class AIModelService {
   
   
   
-  async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-    const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
-    if (!model) {
-      throw new NotFoundException('Model not found!');
-    }
-    
-  
-    // สร้าง FormData และเพิ่มข้อมูล
-    const formData = new FormData();
-    formData.append('file', file.buffer, file.originalname); // เพิ่มไฟล์
-    // หากมีข้อมูลเพิ่มเติมสามารถเพิ่มได้
-    // formData.append('other_field', 'value');
-  
-    try {
-      // ใช้ formData และตั้งค่า headers
-      const response = await axios.post(model.api_uri, formData, {
-        headers: {
-          ...formData.getHeaders(), // Headers ที่สร้างจาก FormData
-        },
-      });
-  
-      const responseKeysWithMeaning = model.response_keys;
-      const filteredResponse = this.filterResponse(response.data, responseKeysWithMeaning);
-  
-      return {
-        prediction: filteredResponse,
-        ai_type: model.ai_type,
-        response_keys: responseKeysWithMeaning,
-      };
-    } catch (error) {
-      console.error('Error during prediction:', error.response?.data || error.message);
-      throw new Error('Failed to process prediction request.');
-    }
-  }
-
   findAll(): Promise<AIModel[]> {
     return this.aiModelRepository.find();
   }
@@ -91,18 +56,99 @@ export class AIModelService {
   findOne(id: number): Promise<AIModel | null> {
     return this.aiModelRepository.findOneBy({ id });
   }
-
+  
   remove(id: number): Promise<void> {
     return this.aiModelRepository.delete(id).then(() => undefined);
   }
+  
+  
+  // async predict(modelId: number, file: Express.Multer.File): Promise<any> {
+  //   const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
+  //   if (!model) {
+  //     throw new NotFoundException('Model not found!');
+  //   }
+  
+  //   const formData = new FormData();
+  //   formData.append('file', file.buffer, file.originalname);
+  
+  //   try {
+  //     const response = await axios.post(model.api_uri, formData, {
+  //       headers: {
+  //         ...formData.getHeaders(),
+  //       },
+  //     });
+  
+  //     if (!response.data) {
+  //       throw new BadRequestException('No response from external API');
+  //     }
+  
+  //     const filteredResponse = this.filterResponse(response.data, model.response_keys);
+  
+  //     return {
+  //       prediction: filteredResponse,
+  //       ai_type: model.ai_type,
+  //       response_keys: model.response_keys,
+  //     };
+  //   } catch (error) {
+  //     const errorMessage = error.response?.data?.message || error.message;
+  //     console.error('Error during prediction:', errorMessage);
+  //     throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
+  //   }
+  // }
+  
 
-  private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
-    const filteredResponse = {};
-    responseKeysWithMeaning.forEach(({ key }) => {
-      filteredResponse[key] = responseJson[key] || 'ไม่มีข้อมูล';
-    });
-    return filteredResponse;
+  // private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
+  //   const filteredResponse: Record<string, any> = {};
+  
+  //   responseKeysWithMeaning.forEach(({ key }) => {
+  //     // ตรวจสอบว่ามี nested key (key ที่มีจุด '.')
+  //     if (key.includes('.')) {
+  //       const [arrayKey, nestedKey] = key.split('.');
+  //       if (Array.isArray(responseJson[arrayKey])) {
+  //         // ดึงค่าของ nested key ในแต่ละ item ของ array
+  //         filteredResponse[key] = responseJson[arrayKey].map((item: any) => item[nestedKey] || 'ไม่มีข้อมูล');
+  //       } else {
+  //         filteredResponse[key] = 'ไม่มีข้อมูล';
+  //       }
+  //     } else {
+  //       // ดึงค่าของ key ตรงๆ
+  //       filteredResponse[key] = responseJson[key] !== undefined ? responseJson[key] : 'ไม่มีข้อมูล';
+  //     }
+  //   });
+  
+  //   return filteredResponse;
+  // }
+  
+  async predict(modelId: number, file: Express.Multer.File): Promise<any> {
+    const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
+    if (!model) {
+      throw new NotFoundException('Model not found!');
+    }
+  
+    const formData = new FormData();
+    formData.append('file', file.buffer, file.originalname);
+  
+    try {
+      const response = await axios.post(model.api_uri, formData, {
+        headers: { ...formData.getHeaders() },
+      });
+  
+      if (!response.data) {
+        throw new BadRequestException('No response from external API');
+      }
+  
+      return {
+        response_keys: model.response_keys,
+        prediction: response.data,
+        ai_type: model.ai_type,
+      };
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error('Error during prediction:', errorMessage);
+      throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
+    }
   }
+  
 
    async update(id: number, updateAIModelDto: UpdateAIModelDto):Promise<string> {
     const existingModel = await  this.aiModelRepository.findOne({where: {id}})

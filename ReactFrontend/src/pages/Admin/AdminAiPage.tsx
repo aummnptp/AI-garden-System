@@ -51,7 +51,7 @@ function AdminAi() {
                     },
                   }}
                   >
-                + Create New AI 
+                + Add New AI 
                 </Button>
 
               </Link>
@@ -62,7 +62,7 @@ function AdminAi() {
                 type="text"
                 id="first_name"
                 className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
-                placeholder="ค้นหาชื่อAI"
+                placeholder="Search with AI name"
                 required
               />
               <div>
@@ -70,13 +70,13 @@ function AdminAi() {
                 type="button"
                 className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
               >
-                ประเภท <SortAscendingOutlined />
+                type filter <SortAscendingOutlined />
               </button>
               <button
                 type="button"
                 className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
               >
-                tag <ControlOutlined />
+                tag filter <ControlOutlined />
               </button></div>
             </div>
           </div>
