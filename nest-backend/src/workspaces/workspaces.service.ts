@@ -42,6 +42,10 @@ export class WorkspacesService {
     return this.workspaceRepository.findOneBy({ id });
   }
 
+  async findByCreator(email: string): Promise<Workspace[]> {
+    return this.workspaceRepository.find({ where: { createByEmail: email } });
+  }
+
   
   // ลบ workspace
   remove(id: number): Promise<void> {

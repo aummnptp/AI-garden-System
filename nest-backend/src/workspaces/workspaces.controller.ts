@@ -8,12 +8,12 @@ import { User } from 'src/user/entities/user.entity';
 
 @Controller('workspaces')
 export class WorkspacesController {
-  constructor(private readonly workspacesService: WorkspacesService) {}
+  constructor(private readonly workspacesService: WorkspacesService) { }
 
   @UseGuards(JwtGuard)
   @Post('create')
-  async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
-    const userEmail = req.user.email; 
+  async create(@Request() req, @Body() createWorkspaceDto: CreateWorkspaceDto) {
+    const userEmail = req.user.email;
     return this.workspacesService.create(createWorkspaceDto, userEmail);
   }
 
@@ -21,6 +21,12 @@ export class WorkspacesController {
   findAll() {
     return this.workspacesService.findAll();
   }
+
+  @Get(':email')
+  async findByCreator(@Param('email') email: string) {
+    return this.workspacesService.findByCreator(email);
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -42,7 +48,7 @@ export class WorkspacesController {
   remove(@Param('id') id: string) {
     return this.workspacesService.remove(+id);
   }
-  
+
   @Patch(':id/add-member')
   async addMember(@Param('id') id: string, @Body('email') userEmail: string) {
     return this.workspacesService.addMember(+id, userEmail);

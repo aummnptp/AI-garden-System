@@ -15,7 +15,7 @@ const UserDetailPage = () => {
 
   const { userId } = useParams<{ userId?: string }>();
   const [userData, setUserData] = useState<any>();
-
+  const [myWorkspace, setMyWorkspace] = useState([]); 
   useEffect(() => {
     if (userId) {
       axios.get(`http://localhost:3000/user/${userId}`)
@@ -27,6 +27,19 @@ const UserDetailPage = () => {
         });
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (userData?.email) {
+      axios
+        .get(`http://localhost:3000/workspaces/${userData.email}`)
+        .then((response) => {
+          setMyWorkspace(response.data);
+        })
+        .catch((error) => {
+          console.error('There was an error fetching the workspace data!', error);
+        });
+    }
+  }, [userData]);
   return (
     <>
       <div className=" flex h-full min-h-screen bg-neutral-100">
@@ -105,15 +118,25 @@ const UserDetailPage = () => {
                   />
                   <AiListTable />
                 </div>
-              ) : userTab === "Workspace" ? (
+              ) : userTab === "Workspace" ?(
                 <>
-
-                  {/* My wokspace Card group */}
-
-                </>
-
-
-              ) : null}
+         
+                   {/* My wokspace Card group */}
+                   <div className={` grid grid-cols-3 pb-8 pt-2 `}>  
+                     {myWorkspace.map((data, index)=>(
+                   <div key={index} className={`mb-4 `}>
+                  
+                        <Link to={`/workspaces/${data.id}/project-list`}>
+                       <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
+                       members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} /> 
+                        </Link>
+                   </div>
+                     ))}
+                   </div>
+                 </>
+     
+     
+                 ): null}
             </div>
           </div>
 
