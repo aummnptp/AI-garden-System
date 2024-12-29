@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Workspace } from './entities/workspace.entity';
 import { User } from 'src/user/entities/user.entity';
+import { InviteWorkspaceDto } from './dto/InviteWorkspaceDto';
 
 @Controller('workspaces')
 export class WorkspacesController {
-  constructor(private readonly workspacesService: WorkspacesService) {}
+  constructor(
+    private readonly workspacesService: WorkspacesService
+    
+
+  ) {}
+  
 
   @UseGuards(JwtGuard)
   @Post('create')
@@ -22,9 +28,9 @@ export class WorkspacesController {
     return this.workspacesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workspacesService.findOne(+id);
+  @Get(':workspaceId')
+  findOne(@Param('workspaceId') workspaceId: string) {
+    return this.workspacesService.findOne(+workspaceId);
   }
 
   // @Get(':userId')
@@ -33,28 +39,57 @@ export class WorkspacesController {
   // }
 
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
-    return this.workspacesService.update(+id, updateWorkspaceDto);
+  @Patch(':workspaceId')
+  update(@Param('workspaceId') workspaceId: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
+    return this.workspacesService.update(+workspaceId, updateWorkspaceDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workspacesService.remove(+id);
+  @Delete(':workspaceId')
+  remove(@Param('workspaceId') workspaceId: string) {
+    return this.workspacesService.remove(+workspaceId);
   }
   
-  @Patch(':id/add-member')
-  async addMember(@Param('id') id: string, @Body('email') userEmail: string) {
-    return this.workspacesService.addMember(+id, userEmail);
-  }
-  @Delete(':id/remove-member')
-  async removeMember(@Param('id') id: string, @Body('email') userEmail: string) {
-    // เปลี่ยนuserEmail เป็น role
-    return this.workspacesService.removeMember(+id, userEmail);
+  @UseGuards(JwtGuard)
+  @Patch(':workspaceId/add-member')
+  async addMember(
+    @Param('workspaceId') workspaceId: string,
+    @Body() body: { email: string; role: string }
+  ) {
+    return this.workspacesService.addMember(+workspaceId, body.email, body.role || 'member');
   }
 
-  @Get(':id/members-profiles')
-  async getMembersProfiles(@Param('id') id: string): Promise<User []> {
-    return this.workspacesService.getMembersProfiles(+id);
+
+  @Delete(':workspaceId/remove-member')
+  async removeMember(@Param('workspaceId') workspaceId: string, @Body('email') userEmail: string) {
+    // เปลี่ยนuserEmail เป็น role
+    return this.workspacesService.removeMember(+workspaceId, userEmail);
+  }
+
+  // @Get(':id/members-profiles')
+  // async getMembersProfiles(@Param('id') id: string): Promise<User []> {
+  //   return this.workspacesService.getMembersProfiles(+id);
+  // }
+  @Get(':workspaceId/members-profiles')
+async getMembersProfiles(@Param('workspaceId') workspaceId: string) {
+  return this.workspacesService.getMembersProfiles(+workspaceId);
+}
+
+
+
+@Post(':workspaceId/invite')
+async pendingInvite(
+  @Param('workspaceId') workspaceId: number,
+  @Body() inviteWorkspaceDto: InviteWorkspaceDto,
+) {
+  return this.workspacesService.pendingInvite(workspaceId, inviteWorkspaceDto);
+}
+
+
+@Post(':workspaceId/invitations/:invitationId/accept')
+  async acceptInvitation(
+    @Param('invitationId', ParseIntPipe) invitationId: number,
+    @Body('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.workspacesService.acceptInvitation(invitationId, userId);
   }
 }

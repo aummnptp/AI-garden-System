@@ -11,6 +11,9 @@ import { Workspace } from './workspaces/entities/workspace.entity';
 import { InvitationModule } from './invitation/invitation.module';
 import { AIModel } from './ai/entities/ai-model.entity';
 import { AIModelModule } from './ai/ai-model.module';
+import { ProjectsController } from './projects/projects.controller';
+import { ProjectsModule } from './projects/projects.module';
+import { WorkspaceMember } from './workspaces/entities/workspace-member.entity';
 
 
 
@@ -24,8 +27,8 @@ import { AIModelModule } from './ai/ai-model.module';
       port: parseInt(<string> process.env.POSTGRES_PORT),
       password: process.env.POSTGRES_PASSWORD,
       username: process.env.POSTGRES_USER,
-      entities:[User,Workspace,AIModel],
-      // autoLoadEntities: true,
+      // entities:[User,Workspace,AIModel,WorkspaceMember],
+      autoLoadEntities: true,
       database: process.env.POSTGRES_DATABASE,
       synchronize: true, // อย่าลืมปิดในการใช้งาน production
       logging: true,
@@ -35,8 +38,9 @@ import { AIModelModule } from './ai/ai-model.module';
     UserModule,
     InvitationModule,
     AIModelModule,
+    ProjectsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProjectsController],
   providers: [AppService],
 })
 export class AppModule {}
