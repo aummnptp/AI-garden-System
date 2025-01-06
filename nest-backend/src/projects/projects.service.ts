@@ -5,6 +5,7 @@ import { Workspace } from 'src/workspaces/entities/workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
+import { AIModel } from 'src/ai/entities/ai-model.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -14,20 +15,38 @@ constructor(
 
     @InjectRepository(Workspace)
     private workspaceRepository: Repository<Workspace>,
+
+
+    @InjectRepository(Workspace)
+    private aiModelRepository: Repository<AIModel>,
 ) {}
   async validateWorkspace(workspaceId: number): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
     });
 
+    
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
     return workspace;
   }
+
+
   async create(workspaceId:number ,createProjectDto: CreateProjectDto) {
     await this.validateWorkspace(workspaceId)
-    const project = this.projectRepository.create({ ...createProjectDto, workspace: { workspaceId } });
+
+    const aiModel = await this.projectRepository.manager.findOne(AIModel, {
+      where: { id: createProjectDto.ai_id },
+    });
+
+    if (!aiModel) {
+      throw new NotFoundException('AI Model not found');
+    }
+
+    const project = this.projectRepository.create({ ...createProjectDto, workspace: { workspaceId },
+      ai_model: aiModel,  
+    });
     return this.projectRepository.save(project);
   }
 

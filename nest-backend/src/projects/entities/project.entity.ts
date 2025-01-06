@@ -16,7 +16,7 @@ project_desc: string;
 @Column()
 input_type: string;
 
-@Column()
+@Column({nullable: true})
 image_path: string;
 
 @Column({type: 'timestamp', default: ()  => 'CURRENT_TIMESTAMP'})
@@ -33,7 +33,7 @@ permission_only: boolean;
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace; // ความสัมพันธ์กับ Workspace
 
-  @ManyToOne(()=> AIModel, (ai_model) => ai_model.projects, {onDelete: 'CASCADE'})
-  @JoinColumn({ name: 'ai_id' })
+ @ManyToOne(()=> AIModel, (ai_model) => ai_model.projects, {onDelete: 'CASCADE'})
+@JoinColumn({ name: 'ai_id' })
   ai_model: AIModel;
 }

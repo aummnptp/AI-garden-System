@@ -232,11 +232,10 @@ useEffect(() => {
                 </select>
               </div>
               <div className="form-group">
-                <label style={{ display: 'block' }}>Service URI</label>
+                <label style={{ display: "block" }}>Service URI</label>
                 <input
                   type="text"
                   value={serviceUri}
-
                   onChange={(e) => setServiceUri(e.target.value)}
                   className="w-80 p-2 border border-gray-300 rounded-lg"
                 />
@@ -244,7 +243,7 @@ useEffect(() => {
                   type="file"
                   onChange={handleUri}
                   ref={fileInputRef}
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   className="w-30 p-2 ml-2 text-white bg-indigo-600 rounded-lg"
                 />
                 <Button
@@ -262,27 +261,28 @@ useEffect(() => {
                 >
                   Test URI
                 </Button>
-
               </div>
-
 
               <div className="form-group">
                 <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
 
                 {responseKeys.map((key, index) => (
                   <div key={index} className="response-key flex space-x-2 mb-2">
-
                     {/* ช่อง select สำหรับความหมาย (meaning) */}
                     <input
                       type="text"
                       placeholder="meaning"
                       value={key.meaning}
-                      onChange={(e) => handleKeyChange(index, 'meaning', e.target.value)}
+                      onChange={(e) =>
+                        handleKeyChange(index, "meaning", e.target.value)
+                      }
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
                     <select
                       value={key.key}
-                      onChange={(e) => handleKeyChange(index, 'key', e.target.value)}
+                      onChange={(e) =>
+                        handleKeyChange(index, "key", e.target.value)
+                      }
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     >
                       <option value="">Select Key</option>
@@ -295,8 +295,10 @@ useEffect(() => {
 
                     {/* Select สำหรับ Display Format */}
                     <select
-                      value={key.displayFormat || ''}
-                      onChange={(e) => handleKeyChange(index, 'displayFormat', e.target.value)}
+                      value={key.displayFormat || ""}
+                      onChange={(e) =>
+                        handleKeyChange(index, "displayFormat", e.target.value)
+                      }
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     >
                       <option value="">Select Display Format</option>
@@ -304,15 +306,14 @@ useEffect(() => {
                       <option value="Chart">Chart</option>
                       <option value="ObjectDetection">Object Detection</option>
                       <option value="Segmentation">Segmentation</option>
-
                     </select>
 
                     {responseKeys.length > 1 && (
                       <Button
-                      variant="contained"
-                      style={{ marginRight: "8px" }}
-                      color="error"
-                      size="large"
+                        variant="contained"
+                        style={{ marginRight: "8px" }}
+                        color="error"
+                        size="large"
                         onClick={() => handleRemoveKey(index)}
                         className="p-2 bg-red-600 text-white rounded-lg"
                       >
@@ -321,24 +322,29 @@ useEffect(() => {
                     )}
                   </div>
                 ))}
-               <Button
-                                variant="contained"
-                                style={{ marginRight: "8px" }}
-                                sx={{
-                                  backgroundColor: "#4f46e5",
-                                  "&:hover": {
-                                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                                  },
-                                }}
-                                size="large"
-               onClick={handleAddKey} className="p-2  text-white bg-indigo-600 rounded-lg">
+                <Button
+                  variant="contained"
+                  style={{ marginRight: "8px" }}
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  size="large"
+                  onClick={handleAddKey}
+                  className="p-2  text-white bg-indigo-600 rounded-lg"
+                >
                   + Add Key
                 </Button>
               </div>
-              <div style={{ display: 'none' }}>
-                <label >Regression Parameters (สำหรับพล็อตกราฟ)</label>
+              <div style={{ display: "none" }}>
+                <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
                 {regressionParams.map((param, index) => (
-                  <div key={index} className="response-param flex space-x-2 mb-2">
+                  <div
+                    key={index}
+                    className="response-param flex space-x-2 mb-2"
+                  >
                     <input
                       type="text"
                       placeholder="Parameter"
@@ -347,11 +353,11 @@ useEffect(() => {
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
                     {regressionParams.length > 1 && (
-                       <Button
-                                            variant="contained"
-                                            style={{ marginRight: "8px" }}
-                                            color="error"
-                                            size="large"
+                      <Button
+                        variant="contained"
+                        style={{ marginRight: "8px" }}
+                        color="error"
+                        size="large"
                         onClick={() => handleRemoveParam(index)}
                         className="p-2 bg-red-600 text-white rounded-lg"
                       >
@@ -360,13 +366,20 @@ useEffect(() => {
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={handleAddRegressionParam} className="p-2  text-white bg-indigo-600 rounded-lg">
+                <button
+                  type="button"
+                  onClick={handleAddRegressionParam}
+                  className="p-2  text-white bg-indigo-600 rounded-lg"
+                >
                   + Add Parameter
                 </button>
               </div>
 
               <div className="form-group">
-                <label>AI input description (คำอธิบายรูปภาพหรือวิดีโอที่ AI นำไปวิเคราะห์)</label>
+                <label>
+                  AI input description (คำอธิบายรูปภาพหรือวิดีโอที่ AI
+                  นำไปวิเคราะห์)
+                </label>
                 <textarea
                   value={inputDescription}
                   onChange={(e) => setInputDescription(e.target.value)}
@@ -378,9 +391,16 @@ useEffect(() => {
                 <label>Tag AI</label>
                 <div className="tags-input space-y-2">
                   {tags.map((tag, index) => (
-                    <span key={index} className="tag my-1 text-white bg-indigo-600 p-1.5 rounded-lg inline-flex items-center">
+                    <span
+                      key={index}
+                      className="tag my-1 text-white bg-indigo-600 p-1.5 rounded-lg inline-flex items-center"
+                    >
                       {tag}
-                      <button type="button" onClick={() => handleTagRemove(tag)} className="ml-2 text-white text-xl ">
+                      <button
+                        type="button"
+                        onClick={() => handleTagRemove(tag)}
+                        className="ml-2 text-white text-xl "
+                      >
                         &times;
                       </button>
                     </span>
@@ -393,17 +413,19 @@ useEffect(() => {
                       placeholder="Add tag"
                       className="w-full p-2 border border-gray-300 rounded-lg"
                     />
-                      <Button
-                                       variant="contained"
-                                       style={{ marginRight: "8px" }}
-                                       sx={{
-                                         backgroundColor: "#4f46e5",
-                                         "&:hover": {
-                                           backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                                         },
-                                       }}
-                                       size="small"
-                    onClick={handleTagAdd} className="w-[10%] p-2 bg-indigo-600 rounded-lg text-white">
+                    <Button
+                      variant="contained"
+                      style={{ marginRight: "8px" }}
+                      sx={{
+                        backgroundColor: "#4f46e5",
+                        "&:hover": {
+                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                        },
+                      }}
+                      size="small"
+                      onClick={handleTagAdd}
+                      className="w-[10%] p-2 bg-indigo-600 rounded-lg text-white"
+                    >
                       + Add Tag
                     </Button>
                   </div>
@@ -411,22 +433,28 @@ useEffect(() => {
               </div>
               <div className="form-group">
                 <label>AI Picture</label>
-                <input type="file" onChange={handleFileChange} className="w-full p-2 border border-gray-300 rounded-lg" />
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                />
               </div>
-              <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
 
-                 <Button
-                                  variant="contained"
-                                  style={{ marginRight: "8px" }}
-                                  sx={{
-                                    backgroundColor: "#4f46e5",
-                                    "&:hover": {
-                                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                                    },
-                                  }}
-                                  size="large" type="submit" className="p-2 bg-indigo-600 rounded-lg text-white">
-                Add New AI
-              </Button>
+              <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
+                <Button
+                  variant="contained"
+                  style={{ marginRight: "8px" }}
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  size="large"
+                  type="submit"
+                >
+                  Add New AI
+                </Button>
               </div>
             </form>
           </div>

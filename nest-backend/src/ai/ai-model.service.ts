@@ -40,12 +40,34 @@ export class AIModelService {
         meaning: key.meaning,
         displayFormat: key.displayFormat,
       })),
+      imagePath: file ? `/uploads/${file.filename}` : null,
     });
   
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
-  }
+  }  
+
+  async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
+    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
   
+    if (!existingModel) {
+      throw new NotFoundException(`AI Model with Id ${id} not found`);
+    }
+  
+    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
+  
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    if (file) {
+      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
+      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+    }
+  
+    // อัปเดตข้อมูลในฐานข้อมูล
+    await this.aiModelRepository.update(id, updatedModelData);
+  
+    return 'Model updated successfully!';
+  }
   
   
   findAll(): Promise<AIModel[]> {
@@ -62,62 +84,6 @@ export class AIModelService {
   }
   
   
-  // async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-  //   const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
-  //   if (!model) {
-  //     throw new NotFoundException('Model not found!');
-  //   }
-  
-  //   const formData = new FormData();
-  //   formData.append('file', file.buffer, file.originalname);
-  
-  //   try {
-  //     const response = await axios.post(model.api_uri, formData, {
-  //       headers: {
-  //         ...formData.getHeaders(),
-  //       },
-  //     });
-  
-  //     if (!response.data) {
-  //       throw new BadRequestException('No response from external API');
-  //     }
-  
-  //     const filteredResponse = this.filterResponse(response.data, model.response_keys);
-  
-  //     return {
-  //       prediction: filteredResponse,
-  //       ai_type: model.ai_type,
-  //       response_keys: model.response_keys,
-  //     };
-  //   } catch (error) {
-  //     const errorMessage = error.response?.data?.message || error.message;
-  //     console.error('Error during prediction:', errorMessage);
-  //     throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
-  //   }
-  // }
-  
-
-  // private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
-  //   const filteredResponse: Record<string, any> = {};
-  
-  //   responseKeysWithMeaning.forEach(({ key }) => {
-  //     // ตรวจสอบว่ามี nested key (key ที่มีจุด '.')
-  //     if (key.includes('.')) {
-  //       const [arrayKey, nestedKey] = key.split('.');
-  //       if (Array.isArray(responseJson[arrayKey])) {
-  //         // ดึงค่าของ nested key ในแต่ละ item ของ array
-  //         filteredResponse[key] = responseJson[arrayKey].map((item: any) => item[nestedKey] || 'ไม่มีข้อมูล');
-  //       } else {
-  //         filteredResponse[key] = 'ไม่มีข้อมูล';
-  //       }
-  //     } else {
-  //       // ดึงค่าของ key ตรงๆ
-  //       filteredResponse[key] = responseJson[key] !== undefined ? responseJson[key] : 'ไม่มีข้อมูล';
-  //     }
-  //   });
-  
-  //   return filteredResponse;
-  // }
   
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
     const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
@@ -148,16 +114,5 @@ export class AIModelService {
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
-  
-
-   async update(id: number, updateAIModelDto: UpdateAIModelDto):Promise<string> {
-    const existingModel = await  this.aiModelRepository.findOne({where: {id}})
-    if (!existingModel){
-      throw new NotFoundException(`AI Model with Id ${id} not found`)
-    }
-
-      await this.aiModelRepository.update(id, updateAIModelDto);
-      return 'Model updated successfully!';
-    }
   
 }

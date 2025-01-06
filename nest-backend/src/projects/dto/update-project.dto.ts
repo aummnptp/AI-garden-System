@@ -22,6 +22,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     // @IsOptional()
     permission_only?: boolean;
   
+ 
     // @IsNumber()
     // @IsOptional()
     // workspace_id?: number;

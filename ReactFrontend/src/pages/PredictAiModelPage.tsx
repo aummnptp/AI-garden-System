@@ -40,7 +40,7 @@ const PredictAiModelPage: React.FC = () => {
   const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
 
   if (!workspace) {
-    return <div>ไม่พบพื้นที่ทำงาน</div>;
+    return <div>ไม่พบรายละเอียดโปรเจก</div>;
   }
 
   const detail = workspace.details.find(d => d.id === projectIdNum);
@@ -113,7 +113,7 @@ const PredictAiModelPage: React.FC = () => {
       formData.append('file', file);
   
       // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-      const response = await axios.post('http://localhost:5000/predict/1', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/predict/1`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -139,7 +139,7 @@ const PredictAiModelPage: React.FC = () => {
       formData.append('file', file);
       console.log(file.size);
       try {
-        const response = await fetch(`http://localhost:5000/predict/${modelId}`, {
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/predict/${modelId}`, {
           method: 'POST',
           body: formData,
         });

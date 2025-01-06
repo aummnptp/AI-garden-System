@@ -1,48 +1,71 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 import MiniFooter from '../../components/MiniFooter'
 import Sidebar from '../../components/Sidebar'
-import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material'
-import { Link, useParams } from 'react-router-dom'
+import { Box, Button, Dialog, DialogActions, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import ProjectImageInput from '../../components/input/ProjectImageInput'
+import { Close } from '@mui/icons-material'
+
+interface Project {
+  project_id: number;
+  project_name: string;
+  project_desc: string;
+  input_type: string;
+  image_path: string | null;
+  create_at: string;
+  update_at: string;
+  permission_only: boolean;
+  ai_model: AIModel;
+}
+
+interface AIModel {
+  id: number;
+  name: string;
+  description: string;
+  ai_type: string;
+  ai_tag: string[];
+  input_desc: string;
+  api_uri: string;
+  response_keys: ResponseKey[];
+  createdAt: string;
+  updatedAt: string;
+  imagePath: string | null;
+}
+
+interface ResponseKey {
+  key: string;
+  meaning: string;
+  displayFormat: string;
+}
 
 const ProjectSetting = () => {
+  
   let { workspaceId,projectId } = useParams();
-  const [name, setName] = useState<string>("Medic Classification");
-  const [description, setDescription] = useState<string>("Lorem ipsum dolor sit amet, consectetur adipiscing elit. ");
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [inputType, setInputType] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   const [image, setImage] = useState<File | null>(null);
-
+  const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
+  const [loading, setLoading] = useState(true);
+ const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+ const isDeleteDisabled = confirmText !== name;
   // สำหรับ demo รูป *****
-  const initialImageUrl = "/images/ai/dermpic.jpg"; // URL ของรูปเริ่มต้น
-  useEffect(() => {
-    const fetchImage = async () => {
-      const response = await fetch(initialImageUrl);
-      const blob = await response.blob();
-      const file = new File([blob], "default-image.jpg", { type: blob.type });
-      setImage(file);
-    };
-  
-    fetchImage();
-  }, []);
+  // const initialImageUrl = "/images/ai/dermpic.jpg"; // URL ของรูปเริ่มต้น
   // useEffect(() => {
-  //   const fetchWorkspace = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/project`
-  //       );
-  //       const { name, description } = response.data;
-  //       setName(name);
-  //       setDescription(description);
-  //     } catch (error) {
-  //       console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
-  //     }
+  //   const fetchImage = async () => {
+  //     const response = await fetch(initialImageUrl);
+  //     const blob = await response.blob();
+  //     const file = new File([blob], "default-image.jpg", { type: blob.type });
+  //     setImage(file);
   //   };
-
-  //   fetchWorkspace();
-  // }, [workspaceId]);
-
+  
+  //   fetchImage();
+  // }, []);
+  const navigate = useNavigate();
+  
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -62,41 +85,167 @@ const ProjectSetting = () => {
 
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
-  const handleSave = async () => {
-    try {
-      const payload = {
-        name,
-        description,
-      };
+const handleSave = async () => {
+  try {
+    // เตรียมข้อมูล payload
+    const payload = {
+      project_name: name,
+      project_desc: description,
+      input_type: inputType,
+    };
 
-      // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`,
-        payload
-      );
-      window.location.href = "/workspaces";
-      // จัดการเมื่ออัปเดตสำเร็จ
-      console.log("อัปเดต Workspace สำเร็จ:", response.data);
-      // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
-      // navigate(`/workspaces/${workspaceId}`);
+    // ใช้ FormData สำหรับอัปโหลดรูปถ้ามี
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(payload)) {
+      formData.append(key, value);
+    }
+
+    if (image) {
+      formData.append("image", image);
+    }
+
+    // ส่งคำขอ PATCH เพื่ออัปเดต Project
+    const response = await axios.patch(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/update/${projectId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // แสดงข้อความสำเร็จ หรือรีเฟรชหน้า
+    console.log("อัปเดต Project สำเร็จ:", response.data);
+    navigate(`/workspaces/${workspaceId}/project-list`);
+    // alert("Project updated successfully!");
+  } catch (error) {
+    // จัดการข้อผิดพลาด
+    console.error("เกิดข้อผิดพลาดในการอัปเดต Project:", error);
+    alert("เกิดข้อผิดพลาดในการอัปเดต Project");
+  }
+};
+
+
+const handleDelte = async () => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/delete/${projectId}`);
+      navigate(`/workspaces/${workspaceId}/project-list`);
+      console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {
-      // จัดการข้อผิดพลาด
-      console.error("เกิดข้อผิดพลาดในการอัปเดต Workspace:", error);
-      alert("เกิดข้อผิดพลาดในการอัปเดต Workspace");
+      console.error("เกิดข้อผิดพลาดในการลบ Workspace:", error);
+      alert("เกิดข้อผิดพลาดในการลบ Workspace");
     }
   };
 
-  const handleModalDelete = () => {
-    setOpen(true);
-  };
+  
+    const fetchData = async () => {
+      try {
+        const [workspaceResponse, projectResponse] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
+        
+        ]);
+    
+        setWorkspaceDetail(workspaceResponse.data);
+        setProjectDetail(projectResponse.data)
+        setName(projectResponse.data.project_name);
+        setDescription(projectResponse.data.project_desc)
+        setImage(projectResponse.data.image_path)
+        setInputType(projectResponse.data.input_type)
+      } catch (error) {
+        console.error("There was an error fetching the data!", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
- 
-  return (
+
+    const handleModalDelete = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+
+    useEffect(() => {
+      fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+    }, []);
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+  
+    if (!projectDetail) {
+      return <div>Error: Project details could not be loaded.</div>;
+    }
+    return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* confirm modal delete */}
     
       {/* side bar */}
-    <Sidebar workspaceName={name} />
+      <Sidebar workspaceName={workspaceDetail.name} 
+        projectName={projectDetail.project_name}
+        aiName={projectDetail.ai_model.name}
+        aiType={projectDetail.ai_model.ai_type}
+         />
+
+<Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <Box sx={{ textAlign: "center", padding: "20px" }}>
+            <div className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto">
+              {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
+              <Close sx={{ fontSize: 40, color: "red" }} />
+            </div>
+
+            <DialogTitle
+              id="alert-dialog-title"
+              sx={{ fontSize: "1.5rem", fontWeight: "bold" }}
+            >
+              Delete Project
+            </DialogTitle>
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "20px", color: "#555" }}
+            >
+              Delete a <strong>"{name}"</strong> from project list?
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "20px", color: "#555" }}
+            >
+              To confirm, type <strong>"{name}"</strong>  to in the box
+            </Typography>
+            <input
+          type="text"
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}  // อัปเดต confirmText เมื่อผู้ใช้พิมพ์
+          className="w-full p-2 border border-gray-300 rounded-lg no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+        />
+          </Box>
+          <DialogActions sx={{ padding: "30px" }}>
+            <Button variant="outlined" color="info" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleDelte();
+                handleClose();
+              }}
+              autoFocus
+              disabled={isDeleteDisabled}  
+            >
+              Delete{" "}
+            </Button>
+          </DialogActions>
+        </Dialog>
       {/* content container */}
       <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
         <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
@@ -165,6 +314,8 @@ const ProjectSetting = () => {
             <label className=" flex-col flex text-black text-2xl mb-4 ">
               Project Type
               <RadioGroup
+               value={inputType}
+               onChange={(e) => setInputType(e.target.value)}
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"

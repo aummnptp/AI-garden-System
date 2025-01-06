@@ -15,6 +15,8 @@ import {
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { AIModel } from './entities/ai-model.entity';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
+import * as multer from 'multer';
+
   
   @Controller('ai-models')
   export class AIModelController {
@@ -22,18 +24,33 @@ import { UpdateAIModelDto } from './dto/update-ai-model.dto';
   
     
     @Post('add')
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file',{
+      storage: multer.diskStorage({
+        destination: './uploads', // กำหนดโฟลเดอร์เก็บรูปภาพ
+        filename: (req, file, cb) => {
+          const uniqueName = `${Date.now()}-${file.originalname}`;
+          cb(null, uniqueName);
+        },
+      }),
+    }))
     async addModel(@UploadedFile() file: Express.Multer.File, @Body() createAIModelDto: CreateAIModelDto):Promise<any> {     
       const message = await this.aiModelService.addModel(createAIModelDto, file);
       return { message };
     } 
     
     @Patch(':id/update-ai') 
-    @UseInterceptors(FileInterceptor('file'))
-
-    async updateAI(@UploadedFile() file: Express.Multer.File, @Param('id') id:string,@Body() updateAIModelDto: UpdateAIModelDto):Promise<any>{
-      const message = await this.aiModelService.update(+id, updateAIModelDto );
-      return { message };
+    @UseInterceptors(FileInterceptor('file',{
+      storage: multer.diskStorage({
+      destination: './uploads', // กำหนดโฟลเดอร์เก็บรูปภาพ
+      filename: (req, file, cb) => {
+          const uniqueName = `${Date.now()}-${file.originalname}`;
+          cb(null, uniqueName);
+        },
+      }),
+    }))
+    async updateAI( @Param('id') id:string,@Body() updateAIModelDto: UpdateAIModelDto,@UploadedFile() file: Express.Multer.File):Promise<string>{
+      const message = await this.aiModelService.update(+id, updateAIModelDto, file );
+      return message;
     }
 
     @Get()

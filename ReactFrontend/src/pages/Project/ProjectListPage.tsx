@@ -1,41 +1,44 @@
 import { Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ProjectCard from "../../components/card/ProjectCard";
-import ProjectData from "../../data/ProjectData";
+// import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
+import ProjectData from "../../data/ProjectData";
 
 const ProjectListPage = () => {
   const { workspaceId } = useParams<{ workspaceId?: string }>();
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+  const [projectData, setProjectData] = useState([]); 
+
   if (typeof workspaceId === 'undefined') {
     // Handle the case where workspaceId is undefined
     return <div>No workspace ID provided</div>;
 
   }
-  const id = parseInt(workspaceId, 10);
-  const workspace = ProjectData.find(ws => ws.workspaceId === id);
 
-  const fetchData = () => {
-    axios.all([
+
+  const fetchData =async () => {
+    try{
+      const [workspaceResponse, projectResponse] = await axios.all([
       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-  
-    ])
-    .then(axios.spread((workspaceResponse) => {
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`),
+    ]);
       setWorkspaceDetail(workspaceResponse.data);
-   
-    }))
-    .catch(error => {
+      setProjectData(projectResponse.data)
+      console.log(projectResponse.data); // แสดงข้อมูล project ที่โหลดมา
+    } catch (error) {
       console.error("There was an error fetching the data!", error);
-    });
+    }
   };
 
   useEffect(() => {
     fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
 
+console.log(projectData)
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -117,12 +120,14 @@ const ProjectListPage = () => {
             </div>
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">
-        {workspace?.details.map(data => (
-              <Link key={data.id} to={`/workspaces/${workspaceId}/project/${data.id}/detail`}>
+        {projectData.map(data => (
+              <Link key={data.project_id} to={`/workspaces/${workspaceId}/project/${data.project_id}/detail`}>
                 <ProjectCard
-                  name={data.name}
-                  desc={data.desc}
-                  projectImage={data.projectImage}
+                  name={data.project_name}
+                  desc={data.project_desc}
+                  projectImage={data.image_path}
+                  ai_tags={data.ai_model.ai_tag}
+                  ai_type={data.ai_model.ai_type}
                 />
               </Link>
             ))}

@@ -11,15 +11,10 @@ export class CreateProjectDto {
   input_type: string;
 
   @IsString()
+  @IsOptional()
   image_path: string;
 
-  @IsBoolean()
-  @IsOptional()
-  permission_only?: boolean;
+  @IsNumber()
+  ai_id: number
 
-//   @IsNumber()
-//   workspace_id: number;
-
-//   @IsNumber()
-//   ai_id: number;
 }

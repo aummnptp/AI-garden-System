@@ -12,11 +12,6 @@ export class AIModel {
   @Column({ length: 200, nullable: true })
   description: string;
 
-
-        // @OneToMany(() => AIModel, () => , { cascade: true })
-        // members: WorkspaceMember[];
-  // @Column({ length: 200, nullable: true })
-  // image_path: string;
   @Column()
   ai_type: string;
 
@@ -44,5 +39,7 @@ export class AIModel {
 
   // @Column()
   // create_by: string[];
-
+  
+  @Column({ nullable: true }) // เพิ่มฟิลด์ imagePath
+  imagePath: string;
 }
