@@ -11,7 +11,7 @@ const AiDetail = () => {
 
   useEffect(() => {
     if (ai_id) {
-      axios.get(`http://localhost:3000/ai-models/${ai_id}`)
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
         .then(response => {
           setAiData(response.data);
         })

@@ -45,60 +45,60 @@ const WorkspaceInvitationPage = () => {
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
   const [userDatas, setUserData] = useState<memberData[]>([]);
   const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
-  const [memberDatas, setMemberData] = useState<memberData[]>([
-    {
-      id: 1,
-     name: "Putthipong Chobngam",
-      email: "Putthipong@gmail.com",
-      role: "owner",
-      picture:"/images/homeImage/profile.webp",
-    },
-    {
-      id: 2,
-      name: "Apple Banana",
-      email: "Apple@gmail.com",
-      role: "member",
-      picture:"/images/homeImage/profile.webp",
-    },
-    {
-      id: 3,
-      name: "Kittinan Charearnsong",
-      email: "Kittinana@gmail.com",
-      role: "owner",
-      picture:"/images/homeImage/profile.webp",
-    },
-    {
-      id: 4,
-      name: "Member LastName",
-      email: "Member@gmail.com",
-      role: "member",
-      picture:"/images/homeImage/profile.webp",
-    },
-  ]);
-  const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const fetchUserData = () => {
-    axios.get("http://localhost:3000/user", {
-      withCredentials: true, 
-    })
-      .then(response => {
-        setUserData(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the workspace data!", error);
-      });
-  };
+  const [memberDatas, setMemberData] = useState<memberData[]>([]);
 
-      useEffect(() => {
-          fetchUserData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-        }, []);
-        console.log(userDatas)
+
+  const [workspaceDetail, setWorkspaceDetail] = useState([]);
+  const fetchUserData = async () => {
+   try{
+
+  const alluseResponse =  await axios.get(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`
+      ,{withCredentials: true,} 
+    );
+    if (alluseResponse.status === 200) {
+     setUserData(alluseResponse.data);
+    }else{
+      console.error("Error fetching available user", alluseResponse.statusText);
+    }
+
+    const pendingListResponse = await axios.get(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`,
+      { withCredentials: true }
+    );
+    if (pendingListResponse.status === 200) {
+      setPendingData(pendingListResponse.data);
+     }else{
+       console.error("Error fetching pendingData", pendingListResponse.statusText);
+     }
+     const getMemberDataResponse =  await axios.get(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`
+      ,{withCredentials: true,} 
+    );
+    if (alluseResponse.status === 200) {
+     setMemberData(getMemberDataResponse.data);
+    }else{
+      console.error("Error fetching available user", alluseResponse.statusText);
+    }
+   }catch(error){console.error("Error fetching user data", error);}
+  };
+  
+  
+  const [removeMembeIndex, setRemoveMembeIndex] = useState<number | null>(null);
+  const handleOpenRemoveMemberDialog = (index: number) => {
+    setRemoveMembeIndex(index);  // เก็บค่า index ของสมาชิกที่ต้องการให้เปิด dialog
+  };
+  
+  const handleCloseRemoveMemberDialog= () => {
+    setRemoveMembeIndex(null);  // ปิด dialog โดยการรีเซ็ต index
+  };
 
   
-  const handleChange = (event: SelectChangeEvent, index: number) => {
-    const UpdatedMember = [...memberDatas];
-    UpdatedMember[index].role = event.target.value;
-    setMemberData(UpdatedMember);
-  };
+  // const handleChange = (event: SelectChangeEvent, index: number) => {
+  //   const UpdatedMember = [...memberDatas];
+  //   UpdatedMember[index].role = event.target.value;
+  //   setMemberData(UpdatedMember);
+  // };
 
   const link = "https://www.invite_example.com";
   const [copied, setCopied] = useState(false);
@@ -113,57 +113,94 @@ const WorkspaceInvitationPage = () => {
         console.error("Failed to copy: ", err);
       });
   };
-  const handleInviteButton = () => {
-  
-    setPendingData((prevPendingData) => [
-      ...prevPendingData,
-      ...selectedUsers.filter(
-        // เช็คว่าอีเมลของผู้ใช้ไม่ได้อยู่ใน pendingData
-        (user) =>
-          !prevPendingData.some((pending) => pending.email === user.email)
-      ),
-    ]);
-    setSelectedUsers([]);
-  };
-  const handleDeleteMember = (index: number|null) => {
-    if (index === null) return;
-  
-    const updatedMembers = [...memberDatas];
-    updatedMembers.splice(index, 1);
-    setMemberData(updatedMembers);
-    setOpen(false);
-  };
-  
- 
- 
- 
-  const handleDeletePending = (index: number) => {
-    const UpdatedPending = [...pendingDatas];
-    UpdatedPending.splice(index, 1);
-    setPendingData(UpdatedPending);
-    setOpen(false);
-    // setMemberData()
-  };
-  const filteredUserDatas = userDatas.filter(
-    (user) => !pendingDatas.some((pending) => pending.email === user.email)
+
+
+  const handleInviteButton = async () => {
+    if (selectedUsers.length === 0) {
+      alert("Please select at least one user to invite.");
+      return;
+    }
+    const requestBody = {
+      emails: selectedUsers.map((user) => user.email), // ดึง email จาก selectedUsers
+    };
+   try {
+  const response = await axios.post(
+    `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-invite/${workspaceId}`,
+    requestBody,
+    { withCredentials: true }
   );
 
+  console.log("Response data:", response);
 
+  if (response.status >= 200 && response.status < 300) {
+    fetchUserData();
 
-
-  const handleClickOpen = (index: number) => {
-    setSelectedMemberIndex(index);
-    setOpen(true);
+    // alert("Invitations sent successfully!");
+    setSelectedUsers([]);
+  } else {
+    console.error("Unexpected response:", response);
+    alert("Failed to send invitations. Please try again.");
+  }
+} catch (error) {
+  console.error("Error sending invites", error);
+  alert("An error occurred while sending invitations.");
+}
   };
 
-  const handleClose = () => {
-    setOpen(false);
+const handleDeleteMember = async (userId: number) => {
+  // alert(userId)
+  try {
+    await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/remove-member/${workspaceId}`, {
+      data: { userId: userId }, // ใส่ userId ใน data
+      withCredentials: true,   // เปิดใช้งาน Credentials (เช่น Cookies หรือ Authorization headers)
+    });
+
+    alert("Member removed successfully!");
+    fetchUserData();
+  } catch (error) {
+    alert(`Error: ${error}`);
+    console.error(error);
+  }
+};
+
+ 
+ 
+  const handleCancelPending = async(inviteId: number) => {
+    // alert(inviteId)
+    try{
+      await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/cancel-invite/${inviteId}`,
+      {withCredentials: true,}
+      )
+      fetchUserData();
+    }catch(error){
+      alert(`Error deleting pending invite: ${error}`)
   };
+}
+
+
+
+
+const handleChangeRole = async(userId: number ,newRole: string) => {
+  // alert(inviteId)
+  try{
+    await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/change-role/${workspaceId}`,
+      {userId:userId, role: newRole },
+      {withCredentials: true,}
+    )
+    alert("Role updated successfully!")
+    fetchUserData();
+    //  const UpdatedPending = [...pendingDatas]; 
+    //  UpdatedPending.splice(index, 1); 
+    //  setPendingData(UpdatedPending); setOpen(false);
+  }catch(error){
+    alert(`${error}`)
+};
+}
 
   const fetchData = () => {
     axios.all([
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}/members-profiles`)
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/members-profiles`)
     ])
     .then(axios.spread((workspaceResponse) => {
       setWorkspaceDetail(workspaceResponse.data);
@@ -176,7 +213,13 @@ const WorkspaceInvitationPage = () => {
 
   useEffect(() => {
     fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+    fetchUserData();
   }, []);
+
+
+
+
+  
 
   return (
     <>
@@ -222,6 +265,7 @@ const WorkspaceInvitationPage = () => {
                 <h1 className="text-black text-3xl px-10 pb-4">
                   <i className="bi bi-people-fill"></i> Member
                 </h1>
+                
                 {memberDatas
                   .sort((a, b) => {
                     if (a.role === "owner" && b.role === "member")
@@ -240,7 +284,7 @@ const WorkspaceInvitationPage = () => {
                         <div className="flex items-center ">
                           <img
                             className="w-10 h-10 rounded-full  border-2"
-                            src={member.picture|| "/images/homeImage/profile.webp"}
+                            src={member.user.picture|| "/images/homeImage/profile.webp"}
                             alt="User"
                             onError={(e) => {
                               e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -249,10 +293,10 @@ const WorkspaceInvitationPage = () => {
                           />
                           <div className="ml-2">
                             <p className="text-indigo-900 text-xl font-medium">
-                            {member.name} 
+                            {member.user.name} 
                             </p>
                             <p className="text-gray-400 text-lg ">
-                              email: {member.email}
+                              email: {member.user.email}
                             </p>
                           </div>
                         </div>
@@ -260,7 +304,8 @@ const WorkspaceInvitationPage = () => {
                           <FormControl sx={{ m: 1, minWidth: 160 }}>
                             <Select
                               value={member.role}
-                              onChange={(event) => handleChange(event, index)}
+                              onChange={(event) => handleChangeRole(member.user.userId, event.target.value)} 
+                              // onChange={(event) => handleChange(event, index)}
                               displayEmpty
                               inputProps={{ "aria-label": "Without label" }}
                               disabled={index === 0}
@@ -271,9 +316,9 @@ const WorkspaceInvitationPage = () => {
                               </MenuItem>
                             </Select>
                           </FormControl>
-                          {index !== 0 ? (
+                          {index !== 0 && member.user?.userId ? (
                             <i
-                                onClick={() => handleClickOpen(index)}
+                                onClick={() => handleOpenRemoveMemberDialog(index)}
                               className="bi bi-trash-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"
                             ></i>
                           ) : (
@@ -287,11 +332,12 @@ const WorkspaceInvitationPage = () => {
                         </div>
                       
                       </div>
-                    </>         
-                  ))}
+
                     <Dialog
-                            open={open}
-                            onClose={handleClose}
+                    
+                            // open={open}
+                            open={removeMembeIndex === index}
+                            onClose={handleCloseRemoveMemberDialog}
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
                           >
@@ -301,15 +347,21 @@ const WorkspaceInvitationPage = () => {
                   
                             <DialogActions>
 
-                              <Button variant="contained" color="error"  onClick={() => {
-                              handleDeleteMember(selectedMemberIndex);
-                               handleClose();
-                              }}autoFocus >ลบสมาชิก</Button>
-                              <Button  variant="outlined" color="info"onClick={handleClose} >
+                              <Button variant="contained" color="error"  
+                                    onClick={() => {
+                                      if (member.user?.userId) {
+                                        handleDeleteMember(member.user.userId);  // ลบสมาชิกที่เลือก
+                                        handleCloseRemoveMemberDialog();  // ปิด dialog
+                                      }
+                                    }}
+                              autoFocus >ลบสมาชิก</Button>
+                              <Button  variant="outlined" color="info"onClick={handleCloseRemoveMemberDialog} >
                                 ไม่
                               </Button>
                             </DialogActions>
                           </Dialog>
+                    </>         
+                  ))}
               </div>
 
               <div className=" w-full h-fit bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4  my-5">
@@ -326,7 +378,7 @@ const WorkspaceInvitationPage = () => {
                       <div className="flex items-center ">
                         <img
                           className="w-10 h-10 rounded-full  border-2"
-                          src={member.picture|| "/images/homeImage/profile.webp"}
+                          src={member.user.picture|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
                             e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -335,16 +387,16 @@ const WorkspaceInvitationPage = () => {
                         />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-xl font-medium">
-                            {member.name}
+                            {member.user.name}
                           </p>
                           <p className="text-gray-400 text-lg ">
-                            Email: {member.email}
+                            Email: {member.user.email}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center">
                         <i
-                          onClick={() => handleDeletePending(index)}
+                          onClick={() => handleCancelPending(member.inviteId)}
                           className="bi bi-x-circle-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"
                         ></i>
                       </div>
@@ -361,7 +413,7 @@ const WorkspaceInvitationPage = () => {
                 <div className="mx-auto  w-full flex px-10 pb-5 bg-rd ">
                   <Autocomplete
                     multiple
-                    options={filteredUserDatas}
+                    options={userDatas}
                     // getOptionLabel={(option) =>`${option.firstName} ${option.lastName} (${option.email})`}
                     getOptionLabel={(option) => `${option.email}`}
                     renderOption={(props, option) => (

@@ -12,7 +12,7 @@ import axios from "axios";
 function AIlist() {
   const [AIData, setAIData] = useState([]);
   const fetchAIData = () => {
-    axios.get("http://localhost:3000/ai-models/")
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
       .then(response => {
         setAIData(response.data);
       })

@@ -12,33 +12,69 @@ interface NotiData {
   lastName: string;
   workspace: string;
 }
+
+interface Workspace {
+  workspaceId: number;
+  name: string;
+  description: string;
+  createById: number;
+  createdAt: string; // ใช้ `string` เนื่องจากเป็นรูปแบบวันที่
+  updatedAt: string;
+}
+
+interface User {
+  userId: number;
+  googleId: string;
+  email: string;
+  name: string;
+  picture: string;
+}
+
+interface Invitation {
+  inviteId: number;
+  status: string; // อาจใช้เป็น `'pending' | 'accepted' | 'rejected'` หากสถานะมีค่าที่แน่นอน
+  createdAt: string; // ใช้ `string` เนื่องจากเป็นรูปแบบวันที่
+  workspace: Workspace;
+  invitedBy: User;
+  user: User;
+}
+interface NotiData {
+  inviteId: number;
+  status: string; // หรือ 'pending' | 'accepted' | 'rejected' หากต้องการเจาะจง
+  createdAt: string;
+  workspace: Workspace;
+  invitedBy: User;
+  user: User;
+}
 function Nav() {
   const [notiData, setNotiData] = useState<NotiData[]>([
-    {
-      id: 1,
-      firstName: "Putthipong",
-      lastName: "Chobngam",
-      workspace: "Project 67",
+    
+    // {
+    //   id: 1,
+    //   firstName: "Putthipong",
+    //   lastName: "Chobngam",
+    //   workspace: "Project 67",
      
-    },
-    {
-      id: 2,
-      firstName: "Apple",
-      lastName: "Banana",
-      workspace: "KMITL",
+    // },
+    // {
+    //   id: 2,
+    //   firstName: "Apple",
+    //   lastName: "Banana",
+    //   workspace: "KMITL",
       
-    },
-    {
-      id: 3,
-      firstName: "Apple",
-      lastName: "Banana",
-      workspace: "KMITL",
+    // },
+    // {
+    //   id: 3,
+    //   firstName: "Apple",
+    //   lastName: "Banana",
+    //   workspace: "KMITL",
       
-    },
+    // },
    
 
  
   ]);
+ 
   const [isAuthenticated ,setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -59,6 +95,17 @@ function Nav() {
     }
   };
 
+  const getInvitationList = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/get-my-invitation`, {
+        withCredentials: true, 
+      });
+      setNotiData(response.data);
+    } catch (error) {
+      console.error('Not logged in or session expired', error);
+
+    }
+  };
   useEffect(() => {
     if (showNotifications) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -71,29 +118,45 @@ function Nav() {
     };
   }, [showNotifications]);
   
-  const handleAccept = (index:number) => {
-    const UpdatedNoti = [...notiData];
-    UpdatedNoti.splice(index, 1);
-    setNotiData(UpdatedNoti)
+  const handleAccept = async(inviteId:number) => {
+    try{
+      const acceptRequest = await axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/accept-invite/${inviteId}`,
+        {}, // Body (ว่างเปล่าในกรณีนี้)
+        { withCredentials: true } // Options
+      );
+        if (acceptRequest.status>= 200 && acceptRequest.status < 300) {
+          
+          getInvitationList();
+        }else{
+          console.error( acceptRequest);
+        }    
 
-
+    }catch(error){console.error( error);}
   };
-  
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/user/profile', {
-          withCredentials: true, 
-        });
-        setUser(response.data);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Not logged in or session expired', error);
-        setIsAuthenticated(false);
-      }
-    };
 
+  const handleReject = async(inviteId:number) => {
+    alert("Reject")
+  }
+
+  const checkLoginStatus = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/profile`, {
+        withCredentials: true, 
+      });
+      setUser(response.data);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Not logged in or session expired', error);
+      setIsAuthenticated(false);
+    }
+  };
+
+
+
+  useEffect(() => {
     checkLoginStatus();
+    getInvitationList();
   }, []);
 
  
@@ -153,7 +216,7 @@ function Nav() {
                   <div className="p-4 border-b ">Notificaton</div>
                   <div className="max-h-64 overflow-y-auto">
                     {/* noti map here */}
-                    {notiData.length > 0 ? (
+{notiData.length > 0 ? (
     <div className="max-h-64 overflow-y-auto">
       {notiData.map((noti, index) => (
         <div
@@ -162,22 +225,27 @@ function Nav() {
         >
           <img
             className="w-10 h-10 rounded-full border-2"
-            src="/images/homeImage/profile.webp"
+            src={noti.invitedBy.picture || "/images/homeImage/profile.webp"}
+            alt="InviterProfile"
+            onError={(e) => {
+              e.currentTarget.onerror = null; // ป้องกัน loop error
+              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+            }}
           />
           <div className="ml-2">
             <span className="text-black text-lg font-medium">
-              {noti.firstName} {noti.lastName}
+              {noti.invitedBy.name}
             </span>
             <br />
             <span className="text-black text-base font-normal">
               {" "}ได้เชิญคุณเข้าร่วม
             </span>
             <span className="text-black text-lg font-medium">
-              {" "}{noti.workspace}
+              {" "}{noti.workspace.name}
             </span>
             <div className="w-full">
               <Button
-                onClick={() => handleAccept(index)}
+                onClick={() => handleAccept(noti.inviteId)}
                 variant="contained"
                 color="success"
                 style={{ marginRight: '8px' }}
@@ -186,7 +254,7 @@ function Nav() {
                 ยอมรับ
               </Button>
               <Button 
-               onClick={() => handleAccept(index)}
+               onClick={() => handleReject(noti.inviteId)}
               variant="outlined" color="error" size="small">ปฎิเสธ</Button>
             </div>
           </div>
@@ -252,7 +320,9 @@ function Nav() {
                       backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
                     },
                   }}
-                    href="http://localhost:3000/auth/google/login"
+                  href={`${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`}
+
+          
                 >
                 Sign In
                 </Button>

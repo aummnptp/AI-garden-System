@@ -10,3 +10,4 @@ export class UpdateWorkspaceDto extends PartialType(CreateWorkspaceDto) {
 
     // readonly members?: string[];
 }
+

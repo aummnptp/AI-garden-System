@@ -25,7 +25,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({showModal,setSh
   const handleSubmit = () => {
     axios
       .post(
-        "http://localhost:3000/workspaces/create",
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
         { name: name, description: description },
         { withCredentials: true }
       )

@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray, IsInt, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsArray, IsInt, IsEmail, IsNumber } from 'class-validator';
 
 export class CreateWorkspaceDto {
 
@@ -7,8 +7,8 @@ export class CreateWorkspaceDto {
     @IsOptional()
     @IsString()
     readonly description?: string;
-    @IsEmail()
-    readonly createByEmail: string;
+    @IsNumber()
+    readonly createById: number;
 
     // readonly member: string;
 }

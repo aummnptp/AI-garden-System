@@ -4,7 +4,7 @@ import { RegisterDTO } from './dto/register.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -24,12 +24,13 @@ export class UserController {
   //   return this.userService.findOne(+id);
   // }
 
-s
+
   @UseGuards(JwtGuard)  
   @Get('profile')    
   async  getProfile(@Request() req) {
-    console.log  (req)
-    const user= await this.userService.findByEmail(req.user.email)
+    // console.log  ("abc",req.user)
+    const userId = req.user.userId;
+    const user = await this.userService.findOne(userId)
     return user;
     // return this.userService.findAll();
   }

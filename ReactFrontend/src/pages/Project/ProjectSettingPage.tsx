@@ -30,7 +30,7 @@ const ProjectSetting = () => {
   //   const fetchWorkspace = async () => {
   //     try {
   //       const response = await axios.get(
-  //         `http://localhost:3000/workspaces/${workspaceId}/project`
+  //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/project`
   //       );
   //       const { name, description } = response.data;
   //       setName(name);
@@ -71,7 +71,7 @@ const ProjectSetting = () => {
 
       // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
       const response = await axios.patch(
-        `http://localhost:3000/workspaces/${workspaceId}`,
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`,
         payload
       );
       window.location.href = "/workspaces";

@@ -34,7 +34,7 @@ const WorkspaceSettingPage = () => {
   const fetchWorkspace = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/workspaces/${workspaceId}`
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
       );
       const { name, description } = response.data;
       setName(name);
@@ -58,7 +58,7 @@ const WorkspaceSettingPage = () => {
 
       // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
       const response = await axios.patch(
-        `http://localhost:3000/workspaces/${workspaceId}`,
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/update/${workspaceId}`,
         payload
       );
       window.location.href = "/workspaces";
@@ -82,7 +82,7 @@ const WorkspaceSettingPage = () => {
   };
   const handleDelte = async () => {
     try {
-      const response = await axios.delete(`http://localhost:3000/workspaces/${workspaceId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/delete/${workspaceId}`);
       window.location.href = "/workspaces";
       console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {

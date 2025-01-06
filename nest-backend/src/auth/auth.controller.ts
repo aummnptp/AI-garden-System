@@ -23,7 +23,7 @@ export class AuthController{
     res.cookie('access_token', accessToken, {
       // httpOnly: true,
     });
-    res.redirect(`http://localhost:5173`)
+    res.redirect(`${process.env.REACT_APP_API_URL}`)
     // return {
     //   message: 'Login Successful',
     // };
@@ -34,7 +34,7 @@ export class AuthController{
     res.clearCookie('jwt token', {
       // httpOnly: true,
     });
-    res.redirect(`http://localhost:5173`)
+    res.redirect(`${process.env.REACT_APP_API_URL}`)
     // return res.json({ message: 'Successfully logged out' });
   }
 

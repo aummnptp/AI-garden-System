@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from 'src/projects/entities/project.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('ai_models')
 export class AIModel {
@@ -11,6 +12,9 @@ export class AIModel {
   @Column({ length: 200, nullable: true })
   description: string;
 
+
+        // @OneToMany(() => AIModel, () => , { cascade: true })
+        // members: WorkspaceMember[];
   // @Column({ length: 200, nullable: true })
   // image_path: string;
   @Column()
@@ -34,6 +38,9 @@ export class AIModel {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
+
+  @OneToMany(() => Project,(project) => project.ai_model,)
+       projects: Project[];
 
   // @Column()
   // create_by: string[];

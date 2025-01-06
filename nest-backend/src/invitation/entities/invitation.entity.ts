@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+// import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Invitation {
+// @Entity()
+// export class Invitation {
     
-    @PrimaryGeneratedColumn()
-    id: number;
-    // @Column()
-    // : number;
-}
+//     @PrimaryGeneratedColumn()
+//     inviteId: number;
+//     // @Column()
+//     // : number;
+// }

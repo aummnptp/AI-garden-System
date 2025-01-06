@@ -46,7 +46,7 @@ const UpdateAiPage = () => {
 
   
 const fetchAi = () => {
-  axios.get(`http://localhost:3000/ai-models/${ai_id}`)
+  axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
     .then(response => {
       setAiName(response.data.name);
       setDescription(response.data.description);
@@ -223,7 +223,7 @@ const fetchAi = () => {
 
   const deleteAiModel = async () => {
     try {
-      const response = await axios.delete(`http://localhost:3000/ai-models/${ai_id}/remove-ai`);
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/remove-ai`);
       console.log('AI model deleted successfully:', response.data);
       // Handle successful deletion, e.g., update state or show a success message
     } catch (error) {
@@ -245,7 +245,7 @@ const fetchAi = () => {
       response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning,displayFormat: key.displayFormat})), // ส่งทั้ง key และ meaning
     };
     // ****************** อย่าลืมใส่ alertหรือ try catchตอนไม่เจอด้วย
-    fetch(`http://localhost:3000/ai-models/${ai_id}/update-ai`, {
+    fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

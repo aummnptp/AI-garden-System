@@ -20,7 +20,7 @@ const ProjectListPage = () => {
 
   const fetchData = () => {
     axios.all([
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
   
     ])
     .then(axios.spread((workspaceResponse) => {

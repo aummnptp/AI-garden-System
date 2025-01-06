@@ -6,10 +6,10 @@ import { Workspace } from './entities/workspace.entity';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { WorkspaceMember } from './entities/workspace-member.entity';
-import { WorkspaceInvitations } from './entities/workspace-invitation.entity';
+import { WorkspaceInvitation } from './entities/workspace-invitation.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workspace,User,WorkspaceMember,WorkspaceInvitations]),    ],
+  imports: [TypeOrmModule.forFeature([Workspace,User,WorkspaceMember,WorkspaceInvitation]),    ],
   controllers: [WorkspacesController],
   providers: [WorkspacesService,UserService],
 })

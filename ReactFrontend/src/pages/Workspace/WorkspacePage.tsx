@@ -13,10 +13,31 @@ import MiniFooter from "../../components/MiniFooter";
 import axios from "axios";
 import { Button } from "@mui/material";
 
+
+interface WorkspaceProps {
+  workspaceId: number;
+  name: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+  members: {
+    id: number;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: number;
+      googleId: string;
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }[];
+}
 function WorkspacePage() {
   // my workspace show
-  const [myWorkspace, setMyWorkspace] = useState([]); 
-  const [invitedWorkspace, setInvitedWorkspace]= useState([]); 
+  const [myWorkspace, setMyWorkspace] = useState<WorkspaceProps[]>([]); 
+  const [invitedWorkspace, setInvitedWorkspace]= useState<WorkspaceProps[]>([]); 
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
   const [showModal, setShowModal] = useState(false);
   const toggleWorkspaceRow = () => {
@@ -30,14 +51,30 @@ function WorkspacePage() {
   };
 
 
-  const fetchWorkspaces = () => {
-    axios.get("http://localhost:3000/workspaces/")
-      .then(response => {
-        setMyWorkspace(response.data);
-      })
-      .catch(error => {
+  const fetchWorkspaces = async () => {
+    try{
+    const myWorkspacesResponse =  await axios.get(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/my-workspaces`
+      ,{withCredentials: true,} 
+    );
+    if (myWorkspacesResponse.status === 200) {
+     setMyWorkspace(myWorkspacesResponse.data);
+    }else{
+      console.error("Error fetching my workspaces", myWorkspacesResponse.statusText);
+    }
+    const inviteWorkspacesResponse = await axios.get(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/invite-workspaces`,
+      { withCredentials: true }
+    );
+
+    if (inviteWorkspacesResponse.status === 200) {
+      setInvitedWorkspace(inviteWorkspacesResponse.data);
+    } else {
+      console.error("Error fetching invited workspaces", inviteWorkspacesResponse.statusText);
+    }
+    }catch(error ) {
         console.error("There was an error fetching the workspace data!", error);
-      });
+      };
   };
 
   useEffect(() => {
@@ -92,9 +129,9 @@ function WorkspacePage() {
                 {myWorkspace.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showWorkspaceRow && index >= 3 ? 'hidden' : ''}`}>
              
-                   <Link to={`/workspaces/${data.id}/project-list`}>
-                  <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
-                  members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} /> 
+                   <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                  <WorkspaceCard  id={data.workspaceId} name={data.name} description={data.description} 
+                  members={data.members} updatedAt={data.updatedAt} createdAt={data.createdAt} /> 
                    </Link>
               </div>
                 ))}
@@ -121,13 +158,14 @@ function WorkspacePage() {
               </div>
             {/* invited wokspace Card */}
             <div className={`grid grid-cols-3 pb-8 pt-2`}>  
-                {MyWorkspaceData.map((data, index)=>(
+                {invitedWorkspace.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
-                <Link to={`/workspaces/${data.id}/project-list`}>
-                  <InvitedCard  id={data.id} name={data.name} desc={data.description} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
+                <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                  <InvitedCard  id={data.id} name={data.name} desc={data.description} members={data.members} createAt={data.createAt} updateAt={data.updateAt} /> 
                 </Link>
               </div>
                 ))}
+                
               </div>
 
           </div>

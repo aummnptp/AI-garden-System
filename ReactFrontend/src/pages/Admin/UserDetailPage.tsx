@@ -15,7 +15,7 @@ const UserDetailPage = () => {
   const [myWorkspace, setMyWorkspace] = useState([]); 
 
   const fetchWorkspaces = () => {
-    axios.get("http://localhost:3000/workspaces/")
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/`)
       .then(response => {
         setMyWorkspace(response.data);
       })

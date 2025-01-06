@@ -16,12 +16,14 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
+
   findAll():Promise<User[]> {
     return this.userRepository.find();
   }
-  findOne(id: number): Promise<User | null> {
+  
+  findOne(userId: number): Promise<User | null> {
 
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOneBy({ userId:userId });
   }
 
 

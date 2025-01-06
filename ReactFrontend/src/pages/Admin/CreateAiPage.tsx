@@ -166,7 +166,7 @@ useEffect(() => {
       regression_params: regressionParams.map(param => param.param)
     };
     // ****************** อย่าลืมใส่ alertหรือ try catchตอนไม่เจอด้วย
-    fetch('http://localhost:3000/ai-models/add', {
+    fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

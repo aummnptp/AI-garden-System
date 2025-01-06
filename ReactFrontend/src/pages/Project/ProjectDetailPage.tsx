@@ -52,7 +52,7 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
 
   const fetchData = () => {
     axios.all([
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
   
     ])
     .then(axios.spread((workspaceResponse) => {
