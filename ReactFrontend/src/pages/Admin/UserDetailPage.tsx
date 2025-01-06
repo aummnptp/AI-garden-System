@@ -15,7 +15,7 @@ const UserDetailPage = () => {
 
   const { userId } = useParams<{ userId?: string }>();
   const [userData, setUserData] = useState<any>();
-  const [myWorkspace, setMyWorkspace] = useState([]); 
+  const [myWorkspace, setMyWorkspace] = useState([]);
   useEffect(() => {
     if (userId) {
       axios.get(`http://localhost:3000/user/${userId}`)
@@ -100,43 +100,40 @@ const UserDetailPage = () => {
             <div className=' py-6 border-t'>
               {/* AI List */}
               {userTab === "Ai" ? (
-
                 <div className="px-6">
                   <div className="flex justify-between items-center px-4 py-2 ">
-                    <span className='text-xl font-medium text-indigo-800'> <i className="bi bi-file-earmark-check-fill"></i>AI ได้รับสิทธิ์ : 5</span>
-
+                    <span className='text-xl font-medium text-indigo-800'>
+                      <i className="bi bi-file-earmark-check-fill"></i>AI ได้รับสิทธิ์ : {userData?.aiCount || 0}
+                    </span>
                     <AddAIDialog />
-                    {/* <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                    + add AI
-                  </button> */}
                   </div>
                   <input
                     type="text"
                     id="first_name"
-                    className="w-6/12 h-fit my-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
+                    className="w-6/12 h-fit my-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     placeholder="ค้นหาAI"
                   />
-                  <AiListTable />
+                  <AiListTable userId={userId} />
                 </div>
-              ) : userTab === "Workspace" ?(
+              ) : userTab === "Workspace" ? (
                 <>
-         
-                   {/* My wokspace Card group */}
-                   <div className={` grid grid-cols-3 pb-8 pt-2 `}>  
-                     {myWorkspace.map((data, index)=>(
-                   <div key={index} className={`mb-4 `}>
-                  
+
+                  {/* My wokspace Card group */}
+                  <div className={` grid grid-cols-3 pb-8 pt-2 `}>
+                    {myWorkspace.map((data, index) => (
+                      <div key={index} className={`mb-4 `}>
+
                         <Link to={`/workspaces/${data.id}/project-list`}>
-                       <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
-                       members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} /> 
+                          <WorkspaceCard id={data.id} name={data.name} desc={data.description}
+                            members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} />
                         </Link>
-                   </div>
-                     ))}
-                   </div>
-                 </>
-     
-     
-                 ): null}
+                      </div>
+                    ))}
+                  </div>
+                </>
+
+
+              ) : null}
             </div>
           </div>
 

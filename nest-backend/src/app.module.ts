@@ -11,7 +11,8 @@ import { Workspace } from './workspaces/entities/workspace.entity';
 import { InvitationModule } from './invitation/invitation.module';
 import { AIModelModule } from './ai/ai-model.module';
 import { AIModel } from './ai/entities/ai-model.entity';
-
+import { Permission } from './permission/entities/permission.entity';
+import { AiPermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { AIModel } from './ai/entities/ai-model.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Workspace, AIModel], // เพิ่ม AIModel ที่นี่
+      entities: [User, Workspace, AIModel, Permission], // เพิ่ม AIModel ที่นี่
       synchronize: true, // ปิดในการใช้งาน production
       logging: true,
     }),
@@ -31,6 +32,7 @@ import { AIModel } from './ai/entities/ai-model.entity';
     AuthModule,
     UserModule,
     InvitationModule,
+    AiPermissionModule,
     AIModelModule,
   ],
   controllers: [AppController],

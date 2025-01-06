@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Paper, TableContainer,
     Button,tableCellClasses ,
 } from '@mui/material';
-
+import axios from 'axios';
 
 import formatDate from '../../function/formatDate';
 import formatTime from '../../function/formatTime';
 import { styled } from '@mui/material/styles';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
+
+
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -38,6 +41,9 @@ interface Data {
     email: string;
     date: Date;
 }
+interface AiListTableProps {
+  userId?: string;
+}
 
 function createData(name: string, ai: string, ai_image: string, email: string ,date: string,): Data {
     return { name, ai,  ai_image,email , date: new Date(date), };
@@ -53,16 +59,30 @@ const initialRows = [
 
 type Order = 'asc' | 'desc';
 
-const AiListTable: React.FC = () => {
-  const [rows, setRows] = useState<Data[]>(initialRows);
+const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
+  const [rows, setRows] = useState<Data[]>([]);
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<keyof Data>("date");
+
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`http://localhost:3000/ai-models/approved/${userId}`) // ดึงข้อมูล AI ที่เกี่ยวข้องกับ userId
+        .then((response) => {
+          setRows(response.data); // response.data ควรเป็น array ของ AI
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the AI data!", error);
+        });
+    }
+  }, [userId]);
 
   const handleRequestSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
   const handleAccept = (index: number) => {
     setRows((prevRows) => prevRows.filter((_, i) => i !== index));
   };
@@ -126,16 +146,15 @@ const AiListTable: React.FC = () => {
         </TableHead>
         <TableBody>
           {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
-            <StyledTableRow key={index} >
-                
-              <StyledTableCell >
-                <div className="flex items-center my-2 w-fit mx-auto" >
+            <StyledTableRow key={index}>
+              <StyledTableCell>
+                <div className="flex items-center my-2 w-fit mx-auto">
                   <img
                     className="w-14 h-14 rounded-[10px] border-2"
                     src={row.ai_image}
                   />
                   <div className="ml-2">
-                    <p className="text-black text-lg font-medium">{row.ai}</p>
+                    <p className="text-black text-lg font-medium">{row.name}</p>
                     <p className="text-[#8D9BAE] text-sm font-normal">
                       Classification
                     </p>
@@ -156,7 +175,6 @@ const AiListTable: React.FC = () => {
               </StyledTableCell>
 
               <StyledTableCell>
-                {" "}
                 <div className="mx-auto flex justify-center">
                   <Button variant="outlined" color="error">
                     ถอนสิทธิ์

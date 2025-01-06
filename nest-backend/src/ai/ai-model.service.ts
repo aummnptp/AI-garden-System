@@ -7,12 +7,14 @@ import * as FormData from 'form-data';
 import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
+import { Permission } from '../permission/entities/permission.entity';
 
 @Injectable()
 export class AIModelService {
   constructor(
     @InjectRepository(AIModel)
     private aiModelRepository: Repository<AIModel>,
+    
   ) {}
 
   async addModel(createAIModelDto: CreateAIModelDto, file: Express.Multer.File): Promise<string> {
@@ -112,6 +114,15 @@ export class AIModelService {
 
       await this.aiModelRepository.update(id, updateAIModelDto);
       return 'Model updated successfully!';
+    }
+
+    async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
+      return this.aiModelRepository
+        .createQueryBuilder('aiModel')
+        .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+        .where('permission.user_id = :userId', { userId })
+        .andWhere('permission.approve = :approve', { approve: true })
+        .getMany();
     }
   
 }

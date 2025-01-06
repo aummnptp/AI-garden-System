@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity,OneToMany, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Permission } from '../../permission/entities/permission.entity';
 
 @Entity('ai_models')
 export class AIModel {
@@ -34,7 +35,8 @@ export class AIModel {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
-
+  @OneToMany(() => Permission, (permission) => permission.aiModel)
+  permissions: Permission[];
   // @Column()
   // create_by: string[];
 
