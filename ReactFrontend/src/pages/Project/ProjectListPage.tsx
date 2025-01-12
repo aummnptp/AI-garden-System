@@ -13,6 +13,7 @@ const ProjectListPage = () => {
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   const [projectData, setProjectData] = useState([]); 
 
+
   if (typeof workspaceId === 'undefined') {
     // Handle the case where workspaceId is undefined
     return <div>No workspace ID provided</div>;
@@ -20,23 +21,54 @@ const ProjectListPage = () => {
   }
 
 
-  const fetchData =async () => {
-    try{
-      const [workspaceResponse, projectResponse] = await axios.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`),
-    ]);
+  // const fetchData =async () => {
+  //   try{
+  //     const [workspaceResponse, projectResponse] = await axios.all([
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`),
+  //   ]);
+  //     setWorkspaceDetail(workspaceResponse.data);
+  //     setProjectData(projectResponse.data)
+  //     console.log(projectResponse.data); // แสดงข้อมูล project ที่โหลดมา
+  //   } catch (error) {
+  //     console.error("There was an error fetching the data!", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  // }, []);
+  const [loading, setLoading] = useState(true);
+  const fetchData = async () => {
+    try {
+      // เรียก API หลายตัวพร้อมกัน
+      const [
+        workspaceResponse,projectResponse
+         ] = await Promise.all([
+              axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
+                withCredentials: true,
+              }),
+              axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`, {
+                withCredentials: true,
+              }),
+             
+            ]);  
+      // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
       setWorkspaceDetail(workspaceResponse.data);
       setProjectData(projectResponse.data)
-      console.log(projectResponse.data); // แสดงข้อมูล project ที่โหลดมา
     } catch (error) {
-      console.error("There was an error fetching the data!", error);
+      console.error("Error fetching data!", error);
+    } finally {
+      setLoading(false);
     }
   };
-
+  
   useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+    fetchData();
   }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
 console.log(projectData)
   return (

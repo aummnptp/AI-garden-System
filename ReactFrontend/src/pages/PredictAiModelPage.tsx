@@ -1,4 +1,4 @@
-import React, { ChangeEvent, DragEvent, useState } from 'react';
+import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
@@ -15,6 +15,40 @@ interface PredictResult {
   prediction: any;
   regression_params?: any | null;
 }
+
+interface Project {
+  project_id: number;
+  project_name: string;
+  project_desc: string;
+  input_type: string;
+  image_path: string | null;
+  create_at: string;
+  update_at: string;
+  permission_only: boolean;
+  ai_model: AIModel;
+}
+
+interface AIModel {
+  id: number;
+  name: string;
+  description: string;
+  ai_type: string;
+  ai_tag: string[];
+  input_desc: string;
+  api_uri: string;
+  response_keys: ResponseKey[];
+  createdAt: string;
+  updatedAt: string;
+  imagePath: string | null;
+}
+
+interface ResponseKey {
+  key: string;
+  meaning: string;
+  displayFormat: string;
+}
+
+
 const PredictAiModelPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const { modelId } = useParams<{ modelId: string }>();
@@ -28,6 +62,12 @@ const PredictAiModelPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false); // State for editing mode
   const [savedNote, setSavedNote] = useState(''); // State for saved note
 
+
+    const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+    const [projectData, setProjectData] = useState([]); 
+    const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+      const [loading, setLoading] = useState(true);
+    
   const navigate = useNavigate();
 
   if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
@@ -39,15 +79,6 @@ const PredictAiModelPage: React.FC = () => {
 
   const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
 
-  if (!workspace) {
-    return <div>ไม่พบรายละเอียดโปรเจก</div>;
-  }
-
-  const detail = workspace.details.find(d => d.id === projectIdNum);
-
-  if (!detail) {
-    return <div>ไม่พบรายละเอียดโปรเจก</div>;
-  }
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -113,7 +144,7 @@ const PredictAiModelPage: React.FC = () => {
       formData.append('file', file);
   
       // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-      const response = await axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/predict/1`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/predict/${2}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -183,16 +214,49 @@ const PredictAiModelPage: React.FC = () => {
     setIsEditing(false);
   };
 
+
+   const fetchData = async () => {
+      try {
+        const [workspaceResponse, projectResponse] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
+        ]);
+    
+      setWorkspaceDetail(workspaceResponse.data);
+        setProjectDetail(projectResponse.data);
+      } catch (error) {
+        console.error("There was an error fetching the data!", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    useEffect(() => {
+      fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+    }, []);
+  
+  
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+  
+    if (!projectDetail) {
+      return <div>Error: Project details could not be loaded.</div>;
+    }
+
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-        <Sidebar />
+      <Sidebar workspaceName={workspaceDetail.name} 
+        projectName={projectDetail.project_name}
+        aiName={projectDetail.ai_model.name}
+        aiType={projectDetail.ai_model.ai_type}
+         />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                {detail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
+                {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
               </h1>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>

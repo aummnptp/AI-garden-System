@@ -14,6 +14,9 @@ export class User{
     name: string;
     @Column()
     picture: string;
+
+    @Column({ default: 'user' })
+    role: string;
     
 
 }

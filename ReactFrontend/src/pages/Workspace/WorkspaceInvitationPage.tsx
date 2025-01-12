@@ -46,42 +46,11 @@ const WorkspaceInvitationPage = () => {
   const [userDatas, setUserData] = useState<memberData[]>([]);
   const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
   const [memberDatas, setMemberData] = useState<memberData[]>([]);
+  const [loading, setLoading] = useState(true);
 
 
   const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const fetchUserData = async () => {
-   try{
 
-  const alluseResponse =  await axios.get(
-      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`
-      ,{withCredentials: true,} 
-    );
-    if (alluseResponse.status === 200) {
-     setUserData(alluseResponse.data);
-    }else{
-      console.error("Error fetching available user", alluseResponse.statusText);
-    }
-
-    const pendingListResponse = await axios.get(
-      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`,
-      { withCredentials: true }
-    );
-    if (pendingListResponse.status === 200) {
-      setPendingData(pendingListResponse.data);
-     }else{
-       console.error("Error fetching pendingData", pendingListResponse.statusText);
-     }
-     const getMemberDataResponse =  await axios.get(
-      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`
-      ,{withCredentials: true,} 
-    );
-    if (alluseResponse.status === 200) {
-     setMemberData(getMemberDataResponse.data);
-    }else{
-      console.error("Error fetching available user", alluseResponse.statusText);
-    }
-   }catch(error){console.error("Error fetching user data", error);}
-  };
   
   
   const [removeMembeIndex, setRemoveMembeIndex] = useState<number | null>(null);
@@ -133,7 +102,7 @@ const WorkspaceInvitationPage = () => {
   console.log("Response data:", response);
 
   if (response.status >= 200 && response.status < 300) {
-    fetchUserData();
+    fetchData();
 
     // alert("Invitations sent successfully!");
     setSelectedUsers([]);
@@ -156,7 +125,7 @@ const handleDeleteMember = async (userId: number) => {
     });
 
     alert("Member removed successfully!");
-    fetchUserData();
+    fetchData();
   } catch (error) {
     alert(`Error: ${error}`);
     console.error(error);
@@ -171,7 +140,7 @@ const handleDeleteMember = async (userId: number) => {
       await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/cancel-invite/${inviteId}`,
       {withCredentials: true,}
       )
-      fetchUserData();
+      fetchData();
     }catch(error){
       alert(`Error deleting pending invite: ${error}`)
   };
@@ -188,7 +157,7 @@ const handleChangeRole = async(userId: number ,newRole: string) => {
       {withCredentials: true,}
     )
     alert("Role updated successfully!")
-    fetchUserData();
+    fetchData();
     //  const UpdatedPending = [...pendingDatas]; 
     //  UpdatedPending.splice(index, 1); 
     //  setPendingData(UpdatedPending); setOpen(false);
@@ -197,24 +166,45 @@ const handleChangeRole = async(userId: number ,newRole: string) => {
 };
 }
 
-  const fetchData = () => {
-    axios.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/members-profiles`)
-    ])
-    .then(axios.spread((workspaceResponse) => {
-      setWorkspaceDetail(workspaceResponse.data);
-   
-    }))
-    .catch(error => {
-      console.error("There was an error fetching the data!", error);
-    });
-  };
+const fetchData = async () => {
+  try {
+    // เรียก API หลายตัวพร้อมกัน
+    const [
+      workspaceResponse,allUserResponse,pendingListResponse,memberDataResponse,
+    ] = await Promise.all([
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
+        withCredentials: true,
+      }),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`, {
+        withCredentials: true,
+      }),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`, {
+        withCredentials: true,
+      }),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`, {
+        withCredentials: true,
+      }),
+    ]);
 
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-    fetchUserData();
-  }, []);
+    // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
+    setWorkspaceDetail(workspaceResponse.data);
+    setUserData(allUserResponse.data);
+    setPendingData(pendingListResponse.data);
+    setMemberData(memberDataResponse.data);
+  } catch (error) {
+    console.error("Error fetching data!", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchData();
+}, []);
+if (loading) {
+  return <div>Loading...</div>;
+}
+
 
 
 
@@ -233,7 +223,7 @@ const handleChangeRole = async(userId: number ,newRole: string) => {
               className="p-5  text-3xl font-medium tracking-tight 
           text-indigo-900 "
             >
-                 <i className="bi bi-pencil-fill"></i>   Workspace Setting
+                 <i className="bi bi-pencil-fill"></i>  Workspace Setting
             </h1>
             <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
             <div className="flex justify-start  ">

@@ -10,6 +10,7 @@ export class JwtStrategy extends  PassportStrategy(Strategy){
         //   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
           jwtFromRequest: ExtractJwt.fromExtractors([
             (request)=>{
+                // console.log('Cookies:', request?.cookies); 
                 return request?.cookies?.access_token;
             }
         ]),
@@ -18,7 +19,8 @@ export class JwtStrategy extends  PassportStrategy(Strategy){
         })
     }
     async validate(payload: any) {
-        return { userId: payload.userId, email: payload.email,  };
+        // console.log('JWT Payload:', payload); // ตรวจสอบ payload ที่ได้รับจาก JWT
+        return { userId: payload.userId, email: payload.email, role: payload.role };
       }
 
 }

@@ -172,6 +172,8 @@ useEffect(() => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(modelData),
+      credentials: "include",
+    
     })
       .then(response => response.json())
       .then(data => {

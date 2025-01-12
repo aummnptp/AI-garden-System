@@ -9,6 +9,7 @@ import {
     Request,
     Delete,
     Patch,
+    UseGuards,
   } from '@nestjs/common';
   import { FileInterceptor } from '@nestjs/platform-express';
   import { AIModelService } from './ai-model.service';
@@ -16,6 +17,10 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { AIModel } from './entities/ai-model.entity';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import * as multer from 'multer';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
+import { Role } from 'src/auth/decorator/roles-decoraters';
+
 
   
   @Controller('ai-models')
@@ -23,6 +28,8 @@ import * as multer from 'multer';
     constructor(private readonly aiModelService: AIModelService) {}
   
     
+    @Role("admin")
+    @UseGuards(JwtGuard,RolesGuard)
     @Post('add')
     @UseInterceptors(FileInterceptor('file',{
       storage: multer.diskStorage({
@@ -38,6 +45,8 @@ import * as multer from 'multer';
       return { message };
     } 
     
+    @Role("admin")
+    @UseGuards(JwtGuard,RolesGuard)
     @Patch(':id/update-ai') 
     @UseInterceptors(FileInterceptor('file',{
       storage: multer.diskStorage({
@@ -53,6 +62,7 @@ import * as multer from 'multer';
       return message;
     }
 
+
     @Get()
     findAll() {
       return this.aiModelService.findAll();
@@ -64,25 +74,25 @@ import * as multer from 'multer';
       return this.aiModelService.findOne(+id);
     }
   
-    @Get()
-    // async GetAi(@Body() data: any): Promise<{ message: string }> {
-      async GetAi(): Promise<{ message: string }> {
-      // const message = await this.aiModelService.addModel(data);
-      // return { message };
-      return { message: 'Hello world!' };
-    }
   
+    // @UseGuards(JwtGuard) 
     @Post('predict/:id')
     @UseInterceptors(FileInterceptor('file'))
     async predict(@Param('id') id: number,@UploadedFile() file: Express.Multer.File,): Promise<any> {
       return this.aiModelService.predict(+id, file);
     }
 
+
+    @Role("admin")
+    @UseGuards(JwtGuard,RolesGuard)
     @Delete(':id/remove-ai')
     async removeAI(@Param('id') id:string ){
       return this.aiModelService.remove(+id);
     }
 
+
+
+  
 
 
 

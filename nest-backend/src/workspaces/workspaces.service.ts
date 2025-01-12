@@ -375,6 +375,7 @@ export class WorkspacesService {
     const currentUserMembership = await this.workspaceMemberRepository.findOne({
       where: { workspace: { workspaceId }, user: { userId: currentUserId }, role: 'owner' },
     });
+    
     if (!currentUserMembership) {
       throw new ForbiddenException('Only the workspace owner can change user roles');
     }

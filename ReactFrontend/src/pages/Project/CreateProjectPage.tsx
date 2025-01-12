@@ -32,28 +32,28 @@ function CreateProjectPage() {
   const [alertText, setAlertText] = useState("");
 
   
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [workspaceResponse, aiModelsResponse] = await axios.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
-    ])
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const [workspaceResponse, aiModelsResponse] = await axios.all([
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
+  //   ])
    
-      setWorkspaceDetail(workspaceResponse.data);
-      setAIData(aiModelsResponse.data);
+  //     setWorkspaceDetail(workspaceResponse.data);
+  //     setAIData(aiModelsResponse.data);
 
-    } catch (err) {
-      setError("There was an error fetching the data!");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
+  //   } catch (err) {
+  //     setError("There was an error fetching the data!");
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  // }, []);
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
   const handleSelectCard = (id: number) => {
@@ -137,6 +137,7 @@ function CreateProjectPage() {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     });
     navigate(`/workspaces/${workspaceId}/project-list`);
     // console.log("Project created successfully!");
@@ -145,6 +146,38 @@ function CreateProjectPage() {
     console.error("Error creating project:", error);
   }
 };
+
+  const fetchData = async () => {
+    try {
+      const [workspaceResponse, aiModelsResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
+          ,
+          {
+            withCredentials: true,
+          }
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`  ,
+          {
+            withCredentials: true,
+          }
+        ),
+      ]);
+  
+      setWorkspaceDetail(workspaceResponse.data);
+      setAIData(aiModelsResponse.data);
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">

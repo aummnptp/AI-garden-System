@@ -112,6 +112,7 @@ const handleSave = async () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+    withCredentials: true,
       }
     );
 
@@ -129,7 +130,10 @@ const handleSave = async () => {
 
 const handleDelte = async () => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/delete/${projectId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/delete/${projectId}`,
+        {
+          withCredentials: true,}
+      );
       navigate(`/workspaces/${workspaceId}/project-list`);
       console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {
@@ -142,8 +146,14 @@ const handleDelte = async () => {
     const fetchData = async () => {
       try {
         const [workspaceResponse, projectResponse] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
+            {
+              withCredentials: true,}
+          ),
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
+            {
+              withCredentials: true,}
+          ),
         
         ]);
     

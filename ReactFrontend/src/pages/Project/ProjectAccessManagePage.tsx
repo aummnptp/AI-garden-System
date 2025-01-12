@@ -27,9 +27,14 @@ const ProjectAccessManagePage = () => {
   const fetchData = async () => {
     try {
       const [workspaceResponse, projectResponse,memberResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,{
+          withCredentials: true,}),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
+          {
+            withCredentials: true,}
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`,{
+          withCredentials: true,}),
       ]);
   
       setWorkspaceDetail(workspaceResponse.data);

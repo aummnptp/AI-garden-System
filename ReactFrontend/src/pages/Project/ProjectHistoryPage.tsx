@@ -22,8 +22,11 @@ const ProjectHistoryPage = () => {
     const workspace = ProjectData.find(ws => ws.workspaceId === id);
     const fetchData = () => {
       axios.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
-    
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`,
+          {
+            withCredentials: true,}
+        ),
+  
       ])
       .then(axios.spread((workspaceResponse) => {
         setWorkspaceDetail(workspaceResponse.data);

@@ -1,6 +1,7 @@
 import { AIModel } from "src/ai/entities/ai-model.entity";
 import { Workspace } from "src/workspaces/entities/workspace.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProjectHistory } from "./project-history.entity";
 
 @Entity()
 export class Project {
@@ -36,4 +37,10 @@ permission_only: boolean;
  @ManyToOne(()=> AIModel, (ai_model) => ai_model.projects, {onDelete: 'CASCADE'})
 @JoinColumn({ name: 'ai_id' })
   ai_model: AIModel;
+
+  
+
+  @OneToMany(() => ProjectHistory,(project_history) => project_history.project,)
+  project_historys: ProjectHistory[];
+
 }

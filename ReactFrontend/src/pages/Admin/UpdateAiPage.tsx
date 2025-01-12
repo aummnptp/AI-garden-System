@@ -46,7 +46,9 @@ const UpdateAiPage = () => {
 
   
 const fetchAi = () => {
-  axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
+  axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`,{
+    withCredentials: true,
+},)
     .then(response => {
       setAiName(response.data.name);
       setDescription(response.data.description);
@@ -223,8 +225,11 @@ const fetchAi = () => {
 
   const deleteAiModel = async () => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/remove-ai`);
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/remove-ai`,{
+          withCredentials: true,
+      });
       console.log('AI model deleted successfully:', response.data);
+      navigate('/admin/admin-ai');
       // Handle successful deletion, e.g., update state or show a success message
     } catch (error) {
       console.error('There was an error deleting the AI model!', error);
@@ -233,33 +238,57 @@ const fetchAi = () => {
   };
 
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const modelData = {
       name: aiName,
       description: description,
       ai_type: aiType,
       api_uri: serviceUri,
-      ai_tag:tags,
-      input_desc:inputDescription,
-      response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning,displayFormat: key.displayFormat})), // ส่งทั้ง key และ meaning
+      ai_tag: tags,
+      input_desc: inputDescription,
+      response_keys: responseKeys.map((key) => ({
+        key: key.key,
+        meaning: key.meaning,
+        displayFormat: key.displayFormat,
+      })),
     };
-    // ****************** อย่าลืมใส่ alertหรือ try catchตอนไม่เจอด้วย
-    fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then(response => response.json())
-      .then(data => {
+  
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(modelData),
+          credentials: 'include',
+        }
+      );
+  
+      if (!response.ok) {
+        // ตรวจสอบว่าสถานะไม่ใช่ 2xx
+        const errorData = await response.json().catch(() => {
+          throw new Error(response.statusText); // ใช้ข้อความสถานะหากไม่มี JSON
+        });
+        throw new Error(errorData.message || 'Something went wrong!');
+      }
+  
+      // ตรวจสอบ Content-Type ก่อนแปลง JSON
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json();
         console.log('Success:', data);
-        navigate('/admin/admin-ai'); // Navigate back to admin page after submission
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+      } else {
+        console.log('Success:', await response.text()); // แสดงข้อความ plain text
+      }
+  
+      navigate('/admin/admin-ai'); // Navigate back to admin page after submission
+    } catch (error) {
+      console.error('Error:', error || error);
+      alert(`Error: ${error|| 'Failed to update AI model'}`);
+    }
   };
   
 

@@ -29,6 +29,7 @@ export class AuthController{
     // };
   }
   
+  
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('jwt token', {

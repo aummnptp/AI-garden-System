@@ -64,8 +64,17 @@ const ProjectDetailPage = () => {
   const fetchData = async () => {
     try {
       const [workspaceResponse, projectResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
+          ,
+          {
+            withCredentials: true,
+          }
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`  ,
+          {
+            withCredentials: true,
+          }
+        ),
       ]);
   
     setWorkspaceDetail(workspaceResponse.data);
@@ -184,8 +193,9 @@ const ProjectDetailPage = () => {
               </span>
             </div>
             <p className="ml-3">
-              รูปภาพที่นำมาอัพโหลด ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง
-              ได้แก่สุนัข แมว นก กระต่าย เต่า เท่านั้น{" "}
+              {projectDetail.ai_model.input_desc}
+              {/* รูปภาพที่นำมาอัพโหลด ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง
+              ได้แก่สุนัข แมว นก กระต่าย เต่า เท่านั้น{" "} */}
             </p>
 
             {/* เริ่มต้นใช้งาน */}
