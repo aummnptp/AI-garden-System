@@ -36,15 +36,7 @@ const UserDetailPage = () => {
         {/* top card (create sort workspace name) */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
    
-          <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
-            <h1
-              className="p-5 ml-5 text-3xl font-medium tracking-tight 
-            text-indigo-900 "
-            >
-            User List
-            </h1>
-            <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto "></div>
-          </div>
+          
 
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
             {/* Header: User Profile */}
