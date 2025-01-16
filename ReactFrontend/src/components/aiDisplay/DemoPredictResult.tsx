@@ -14,13 +14,25 @@ interface PredictResult {
 interface DemoPredictResultProps {
   predictResult: PredictResult;
   resultImage: string;
+  aiDataProp: aiDataProp;
+}
+interface aiDataProp {
+  id:number;
+  name:string;
+  description: string;
+  img:string;
+  input_desc:string;
+  ai_type: string;
+  ai_tag:string[];
 }
 const DemoPredictResult: React.FC<DemoPredictResultProps> = ({
-predictResult, resultImage
+predictResult, resultImage ,aiDataProp, 
 }) => {
   const resultEntries = Object.entries(predictResult.prediction);
   const getMeaningForKey = (key: string) => {
+   
     console.log("Key being processed:", key);
+    
     const keyWithMeaning = predictResult.response_keys?.find(
       (item: { key: string; meaning: string }) => item.key === key
     );
@@ -46,26 +58,28 @@ predictResult, resultImage
           <div className="flex justify-start items-center p-0 space-x-4">
             <PictureOutlined style={{ fontSize: "32px", color: "#4f46e5" }} />
             <h1 className="text-3xl font-medium tracking-tight text-indigo-900 mb-0">
-              Image Name
+              Image
             </h1>
           </div>
           <div className="flex justify-start items-center p-0 space-x-4">
-            <span className="text-gray-600 text-lg"> AI Name</span>
+            <span className="text-gray-600 text-lg">    {aiDataProp.name}</span>
             <span className="text-gray-400">|</span>
             <span className="text-gray-400 text-lg">
-              {predictResult.ai_type}
+            {aiDataProp.ai_type}
             </span>
           </div>
           <div className="flex justify-start mb-2 mt-4 ">
+          {aiDataProp.ai_tag.map((tag: string, index: number) => (
             <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-              tag1
+              {tag}
             </span>
-            <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
+            ))}
+            {/* <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
               tag2
             </span>
             <span className="w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
               tag3
-            </span>
+            </span> */}
           </div>
           <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
           <div className="py-4">

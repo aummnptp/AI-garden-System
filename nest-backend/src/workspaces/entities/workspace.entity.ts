@@ -1,11 +1,13 @@
 
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
+import { WorkspaceMember} from './workspace-member.entity'
+import { WorkspaceInvitation } from './workspace-invitation.entity';
+import { Project } from 'src/projects/entities/project.entity';
    @Entity()
    export class Workspace {
       
-      @PrimaryGeneratedColumn()
-      id: number;
+      @PrimaryGeneratedColumn({ name: 'workspace_id' })
+      workspaceId: number;
    
       @Column()
       name: string;
@@ -14,15 +16,13 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
       description: string;
    
       @Column()
-      createByEmail: string;
+      createById: number;
 
-      // @Column("text", { array: true, nullable: true })
-      // members: string[]; // IDs of people in the workspace, can be null
-      @Column("jsonb", { nullable: true })
-      members: { email: string;  role: string }[]; 
+      @OneToMany(() => WorkspaceMember, (member) => member.workspace, { cascade: true })
+      members: WorkspaceMember[]; // เชื่อมกับ WorkspaceMember
    
-      @Column("int", { array: true, nullable: true })
-      projects: number[]; // IDs of projects in the workspace, can be null
+      // @Column("int", { array: true, nullable: true })
+      // projects: number[]; // IDs of projects in the workspace, can be null
    
       @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
       createdAt: Date;
@@ -30,7 +30,10 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
       @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
       updatedAt: Date;
 
-      // @OneToMany(() => Workspace, (workspace) => workspace.createByUserId) 
-      // workspaces: Workspace[]; // ฟิลด์นี้เก็บข้อมูล Workspace หลายอันที่ผู้ใช้คนนี้สร้าง
+      @OneToMany(() => WorkspaceInvitation,(invitation) => invitation.workspace,)
+       invitations: WorkspaceInvitation[];
+
+       @OneToMany(() => Project,(project) => project.workspace,)
+       projects: Project[];
 
    }

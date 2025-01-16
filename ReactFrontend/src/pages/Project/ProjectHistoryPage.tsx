@@ -22,8 +22,11 @@ const ProjectHistoryPage = () => {
     const workspace = ProjectData.find(ws => ws.workspaceId === id);
     const fetchData = () => {
       axios.all([
-        axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
-    
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`,
+          {
+            withCredentials: true,}
+        ),
+  
       ])
       .then(axios.spread((workspaceResponse) => {
         setWorkspaceDetail(workspaceResponse.data);
@@ -91,7 +94,38 @@ const ProjectHistoryPage = () => {
                     <text className="text-black text-lg font-normal">
                       John Doe
                     </text>
-                    <text className="text-black text-lg font-normal"> 20 รูปภาพ</text>
+                    <text className="text-black text-lg font-normal"> 1 รูปภาพ</text>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap">
+                  <div  className=" mb-8">
+                    <img
+                      className="w-28 h-28 mr-6  border-2 object-cover"
+                      src="/images/ai/dermatophyte.jpg"
+                      />
+                      <p>image_name</p>
+                  </div>
+                </div>
+
+
+{/* row 2 ขึ้นไป */}
+                <h1 className=" text-2xl font-normal  ">วันที่ 1 มกราคม 2024</h1>
+                <div className="flex  items-center space-x-2 px-2 rounded-[5px]">
+                  <text className=" text-lg font-normal  ">12.00 น.</text>
+                  <div className="w-[80%] h-[0px] border border-zinc-300 mx-auto" />
+                </div>
+
+                <div className="flex items-center my-4 w-fit">
+                  <img
+                    className="w-10 h-10 rounded-full border-2"
+                    src="/images/homeImage/profile.webp"
+                  />
+                  <div className="ml-2">
+                    <text className="text-black text-lg font-normal">
+                      John Doe
+                    </text>
+                    <text className="text-black text-lg font-normal"> 3 รูปภาพ</text>
                   </div>
                 </div>
 
@@ -101,6 +135,23 @@ const ProjectHistoryPage = () => {
                       className="w-28 h-28 mr-6  border-2"
                       src="\images\testphoto.avif"
                       />
+                      
+                      <p>image_name</p>
+                  </div>
+                  <div  className=" mb-8">
+                    <img
+                      className="w-28 h-28 mr-6  border-2"
+                      src="\images\testphoto.avif"
+                      />
+                      
+                      <p>image_name</p>
+                  </div>
+                  <div  className=" mb-8">
+                    <img
+                      className="w-28 h-28 mr-6  border-2"
+                      src="\images\testphoto.avif"
+                      />
+                      
                       <p>image_name</p>
                   </div>
                 </div>
@@ -131,8 +182,8 @@ const ProjectHistoryPage = () => {
                   <div className="flex w-full   ">
                     <div  className="w-[20%]  mb-8 px-auto items-center ">
                       <img
-                        className="w-36 h-36 "
-                        src="\images\testphoto.avif"
+                        className="w-36 h-36 object-cover"
+                        src="/images/ai/dermatophyte.jpg"
                         />
                         <p>image_name</p>
                     </div>

@@ -50,8 +50,8 @@ const CreateProjectCard :React.FC<CreateProjectCardProps> = (props) => {
         </RadioGroup>
       </FormControl> */}
           <div className='  mb-4'>
-          {props.tags.map((tag) => (
-              <span  className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">{tag}</span>
+           {props.tags.map((tag) => (
+              <span  className="w-fit bg-sky-500 rounded-[10px] me-2 px-2.5 py-0.5    text-white text-xs font-normal">{tag}</span>
             ))}
             </div>
         </div>

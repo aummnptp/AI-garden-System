@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User{
-    @PrimaryGeneratedColumn()  // ใช้ id เป็น Primary Key
-    id: number;
+    @PrimaryGeneratedColumn({ name: 'user_id' })// ใช้ id เป็น Primary Key
+    userId: number;
   
     @Column({ unique: true })  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
     googleId: string;
@@ -14,6 +14,9 @@ export class User{
     name: string;
     @Column()
     picture: string;
+
+    @Column({ default: 'user' })
+    role: string;
     
 
 }

@@ -1,5 +1,9 @@
-import { Entity,OneToMany, Column, PrimaryGeneratedColumn } from 'typeorm';
+
 import { Permission } from '../../permission/entities/permission.entity';
+
+import { Project } from 'src/projects/entities/project.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
 
 @Entity('ai_models')
 export class AIModel {
@@ -12,8 +16,6 @@ export class AIModel {
   @Column({ length: 200, nullable: true })
   description: string;
 
-  // @Column({ length: 200, nullable: true })
-  // image_path: string;
   @Column()
   ai_type: string;
 
@@ -35,9 +37,18 @@ export class AIModel {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
+
   @OneToMany(() => Permission, (permission) => permission.aiModel)
   permissions: Permission[];
+
+
+  @OneToMany(() => Project,(project) => project.ai_model,)
+       projects: Project[];
+
   // @Column()
   // create_by: string[];
+  
+  @Column({ nullable: true }) // เพิ่มฟิลด์ imagePath
+  imagePath: string;
 
 }

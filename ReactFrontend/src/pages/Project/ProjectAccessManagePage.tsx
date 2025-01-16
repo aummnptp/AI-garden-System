@@ -20,11 +20,52 @@ const ProjectAccessManagePage = () => {
   const [name, setName] = useState<string>("");
   const [memberDatas, setMemberData] = useState<memberData[]>(memberMockupData);
   const [accessProjectType, setAccessProjectType] =useState<string>("access_all");
+  const [projectDetail, setProjectDetail] = useState<any | null>(null);
+  const [workspaceDetail, setWorkspaceDetail] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+   
+  const fetchData = async () => {
+    try {
+      const [workspaceResponse, projectResponse,memberResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,{
+          withCredentials: true,}),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
+          {
+            withCredentials: true,}
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`,{
+          withCredentials: true,}),
+      ]);
+  
+      setWorkspaceDetail(workspaceResponse.data);
+      setProjectDetail(projectResponse.data)
+      setMemberData(memberResponse.data)
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+     useEffect(() => {
+        fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+      }, []);
+  
 
+if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!projectDetail) {
+    return <div>Error: Project details could not be loaded.</div>;
+  }
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Sidebar */}
-      <Sidebar workspaceName={name} />
+      <Sidebar workspaceName={workspaceDetail.name} 
+        projectName={projectDetail.project_name}
+        aiName={projectDetail.ai_model.name}
+        aiType={projectDetail.ai_model.ai_type}
+         />
 
       {/* Content Container */}
       <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
@@ -125,16 +166,16 @@ const ProjectAccessManagePage = () => {
                         <div className="flex items-center "  key={index}>
                           <img
                             className="w-10 h-10 rounded-full  border-2"
-                            src={member.avatar}
+                            src={member.user.picture}
 
                             // src="/images/homeImage/profile.webp"
                           />
                           <div className="ml-2">
                             <p className="text-indigo-900 text-xl font-medium">
-                              {member.name}
+                              {member.user.name}
                             </p>
                             <p className="text-gray-400 text-lg ">
-                              Email: {member.email}
+                              Email: {member.user.email}
                             </p>
                           </div>
                         </div>

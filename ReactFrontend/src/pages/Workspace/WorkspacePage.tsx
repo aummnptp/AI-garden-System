@@ -13,10 +13,31 @@ import MiniFooter from "../../components/MiniFooter";
 import axios from "axios";
 import { Button } from "@mui/material";
 
+
+interface WorkspaceProps {
+  workspaceId: number;
+  name: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+  members: {
+    id: number;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: number;
+      googleId: string;
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }[];
+}
 function WorkspacePage() {
   // my workspace show
-  const [myWorkspace, setMyWorkspace] = useState([]); 
-  const [invitedWorkspace, setInvitedWorkspace]= useState([]); 
+  const [myWorkspace, setMyWorkspace] = useState<WorkspaceProps[]>([]); 
+  const [invitedWorkspace, setInvitedWorkspace]= useState<WorkspaceProps[]>([]); 
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
   const [showModal, setShowModal] = useState(false);
   const toggleWorkspaceRow = () => {
@@ -30,29 +51,50 @@ function WorkspacePage() {
   };
 
 
-  const fetchWorkspaces = () => {
-    axios.get("http://localhost:3000/workspaces/")
-      .then(response => {
-        setMyWorkspace(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the workspace data!", error);
-      });
-  };
 
-  useEffect(() => {
-    fetchWorkspaces(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
+    const [loading, setLoading] = useState(true);
+    const fetchData = async () => {
+      try {
+        // เรียก API หลายตัวพร้อมกัน
+        const [myWorkspacesResponse,inviteWorkspacesResponse] = await Promise.all([
+          axios.get(
+            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/my-workspaces`,
+            {
+              withCredentials: true,
+            }
+          ),
+          axios.get(
+            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/invite-workspaces`,
+            {
+              withCredentials: true,
+            }
+          ),
+        ]);
+        setMyWorkspace(myWorkspacesResponse.data);
+        setInvitedWorkspace(inviteWorkspacesResponse.data);
+      } catch (error) {
+        console.error("Error fetching data!", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchData();
+    }, []);
+  
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+    
 
 
-
-  console.log(myWorkspace)
 
   return (
       <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
         {/* popup */}
-        <CreateWorkspace showModal={showModal} setShowModal={setShowModal} fetchWorkspaces={fetchWorkspaces} />
+        <CreateWorkspace showModal={showModal} setShowModal={setShowModal} fetchWorkspaces={fetchData} />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
           <div className="mt-4 h-fit w-11/12 bg-white rounded-[15px]  items-center relative  p-6 ">
@@ -92,9 +134,9 @@ function WorkspacePage() {
                 {myWorkspace.map((data, index)=>(
               <div key={index} className={`mb-4 ${!showWorkspaceRow && index >= 3 ? 'hidden' : ''}`}>
              
-                   <Link to={`/workspaces/${data.id}/project-list`}>
-                  <WorkspaceCard  id={data.id} name={data.name} desc={data.description} 
-                  members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} /> 
+                   <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                  <WorkspaceCard  id={data.workspaceId} name={data.name} description={data.description} 
+                  members={data.members} updatedAt={data.updatedAt} createdAt={data.createdAt} /> 
                    </Link>
               </div>
                 ))}
@@ -121,13 +163,15 @@ function WorkspacePage() {
               </div>
             {/* invited wokspace Card */}
             <div className={`grid grid-cols-3 pb-8 pt-2`}>  
-                {MyWorkspaceData.map((data, index)=>(
+                {invitedWorkspace.map((data, index)=>(
+                  
               <div key={index} className={`mb-4 ${!showInvitedRow && index >= 3 ? 'hidden' : ''}`}>
-                <Link to={`/workspaces/${data.id}/project-list`}>
-                  <InvitedCard  id={data.id} name={data.name} desc={data.description} members={[...data.member]} createAt={data.createAt} updateAt={data.updateAt} /> 
+                <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                  <InvitedCard  id={data.id} name={data.name} desc={data.description} members={data.members} createAt={data.createAt} updateAt={data.updateAt} /> 
                 </Link>
               </div>
                 ))}
+                
               </div>
 
           </div>

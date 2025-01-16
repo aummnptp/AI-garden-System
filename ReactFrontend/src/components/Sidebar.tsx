@@ -5,8 +5,11 @@ import { Link, useParams, useLocation } from 'react-router-dom'
 
 interface SidebarProps {
   workspaceName: string; // เพิ่ม props สำหรับ workspaceName
+  projectName:string;
+  aiName:string;
+  aiType:string;
 }
-const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
+const Sidebar: React.FC<SidebarProps> = ({ workspaceName ,projectName,aiName,aiType})=> {
   let {workspaceId,projectId} = useParams()
   const location = useLocation();
   const isProjectPage = location.pathname.includes('/project/');
@@ -91,14 +94,16 @@ const Sidebar: React.FC<SidebarProps> = ({ workspaceName })=> {
           <div className="text-neutral-400 text-base font-medium  leading-loose mt-[-12px]">
             In project
           </div>
-          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">ProjectName</h1>
+          <h1 className="text-indigo-900 text-2xl font-semibold mt-[-10px]">{projectName}</h1>
         </div>
       </div>
-      <span className="ml-[5%] w-fit  text-indigo-600 text-lg font-semibold">
-        AI name
+      {/* <div className='flex'> */}
+      <span className="w-fit  text-indigo-600 text-base font-semibold">
+        {aiName}
       </span>
+      {/* </div> */}
       <span className="text-indigo-900 text-base font-medium "> | </span>
-      <span className="text-indigo-900 text-base font-medium "> ai type </span>
+      <span className="text-indigo-900 text-base font-medium "> {aiType} </span>
       <div className="mt-6 w-full border border-zinc-300"/>
       {/* project menu */}
       <div className="text-neutral-400 text-lg font-normal leading-loose">

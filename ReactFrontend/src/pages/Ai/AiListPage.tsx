@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react'
+
+import React, { useEffect, useState } from "react";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
 import AiData from "../../data/AiData";
 import { Link } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 
 function AIlist() {
   const [AIData, setAIData] = useState([]);
   const fetchAIData = () => {
-    axios.get("http://localhost:3000/ai-models/")
+
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
       .then(response => {
         setAIData(response.data);
       })
@@ -21,6 +23,7 @@ function AIlist() {
   useEffect(() => {
     fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
+
   return (
     <>
       <div className=" bg-neutral-100  items-center justify-center h-full pb-32 grid grid-cols-1">
@@ -86,18 +89,19 @@ function AIlist() {
           </div>
         </div>
 
-        {/* card container */}
-        <div className="mt-4 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
-          {/* card */}
-          {AIData.map((data) => (
 
-            <AiCard
-              id={data.id}
-              name={data.name}
-              aiDesc={data.description}
-              tags={data.ai_tag}
-              img={"/images/ai/healthAi.webp"}
-              type={data.ai_type}
+      {/* card container */}
+      <div className="mt-4 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
+        {/* card */}
+        {AIData.map((data) => (
+    
+          <AiCard
+            id={data.id}
+            name={data.name}
+            aiDesc={data.description}
+            tags={data.ai_tag}
+            img={"/images/ai/healthAi.webp"}
+            type={data.ai_type}
             ></AiCard>
 
           ))}

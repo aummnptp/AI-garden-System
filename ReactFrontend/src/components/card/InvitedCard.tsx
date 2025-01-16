@@ -36,10 +36,15 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 <p className='mr-1 text-black/opacity-75 text-xs font-normal'>create by</p>
                 <img 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                src={props.members[0].avatar} 
+                src={props.members[0].user.picture|| "/images/homeImage/profile.webp"}
+                alt="creator"
+                onError={(e) => {
+                  e.currentTarget.onerror = null; // ป้องกัน loop error
+                  e.currentTarget.src = "/images/homeImage/profile.webp"; // 
+                }} 
                 
                 />
-                <p className='ml-1 text-indigo-600 text-sm font-medium'>{props.members[0].name}</p>
+                <p className='ml-1 text-indigo-600 text-sm font-medium'>{props.members[0].user.name}</p>
                 
                 </div>
               </div>
@@ -48,8 +53,12 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 <img 
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                src={member.avatar} 
-                alt={member.name} 
+                src={member.user.picture|| "/images/homeImage/profile.webp"} 
+                onError={(e) => {
+                  e.currentTarget.onerror = null; // ป้องกัน loop error
+                  e.currentTarget.src = "/images/homeImage/profile.webp"; // 
+                }} 
+                alt={member.user.name} 
                 />
               ))}
               {props.members.length > 2 && (
@@ -57,6 +66,7 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                   +{props.members.length - 2}
                 </div>
               )}
+              
             </div>
         </div>    
           </div>

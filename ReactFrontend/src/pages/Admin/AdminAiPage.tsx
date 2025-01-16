@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react'
+
+import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
-import { SendOutlined } from '@ant-design/icons';
-import AiData from "../../data/AiData";
-import AiCard from "../../components/card/AiCard";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
-import axios from 'axios';
+
+import axios from "axios";
+
 
 function AdminAi() {
 
   const [AIData, setAIData] = useState([]);
   const fetchAIData = () => {
-    axios.get("http://localhost:3000/ai-models/")
+
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
       .then(response => {
         setAIData(response.data);
       })
@@ -52,8 +54,10 @@ function AdminAi() {
                       backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
                     },
                   }}
-                >
-                  + Create New AI
+
+                  >
+                + Add New AI 
+
                 </Button>
 
               </Link>
@@ -64,39 +68,41 @@ function AdminAi() {
                 type="text"
                 id="first_name"
                 className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
-                placeholder="ค้นหาชื่อAI"
+                placeholder="Search with AI name"
                 required
               />
               <div>
-                <button
-                  type="button"
-                  className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
-                >
-                  ประเภท <SortAscendingOutlined />
-                </button>
-                <button
-                  type="button"
-                  className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
-                >
-                  tag <ControlOutlined />
-                </button></div>
+
+              <button
+                type="button"
+                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
+              >
+                type filter <SortAscendingOutlined />
+              </button>
+              <button
+                type="button"
+                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
+              >
+                tag filter <ControlOutlined />
+              </button></div>
+
             </div>
           </div>
 
           {/* Card container */}
           <div className="mt-4 h-fit  w-[95%] grid grid-cols-3  bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
+
             {AIData.map((data) => (
-
-              <AiCard
-                id={data.id}
-                name={data.name}
-                aiDesc={data.description}
-                tags={data.ai_tag}
-                img={"/images/ai/healthAi.webp"}
-                type={data.ai_type}
-              ></AiCard>
-
+              <AdminAiCard
+              id={data.id}
+              name={data.name}
+              aiDesc={data.description}
+              tags={data.ai_tag}
+              img={"/images/ai/healthAi.webp"}
+              type={data.ai_type}
+              />
+              
             ))}
 
 

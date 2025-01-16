@@ -2,42 +2,65 @@ import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 
 import Sidebar from '../../components/Sidebar'
 import { Input } from "antd";
-import AiData from '../../data/AiData';
+// import AiData from '../../data/AiData';
 import CreateProjectCard from '../../components/card/CreateProjectCard';
-import { Link, useParams } from 'react-router-dom';
-import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
+
 const { TextArea } = Input;
 
 
 function CreateProjectPage() {
   let {workspaceId} = useParams()
+ const navigate = useNavigate();
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription ] = useState('');
+  // const [projectImage, setProjecImage] = useState('');
+
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [inputType, setInputType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [uploadStep, setUploadStep] = useState(1);
-  const [seletedAI, setSelectedAI] = useState();
-  const fetchData = () => {
-    axios.all([
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
+  const [selectedAI, setSelectedAI] = useState();
+  const [AIData, setAIData] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = React.useState(false);
+  const [alertText, setAlertText] = useState("");
+
   
-    ])
-    .then(axios.spread((workspaceResponse) => {
-      setWorkspaceDetail(workspaceResponse.data);
+  // const fetchData = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const [workspaceResponse, aiModelsResponse] = await axios.all([
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
+  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
+  //   ])
    
-    }))
-    .catch(error => {
-      console.error("There was an error fetching the data!", error);
-    });
-  };
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
+  //     setWorkspaceDetail(workspaceResponse.data);
+  //     setAIData(aiModelsResponse.data);
+
+  //   } catch (err) {
+  //     setError("There was an error fetching the data!");
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+  // }, []);
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
   const handleSelectCard = (id: number) => {
-    setSelectedCardId(id);
+    const selectedCard = AIData.find(data => data.id === id);
+    setSelectedAI(selectedCard);  // เก็บข้อมูล AI ที่ถูกเลือก
+    setSelectedCardId(id);  // เก็บแค่ id ถ้าจำเป็น
+    // alert(`Selected AI model: ${selectedCard?.name}`);
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -56,27 +79,135 @@ function CreateProjectPage() {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
+  
+  const startTimer = () => {
+    setTimeout(() => {
+      setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
+    }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+  if (open) {
+    startTimer();
+  }
+
+  const handleToNextStep = () => {
+    if(uploadStep===1 &&( projectName === '' || projectDescription === '') ){
+        setOpen(true);
+        setAlertText('กรุณากรอกข้อมูลให้ครบถ้วน')
+        
+    }
+    else if(uploadStep===2 && selectedAI === undefined){
+      setOpen(true);
+      setAlertText('กรุณาเลือก AI ที่ต้องการใช้งาน')
+    }
+    else {
+      setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
+
+    }
+  
+  };
+
+   
+
+ const handleSubmit = async () => {
+
+  const projectData = {
+    name: projectName,
+    description: projectDescription,
+    input_type: inputType,
+    ai_id:selectedCardId,
+    // image_path: image,
+  };
+
+  try {
+    const formData = new FormData();
+    formData.append("project_name", projectData.name);
+    formData.append("project_desc", projectData.description);
+    formData.append("input_type", projectData.input_type);
+    formData.append("ai_id", projectData.ai_id);
+    
+    // formData.append("image_path", image);
+
+    await axios.post(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData, 
+       {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+    navigate(`/workspaces/${workspaceId}/project-list`);
+    // console.log("Project created successfully!");
+    // ทำการ reset หรือเปลี่ยนหน้า
+  } catch (error) {
+    console.error("Error creating project:", error);
+  }
+};
+
+  const fetchData = async () => {
+    try {
+      const [workspaceResponse, aiModelsResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
+          ,
+          {
+            withCredentials: true,
+          }
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`  ,
+          {
+            withCredentials: true,
+          }
+        ),
+      ]);
+  
+      setWorkspaceDetail(workspaceResponse.data);
+      setAIData(aiModelsResponse.data);
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
-    <div className="flex h-full min-h-screen bg-neutral-100">
-      <Sidebar workspaceName={workspaceDetail.name} />
+    <>
+      <div className="flex h-full min-h-screen bg-neutral-100">
+        {open && (
+          <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
+            <Alert severity="error" onClose={handleClose}>
+              <AlertTitle>Error</AlertTitle>
+              {alertText}
+            </Alert>
+          </div>
+        )}
+        <Sidebar workspaceName={workspaceDetail.name} />
 
-      <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen ">
-        {/* ml-5 mb-5 text-3xl font-medium tracking-tight 
-      text-indigo-900  */}
-        {/* create container */}
-        <div className="px-8 py-2 col-span-10 mt-4 pb-5 h-fit  w-[95%] bg-white rounded-[15px] justify-self relative ">
-          <h1 className="text-indigo-900 text-4xl font-medium  leading-loose">
-            Create New Project
-          </h1>
-          <div className="mb-10 h-[0px] border border-zinc-300 mx-auto" />
+        <div 
+          onSubmit={handleSubmit}
+          className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen "
+        >
+          {/* create container */}
+          <div className="px-8 py-2 col-span-10 mt-4 pb-5 h-fit  w-[95%] bg-white rounded-[15px] justify-self relative ">
+            <h1 className="text-indigo-900 text-4xl font-medium  leading-loose">
+              Create New Project
+            </h1>
+            <div className="mb-10 h-[0px] border border-zinc-300 mx-auto" />
 
-          {/* upload step */}
-          <div className="flex items-center justify-between w-full px-20 py-4 my-4  ">
-            {/* Step 1 */}
-            <div className="flex items-center space-x-2">
-              <div
-                className={`rounded-full h-8 w-8 flex items-center justify-center 
+            {/* upload step */}
+            <div className="flex items-center justify-between w-full px-20 py-4 my-4  ">
+              {/* Step 1 */}
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center 
                   ${
                     uploadStep > 1
                       ? "bg-green-500"
@@ -84,20 +215,20 @@ function CreateProjectPage() {
                       ? "bg-blue-500"
                       : "bg-gray-400"
                   } text-white`}
-              >
-                {uploadStep > 1 ? <i className="bi bi-check"></i> : 1}
+                >
+                  {uploadStep > 1 ? <i className="bi bi-check"></i> : 1}
+                </div>
+                <span
+                  className={uploadStep >= 1 ? "text-black" : "text-gray-400"}
+                >
+                  ใส่ข้อมูล
+                </span>
               </div>
-              <span
-                className={uploadStep >= 1 ? "text-black" : "text-gray-400"}
-              >
-                ใส่ข้อมูล
-              </span>
-            </div>
-            <div className="flex-1 h-0.5 bg-gray-300 mx-2" />
-            {/* Step 2 */}
-            <div className="flex items-center space-x-2">
-              <div
-                className={`rounded-full h-8 w-8 flex items-center justify-center 
+              <div className="flex-1 h-0.5 bg-gray-300 mx-2" />
+              {/* Step 2 */}
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center 
                     ${
                       uploadStep > 2
                         ? "bg-green-500"
@@ -105,21 +236,21 @@ function CreateProjectPage() {
                         ? "bg-blue-500"
                         : "bg-gray-400"
                     } text-white`}
-              >
-                {uploadStep > 2 ? <i className="bi bi-check"></i> : 2}
+                >
+                  {uploadStep > 2 ? <i className="bi bi-check"></i> : 2}
+                </div>
+                <span
+                  className={uploadStep >= 2 ? "text-black" : "text-gray-400"}
+                >
+                  เลือก AI
+                </span>
               </div>
-              <span
-                className={uploadStep >= 2 ? "text-black" : "text-gray-400"}
-              >
-                เลือก AI
-              </span>
-            </div>
-            {/* Line between Step 2 and Step 3 */}
-            <div className="flex-1 h-0.5 bg-gray-300 mx-2"></div>
-            {/* Step 3 */}
-            <div className="flex items-center space-x-2">
-              <div
-                className={`rounded-full h-8 w-8 flex items-center justify-center 
+              {/* Line between Step 2 and Step 3 */}
+              <div className="flex-1 h-0.5 bg-gray-300 mx-2"></div>
+              {/* Step 3 */}
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`rounded-full h-8 w-8 flex items-center justify-center 
                     ${
                       uploadStep > 3
                         ? "bg-green-500"
@@ -127,170 +258,205 @@ function CreateProjectPage() {
                         ? "bg-blue-500"
                         : "bg-gray-400"
                     } text-white`}
-              >
-                {uploadStep > 3 ? <i className="bi bi-check"></i> : 3}
+                >
+                  {uploadStep > 3 ? <i className="bi bi-check"></i> : 3}
+                </div>
+                <span
+                  className={uploadStep > 3 ? "text-black" : "text-gray-400"}
+                >
+                  เลือกประเภท Project
+                </span>
               </div>
-              <span className={uploadStep > 3 ? "text-black" : "text-gray-400"}>
-                เลือกประเภท Project
-              </span>
             </div>
-          </div>
-          {uploadStep == 1 ? (
-            <div className="flex pt-8">
-              <div className="w-[30%] border rounded-[5px] border-gray-300  mx-auto  pt-8 pb-10 px-10 ">
-                <ProjectImageInput
-                  image={image}
-                  setImage={setImage}
-                  handleFileSelect={handleFileSelect}
-                  handleDrop={handleDrop}
-                  handleDragOver={handleDragOver}
-                />
+            {uploadStep == 1 ? (
+              <div className="flex pt-8">
+                <div className="w-[30%] border rounded-[5px] border-gray-300  mx-auto  pt-8 pb-10 px-10 ">
+                  <ProjectImageInput
+                    image={image}
+                    setImage={setImage}
+                    handleFileSelect={handleFileSelect}
+                    handleDrop={handleDrop}
+                    handleDragOver={handleDragOver}
+                  />
+                </div>
+                <div className="w-[70%] border rounded-[5px] border-gray-300  mx-auto  pt-8 pb-10 px-10 ">
+                  <label className="mt-10 text-black text-2xl font-medium">
+                    {" "}
+                    Project name{" "}
+                  </label>
+                  <Input
+                    placeholder="Project name"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    variant="filled"
+                    className="my-4"
+                  />
+                  <label className="text-black text-2xl font-medium">
+                    {" "}
+                    Project description
+                  </label>
+                  <TextArea
+                    rows={4}
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                    variant="filled"
+                    placeholder="Projet description"
+                    className="my-4 mb-16"
+                  />
+                </div>
               </div>
-              <div className="w-[70%] border rounded-[5px] border-gray-300  mx-auto  pt-8 pb-10 px-10 ">
-                <label className="mt-10 text-black text-2xl font-medium">
-                  {" "}
-                  Project name{" "}
+            ) : uploadStep == 2 ? (
+              <div>
+                <p className="ml-4 mb-6 text-black text-2xl font-medium">
+                  เลือก AI ที่ต้องการใช้งาน
+                </p>
+
+                <label className="ml-4  text-zinc-400 text-sm font-normal">
+                  ค้นหาด้วยชื่อ Ai
                 </label>
-                <Input
-                  placeholder="Project name"
-                  variant="filled"
-                  className="my-4"
-                />
-                <label className="text-black text-2xl font-medium">
-                  {" "}
-                  Project description
-                </label>
-                <TextArea
-                  rows={4}
-                  variant="filled"
-                  placeholder="Projet description"
-                  className="my-4 mb-16"
-                />
+                <div className="ml-4 flex justify-between">
+                  <Input
+                    placeholder="ค้นหาด้วยชื่อ AI"
+                    variant="filled"
+                    className=" w-4/12"
+                  />
+                </div>
+
+                <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
+                  {AIData.map((data) => (
+                    <CreateProjectCard
+                      id={data.id}
+                      name={data.name}
+                      aiDesc={data.description}
+                      tags={data.ai_tag}
+                      img={`/images/ai/healthAi.webp`}
+                      type={data.ai_type}
+                      isSelected={data.id === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
+                      onSelect={() => handleSelectCard(data.id)} // ส่งฟังก์ชัน onClick
+                    ></CreateProjectCard>
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : uploadStep == 2 ? (
-          <div>
-            <p className="ml-4 mb-6 text-black text-2xl font-medium">
-              เลือก AI ที่ต้องการใช้งาน
-            </p>
+            ) : uploadStep === 3 && selectedAI ? (
+              <div className="mx-auto my-5 w-[30%] h-fit bg-white  border rounded-[15px] p-4 cursor-pointer border-1 border-gray-300 shadow-md">
+                <img
+                  className="w-full h-48 object-cover"
+                  src={
+                    // selectedAI.imagePath ||
+                    "/images/ai/healthAi.webp"
+                  } // แสดงรูปจาก selectedAI หรือรูป default
+                  alt={selectedAI.name}
+                />
+                <h1 className="py-2 text-black text-[25px] font-semibold">
+                  {selectedAI.name}
+                </h1>
+                <span className="mb-2 w-fit bg-sky-500 rounded-[15px] me-2 px-2.5 py-0.5 text-white text-sm font-normal">
+                  {selectedAI.ai_type}
+                </span>
+                <p className="px-4 py-2">{selectedAI.description}</p>
+                <div className="mb-4">
+                  {selectedAI.ai_tag.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5 text-white text-sm font-normal"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
 
-            <label className="ml-4  text-zinc-400 text-sm font-normal">
-              ค้นหาด้วยชื่อ Ai
-            </label>
-            <div className="ml-4 flex justify-between">
-              <Input
-                placeholder="ค้นหาด้วยชื่อ AI"
-                variant="filled"
-                className=" w-4/12"
-              />
-            </div>
-
-            <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
-            
-              {AiData.map((data) => (
-                <CreateProjectCard
-                  id={data.id}
-                  name={data.name}
-                  aiDesc={data.aiDesc}
-                  tags={data.tags}
-                  img={data.img}
-                  type={data.type}
-                  isSelected={data.id === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
-                  onSelect={() => handleSelectCard(data.id)} // ส่งฟังก์ชัน onClick
-                ></CreateProjectCard>
-              ))}
-            </div>
+                <FormControl>
+                  <FormLabel id="demo-row-radio-buttons-group-label">
+                    ประเภท Project
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    value={inputType}
+                    onChange={(e) => setInputType(e.target.value)}
+                    defaultValue={"รูปภาพและวิดีโอ"}
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="รูปภาพและวิดีโอ"
+                      control={<Radio />}
+                      label="รูปภาพ และ วิดีโอ"
+                    />
+                    <FormControlLabel
+                      value="รูปภาพ"
+                      control={<Radio />}
+                      label="รูปภาพ"
+                    />
+                    <FormControlLabel
+                      value="วิดีโอ"
+                      control={<Radio />}
+                      label="วิดีโอ"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            ) : null}
+            {/* select ai section */}
           </div>
-
-          ) : uploadStep == 3 ?(
-
-             <div
-    className={`mx-auto my-5 w-[30%] h-fit bg-white shadow border rounded-[15px] p-4 cursor-pointer ${
-   'border-1 border-gray-300 shadow-md'
-    }`}
-// เรียกฟังก์ชันเมื่อการ์ดถูกคลิก
-  >
-          <img
-            className=" w-full h-48  
-            object-cover"
-            src={"/images/ai/healthAi.webp"}
-            />
-
-          <h1 className=" py-2 text-black text-[25px] font-semibold">
-            {`Health Example AI`}
-          </h1>
-       
-          <span className="  mb-2 w-fit bg-sky-500 rounded-[15px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">
-          {`Classification`}
-          </span>
-          <p className=" px-4 py-2">
-          {`Lorem Ipsum is simply dummy text of the printi ng and typesetting industry. Lorem Ipsum has been the`}
-          </p>
-         <span  className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">tag1</span>
-         <span  className="w-fit bg-indigo-600 rounded-[10px] me-2 px-2.5 py-0.5   text-white text-sm font-normal">tag2</span>
-
-          <FormControl>
-         <FormLabel id="demo-row-radio-buttons-group-label">ประเภท Project</FormLabel>
-         <RadioGroup
-           row
-           aria-labelledby="demo-row-radio-buttons-group-label"
-           name="row-radio-buttons-group"
-           defaultValue={"รูปภาพและวิดีโอ"}
-         >
-           <FormControlLabel value="รูปภาพและวิดีโอ" control={<Radio />} label="รูปภาพ และ วิดีโอ " />
-           <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
-           <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
-         </RadioGroup>
-       </FormControl> 
-          <div className='  mb-4'>
-          {/* {props.tags.map((tag) => (
-            ))} */}
-            </div>
-        </div>
-          ) : null}
-          {/* select ai section */}
-
-
-
-
-     
-        </div>
-        {/* bottom ba  */}
-        <div className="pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
-          {uploadStep ==3?(
-            <Link to={`/workspaces/${workspaceId}/project-list`}>
-            <Button
-            size="large"
-            variant="contained"
-            sx={{
-              backgroundColor: "#4f46e5",
-              "&:hover": { backgroundColor: "#3730a3" },
-            }}
-            style={{ marginRight: "0.5rem" }}
-            >
-            Create
-          </Button>
-          </Link>
-          ):(<Button
-            size="large"
-            variant="contained"
-            sx={{
-              backgroundColor: "#4f46e5",
-              "&:hover": { backgroundColor: "#3730a3" },
-            }}
-            style={{ marginRight: "0.5rem" }}
-            onClick={() => {
-              setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
-            }}
+          {/* bottom ba  */}
+          <div
+            className={`pr-12 w-[100%] pl-[20%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex ${
+              uploadStep > 1 ? "justify-between" : "justify-end"
+            } items-center`}
           >
-            Next Step
-          </Button>)}
+            {uploadStep > 1 ? (
+              <Button
+            
+                size="large"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": { backgroundColor: "#3730a3" },
+                }}
+                style={{ marginRight: "0.5rem" }}
+                onClick={() => {
+                  setUploadStep((prevStep) => Math.max(prevStep - 1, 1));
+                }}
+              >
+                Back
+              </Button>
+            ) : null}
+            {uploadStep == 3 ? (
+              <Button
+                onClick={handleSubmit}
+               
+                size="large"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": { backgroundColor: "#3730a3" },
+                }}
+                style={{ marginRight: "0.5rem" }}
 
-          {/* <Link to={`/workspaces/${workspaceId}/project-list`}>
-      </Link> */}
-        </div>
+              >
+                Create
+              </Button>
+            ) : (
+              <Button
+              
+                size="large"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": { backgroundColor: "#3730a3" },
+                }}
+                style={{ marginRight: "0.5rem" }}
+                onClick={() => {
+                  handleToNextStep();
+                }}
+              >
+                Next Step
+              </Button>
+            )}
+          </div>
+        </div >
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -18,7 +18,13 @@ export class AuthService{
   ) {}
   
   async login(user: any) {
-    const payload = { email: user.email, sub: user.userId , id: user.id};
+
+    //const payload = { email: user.email, sub: user.userId , id: user.id};
+
+    
+    const payload = { email: user.email, userId: user.userId, role: user.role };
+
+
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -26,7 +32,7 @@ export class AuthService{
 
   async googleLogin(req): Promise<any> {
     if (!req.user) {
-      throw new Error('Google login failed: No user information received.');
+      throw new BadRequestException('Google login failed: No user information received.');
     }
     const { email, name, picture, googleId } = req.user;
     let user = await this.userRepository.findOneBy({ email });
@@ -36,10 +42,15 @@ export class AuthService{
         name,
         picture,
         googleId,
+        role:"user",
       });
       user = await this.userRepository.save(newUser);
     }
-    const payload = { email: user.email,id: user.id};
+
+    //const payload = { email: user.email,id: user.id};
+
+    const payload = { email: user.email, userId: user.userId, role: user.role};
+
 
     return {
       accessToken: this.jwtService.sign(payload),

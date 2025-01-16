@@ -31,22 +31,7 @@ const WorkspaceSettingPage = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   
-  useEffect(() => {
-    const fetchWorkspace = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/workspaces/${workspaceId}`
-        );
-        const { name, description } = response.data;
-        setName(name);
-        setDescription(description);
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล Workspace:", error);
-      }
-    };
 
-    fetchWorkspace();
-  }, [workspaceId]);
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
   const handleSave = async () => {
@@ -58,8 +43,10 @@ const WorkspaceSettingPage = () => {
 
       // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
       const response = await axios.patch(
-        `http://localhost:3000/workspaces/${workspaceId}`,
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/update/${workspaceId}`,
         payload
+      ,{
+        withCredentials: true,}
       );
       window.location.href = "/workspaces";
       // จัดการเมื่ออัปเดตสำเร็จ
@@ -82,7 +69,10 @@ const WorkspaceSettingPage = () => {
   };
   const handleDelte = async () => {
     try {
-      const response = await axios.delete(`http://localhost:3000/workspaces/${workspaceId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/delete/${workspaceId}`,
+        {
+          withCredentials: true,}
+      );
       window.location.href = "/workspaces";
       console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {
@@ -91,6 +81,38 @@ const WorkspaceSettingPage = () => {
     }
   };
   const isDeleteDisabled = confirmText !== name;
+
+
+
+  const [loading, setLoading] = useState(true);
+  const fetchData = async () => {
+    try {
+      // เรียก API หลายตัวพร้อมกัน
+      const [workspaceResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
+          {
+            withCredentials: true,
+          }
+        ),
+      ]);
+      const { name, description } = workspaceResponse.data;
+      setName(name);
+      setDescription(description);
+    } catch (error) {
+      console.error("Error fetching data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [workspaceId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">

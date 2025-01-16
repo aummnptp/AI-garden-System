@@ -2,7 +2,11 @@ import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+
 import axios from 'axios';
+
+import ProjectImage from './ProjectLetterImage';
+
 
 interface AiCardProps {
     id:number;
@@ -35,6 +39,21 @@ interface AiCardProps {
     <Link to={`/ai/${props.id}/detail`}>
   
     <div className="mx-auto mt-10 pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
+    {/* {props.img ? (
+          //  <div className='mx-2 w-fit h-fit  flex items-center  '>
+          //    <img
+          //    className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
+          //    src={props.img}
+          //    alt={`${props.name} project`}
+          //    />
+          //     </div>
+            ) : ( */}
+              
+              {/* <ProjectImage
+              projectName={props.name}
+              className="  w-full h-[186px] rounded-[10px]  border-2 flex items-center justify-center text-white font-medium text-3xl"
+              /> */}
+            {/* )} */}
           <img
             className=" w-full h-48 
             object-cover"
@@ -50,9 +69,9 @@ interface AiCardProps {
           <span className=" mx-2 mb-2 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-xs font-normal">
           {props.type}
           </span>
-          <p className=" p-2">
+          <div className="text-gray-600 text-sm line-clamp-4">
           {props.aiDesc}
-          </p>
+          </div>
           
           <div className=' p-2 mb-2'>
           {props.tags.map((tag) => (
@@ -67,11 +86,12 @@ interface AiCardProps {
                 backgroundColor: '#4f46e5',
                 '&:hover': { backgroundColor: '#3730a3' },
               }}
-              onClick={handleSendRequest} // เรียกฟังก์ชันเมื่อคลิก
+
             >
-              <SendOutlined style={{ color: '#fff', marginRight: '4px' }} />
-              ส่งคำขอใช้งาน
-            </Button>
+
+              <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ดูรายละเอียด
+              </Button>
+
           </div>
           </div>
         </div>

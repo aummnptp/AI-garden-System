@@ -13,6 +13,16 @@ const UserDetailPage = () => {
   const [userTab, setUserTab] = useState<string>("Ai");
 
 
+  const fetchWorkspaces = () => {
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/`)
+      .then(response => {
+        setMyWorkspace(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the workspace data!", error);
+      });
+  };
+
   const { userId } = useParams<{ userId?: string }>();
   const [userData, setUserData] = useState<any>();
   const [myWorkspace, setMyWorkspace] = useState([]);

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AIModel } from './entities/ai-model.entity';
@@ -9,12 +9,12 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import { Permission } from '../permission/entities/permission.entity';
 
+
 @Injectable()
 export class AIModelService {
   constructor(
     @InjectRepository(AIModel)
     private aiModelRepository: Repository<AIModel>,
-    
   ) {}
 
   async addModel(createAIModelDto: CreateAIModelDto, file: Express.Multer.File): Promise<string> {
@@ -42,50 +42,68 @@ export class AIModelService {
         meaning: key.meaning,
         displayFormat: key.displayFormat,
       })),
+
+      imagePath: file ? `/uploads/${file.filename}` : null,
+
     });
   
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
-  }
-  
-  
   
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
     const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-    
-  
-    // สร้าง FormData และเพิ่มข้อมูล
-    const formData = new FormData();
-    formData.append('file', file.buffer, file.originalname); // เพิ่มไฟล์
-    // หากมีข้อมูลเพิ่มเติมสามารถเพิ่มได้
-    // formData.append('other_field', 'value');
+
+ const formData = new FormData();
+    formData.append('file', file.buffer, file.originalname);
   
     try {
-      // ใช้ formData และตั้งค่า headers
       const response = await axios.post(model.api_uri, formData, {
-        headers: {
-          ...formData.getHeaders(), // Headers ที่สร้างจาก FormData
-        },
+        headers: { ...formData.getHeaders() },
       });
   
-      const responseKeysWithMeaning = model.response_keys;
-      const filteredResponse = this.filterResponse(response.data, responseKeysWithMeaning);
+      if (!response.data) {
+        throw new BadRequestException('No response from external API');
+      }
   
       return {
-        prediction: filteredResponse,
+        response_keys: model.response_keys,
+        prediction: response.data,
         ai_type: model.ai_type,
-        response_keys: responseKeysWithMeaning,
       };
     } catch (error) {
-      console.error('Error during prediction:', error.response?.data || error.message);
-      throw new Error('Failed to process prediction request.');
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error('Error during prediction:', errorMessage);
+      throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
 
-  findAll(): Promise<AIModel[]> {
+
+   async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
+    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
+  
+    if (!existingModel) {
+      throw new NotFoundException(`AI Model with Id ${id} not found`);
+    }
+  
+    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
+  
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    if (file) {
+      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
+      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+    }
+  
+    // อัปเดตข้อมูลในฐานข้อมูล
+    await this.aiModelRepository.update(id, updatedModelData);
+  
+    return 'Model updated successfully!';
+  }
+  
+findAll(): Promise<AIModel[]> {
     return this.aiModelRepository.find();
   }
 
@@ -93,29 +111,9 @@ export class AIModelService {
   findOne(id: number): Promise<AIModel | null> {
     return this.aiModelRepository.findOneBy({ id });
   }
-
+  
   remove(id: number): Promise<void> {
     return this.aiModelRepository.delete(id).then(() => undefined);
-  }
-
-  private filterResponse(responseJson: any, responseKeysWithMeaning: any[]): any {
-    const filteredResponse = {};
-    responseKeysWithMeaning.forEach(({ key }) => {
-      filteredResponse[key] = responseJson[key] || 'ไม่มีข้อมูล';
-    });
-    return filteredResponse;
-  }
-
-   async update(id: number, updateAIModelDto: UpdateAIModelDto):Promise<string> {
-    const existingModel = await  this.aiModelRepository.findOne({where: {id}})
-    if (!existingModel){
-      throw new NotFoundException(`AI Model with Id ${id} not found`)
-    }
-
-      await this.aiModelRepository.update(id, updateAIModelDto);
-      return 'Model updated successfully!';
-    }
-
     async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
       return this.aiModelRepository
         .createQueryBuilder('aiModel')
@@ -124,5 +122,9 @@ export class AIModelService {
         .andWhere('permission.approve = :approve', { approve: true })
         .getMany();
     }
+
+  
+    
+
   
 }

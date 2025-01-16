@@ -18,59 +18,95 @@ import axios from "axios";
 
 
 
-interface ProjectCardProps {
-    name:string;
-    aiDesc:string;
-    inputDesc:string;
-    type:string
-    tags:string;
-    img:string;
+
+interface Project {
+  project_id: number;
+  project_name: string;
+  project_desc: string;
+  input_type: string;
+  image_path: string | null;
+  create_at: string;
+  update_at: string;
+  permission_only: boolean;
+  ai_model: AIModel;
+}
+
+interface AIModel {
+  id: number;
+  name: string;
+  description: string;
+  ai_type: string;
+  ai_tag: string[];
+  input_desc: string;
+  api_uri: string;
+  response_keys: ResponseKey[];
+  createdAt: string;
+  updatedAt: string;
+  imagePath: string | null;
+}
+
+interface ResponseKey {
+  key: string;
+  meaning: string;
+  displayFormat: string;
 }
 
 
-const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
-  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+const ProjectDetailPage = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
-    // จัดการกรณีที่ workspaceId หรือ projectId เป็น undefined
-    return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
-  }
-  const workspaceIdNum = parseInt(workspaceId, 10);
-  const projectIdNum = parseInt(projectId, 10);
-  const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
+  const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
+  const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+
+
+
+
+  const fetchData = async () => {
+    try {
+      const [workspaceResponse, projectResponse] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
+          ,
+          {
+            withCredentials: true,
+          }
+        ),
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`  ,
+          {
+            withCredentials: true,
+          }
+        ),
+      ]);
   
-  if (!workspace) {
-    return <div>ไม่พบพื้นที่ทำงาน</div>;
-  }
-
-  const detail = workspace.details.find(d => d.id === projectIdNum);
-
-  if (!detail) {
-    return <div>ไม่พบรายละเอียดโปรเจก</div>;
-  }
-  const uploadIcon = detail.inputType === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
-
-  const fetchData = () => {
-    axios.all([
-      axios.get(`http://localhost:3000/workspaces/${workspaceId}`),
-  
-    ])
-    .then(axios.spread((workspaceResponse) => {
-      setWorkspaceDetail(workspaceResponse.data);
-   
-    }))
-    .catch(error => {
+    setWorkspaceDetail(workspaceResponse.data);
+      setProjectDetail(projectResponse.data);
+    } catch (error) {
       console.error("There was an error fetching the data!", error);
-    });
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
+    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!projectDetail) {
+    return <div>Error: Project details could not be loaded.</div>;
+  }
+  const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
+  
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name} />
+        <Sidebar workspaceName={workspaceDetail.name} 
+        projectName={projectDetail.project_name}
+        aiName={projectDetail.ai_model.name}
+        aiType={projectDetail.ai_model.ai_type}
+         />
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* top card (create sort workspace name) */}
@@ -87,19 +123,19 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
           {/* detail */}
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
-            {detail.projectImage ? (
+            {projectDetail.image_path ? (
              <img
                className=" col-span-2 w-full h-[100%] object-cover"
-             src={detail.projectImage}
-             alt={`${detail.name} project`}
+             src={projectDetail.image_path}
+            //  alt={`${projectDetail.project_name} project`}
              />
             ) : (
-              
+           
               <ProjectImage
-              projectName={detail.name}
+              projectName={projectDetail.project_name}
               className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
-              />
-            )}
+              /> 
+           )}
             
               <div className="col-span-4 p-6">
                 <div>
@@ -108,7 +144,7 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
                       className=" mb-2 text-3xl font-medium tracking-tight 
                   text-indigo-900 "
                     >
-                      {detail.name}
+                      {projectDetail.project_name}
                     </h1>
 
                     <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
@@ -136,21 +172,15 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
                   รายละเอียด
                 </p>
                 <p>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's{" "}
+                {projectDetail.project_desc}
                 </p>
                 <div className="mb-2 mt-4">
+                {projectDetail.ai_model.ai_tag.map((tag) => (
                   <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                    tag1
+                    {tag}
                   </span>
-                  <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                    tag2
-                  </span>
-                  <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                    tag3
-                  </span>
+                ))}
+                
                 </div>
               </div>
             </div>
@@ -163,8 +193,9 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
               </span>
             </div>
             <p className="ml-3">
-              รูปภาพที่นำมาอัพโหลด ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง
-              ได้แก่สุนัข แมว นก กระต่าย เต่า เท่านั้น{" "}
+              {projectDetail.ai_model.input_desc}
+              {/* รูปภาพที่นำมาอัพโหลด ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง
+              ได้แก่สุนัข แมว นก กระต่าย เต่า เท่านั้น{" "} */}
             </p>
 
             {/* เริ่มต้นใช้งาน */}
@@ -192,7 +223,7 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
                 },
               }}
               >
-         {detail.inputType === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
+         {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
       </Button>
       </Link>
     </div>
@@ -232,7 +263,7 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
                   disable={false}
                 />
                 {/* รูป summary */}
-                {detail.inputType === "รูปภาพ"  ? (
+                {projectDetail.input_type === "รูปภาพ"  ? (
                
                 <SummaryCard
                   icon={
@@ -259,7 +290,7 @@ const ProjectDetailPage:React.FC<ProjectCardProps> = () => {
                 />
               )}
                 {/* วิดีโอ summary */}
-                {detail.inputType === "วิดีโอ"  ? (
+                {projectDetail.input_type === "วิดีโอ"  ? (
                 <SummaryCard
                 icon={
                   <PictureOutlined

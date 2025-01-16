@@ -6,12 +6,27 @@ import { AvatarGroup } from '@mui/material';
 
 interface WorkspaceCardProps {
   id: number;
-  name:string;
-  desc: string;
-  members: { name: string; avatar: string }[];
-  createAt:string;
-  updatedAt:string;
+  name: string;
+  description: string;
+  createById: number;
+  // projects: any; // ใช้ any เพราะ projects อาจเป็น null หรือข้อมูลอื่น ๆ
+  createdAt: string;
+  updatedAt: string;
+  members: {
+    id: number;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: number;
+      googleId: string;
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }[];
 }
+
 
 const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
     return (
@@ -25,7 +40,7 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
               <h1 className="text-indigo-900 text-2xl font-medium">
               {props.name}
               </h1>
-              <p className='text-neutral-700 pr-4'>{props.desc}</p>
+              <p className='text-neutral-700 pr-4'>{props.description}</p>
               <div
               className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center">
                 {/* <MoreOutlined style={{color:'#999'}}/> */}
@@ -44,8 +59,12 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
                 // src={member.avatar} 
-                src="/images/homeImage/profile.webp"
-                alt={member.name}
+                src={member.user.picture|| "/images/homeImage/profile.webp"}
+                onError={(e) => {
+                  e.currentTarget.onerror = null; // ป้องกัน loop error
+                  e.currentTarget.src = "/images/homeImage/profile.webp"; // 
+                }} 
+                alt={member.user.name}
                 />
               ))}
 
