@@ -50,16 +50,7 @@ export class WorkspacesController {
   
   
 
-  @Role("admin")
-  @Get(':email')
-  async findByCreator(@Param('email') email: string) {
-    return this.workspacesService.findByCreator(email);
-  }
-  @Role("admin")
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workspacesService.findOne(+id);
-    
+  
 
     
   @Role("user")

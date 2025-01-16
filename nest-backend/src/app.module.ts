@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Workspace } from './workspaces/entities/workspace.entity';
-import { InvitationModule } from './invitation/invitation.module';
+
 
 import { Permission } from './permission/entities/permission.entity';
 import { AiPermissionModule } from './permission/permission.module';
@@ -67,7 +67,7 @@ import { RolesGuard } from './auth/guards/role.guard';
     AuthModule,
     UserModule,
 
-    InvitationModule,
+    
     AiPermissionModule,
 
     // InvitationModule

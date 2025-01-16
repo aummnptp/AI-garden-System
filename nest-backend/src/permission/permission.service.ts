@@ -18,7 +18,7 @@ export class AiPermissionService {
   // ฟังก์ชันสร้าง Permission
   async create(data: CreateAiPermissionDto, id: number) {
     // ตรวจสอบว่าผู้ใช้มีอยู่ในระบบ
-    const user = await this.userRepository.findOne({ where: { id: id } });
+    const user = await this.userRepository.findOne({ where: { userId: id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
