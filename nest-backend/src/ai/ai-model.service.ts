@@ -7,6 +7,8 @@ import * as FormData from 'form-data';
 import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
+import { Permission } from '../permission/entities/permission.entity';
+
 
 @Injectable()
 export class AIModelService {
@@ -40,58 +42,21 @@ export class AIModelService {
         meaning: key.meaning,
         displayFormat: key.displayFormat,
       })),
+
       imagePath: file ? `/uploads/${file.filename}` : null,
+
     });
   
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
-  }  
-
-  async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
-  
-    if (!existingModel) {
-      throw new NotFoundException(`AI Model with Id ${id} not found`);
-    }
-  
-    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
-    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
-  
-    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
-    if (file) {
-      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
-      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
-    }
-  
-    // อัปเดตข้อมูลในฐานข้อมูล
-    await this.aiModelRepository.update(id, updatedModelData);
-  
-    return 'Model updated successfully!';
-  }
-  
-  
-  findAll(): Promise<AIModel[]> {
-    return this.aiModelRepository.find();
-  }
-
-  // อ่าน AIModel ตาม id
-  findOne(id: number): Promise<AIModel | null> {
-    return this.aiModelRepository.findOneBy({ id });
-  }
-  
-  remove(id: number): Promise<void> {
-    return this.aiModelRepository.delete(id).then(() => undefined);
-  }
-  
-  
   
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
     const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-  
-    const formData = new FormData();
+
+ const formData = new FormData();
     formData.append('file', file.buffer, file.originalname);
   
     try {
@@ -114,5 +79,52 @@ export class AIModelService {
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
+
+
+   async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
+    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
+  
+    if (!existingModel) {
+      throw new NotFoundException(`AI Model with Id ${id} not found`);
+    }
+  
+    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
+  
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    if (file) {
+      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
+      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+    }
+  
+    // อัปเดตข้อมูลในฐานข้อมูล
+    await this.aiModelRepository.update(id, updatedModelData);
+  
+    return 'Model updated successfully!';
+  }
+  
+findAll(): Promise<AIModel[]> {
+    return this.aiModelRepository.find();
+  }
+
+  // อ่าน AIModel ตาม id
+  findOne(id: number): Promise<AIModel | null> {
+    return this.aiModelRepository.findOneBy({ id });
+  }
+  
+  remove(id: number): Promise<void> {
+    return this.aiModelRepository.delete(id).then(() => undefined);
+    async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
+      return this.aiModelRepository
+        .createQueryBuilder('aiModel')
+        .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+        .where('permission.user_id = :userId', { userId })
+        .andWhere('permission.approve = :approve', { approve: true })
+        .getMany();
+    }
+
+  
+    
+
   
 }

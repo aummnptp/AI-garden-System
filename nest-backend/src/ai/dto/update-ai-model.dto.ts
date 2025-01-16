@@ -40,8 +40,9 @@ export class UpdateAIModelDto {
   @ValidateNested({ each: true })
   @Type(() => ResponseKeyDto)
   readonly response_keys: ResponseKeyDto[];
-  
+
   @IsOptional()
   @IsString()
   readonly imagePath?: string; // เพิ่มฟิลด์ imagePath
+
 }

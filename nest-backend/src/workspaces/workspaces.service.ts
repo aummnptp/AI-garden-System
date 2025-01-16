@@ -51,7 +51,6 @@ export class WorkspacesService {
     return this.workspaceRepository.findOneBy({ workspaceId: workspaceId });
   }
 
-
   // ลบ workspace
   remove(workspaceId: number): Promise<void> {
     return this.workspaceRepository.delete(workspaceId).then(() => undefined);

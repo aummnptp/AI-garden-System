@@ -2,7 +2,11 @@ import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+
+import axios from 'axios';
+
 import ProjectImage from './ProjectLetterImage';
+
 
 interface AiCardProps {
     id:number;
@@ -13,7 +17,24 @@ interface AiCardProps {
     tags:string[];
   }
 
-const AiCard :React.FC<AiCardProps> = (props) => {
+  
+  const AiCard: React.FC<AiCardProps> = (props) => {
+
+    const handleSendRequest = async () => {
+      console.log("AI ID (props.id):", props.id); // Debug
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/ai-permission/add",
+          { ai_id: props.id }, // ต้องส่ง aiId ไป
+          { withCredentials: true }
+        );
+        alert(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || 'สำเร็จ'}`);
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:', error);
+        alert('ไม่สามารถส่งคำขอใช้งานได้');
+      }
+    };
+    
   return (
     <Link to={`/ai/${props.id}/detail`}>
   
@@ -58,18 +79,19 @@ const AiCard :React.FC<AiCardProps> = (props) => {
             ))}
             </div>
             <div className="flex justify-center"> 
-              <Button
+            <Button
               variant="contained"
               size="large"
               sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
+                backgroundColor: '#4f46e5',
+                '&:hover': { backgroundColor: '#3730a3' },
               }}
-              >
+
+            >
+
               <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ดูรายละเอียด
               </Button>
+
           </div>
           </div>
         </div>

@@ -17,6 +17,7 @@ import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 
 @Controller('workspaces')
 export class WorkspacesController {
+
   constructor(
     private readonly workspacesService: WorkspacesService
     
@@ -24,13 +25,20 @@ export class WorkspacesController {
   ) {}
   
 
+
   @Role("user")
   @UseGuards(JwtGuard,RolesGuard)
   @Post('create')
+
+  //async create(@Request() req, @Body() createWorkspaceDto: CreateWorkspaceDto) {
+    //const userEmail = req.user.email;
+    //return this.workspacesService.create(createWorkspaceDto, userEmail);
+
   async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
     const userId = req.user.userId; 
     // return  req.user
     return this.workspacesService.create(createWorkspaceDto, userId);
+
   }
 
   @Role("admin")
@@ -39,7 +47,21 @@ export class WorkspacesController {
   findAll() {
     return this.workspacesService.findAll();
   }
+  
+  
 
+  @Role("admin")
+  @Get(':email')
+  async findByCreator(@Param('email') email: string) {
+    return this.workspacesService.findByCreator(email);
+  }
+  @Role("admin")
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.workspacesService.findOne(+id);
+    
+
+    
   @Role("user")
   @UseGuards(JwtGuard,RolesGuard)
   @Get('/detail/:workspaceId')
@@ -101,6 +123,7 @@ export class WorkspacesController {
   async getUserListInvitation(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.getNonMembersProfiles(+workspaceId);
   }
+
 
 
 

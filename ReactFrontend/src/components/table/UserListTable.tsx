@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Paper, TableContainer,
     Button,tableCellClasses ,
@@ -11,6 +11,8 @@ import { styled } from '@mui/material/styles';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
 import { Link } from 'react-router-dom';
 import { Desk, PsychologyOutlined } from '@mui/icons-material';
+import axios from "axios";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
@@ -45,20 +47,29 @@ function createData(  id:number,name: string, email: string ,ai:number,workspace
   return { id,name,email,ai,workspace, date: new Date(date), };
 }
 
-const initialRows = [
-  createData(1,'John Doe', 'john@example.com', 5,2,'2021-06-02T11:30:00'),
-  createData(2,'Jane Smith', 'jane@example.com', 4,1, '2024-09-02T12:30:00'),
-  createData(3,'Alice Johnson', 'alice@example.com', 4,1, '2024-06-02T13:30:00'),
-  createData(4,'Alice Johnson', 'alice@example.com', 4,3, '2024-06-02T13:30:00'),
-  createData(5,'Alice Johnson', 'alice@example.com', 4,2, '2023-06-02T13:30:00'),
-];
 
 type Order = 'asc' | 'desc';
 
 const UserListTable = () => {
-  const [rows, setRows] = useState<Data[]>(initialRows);
+  const [rows, setRows] = useState([]);
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<keyof Data>('date');
+
+  const fetchUserData = () => {
+    axios.get("http://localhost:3000/user/")
+      .then(response => {
+        setRows(response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the user data!", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  
 
   const handleRequestSort = (property: keyof Data) => {
       const isAsc = orderBy === property && order === 'asc';
@@ -169,7 +180,7 @@ const UserListTable = () => {
                 <span className='text-black text-lg font-medium'> มีสิทธิ์ 
                 </span>
                 <span className='text-indigo-800 text-xl font-medium'> 
-                  {" "}{row.ai}
+                  0
                    </span>
                   
               </StyledTableCell>
@@ -179,12 +190,8 @@ const UserListTable = () => {
                 <Desk /> 
                 <span className='text-black text-lg font-medium'>ทั้งหมด</span>
                 <span className='text-indigo-800 text-xl font-medium'> 
-                {" "}{row.workspace}
+                0
                 </span>
-          
-             
-                  
-             
                 </StyledTableCell>
               <StyledTableCell>
                 {" "}

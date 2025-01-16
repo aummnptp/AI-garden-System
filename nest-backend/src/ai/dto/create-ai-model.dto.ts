@@ -51,4 +51,5 @@ export class CreateAIModelDto {
   @IsOptional()
   @IsString()
   readonly imagePath?: string; // เพิ่มฟิลด์ imagePath
+
 }
