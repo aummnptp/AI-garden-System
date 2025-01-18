@@ -28,7 +28,7 @@ const UserDetailPage = () => {
   const [myWorkspace, setMyWorkspace] = useState([]);
   useEffect(() => {
     if (userId) {
-      axios.get(`http://localhost:3000/user/${userId}`)
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/${userId}`)
         .then(response => {
           setUserData(response.data);
         })
@@ -41,7 +41,7 @@ const UserDetailPage = () => {
   useEffect(() => {
     if (userData?.email) {
       axios
-        .get(`http://localhost:3000/workspaces/${userData.email}`)
+        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`)
         .then((response) => {
           setMyWorkspace(response.data);
         })

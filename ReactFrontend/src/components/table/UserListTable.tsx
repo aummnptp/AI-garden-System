@@ -29,13 +29,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
+  // huserIde last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
 interface Data {
-  id:number;
+  userId:number;
   name: string;
   email: string;
   ai:number;
@@ -43,8 +43,8 @@ interface Data {
   date: Date;
 }
 
-function createData(  id:number,name: string, email: string ,ai:number,workspace:number,date: string,): Data {
-  return { id,name,email,ai,workspace, date: new Date(date), };
+function createData(  userId:number,name: string, email: string ,ai:number,workspace:number,date: string,): Data {
+  return { userId,name,email,ai,workspace, date: new Date(date), };
 }
 
 
@@ -56,7 +56,7 @@ const UserListTable = () => {
   const [orderBy, setOrderBy] = useState<keyof Data>('date');
 
   const fetchUserData = () => {
-    axios.get("http://localhost:3000/user/")
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/`)
       .then(response => {
         setRows(response.data);
       })
@@ -196,7 +196,7 @@ const UserListTable = () => {
               <StyledTableCell>
                 {" "}
                 <div className="mx-auto flex justify-center">
-                  <Link key={row.id} to={`/admin/user/${row.id}`}>
+                  <Link key={row.userId} to={`/admin/user/${row.userId}`}>
                     <Button
                       variant="contained"
                       color="info"
