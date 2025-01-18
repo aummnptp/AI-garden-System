@@ -34,6 +34,9 @@ import ProjectSetting from './pages/Project/ProjectSettingPage.tsx'
 import ProjectAccessManagePage from './pages/Project/ProjectAccessManagePage.tsx'
 import UserDetailPage from './pages/Admin/UserDetailPage.tsx'
 import Videotest from './pages/Videotest.tsx'
+import RoleGuard from './components/auth/RoleGurad.tsx'
+import { AuthProvider } from './context/AuthContext.tsx'
+import WorkspaceRoleGuard from './components/auth/WorkspaceRoleGuard.tsx'
 
 
 
@@ -77,38 +80,38 @@ const router = createBrowserRouter([
   },
   {
     path: "/workspaces",
-    element: <WorkspacePage/>,
+    element: <RoleGuard requiredRole="user"><WorkspacePage/></RoleGuard>,
     children:[]
   },
   {
       path: "/workspaces/:workspaceId/project-list",
-    element: <ProjectListPage/>,
+    element:  <RoleGuard requiredRole="user"><ProjectListPage/></RoleGuard>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/history",
-  element: <ProjectHistoryPage/>,
+  element:  <RoleGuard requiredRole="user"><ProjectHistoryPage/></RoleGuard>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/detail",
-  element: <ProjectDetailPage/>,
+  element: <RoleGuard requiredRole="user"> <ProjectDetailPage/></RoleGuard>,
   },
   {
     path: "/workspaces/:workspaceId/history",
-  element: <WorkspaceHistoryPage/>,
+  element: <RoleGuard requiredRole="user"> <WorkspaceHistoryPage/></RoleGuard>,
   },
   {
     path: "/workspaces/:workspaceId/setting/edit",
-  element: <WorkspaceSettingPage/>,
+  element: <WorkspaceRoleGuard requiredRole="owner"><WorkspaceSettingPage/></WorkspaceRoleGuard>,
   },
   {
     path: "/workspaces/:workspaceId/setting/invitation",
-  element: <WorkspaceInvitationPage/>,
+  element:  <WorkspaceRoleGuard requiredRole="owner"><WorkspaceInvitationPage/></WorkspaceRoleGuard>,
   },
 
 
   {
     path: "/workspaces/:workspaceId/create",
-    element: <CreateProjectPage/>,
+    element:  <CreateProjectPage/>,
   },
   {
     path: "/workspaces/:workspaceId/project/:projectId/setting",
@@ -140,30 +143,30 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/dashboard",
-    element: < AdminDashboardPage/>,
+    element: <RoleGuard requiredRole="admin">< AdminDashboardPage/></RoleGuard>,
   },
   {
     path: "/admin/admin-ai",
-    element: <AdminAiPage/>,
+    element: <RoleGuard requiredRole="admin"> <AdminAiPage/></RoleGuard>,
   },
   
   {
     path: "/admin/createai",
-    element: <CreateAiPage/>,
+    element: <RoleGuard requiredRole="admin"><CreateAiPage/></RoleGuard>,
   },
 
   {
     path: "/admin/updateai/:ai_id",
-    element: <UpdateAiPage/>,
+    element: <RoleGuard requiredRole="admin"><UpdateAiPage/></RoleGuard>,
   },
 
   {
     path: "/admin/userlist",
-    element: <UserListPage/>,
+    element: <RoleGuard requiredRole="admin"><UserListPage/></RoleGuard>,
   },
   {
     path: "/admin/user/:userId",
-    element: <UserDetailPage/>,
+    element: <RoleGuard requiredRole="admin"><UserDetailPage/></RoleGuard>,
   },
 
   {
@@ -178,8 +181,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={theme}>
+     <AuthProvider>
+
   <React.StrictMode>
       <RouterProvider router={router}/>
   </React.StrictMode>,
+     </AuthProvider>
   </ThemeProvider>
 )

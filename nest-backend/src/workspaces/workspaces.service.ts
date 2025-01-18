@@ -413,4 +413,15 @@ export class WorkspacesService {
     });
   }
 
+
+  async getWorkspaceMember(workspaceId: number, userId: number): Promise<WorkspaceMember | null> {
+    return await this.workspaceMemberRepository.findOne({
+      where: {
+        workspace: { workspaceId: workspaceId },
+        user: { userId: userId },
+      },
+      relations: ['workspace', 'user'],
+    });
+  }
+
 }

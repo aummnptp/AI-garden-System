@@ -1,7 +1,7 @@
 import { Project } from 'src/projects/entities/project.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-@Entity('ai_models')
+@Entity('ai_model')
 export class AIModel {
   @PrimaryGeneratedColumn()
   id: number;

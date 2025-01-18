@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, Req } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -220,4 +220,17 @@ async showmyInvitation(@Request() req, ) {
   return this.workspacesService.getMyInvitation(userId);
 }
 
+@UseGuards(JwtGuard)
+@Get(':workspaceId/my-role')
+async getWorkspaceRole(@Param('workspaceId') workspaceId: number, @Req() req): Promise<{ role: string }> {
+  const userId = req.user.userId; // ดึง userId จาก JWT Payload
+
+  const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
+
+  if (!member) {
+    throw new NotFoundException('User is not a member of this workspace');
+  }
+
+  return { role: member.role };
+}
 }
