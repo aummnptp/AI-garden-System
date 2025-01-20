@@ -1,17 +1,18 @@
-import { IsNotEmpty, IsString, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class CreateSubDocsDto {
+export class CreateSubDocsDto {
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  // @IsNotEmpty()
   @IsString()
-  content: string;
+  content?: string;
 }
 
-export class CreateDocsDto {
+export class  CreateDocsDto {
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -19,9 +20,4 @@ export class CreateDocsDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateSubDocsDto)
-  subheadings: CreateSubDocsDto[];
 }

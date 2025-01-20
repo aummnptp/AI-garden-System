@@ -74,8 +74,13 @@ const router = createBrowserRouter([
     path: "/",
     element: <HomePage/>,
   },
+  // สำหรับตอนเริ่มต้น
   {
     path: "/docs",
+    element: <DocsPage/>,
+  },
+  {
+    path: "/docs/:docsId",
     element: <DocsPage/>,
   },
   {

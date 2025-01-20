@@ -45,7 +45,8 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           <SaveOutlined /> Save Content
         </Button>
       </div>
-      <Editor
+     
+      {/* <Editor
         apiKey="ncaou3be6pfqi22ceukdz7cyc2cf3nz3qhj33rqb8b5j8kxy"
         init={{
           plugins: "",
@@ -56,6 +57,43 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
         }}
         value={value}
         onInit={(evt, editor) => setText(editor.getContent())}
+        onEditorChange={onEditorChange}
+      /> */}
+      <Editor
+        id="Editor"
+        tinymceScriptSrc={"/tinymce/tinymce.min.js"}
+        onInit={(evt, editor) => setText(editor.getContent())}
+        value={value}
+        init={{
+          // placeholder: "",
+          min_height: 750,
+          menubar: true,
+          plugins: [
+            "advlist",
+            "autolink",
+            "lists",
+            "link",
+            "image",
+            "charmap",
+            "anchor",
+            "searchreplace",
+            "visualblocks",
+            "code",
+            "fullscreen",
+            "insertdatetime",
+            "media",
+            "table",
+            "preview",
+            "help",
+            "wordcount",
+          ],
+          toolbar:
+            "undo redo | blocks | " +
+            "bold italic forecolor | alignleft aligncenter " +
+            "alignright alignjustify | bullist numlist outdent indent | " +
+            "removeformat | help",
+          resize: true,
+        }}
         onEditorChange={onEditorChange}
       />
     </div>

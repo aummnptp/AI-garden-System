@@ -8,6 +8,7 @@ import DocList from '../components/docs/DocList';
 import ContentViewer from '../components/docs/ContentViewer';
 import ContentEditor from '../components/docs/ContentEditor';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 interface SubTitle {
   subId:number
@@ -39,6 +40,8 @@ type EditAtIndexType = {
 
 const DocsPage = () => {
   // ข้อมูลของ Docdata
+  
+    let { docsId } = useParams();
   const [docDatas, setDocDatas] = useState<DocData[]>([
     {
       id: 1,
@@ -163,7 +166,7 @@ const DocsPage = () => {
     setValue(newValue);
     setText(editor.getContent());
   };
-  // console.log(value)
+
 
 // แก้ไขตัว content ด้วย editorใน เว็บ
 const EditContent = (index: number, subIndex: number | null) => {
@@ -238,7 +241,6 @@ const EditContent = (index: number, subIndex: number | null) => {
       setShowWarningEdit(false);
     }
   };
-      console.log(docDatas[0].contentData)
 
     const handleSaveEditorModal = () => {
       setShowSaveEditorModal(true);
@@ -268,36 +270,71 @@ const EditContent = (index: number, subIndex: number | null) => {
       setShowTextEditor(false);
     };
 
-       const [loading, setLoading] = useState(true);
-        const fetchData = async () => {
-          try {
-            // เรียก API หลายตัวพร้อมกัน
-            const [myWorkspacesResponse,inviteWorkspacesResponse] = await Promise.all([
-              axios.get(
-                `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/my-workspaces`,
+      const [docs, setDocs] = useState([])
+      const [loading, setLoading] = useState(true);
+
+       const fetchData= async() =>{
+          try{
+            let docsResponse,contentDetailResponse;
+            docsResponse = await axios.get(
+              `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
+              {
+                withCredentials:true,
+              }
+            );
+            if(docsId){
+              contentDetailResponse = await axios.get(
+                `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-docs/${docsId}`,
                 {
                   withCredentials: true,
                 }
-              ),
-              axios.get(
-                `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/invite-workspaces`,
-                {
-                  withCredentials: true,
-                }
-              ),
-            ]);
-            setMyWorkspace(myWorkspacesResponse.data);
-            setInvitedWorkspace(inviteWorkspacesResponse.data);
+              );
+            }
+            setDocs(docsResponse.data);
+            if (contentDetailResponse) {
+              setCurrentPageData(contentDetailResponse.data.content);
+        
+            }
           } catch (error) {
             console.error("Error fetching data!", error);
           } finally {
             setLoading(false);
-          }
-        };
+          }};
+        // const fetchData = async () => {
+        //   try {
+        //     // เรียก API หลายตัวพร้อมกัน
+        //     const [docsResponse,contentDetailResponse] = await Promise.all([
+        //       axios.get(
+        //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
+        //         {
+        //           withCredentials: true,
+        //         }
+        //       ),
+        // axios.get(
+        //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-docs/${docsId}`,
+        //         {
+        //           withCredentials: true,
+        //         }
+        //       ),
+       
+        //     ]);
+        //     // console.log("",contentDetailResponse.data)
+        //     setDocs(docsResponse.data)
+        //     // setCurrentPageData(contentDetailResponse.data)
+        //     console.log(docs)
+        //     // console.log(docDatas)
+        //     // setMyWorkspace(myWorkspacesResponse.data);
+        //     // setInvitedWorkspace(inviteWorkspacesResponse.data);
+        //   } catch (error) {
+        //     console.error("Error fetching data!", error);
+        //   } finally {
+        //     setLoading(false);
+        //   }
+        // };
       
         useEffect(() => {
           fetchData();
-        }, []);
+        }, [docsId]);
       
         if (loading) {
           return <div>Loading...</div>;
@@ -309,7 +346,7 @@ const EditContent = (index: number, subIndex: number | null) => {
   
 
         {/* Doc SideBar Left */}
-        <DocList/>
+        <DocList  docs={docs}/>
     
 
       {/* content container */}

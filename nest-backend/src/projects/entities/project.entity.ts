@@ -5,8 +5,8 @@ import { ProjectHistory } from "./project-history.entity";
 
 @Entity()
 export class Project {
-@PrimaryGeneratedColumn()
-project_id: number;
+@PrimaryGeneratedColumn({name:"project_id"})
+projectId: number;
 
 @Column()
 project_name: string;

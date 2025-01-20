@@ -7,35 +7,16 @@ import DeleteModal from "./DeleteModal";
 import { DeleteOutlined, EditOutlined, MoreOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import SubTitleList from "./SubList";
 import { Button, TextField } from "@mui/material";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
-// type DocData = {
-//   id: string;
-//   title: string;
-//   text: string;
-//   showInput: boolean;
-//   showEditModal: boolean;
-//   showDeleteModal: boolean;
-//   editPosition: { top: number; left: number };
-//   subTitle: SubTitle[];
+// type Props = {
+//   doc: DocData;
+//   index: number;
+//   docDatas: DocData[];
+//   setDocDatas: React.Dispatch<React.SetStateAction<DocData[]>>;
+//   NavigationToContent: (index: number, subIndex?: number) => void;
 // };
-
-// type SubTitle = {
-//   subId: string;
-//   name: string;
-//   showInput: boolean;
-//   text: string;
-//   showEdit: boolean;
-//   showDelete: boolean;
-//   editPosition: { top: number; left: number };
-// };
-
-type Props = {
-  doc: DocData;
-  index: number;
-  docDatas: DocData[];
-  setDocDatas: React.Dispatch<React.SetStateAction<DocData[]>>;
-  NavigationToContent: (index: number, subIndex?: number) => void;
-};
 
 interface SubTitle {
     subId:number
@@ -65,9 +46,17 @@ interface SubTitle {
     subIndex: number | null;
   };
 
+  interface Props {
+    docs: {
+      id: number;
+      title: string;
+      // slug: string;
+    }[];
+  }
 
-const DocList: React.FC<Props> = () => {
+const DocList: React.FC<Props> = ({ docs }) => {
 
+// const [docs, setDocs] = useState([])
   const [docDatas, setDocDatas] = useState<DocData[]>([
     {
       id: 1,
@@ -115,29 +104,61 @@ const DocList: React.FC<Props> = () => {
   
   // ข้อมูลของ Title Manage component เช่น โชว์ edit โชว์ input โชว์ delete
 
-  // console.log("docData:",docDatas);
+ 
 
   // Edit Title Function handler
-  const handleTitleAdd = () => {
-    const maxId =
-      docDatas.length > 0 ? Math.max(...docDatas.map((doc) => doc.id)) : 0;
-    const newId = maxId + 1;
-    setDocDatas([
-      ...docDatas,
-      {
-        id: newId,
-        title: "New Heading",
-        contentData: "",
-        showEditModal: false,
-        editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-        showInput: false,
-        showDeleteModal: false,
-        text: "",
-        subTitle: [],
-      },
-    ]);
+  // axios
+  // .post(
+  //   `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
+  //   { name: name, description: description },
+  //   { withCredentials: true }
+  // )
+  // .then(() => {
+  //   setName('');
+  //   setDescription('');
+  //   setShowModal(false); // ปิด Dialog
+  //   fetchWorkspaces(); // ดึงข้อมูล workspace ใหม่
+  // })
+  // .catch((error) => {
+  //   console.error('Error creating workspace:', error);
+  // });
+  // const handleTitleAdd = () => {
+  //   const maxId =
+  //     docDatas.length > 0 ? Math.max(...docDatas.map((doc) => doc.id)) : 0;
+  //   const newId = maxId + 1;
+  //   setDocDatas([
+  //     ...docDatas,
+  //     {
+  //       id: newId,
+  //       title: "New Heading",
+  //       contentData: "",
+  //       showEditModal: false,
+  //       editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
+  //       showInput: false,
+  //       showDeleteModal: false,
+  //       text: "",
+  //       subTitle: [],
+  //     },
+  //   ]);
+  // };
+  const handleTitleAdd = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-title`,
+        {
+          title: "New Heading",
+          content: "",
+        },
+        { withCredentials: true }
+      );
+  
+      console.log("Document added successfully:", response.data);
+      // Add any additional logic here if necessary (e.g., updating UI)
+    } catch (error) {
+      console.error("Error creating document:", error.message || error);
+      // Optional: Add user notification logic (e.g., toast)
+    }
   };
-
   const handleTitleDelete = (index: number) => {
     const docDataList = [...docDatas];
     
@@ -325,31 +346,50 @@ const DocList: React.FC<Props> = () => {
   }, [docDatas]);
 
   // sub title handle here
-  const handleSubTitleAdd = (index: number) => {
-    const updatedDocDatas = [...docDatas];
+  // const handleSubTitleAdd = (index: number) => {
+  //   const updatedDocDatas = [...docDatas];
 
-    if (!updatedDocDatas[index].subTitle) {
-      updatedDocDatas[index].subTitle = [];
+  //   if (!updatedDocDatas[index].subTitle) {
+  //     updatedDocDatas[index].subTitle = [];
+  //   }
+
+  //   const subTitles = updatedDocDatas[index].subTitle;
+  //   const maxSubId =
+  //     subTitles.length > 0 ? Math.max(...subTitles.map((sub) => sub.subId)) : 0;
+  //   const newSubId = maxSubId + 1;
+  //   // check ข้อมูลใน title component
+  //   updatedDocDatas[index].subTitle.push({
+  //     subId: newSubId,
+  //     name: "New Subtitle",
+  //     contentData: "",
+  //     showEdit: false,
+  //     editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
+
+  //     showInput: false,
+  //     showDelete: false,
+  //     text: "",
+  //   });
+
+  //   setDocDatas(updatedDocDatas);
+  // };
+
+  const handleSubTitleAdd = async (docsId:number) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-subtitle/${docsId}`,
+        {
+          title: "New Sub Heading",
+          content: "",
+        },
+        { withCredentials: true }
+      );
+  
+      console.log("SubDocument added successfully:", response.data);
+      // Add any additional logic here if necessary (e.g., updating UI)
+    } catch (error) {
+      console.error("Error creating sub document:", error.message || error);
+      // Optional: Add user notification logic (e.g., toast)
     }
-
-    const subTitles = updatedDocDatas[index].subTitle;
-    const maxSubId =
-      subTitles.length > 0 ? Math.max(...subTitles.map((sub) => sub.subId)) : 0;
-    const newSubId = maxSubId + 1;
-    // check ข้อมูลใน title component
-    updatedDocDatas[index].subTitle.push({
-      subId: newSubId,
-      name: "New Subtitle",
-      contentData: "",
-      showEdit: false,
-      editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-
-      showInput: false,
-      showDelete: false,
-      text: "",
-    });
-
-    setDocDatas(updatedDocDatas);
   };
 
   const handleSubTitleDelete = (docIndex: number, subIndex: number) => {
@@ -489,7 +529,7 @@ const EditContent = (index: number, subIndex: number | null) => {
       setShowWarningEdit(false);
     }
   };
-      console.log(docDatas[0].contentData)
+ 
 
     const handleSaveEditorModal = () => {
       setShowSaveEditorModal(true);
@@ -508,352 +548,443 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
   setDocDatas(updatedDocDatas);
 };
 
-const [items, setItems] = useState([0, 1, 2, 3])
+// const [items, setItems] = useState([0, 1, 2, 3])
 
 
 
 
 
   return (
-          <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
-          <h1 className=" w-[95%] ml-2 text-black text-3xl font-normal  ">Documentation</h1>
-          
-          <div className=" w-[95%]  border border-zinc-300 mx-auto my-2 mb-4" />
-            <div className="flex justify-end">
-        
-              <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-                  onClick={handleTitleAdd}
-                  >
-               <PlusCircleOutlined /> Add New Heading
-          </Button>
-              
-            </div>
-    <Reorder.Group axis="y" values={docDatas} onReorder={setDocDatas}>
-    {docDatas.map((doc, index) => (
-       <Reorder.Item key={doc.id} value={doc} className="">
-      <div key={index} className="flex justify-between items-center mb-2">
-        {docDatas[index].showInput === false ? (
-          <div className="w-full">
-            <div className=" flex  justify-between">
+    <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
+      <h1 className=" w-[95%] ml-2 text-black text-3xl font-normal  ">
+        Documentation
+      </h1>
+
+      <div className=" w-[95%]  border border-zinc-300 mx-auto my-2 mb-4" />
+      <div className="flex justify-end">
+        <Button
+          variant="contained"
+          size="small"
+          sx={{
+            backgroundColor: "#4f46e5",
+            "&:hover": {
+              backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+            },
+          }}
+          onClick={handleTitleAdd}
+        >
+          <PlusCircleOutlined /> Add New Heading
+        </Button>
+      </div>
+
+      {docs.map((doc, index) => (
+        <div className="w-full">
+          <div className=" flex  justify-between">
+            <Link to={`/docs/${doc.docsId}`}>
               <span
-                onClick={() => NavigationToContent(index)}
+                // onClick={() => NavigationToContent(index)}
                 className="py-2 flex-1 pl-3 whitespace-nowrap text-lg font-semibold hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
               >
                 {doc.title}
               </span>
-              <MoreOutlined
-                onClick={(e) => showEditOptionModal(e, index)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-            {/* subtitle list */}
-            <div className="">
-              <ul>
-              <Reorder.Group
-        axis="y"
-        values={doc.subTitle}
-        onReorder={(newSubTitles) => handleSubTitleReorder(index, newSubTitles)}
-      >
-                {docDatas[index]?.subTitle?.map((subTitle, subIndex) => (
-                 <Reorder.Item key={subTitle.subId} value={subTitle} className="">
-                  <div>
-                    {docDatas[index].subTitle[subIndex].showInput ===
-                    false ? (
-                      <div className="flex " key={subIndex}>
-                        <span
-                          onClick={() =>
-                            NavigationToContent(index, subIndex)
-                          }
-                          className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
-                        >
-                          {subTitle.name}
-                        </span>
-                        <MoreOutlined
-                          onClick={(e) =>
-                            showSubEditOptionModal(e, index, subIndex)
-                          }
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-fit bg-red ">
-                        {/* Sub title textinput */}
-                        <TextField
-                          required
-                          id={`title-${index}`}
-                          label="ใส่ชื่อที่ต้องการแก้ไข"
-                          inputProps={{ maxLength: 20 }}
-                          value={docDatas[index].subTitle[subIndex].text}
-                          onChange={(e) => {
-                            const newTitleComponentData = [...docDatas];
-                            newTitleComponentData[index].subTitle[
-                              subIndex
-                            ].text = e.target.value;
-                            setDocDatas(newTitleComponentData);
-                          }}
-                          onKeyDown={(e) =>
-                            handleSubInputKeyDown(e, index, subIndex)
-                          }
-                          ref={subwrapperRef}
-                        />
-                      </div>
-                    )}
-                    {/* edit modal (rename ,delete) */}
-                    {docDatas[index].subTitle[subIndex].showEdit ===
-                    true ? (
-                      <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-                        <div
-                          style={{
-                            top: docDatas[index].subTitle[subIndex]
-                              .editPosition.top,
-                            left: docDatas[index].subTitle[subIndex]
-                              .editPosition.left,
-                          }}
-                          className="  z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
-                        >
-                          <ul>
-                            <li
-                              className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                              onClick={() => {
-                                handleEditSubTitleClick(index, subIndex);
-                                const updatedTitleModals = [...docDatas];
-                                updatedTitleModals[index].subTitle[
-                                  subIndex
-                                ].showEdit = false;
-                                setDocDatas(updatedTitleModals);
-                              }}
-                            >
-                              <EditOutlined />
-                              rename
-                            </li>
-                            <li
-                              onClick={() => {
-                                showSubDeleteModal(index, subIndex);
-                                // handleTitleDelete(index);
-                                // set modal to false
-                                const updatedTitleModals = [...docDatas];
-                                updatedTitleModals[index].subTitle[
-                                  subIndex
-                                ].showEdit = false;
-                                setDocDatas(updatedTitleModals);
-                              }}
-                              className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                            >
-                              <span className="text-[#f93a37]">
-                                <DeleteOutlined />
-                                delete
-                              </span>
-                            </li>
-                          </ul>
-                        </div>
-                        <div
-                          className=" opacity-25 fixed inset-0 z-40 bg-black"
-                          onClick={(e) =>
-                            hideSubEditOptionModal(e, index, subIndex)
-                          }
-                        ></div>
-                      </div>
-                    ) : null}
-                    {/* show delete modal */}
-                    {/* edit modal (rename ,delete) */}
-                    {docDatas[index].subTitle[subIndex].showDelete ===
-                    true ? (
-                      <>
-                        <div
-                          className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-                          onClick={(e) =>
-                            hideSubDeleteModal(e, index, subIndex)
-                          }
-                        >
-                          <div className="relative w-5/12 my-6 mx-auto">
-                            {/*card */}
-                            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                              {/*header*/}
-                              <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
-                                <h1
-                                  className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-              text-indigo-900 "
-                                >
-                                  <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                                    Delete this sub headding ?
-                                  </span>
-                                </h1>
-                              </div>
-                              {/*body*/}
-                              {/*footer*/}
-                              <div className=" mx-auto flex items-center justify-end p-6">
-                              <Button
-                                variant="outlined"
-                                size="large"
-                                onClick={(e) =>
-                                  hideSubDeleteModal(e, index, subIndex)
-                                }
-                                >
-                              Cancel
-                              </Button>
-                             
-                              <Button
-                                variant="contained"
-                                size="large"
-                                color='error'
-                                onClick={() =>
-                                  handleSubTitleDelete(index, subIndex)
-                                }
-                                >
-                              Delete
-                              </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-                      </>
-                    ) : null}
-                  </div>
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-              </ul>
-              <div   onClick={() => handleSubTitleAdd(index)}
-              className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 ">
-                <span
-                  className="text-blue-700"
-                
-
-                >
-                  <PlusCircleOutlined />
-                  Add Sub Heading
-                </span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="w-full h-fit bg-red ">
-            {/* title textinput */}
-            <TextField
-              required
-              id={`title-${index}`}
-              label="ใส่ชื่อที่ต้องการแก้ไข"
-              inputProps={{ maxLength: 20 }}
-              value={docDatas[index].text}
-              onChange={(e) => {
-                const newTitleComponentData = [...docDatas];
-                newTitleComponentData[index].text = e.target.value;
-                setDocDatas(newTitleComponentData);
-              }}
-              onKeyDown={(e) => handleInputKeyDown(e, index)}
-              ref={wrapperRef}
+            </Link>
+            <MoreOutlined
+              onClick={(e) => showEditOptionModal(e, index)}
+              style={{ cursor: "pointer" }}
             />
           </div>
-        )}
-        {/* edit modal (rename ,delete) */}
-        {docDatas[index].showEditModal === true ? (
-          <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div
-              style={{
-                top: doc.editPosition.top,
-                left: doc.editPosition.left,
-              }}
-              className="z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
-            >
-              <ul>
-                <li
-                  className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                  onClick={() => {
-                    handleEditClick(index);
-                    const updatedTitleModals = [...docDatas];
-                    updatedTitleModals[index].showEditModal = false;
-                    setDocDatas(updatedTitleModals);
-                  }}
-                >
-                  <EditOutlined />
-                  rename
-                </li>
-                <li
-                  onClick={() => {
-                    showDeleteModal(index);
-                    // handleTitleDelete(index);
-                    // set modal to false
-                    const updatedTitleModals = [...docDatas];
-                    updatedTitleModals[index].showEditModal = false;
-                    setDocDatas(updatedTitleModals);
-                  }}
-                  className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                >
-                  <span className="text-[#f93a37]">
-                    <DeleteOutlined />
-                    delete
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <div
-              className=" opacity-25 fixed inset-0 z-40 bg-black"
-              onClick={(e) => hideEditOptionModal(e, index)}
-            ></div>
+
+
+          {doc.subDocuments.map((subDoc, subIndex) => (
+             <div className="flex " key={subIndex}>
+             <span
+               onClick={() =>
+                 NavigationToContent(index, subIndex)
+               }
+               className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
+             >
+               {subDoc.title}
+             </span>
+             <MoreOutlined
+               onClick={(e) =>
+                 showSubEditOptionModal(
+                   e,
+                   index,
+                   subIndex
+                 )
+               }
+               style={{ cursor: "pointer" }}
+             />
+           </div>
+          ))}
+          <div
+            onClick={() => handleSubTitleAdd(docsId)}
+            className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 "
+          >
+            <span className="text-blue-700">
+              <PlusCircleOutlined />
+              Add Sub Heading
+            </span>
           </div>
-        ) : null}
-        {/* show delete modal */}
-        {/* edit modal (rename ,delete) */}
-        {docDatas[index].showDeleteModal === true ? (
-          <>
-            <div
-              className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-              onClick={(e) => hideDeleteModal(e, index)}
-            >
-              <div className="relative w-5/12 my-6 mx-auto">
-                {/*card */}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
-                    <h1
-                      className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
-              text-indigo-900 "
-                    >
-                      <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                        Delete this heading?
-                      </span>
-                    </h1>
-                  </div>
-                  {/*body*/}
-                  {/*footer*/}
-                  <div className=" mx-auto flex items-center justify-end p-6">
-                  <Button
-                    variant="outlined"
-                    size="large"
-                    onClick={(e) => hideDeleteModal(e, index)}
-                    >
-                    Cancel
-                  </Button>
-                   <Button
-                      variant="contained"
-                      size="large"
-                      color='error'
-                      onClick={() => handleTitleDelete(index)}
+        </div>
+      ))}
+
+      <Reorder.Group axis="y" values={docDatas} onReorder={setDocDatas}>
+        {docDatas.map((doc, index) => (
+          <Reorder.Item key={doc.id} value={doc} className="">
+            <div key={index} className="flex justify-between items-center mb-2">
+              {docDatas[index].showInput === false ? (
+                <div className="w-full">
+                  <div className=" flex  justify-between">
+                    <Link to={`/docs/${doc.id}`}>
+                      <span
+                        // onClick={() => NavigationToContent(index)}
+                        className="py-2 flex-1 pl-3 whitespace-nowrap text-lg font-semibold hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
                       >
-                    Delete
-                  </Button>
+                        {doc.title}
+                      </span>
+                    </Link>
+                    <MoreOutlined
+                      onClick={(e) => showEditOptionModal(e, index)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </div>
+                  {/* subtitle list */}
+                  <div className="">
+                    <ul>
+                      <Reorder.Group
+                        axis="y"
+                        values={doc.subTitle}
+                        onReorder={(newSubTitles) =>
+                          handleSubTitleReorder(index, newSubTitles)
+                        }
+                      >
+                        {docDatas[index]?.subTitle?.map(
+                          (subTitle, subIndex) => (
+                            <Reorder.Item
+                              key={subTitle.subId}
+                              value={subTitle}
+                              className=""
+                            >
+                              <div>
+                                {docDatas[index].subTitle[subIndex]
+                                  .showInput === false ? (
+                                  <div className="flex " key={subIndex}>
+                                    <span
+                                      onClick={() =>
+                                        NavigationToContent(index, subIndex)
+                                      }
+                                      className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
+                                    >
+                                      {subTitle.name}
+                                    </span>
+                                    <MoreOutlined
+                                      onClick={(e) =>
+                                        showSubEditOptionModal(
+                                          e,
+                                          index,
+                                          subIndex
+                                        )
+                                      }
+                                      style={{ cursor: "pointer" }}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="w-full h-fit bg-red ">
+                                    {/* Sub title textinput */}
+                                    <TextField
+                                      required
+                                      id={`title-${index}`}
+                                      label="ใส่ชื่อที่ต้องการแก้ไข"
+                                      inputProps={{ maxLength: 20 }}
+                                      value={
+                                        docDatas[index].subTitle[subIndex].text
+                                      }
+                                      onChange={(e) => {
+                                        const newTitleComponentData = [
+                                          ...docDatas,
+                                        ];
+                                        newTitleComponentData[index].subTitle[
+                                          subIndex
+                                        ].text = e.target.value;
+                                        setDocDatas(newTitleComponentData);
+                                      }}
+                                      onKeyDown={(e) =>
+                                        handleSubInputKeyDown(
+                                          e,
+                                          index,
+                                          subIndex
+                                        )
+                                      }
+                                      ref={subwrapperRef}
+                                    />
+                                  </div>
+                                )}
+                                {/* edit modal (rename ,delete) */}
+                                {docDatas[index].subTitle[subIndex].showEdit ===
+                                true ? (
+                                  <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+                                    <div
+                                      style={{
+                                        top: docDatas[index].subTitle[subIndex]
+                                          .editPosition.top,
+                                        left: docDatas[index].subTitle[subIndex]
+                                          .editPosition.left,
+                                      }}
+                                      className="  z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
+                                    >
+                                      <ul>
+                                        <li
+                                          className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                                          onClick={() => {
+                                            handleEditSubTitleClick(
+                                              index,
+                                              subIndex
+                                            );
+                                            const updatedTitleModals = [
+                                              ...docDatas,
+                                            ];
+                                            updatedTitleModals[index].subTitle[
+                                              subIndex
+                                            ].showEdit = false;
+                                            setDocDatas(updatedTitleModals);
+                                          }}
+                                        >
+                                          <EditOutlined />
+                                          rename
+                                        </li>
+                                        <li
+                                          onClick={() => {
+                                            showSubDeleteModal(index, subIndex);
+                                            // handleTitleDelete(index);
+                                            // set modal to false
+                                            const updatedTitleModals = [
+                                              ...docDatas,
+                                            ];
+                                            updatedTitleModals[index].subTitle[
+                                              subIndex
+                                            ].showEdit = false;
+                                            setDocDatas(updatedTitleModals);
+                                          }}
+                                          className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                                        >
+                                          <span className="text-[#f93a37]">
+                                            <DeleteOutlined />
+                                            delete
+                                          </span>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                    <div
+                                      className=" opacity-25 fixed inset-0 z-40 bg-black"
+                                      onClick={(e) =>
+                                        hideSubEditOptionModal(
+                                          e,
+                                          index,
+                                          subIndex
+                                        )
+                                      }
+                                    ></div>
+                                  </div>
+                                ) : null}
+                                {/* show delete modal */}
+                                {/* edit modal (rename ,delete) */}
+                                {docDatas[index].subTitle[subIndex]
+                                  .showDelete === true ? (
+                                  <>
+                                    <div
+                                      className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+                                      onClick={(e) =>
+                                        hideSubDeleteModal(e, index, subIndex)
+                                      }
+                                    >
+                                      <div className="relative w-5/12 my-6 mx-auto">
+                                        {/*card */}
+                                        <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                                          {/*header*/}
+                                          <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
+                                            <h1
+                                              className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
+              text-indigo-900 "
+                                            >
+                                              <span className="mt-5 absolute inset-x-0 top-0 text-center">
+                                                Delete this sub headding ?
+                                              </span>
+                                            </h1>
+                                          </div>
+                                          {/*body*/}
+                                          {/*footer*/}
+                                          <div className=" mx-auto flex items-center justify-end p-6">
+                                            <Button
+                                              variant="outlined"
+                                              size="large"
+                                              onClick={(e) =>
+                                                hideSubDeleteModal(
+                                                  e,
+                                                  index,
+                                                  subIndex
+                                                )
+                                              }
+                                            >
+                                              Cancel
+                                            </Button>
+
+                                            <Button
+                                              variant="contained"
+                                              size="large"
+                                              color="error"
+                                              onClick={() =>
+                                                handleSubTitleDelete(
+                                                  index,
+                                                  subIndex
+                                                )
+                                              }
+                                            >
+                                              Delete
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+                                  </>
+                                ) : null}
+                              </div>
+                            </Reorder.Item>
+                          )
+                        )}
+                      </Reorder.Group>
+                    </ul>
+                    <div
+                      onClick={() => handleSubTitleAdd(index)}
+                      className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 "
+                    >
+                      <span className="text-blue-700">
+                        <PlusCircleOutlined />
+                        Add Sub Heading
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="w-full h-fit bg-red ">
+                  {/* title textinput */}
+                  <TextField
+                    required
+                    id={`title-${index}`}
+                    label="ใส่ชื่อที่ต้องการแก้ไข"
+                    inputProps={{ maxLength: 20 }}
+                    value={docDatas[index].text}
+                    onChange={(e) => {
+                      const newTitleComponentData = [...docDatas];
+                      newTitleComponentData[index].text = e.target.value;
+                      setDocDatas(newTitleComponentData);
+                    }}
+                    onKeyDown={(e) => handleInputKeyDown(e, index)}
+                    ref={wrapperRef}
+                  />
+                </div>
+              )}
+              {/* edit modal (rename ,delete) */}
+              {docDatas[index].showEditModal === true ? (
+                <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+                  <div
+                    style={{
+                      top: doc.editPosition.top,
+                      left: doc.editPosition.left,
+                    }}
+                    className="z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
+                  >
+                    <ul>
+                      <li
+                        className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                        onClick={() => {
+                          handleEditClick(index);
+                          const updatedTitleModals = [...docDatas];
+                          updatedTitleModals[index].showEditModal = false;
+                          setDocDatas(updatedTitleModals);
+                        }}
+                      >
+                        <EditOutlined />
+                        rename
+                      </li>
+                      <li
+                        onClick={() => {
+                          showDeleteModal(index);
+                          // handleTitleDelete(index);
+                          // set modal to false
+                          const updatedTitleModals = [...docDatas];
+                          updatedTitleModals[index].showEditModal = false;
+                          setDocDatas(updatedTitleModals);
+                        }}
+                        className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+                      >
+                        <span className="text-[#f93a37]">
+                          <DeleteOutlined />
+                          delete
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div
+                    className=" opacity-25 fixed inset-0 z-40 bg-black"
+                    onClick={(e) => hideEditOptionModal(e, index)}
+                  ></div>
+                </div>
+              ) : null}
+              {/* show delete modal */}
+              {/* edit modal (rename ,delete) */}
+              {docDatas[index].showDeleteModal === true ? (
+                <>
+                  <div
+                    className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+                    onClick={(e) => hideDeleteModal(e, index)}
+                  >
+                    <div className="relative w-5/12 my-6 mx-auto">
+                      {/*card */}
+                      <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                        {/*header*/}
+                        <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
+                          <h1
+                            className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
+              text-indigo-900 "
+                          >
+                            <span className="mt-5 absolute inset-x-0 top-0 text-center">
+                              Delete this heading?
+                            </span>
+                          </h1>
+                        </div>
+                        {/*body*/}
+                        {/*footer*/}
+                        <div className=" mx-auto flex items-center justify-end p-6">
+                          <Button
+                            variant="outlined"
+                            size="large"
+                            onClick={(e) => hideDeleteModal(e, index)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="contained"
+                            size="large"
+                            color="error"
+                            onClick={() => handleTitleDelete(index)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+                </>
+              ) : null}
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>
-        ) : null}
-      </div>
-      </Reorder.Item>
-    ))}
-       </Reorder.Group>
-       </div>
-       );
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+    </div>
+  );
 };
 
 export default DocList;

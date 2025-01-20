@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('ai_model')
 export class AIModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name:"ai_id"})
   id: number;
 
   @Column()

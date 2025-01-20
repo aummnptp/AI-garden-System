@@ -1,6 +1,6 @@
-import { Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { DocsService } from './docs.service';
-import { CreateDocsDto } from './dto/create-document.dto';
+import { CreateDocsDto, CreateSubDocsDto } from './dto/create-document.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
@@ -19,8 +19,8 @@ export class DocsController {
 
   @Role("admin")
   @UseGuards(JwtGuard,RolesGuard)
-  @Post('/create-docs')
-  async createDocsTitle(createDocsDto: CreateDocsDto) {
+  @Post('/add-title')
+  async createDocsTitle(@Request() req,@Body() createDocsDto: CreateDocsDto) {
     return this.docsService.create(createDocsDto);
   }
   
@@ -32,20 +32,32 @@ export class DocsController {
   }
   @Role("admin")
   @UseGuards(JwtGuard,RolesGuard)
-  @Delete("/delete-docs/docsId")
+  @Delete("/delete-docs/:docsId")
   async deleteDocs(@Param('docsId') docsId:string) {
     return this.docsService.delete(+docsId);
   }
 
   
+  // @UseGuards(JwtGuard) 
+  @Get('/content-docs/:docsId')
+  async getDocsConetent(@Param("docsId") docsId: number) {
+    return this.docsService.findOne(docsId)
+  }
 
-  @Get('/detail-docs/:docsId')
-  async getDocsConetent() {
-
-    // return this.workspacesService.getAllWorkspaceWithMembers(userId);
+ 
+  @Get('/content-docs-by-title/:title')
+  async getDocsByTitle(@Param('title') title: string) {
+    return this.docsService.findByTitle(title);
   }
   
   
+
+  @Role("admin")
+  @UseGuards(JwtGuard,RolesGuard)
+  @Post('/add-subtitle/:docsId')
+  async createSubDocsTitle( @Param('docsId') docsId: number,@Body() createSubDocsDto: CreateSubDocsDto) {
+    return this.docsService.createSubTitle(docsId,createSubDocsDto);
+  }
   
     @Get('/:subDocsId/detail')
     async getSubDocsConetent() {

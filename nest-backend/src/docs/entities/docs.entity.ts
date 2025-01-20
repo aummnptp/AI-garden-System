@@ -2,8 +2,8 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, Primar
 
 @Entity('document')
 export class Document{
-    @PrimaryColumn()
-     @JoinColumn({ name: 'docs_id' })
+
+    @PrimaryGeneratedColumn({ name: 'docs_id' })
     docsId:number;
 
     @Column()
@@ -21,17 +21,17 @@ export class Document{
 
 @Entity('sub_document')
 export class SubDocument {
-  @PrimaryGeneratedColumn()
-   @JoinColumn({ name: 'sub_id' })
+  @PrimaryGeneratedColumn({ name: 'sub_id'} )
   subDocsId: number;
-
+  
   @Column()
   title: string; // หัวข้อย่อย
-
-  @Column('text') 
+  
+  @Column() 
   content: string; // เนื้อหา (Rich Text)
-
+  
   @ManyToOne(() => Document, (document) => document.subDocuments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'docs_id' })
   document: Document; // ต้องตั้งชื่อให้ตรงกับ @OneToMany
 
 }
