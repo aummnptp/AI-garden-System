@@ -48,34 +48,34 @@ interface NotiData {
 }
 function Nav() {
   const [notiData, setNotiData] = useState<NotiData[]>([
-
+    
     // {
     //   id: 1,
     //   firstName: "Putthipong",
     //   lastName: "Chobngam",
     //   workspace: "Project 67",
-
+     
     // },
     // {
     //   id: 2,
     //   firstName: "Apple",
     //   lastName: "Banana",
     //   workspace: "KMITL",
-
+      
     // },
     // {
     //   id: 3,
     //   firstName: "Apple",
     //   lastName: "Banana",
     //   workspace: "KMITL",
-
+      
     // },
+   
 
-
-
+ 
   ]);
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+ 
+  const [isAuthenticated ,setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -87,7 +87,7 @@ function Nav() {
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
-
+    
   };
   const handleClickOutside = (event: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -98,7 +98,7 @@ function Nav() {
   const getInvitationList = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/get-my-invitation`, {
-        withCredentials: true,
+        withCredentials: true, 
       });
       setNotiData(response.data);
     } catch (error) {
@@ -117,47 +117,37 @@ function Nav() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showNotifications]);
-
-  const handleAccept = async (inviteId: number) => {
-    try {
+  
+  const handleAccept = async(inviteId:number) => {
+    try{
       const acceptRequest = await axios.post(
         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/accept-invite/${inviteId}`,
         {}, // Body (ว่างเปล่าในกรณีนี้)
         { withCredentials: true } // Options
       );
-      if (acceptRequest.status >= 200 && acceptRequest.status < 300) {
+        if (acceptRequest.status>= 200 && acceptRequest.status < 300) {
+          
+          getInvitationList();
+        }else{
+          console.error( acceptRequest);
+        }    
 
-        getInvitationList();
-      } else {
-        console.error(acceptRequest);
-      }
-
-    } catch (error) { console.error(error); }
+    }catch(error){console.error( error);}
   };
 
-  const handleReject = async (inviteId: number) => {
+  const handleReject = async(inviteId:number) => {
     alert("Reject")
   }
 
   const checkLoginStatus = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/profile`, {
-        withCredentials: true,
+        withCredentials: true, 
       });
-      console.log('Response Data:', response.data);
-      console.log('userId:', response.data.userId, 'Type:', typeof response.data.userId);
-
       setUser(response.data);
-
-      // ตรวจสอบว่ามี userId หรือไม่
-      if (isNaN(response.data.userId)) {
-        throw new Error('Invalid userId: userId is NaN');
-      }
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Not logged in or session expired', error);
-
-      console.log(import.meta.env.VITE_NEST_BACKEND_API_URL);
       setIsAuthenticated(false);
     }
   };
@@ -169,9 +159,9 @@ function Nav() {
     getInvitationList();
   }, []);
 
+ 
 
-
-
+  
 
   const handleLogout = async () => {
     document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
@@ -180,24 +170,24 @@ function Nav() {
   return (
     <nav className="bg-white   w-full sticky z-20 top-0 start-0 border-b border-gray-200 ">
       <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-        <Link to={`/`} className="">
-          <a
-
-            className="flex items-center space-x-3 rtl:space-x-reverse md:order-2"
-          >
-            <img
-              className="w-12 h-12 rounded-full  "
-              src="/images/logo/IMG_3713.png"
-            />
-            <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap ">
-              AI Garden System
-            </span>
-          </a>
+      <Link to={`/`} className="">
+        <a
+         
+          className="flex items-center space-x-3 rtl:space-x-reverse md:order-2"
+        >
+          <img
+            className="w-12 h-12 rounded-full  "
+            src="/images/logo/IMG_3713.png"
+          />
+          <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap ">
+            AI Garden System
+          </span>
+        </a>
         </Link>
-
-
-
-
+        
+        
+        
+        
 
         <div className="flex md:order-3 space-x2 md:space-x-0 rtl:space-x-reverse">
           {isAuthenticated ? (
@@ -209,11 +199,11 @@ function Nav() {
                 <i className="bi bi-bell-fill"></i>
                 <span className="ml-2">Notificaton</span>
                 {notiData.length > 0 && (
-                  <span className="absolute top-3 right-0 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform translate-x-1/2 -translate-y-1/2">
-                    {notiData.length}
-                  </span>
-                )}
-              </div>
+            <span className="absolute top-3 right-0 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform translate-x-1/2 -translate-y-1/2">
+              {notiData.length}
+            </span>
+          )}
+          </div>
               {showNotifications && (
                 <div
                   ref={modalRef}
@@ -226,117 +216,117 @@ function Nav() {
                   <div className="p-4 border-b ">Notificaton</div>
                   <div className="max-h-64 overflow-y-auto">
                     {/* noti map here */}
-                    {notiData.length > 0 ? (
-                      <div className="max-h-64 overflow-y-auto">
-                        {notiData.map((noti, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center w-fit ml-3 p-2 bg-rd"
-                          >
-                            <img
-                              className="w-10 h-10 rounded-full border-2"
-                              src={noti.invitedBy.picture || "/images/homeImage/profile.webp"}
-                              alt="InviterProfile"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null; // ป้องกัน loop error
-                                e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
-                              }}
-                            />
-                            <div className="ml-2">
-                              <span className="text-black text-lg font-medium">
-                                {noti.invitedBy.name}
-                              </span>
-                              <br />
-                              <span className="text-black text-base font-normal">
-                                {" "}ได้เชิญคุณเข้าร่วม
-                              </span>
-                              <span className="text-black text-lg font-medium">
-                                {" "}{noti.workspace.name}
-                              </span>
-                              <div className="w-full">
-                                <Button
-                                  onClick={() => handleAccept(noti.inviteId)}
-                                  variant="contained"
-                                  color="success"
-                                  style={{ marginRight: '8px' }}
-                                  size="small"
-                                >
-                                  ยอมรับ
-                                </Button>
-                                <Button
-                                  onClick={() => handleReject(noti.inviteId)}
-                                  variant="outlined" color="error" size="small">ปฎิเสธ</Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-4 text-center text-gray-500">
-                        ไม่มีการแจ้งเตือน
-                      </div>
-                    )}
+{notiData.length > 0 ? (
+    <div className="max-h-64 overflow-y-auto">
+      {notiData.map((noti, index) => (
+        <div
+          key={index}
+          className="flex items-center w-fit ml-3 p-2 bg-rd"
+        >
+          <img
+            className="w-10 h-10 rounded-full border-2"
+            src={noti.invitedBy.picture || "/images/homeImage/profile.webp"}
+            alt="InviterProfile"
+            onError={(e) => {
+              e.currentTarget.onerror = null; // ป้องกัน loop error
+              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+            }}
+          />
+          <div className="ml-2">
+            <span className="text-black text-lg font-medium">
+              {noti.invitedBy.name}
+            </span>
+            <br />
+            <span className="text-black text-base font-normal">
+              {" "}ได้เชิญคุณเข้าร่วม
+            </span>
+            <span className="text-black text-lg font-medium">
+              {" "}{noti.workspace.name}
+            </span>
+            <div className="w-full">
+              <Button
+                onClick={() => handleAccept(noti.inviteId)}
+                variant="contained"
+                color="success"
+                style={{ marginRight: '8px' }}
+                size="small"
+              >
+                ยอมรับ
+              </Button>
+              <Button 
+               onClick={() => handleReject(noti.inviteId)}
+              variant="outlined" color="error" size="small">ปฎิเสธ</Button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="p-4 text-center text-gray-500">
+      ไม่มีการแจ้งเตือน
+    </div>
+  )}
                   </div>
                 </div>
               )}
-              <div className="relative">
-                {/* Button to toggle menu */}
-                <div
-                  className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer rounded-lg"
-                  onClick={toggleMenu}
-                >
-                  <img
-                    className="w-10 h-10 rounded-full border-2"
-                    src={user.picture || "/images/homeImage/profile.webp"}
-                    alt="User"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null; // ป้องกัน loop error
-                      e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
-                    }}
-                  />
-                  <div className="ml-2">
-                    <span className="text-black text-lg font-normal">{user.name}</span>
-                  </div>
-                </div>
+         <div className="relative">
+      {/* Button to toggle menu */}
+      <div
+        className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer rounded-lg"
+        onClick={toggleMenu}
+      >
+                <img
+            className="w-10 h-10 rounded-full border-2"
+            src={user.picture || "/images/homeImage/profile.webp"}
+            alt="User"
+            onError={(e) => {
+              e.currentTarget.onerror = null; // ป้องกัน loop error
+              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+            }}
+          />
+        <div className="ml-2">
+          <span className="text-black text-lg font-normal">{user.name}</span>
+        </div>
+      </div>
 
-                {/* Dropdown menu */}
-                {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-fit bg-white shadow-lg rounded-lg p-3">
-                    <div className="text-gray-400 text-sm">
-                      {user.email}
-                    </div>
-                    <div className="mt-2 border-t border-gray-200">
-                      <button
-                        className="w-full flex items-center justify-between text-gray-700 hover:bg-gray-100 px-2 py-1 rounded-lg mt-2"
-                        onClick={handleLogout}
-                      >
-                        <span>Logout</span>
-                        <span className="text-xl">↩</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+      {/* Dropdown menu */}
+      {isProfileOpen && (
+        <div className="absolute right-0 mt-2 w-fit bg-white shadow-lg rounded-lg p-3">
+          <div className="text-gray-400 text-sm">
+            {user.email}
+          </div>
+          <div className="mt-2 border-t border-gray-200">
+            <button
+              className="w-full flex items-center justify-between text-gray-700 hover:bg-gray-100 px-2 py-1 rounded-lg mt-2"
+              onClick={handleLogout}
+            >
+              <span>Logout</span>
+              <span className="text-xl">↩</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
             </div>
           ) : (
+      
+  
+              <Button
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                  href={`${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`}
 
-
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
-              }}
-              href={`${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`}
-
-
-            >
-              Sign In
-            </Button>
-
+          
+                >
+                Sign In
+                </Button>
+          
           )}
         </div>
         <div
@@ -345,44 +335,44 @@ function Nav() {
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
             <li>
-              <Link to={`/workspaces`} className="">
-                <a
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-                >
-                  Workspace
-                </a>
+            <Link to={`/workspaces`} className="">
+              <a
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+              >
+                Workspace
+              </a>
               </Link>
             </li>
             <li>
-              <Link to={`/docs`} className="">
-                <a
+            <Link to={`/docs`} className="">
+              <a
 
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-                >
-                  Document
-                </a>
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+              >
+                Document
+              </a>
               </Link>
             </li>
             <li>
-              <Link to={`/ai-list`}>
-                <a
-                  href="/ai-list"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+              <Link  to={`/ai-list`}>
+              <a
+                href="/ai-list"
+                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
                 >
-                  AI List
-                </a>
+                AI List
+              </a>
               </Link>
             </li>
             <li>
-              <Link to={`/admin/dashboard`} className="">
-                <a
-
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-                >
-                  Admin Console
-                </a>
-              </Link>
-            </li>
+            <Link to={`/admin/dashboard`} className="">
+          <a
+          
+            className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+          >
+            Admin Console
+          </a>
+          </Link>
+        </li>
           </ul>
         </div>
       </div>

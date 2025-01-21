@@ -56,7 +56,9 @@ const UserListTable = () => {
   const [orderBy, setOrderBy] = useState<keyof Data>('date');
 
   const fetchUserData = () => {
-    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/`)
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/`, {
+      withCredentials: true, 
+    })
       .then(response => {
         setRows(response.data);
       })

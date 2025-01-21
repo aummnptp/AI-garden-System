@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MiniFooter from '../../components/MiniFooter'
 import AdminSidebar from '../../components/AdminSidebar'
 import { Link, useParams } from 'react-router-dom';
-import AiListTable from '../../components/table/AiListTable';
+import AiApprovedListTable from '../../components/table/AiApprovedListTable';
 import axios from 'axios';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import WorkspaceCard from '../../components/card/WorkspaceCard';
@@ -28,7 +28,9 @@ const UserDetailPage = () => {
   const [myWorkspace, setMyWorkspace] = useState([]);
   useEffect(() => {
     if (userId) {
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/${userId}`)
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/${userId}`, {
+        withCredentials: true, 
+      })
         .then(response => {
           setUserData(response.data);
         })
@@ -41,7 +43,9 @@ const UserDetailPage = () => {
   useEffect(() => {
 
     axios
-      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`)
+      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`, {
+        withCredentials: true, 
+      })
       .then((response) => {
         console.log('Workspace data:', response.data); // ตรวจสอบข้อมูลที่ได้
         setMyWorkspace(response.data);
@@ -124,7 +128,7 @@ const UserDetailPage = () => {
                     className="w-6/12 h-fit my-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     placeholder="ค้นหาAI"
                   />
-                  <AiListTable userId={userId} />
+                  <AiApprovedListTable userId={userId} />
                 </div>
               ) : userTab === "Workspace" ? (
                 <>
