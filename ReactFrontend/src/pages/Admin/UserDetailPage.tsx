@@ -39,16 +39,17 @@ const UserDetailPage = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (userData?.email) {
-      axios
-        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`)
-        .then((response) => {
-          setMyWorkspace(response.data);
-        })
-        .catch((error) => {
-          console.error('There was an error fetching the workspace data!', error);
-        });
-    }
+
+    axios
+      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`)
+      .then((response) => {
+        console.log('Workspace data:', response.data); // ตรวจสอบข้อมูลที่ได้
+        setMyWorkspace(response.data);
+      })
+      .catch((error) => {
+        console.error('There was an error fetching the workspace data!', error);
+      });
+
   }, [userData]);
   return (
     <>
@@ -129,17 +130,24 @@ const UserDetailPage = () => {
                 <>
 
                   {/* My wokspace Card group */}
-                  <div className={` grid grid-cols-3 pb-8 pt-2 `}>
-                    {myWorkspace.map((data, index) => (
-                      <div key={index} className={`mb-4 `}>
 
+                  <div className={` grid grid-cols-3 pb-8 pt-2 `}>
+                    {Array.isArray(myWorkspace) && myWorkspace.map((data, index) => (
+                      <div key={index} className={`mb-4 `}>
                         <Link to={`/workspaces/${data.id}/project-list`}>
-                          <WorkspaceCard id={data.id} name={data.name} desc={data.description}
-                            members={data.members} updatedAt={data.updatedAt} createAt={data.createdAt} />
+                          <WorkspaceCard
+                            id={data.id}
+                            name={data.name}
+                            desc={data.description}
+                            members={data.members}
+                            updatedAt={data.updatedAt}
+                            createAt={data.createdAt}
+                          />
                         </Link>
                       </div>
                     ))}
                   </div>
+
                 </>
 
 

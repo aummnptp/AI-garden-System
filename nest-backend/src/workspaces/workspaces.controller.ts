@@ -49,6 +49,10 @@ export class WorkspacesController {
   }
   
   
+  @Get(':userId')
+  findByUserId(@Param('userId') userId: string) {
+    return this.workspacesService.findOne(+userId);
+  }
 
   
 

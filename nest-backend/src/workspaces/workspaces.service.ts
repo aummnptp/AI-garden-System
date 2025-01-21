@@ -46,6 +46,10 @@ export class WorkspacesService {
     return this.workspaceRepository.find();
   }
 
+  findByUserId(userId: number): Promise<Workspace[]> {
+    return this.workspaceRepository.find({ where: { createById: userId }});
+  }
+
   // อ่าน workspace ตาม id
   findOne(workspaceId: number): Promise<Workspace | null> {
     return this.workspaceRepository.findOneBy({ workspaceId: workspaceId });

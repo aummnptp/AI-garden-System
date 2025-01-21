@@ -15,11 +15,11 @@ export class AiPermissionController {
   async addAiPermission(@Req() req, @Body() data: CreateAiPermissionDto) {
     console.log('Request User:', req.user); // Debug ดูว่า `req.user` มีข้อมูล `id` หรือไม่
     console.log('AI ID (from request body):', data.ai_id);
-    if (!req.user || !req.user.id) {
+    if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
     }
   
-    return this.aiPermissionService.create(data, req.user.id);
+    return this.aiPermissionService.create(data, req.user.userId);
   }
   
 

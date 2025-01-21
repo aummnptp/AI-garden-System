@@ -67,7 +67,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`http://localhost:3000/ai-models/approved/${userId}`) // ดึงข้อมูล AI ที่เกี่ยวข้องกับ userId
+        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/approved/${userId}`) // ดึงข้อมูล AI ที่เกี่ยวข้องกับ userId
         .then((response) => {
           setRows(response.data); // response.data ควรเป็น array ของ AI
         })
