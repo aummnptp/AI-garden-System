@@ -3,172 +3,96 @@ import { Reorder } from "framer-motion";
 
 import EditableInput from "./EditableInput";
 import EditModal from "./EditModal";
-import DeleteModal from "./DeleteModal";
-import { DeleteOutlined, EditOutlined, MoreOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import DeleteDocModal from "./modal/DeleteDocModal";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MoreOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import SubTitleList from "./SubList";
-import { Button, TextField } from "@mui/material";
+import { Button, Menu, MenuItem, TextField } from "@mui/material";
 import axios from "axios";
-import { Link } from "react-router-dom";
-
-// type Props = {
-//   doc: DocData;
-//   index: number;
-//   docDatas: DocData[];
-//   setDocDatas: React.Dispatch<React.SetStateAction<DocData[]>>;
-//   NavigationToContent: (index: number, subIndex?: number) => void;
-// };
+import { Link, useParams } from "react-router-dom";
+import SubDocList from "./subDocList";
+import DeleteSubDocModal from "./modal/DeleteSubDocModal";
+import { updateDocsTitle, updateSubDocsTitle } from "../../api/services/DocsService";
 
 interface SubTitle {
-    subId:number
-    name: string;
-    contentData:string;
-    showEdit: boolean;
-    editPosition: { top: number; left: number }; 
-    showInput: boolean;
-    showDelete: boolean;
-    text:string;
-  }
-  
-  interface DocData {
-    id:number
+  subId: string;
+  name: string;
+  contentData: string;
+  showEdit: boolean;
+  editPosition: { top: number; left: number };
+  showInput: boolean;
+  showDelete: boolean;
+  text: string;
+}
+
+interface DocData {
+  docsId: number;
+  title: string;
+  contentData: string;
+  showEditModal: boolean;
+  editPosition: { top: number; left: number };
+  showInput: boolean;
+  showDeleteModal: boolean;
+  text: string;
+  subTitle: SubTitle[];
+}
+
+type EditAtIndexType = {
+  index: number;
+  subIndex: number | null;
+};
+
+interface Props {
+  docs: {
+    docsId: number;
     title: string;
-    contentData:string;
-    showEditModal: boolean;
-    editPosition: { top: number; left: number }; 
-    showInput: boolean;
-    showDeleteModal:boolean;
-    text: string;
-    subTitle: SubTitle[];
-  }
-  
-  type EditAtIndexType = {
-    index: number;
-    subIndex: number | null;
-  };
+    // slug: string;
+  }[];
+}
 
-  interface Props {
-    docs: {
-      id: number;
-      title: string;
-      // slug: string;
-    }[];
-  }
+type DocListProps = {
+  // docs: any[]; // ประเภทของ `docs` ที่ส่งมา
+  // onDeleteDoc: (docsId: string) => void; // ฟังก์ชันสำหรับลบหัวข้อใหญ่
+  // onDeleteSubDoc: (subDocsId: string) => void; // ฟังก์ชันสำหรับลบหัวข้อย่อย
+  // onchangeDocTitle: (docsId: string, title: string) => void;
+  // patchDocsTitle: (docsId: string, title: string) => void;
+  // addTitle: () => void;
+  // addSubTitle: (docsId: string) => void;
+};
+const DocList: React.FC<DocListProps> = ({
+  // docs,
+  // onDeleteDoc,
+  // onDeleteSubDoc,
+  // addTitle,
+  // addSubTitle,
+  // onchangeDocTitle,
+  // patchDocsTitle,
+}) => {
+   let { docsId, subDocsId } = useParams();
+  const [docs, setDocs] = useState<DocData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const DocList: React.FC<Props> = ({ docs }) => {
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteSubModalOpen, setDeleteSubModalOpen] = useState(false);
+  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+  const [selectedSubDocId, setSelectedSubDocId] = useState<string | null>(null);
+  // const [docs, setDocs] = useState([])
+  const [docDatas, setDocDatas] = useState<DocData[]>([]);
 
-// const [docs, setDocs] = useState([])
-  const [docDatas, setDocDatas] = useState<DocData[]>([
-    {
-      id: 1,
-      title: "AI Garden System",
-      contentData: `
-<p><span style="color: #353d81;"><strong><span style="font-size: 36pt;">Welcome to AI Garden System</span></strong></span></p>
-<p><span style="font-size: 18pt;">ในแต่ละส่วนของหน้านี้จะเป็นคำอธิบายเกี่ยวกับdocument ที่จะช่วยให้ข้อมูลส่วนต่างๆของเว็บไซต์<br>สามารถกดเลือกแต่ละหัวข้อทางsidebar menu เพื่อดูข้อมูลแต่ละหัวข้อ<br><br></span></p>
-<p><span style="color: #353d81;">&nbsp;</span></p>
-<p>Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'sLorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry'sLorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's&nbsp;</p>
-      `,
-      showEditModal: false,
-      editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-      showInput: false,
-      showDeleteModal: false,
-      text: "",
-      subTitle: [
-        {
-          subId: 1,
-          name: "Get Started",
-          contentData: "get start content here",
-          showEdit: false,
-          editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-          showInput: false,
-          showDelete: false,
-          text: ``,
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Workspaces",
-      contentData: "Workspaces content here",
-      showEditModal: false,
-      editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-
-      showInput: false,
-      showDeleteModal: false,
-      text: "",
-      subTitle: [],
-    },
-  ]);
-
-
-
-  
-  // ข้อมูลของ Title Manage component เช่น โชว์ edit โชว์ input โชว์ delete
-
- 
-
-  // Edit Title Function handler
-  // axios
-  // .post(
-  //   `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
-  //   { name: name, description: description },
-  //   { withCredentials: true }
-  // )
-  // .then(() => {
-  //   setName('');
-  //   setDescription('');
-  //   setShowModal(false); // ปิด Dialog
-  //   fetchWorkspaces(); // ดึงข้อมูล workspace ใหม่
-  // })
-  // .catch((error) => {
-  //   console.error('Error creating workspace:', error);
-  // });
-  // const handleTitleAdd = () => {
-  //   const maxId =
-  //     docDatas.length > 0 ? Math.max(...docDatas.map((doc) => doc.id)) : 0;
-  //   const newId = maxId + 1;
-  //   setDocDatas([
-  //     ...docDatas,
-  //     {
-  //       id: newId,
-  //       title: "New Heading",
-  //       contentData: "",
-  //       showEditModal: false,
-  //       editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-  //       showInput: false,
-  //       showDeleteModal: false,
-  //       text: "",
-  //       subTitle: [],
-  //     },
-  //   ]);
-  // };
-  const handleTitleAdd = async () => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-title`,
-        {
-          title: "New Heading",
-          content: "",
-        },
-        { withCredentials: true }
-      );
-  
-      console.log("Document added successfully:", response.data);
-      // Add any additional logic here if necessary (e.g., updating UI)
-    } catch (error) {
-      console.error("Error creating document:", error.message || error);
-      // Optional: Add user notification logic (e.g., toast)
-    }
-  };
   const handleTitleDelete = (index: number) => {
     const docDataList = [...docDatas];
-    
+
     // ลบข้อมูลที่ตำแหน่งที่กำหนด
     docDataList.splice(index, 1);
     setDocDatas(docDataList);
-  
+
     // ตรวจสอบว่า index ตรงกับข้อมูลใน editAtIndex หรือไม่
-    if (editAtIndex.some(item => item.index === index)) {
-      NavigationToContent(0);
+    if (editAtIndex.some((item) => item.index === index)) {
+      // NavigationToContent(0);
     }
   };
   // 11
@@ -196,43 +120,25 @@ const DocList: React.FC<Props> = ({ docs }) => {
     setDocDatas(updatedTitles);
   };
 
-  const handleInputKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key === "Enter") {
-      handleTitleSave(index);
-    }
-  };
-  const handleSubInputKeyDown = (
-    event: React.KeyboardEvent,
-    index: number,
-    subIndex: number
+  const showEditOptionModal = (
+    e: React.MouseEvent<HTMLSpanElement>,
+    index: number
   ) => {
-    if (event.key === "Enter") {
-      handleSubTitleSave(index, subIndex);
-    }
-  };
-
-
-
-  // console.log(position)
-  const showEditOptionModal = (e: React.MouseEvent<HTMLSpanElement>, index: number) => {
     // ใช้ rect เพื่ออัพเดต editPosition
-    if(showTextEditor === false){
- 
-        const rect = e.currentTarget.getBoundingClientRect();
+    if (showTextEditor === false) {
+      const rect = e.currentTarget.getBoundingClientRect();
 
-        const updatedDocDatas = [...docDatas];
-        updatedDocDatas[index].editPosition = {
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX
-        };
-        updatedDocDatas[index].showEditModal = true;
-        setDocDatas(updatedDocDatas);
-    }
-    else{
-      setShowWarningEdit(true)
+      const updatedDocDatas = [...docDatas];
+      updatedDocDatas[index].editPosition = {
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+      };
+      updatedDocDatas[index].showEditModal = true;
+      setDocDatas(updatedDocDatas);
+    } else {
+      setShowWarningEdit(true);
     }
   };
-
 
   const hideEditOptionModal = (
     e: React.MouseEvent<HTMLElement>,
@@ -245,8 +151,11 @@ const DocList: React.FC<Props> = ({ docs }) => {
     }
   };
 
-
-  const showSubEditOptionModal = (e: React.MouseEvent<HTMLSpanElement>,index: number,subIndex: number) => {
+  const showSubEditOptionModal = (
+    e: React.MouseEvent<HTMLSpanElement>,
+    index: number,
+    subIndex: number
+  ) => {
     // show title setting modal
     if (showTextEditor === false) {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -283,12 +192,10 @@ const DocList: React.FC<Props> = ({ docs }) => {
     setDocDatas(UpdatedTitleModals);
   };
 
-  const hideDeleteModal = (e: React.MouseEvent<HTMLElement>, index: number) => {
-    if (e.target === e.currentTarget) {
-      const UpdatedTitleModals = [...docDatas];
-      UpdatedTitleModals[index].showDeleteModal = false;
-      setDocDatas(UpdatedTitleModals);
-    }
+  const hideDeleteModal = (index: number) => {
+    const UpdatedTitleModals = [...docDatas];
+    UpdatedTitleModals[index].showDeleteModal = false;
+    setDocDatas(UpdatedTitleModals);
   };
   const showSubDeleteModal = (index: number, subIndex: number) => {
     // show title setting modal
@@ -345,57 +252,9 @@ const DocList: React.FC<Props> = ({ docs }) => {
     };
   }, [docDatas]);
 
-  // sub title handle here
-  // const handleSubTitleAdd = (index: number) => {
-  //   const updatedDocDatas = [...docDatas];
-
-  //   if (!updatedDocDatas[index].subTitle) {
-  //     updatedDocDatas[index].subTitle = [];
-  //   }
-
-  //   const subTitles = updatedDocDatas[index].subTitle;
-  //   const maxSubId =
-  //     subTitles.length > 0 ? Math.max(...subTitles.map((sub) => sub.subId)) : 0;
-  //   const newSubId = maxSubId + 1;
-  //   // check ข้อมูลใน title component
-  //   updatedDocDatas[index].subTitle.push({
-  //     subId: newSubId,
-  //     name: "New Subtitle",
-  //     contentData: "",
-  //     showEdit: false,
-  //     editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-
-  //     showInput: false,
-  //     showDelete: false,
-  //     text: "",
-  //   });
-
-  //   setDocDatas(updatedDocDatas);
-  // };
-
-  const handleSubTitleAdd = async (docsId:number) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-subtitle/${docsId}`,
-        {
-          title: "New Sub Heading",
-          content: "",
-        },
-        { withCredentials: true }
-      );
-  
-      console.log("SubDocument added successfully:", response.data);
-      // Add any additional logic here if necessary (e.g., updating UI)
-    } catch (error) {
-      console.error("Error creating sub document:", error.message || error);
-      // Optional: Add user notification logic (e.g., toast)
-    }
-  };
-
   const handleSubTitleDelete = (docIndex: number, subIndex: number) => {
-        // ตรวจสอบว่า docIndex และ subIndex ตรงกับข้อมูลใน editAtIndex หรือไม่
+    // ตรวจสอบว่า docIndex และ subIndex ตรงกับข้อมูลใน editAtIndex หรือไม่
 
-  
     const updatedDocDatas = [...docDatas];
     if (updatedDocDatas[docIndex] && updatedDocDatas[docIndex].subTitle) {
       updatedDocDatas[docIndex].subTitle.splice(subIndex, 1);
@@ -404,10 +263,12 @@ const DocList: React.FC<Props> = ({ docs }) => {
       }
       setDocDatas(updatedDocDatas);
     }
-      if (editAtIndex.some(item => item.index === docIndex && item.subIndex === subIndex)) {
-    NavigationToContent(0);
-  }
- 
+    if (
+      editAtIndex.some(
+        (item) => item.index === docIndex && item.subIndex === subIndex
+      )
+    ) {
+    }
   };
   const handleSubTitleSave = (index: number, subIndex: number) => {
     // Create copies of the state arrays
@@ -438,121 +299,261 @@ const DocList: React.FC<Props> = ({ docs }) => {
     }
   };
 
-  // editor here
-  const [value, setValue] = useState(docDatas[0].contentData);
-  const [text, setText] = useState("");
   const [showTextEditor, setShowTextEditor] = useState(false);
-  const [showSaveEditorModal, setShowSaveEditorModal] = useState(false);
-  // const [currentHeadingId, setCurrentHeadingId] = useState(docDatas[0].id);
-  const [showWarningEdit,setShowWarningEdit] = useState(false);
-  const [editAtIndex, setEditAtIndex] = useState<EditAtIndexType[]>([{ index: 0, subIndex: null }]);
-  const [currentPageData, setCurrentPageData] = useState(
-    docDatas[0].contentData
-  );
-  const editorRef = useRef(null);
-  const handleEditorChange = (newValue: string, editor: any) => {
-    setValue(newValue);
-    setText(editor.getContent());
-  };
-  // console.log(value)
+  const [showWarningEdit, setShowWarningEdit] = useState(false);
+  const [editAtIndex, setEditAtIndex] = useState<EditAtIndexType[]>([
+    { index: 0, subIndex: null },
+  ]);
 
-// แก้ไขตัว content ด้วย editorใน เว็บ
-const EditContent = (index: number, subIndex: number | null) => {
-    if (subIndex !== null) {
-      setCurrentPageData(docDatas[index].subTitle[subIndex].contentData);
-      setValue(docDatas[index].subTitle[subIndex].contentData)
-    } else {
-      setCurrentPageData(docDatas[index].contentData);
-      setValue(docDatas[index].contentData)
-    }
-
-    setShowTextEditor(true);
+  // drag n drop
+  const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
+    const updatedDocDatas = [...docDatas];
+    updatedDocDatas[index].subTitle = newSubTitles;
+    setDocDatas(updatedDocDatas);
   };
 
+  const [headingOptionModal, setHeadingOptionModal] = React.useState<{
+    [key: string]: HTMLElement | null;
+  }>({});
 
-
-
-  const SaveEditContent = (index: number, subIndex: number | null) => {
-    if (subIndex !== null) {
-      setCurrentPageData(text);
-      const    updatedDocDatas = [...docDatas];
-      updatedDocDatas[index].subTitle[subIndex].contentData  = text
-      setDocDatas(updatedDocDatas)
-    } else {
-      setCurrentPageData(text);
-      const    updatedDocDatas = [...docDatas];
-      updatedDocDatas[index].contentData  = text
-      setDocDatas(updatedDocDatas)
-    }
-    setShowTextEditor(false);
-    setShowSaveEditorModal(false);
-  };
-
-
-  const NavigationToContent = (index: number, subIndex?: number) => {
-    if(showTextEditor === false){
-      if (subIndex !== undefined) {
-        const subTitle = docDatas[index]?.subTitle[subIndex];
-        if (subTitle) {
-          const ContentData = [...docDatas];
-          setCurrentPageData(ContentData[index].subTitle[subIndex].contentData);
-          setEditAtIndex([{ index: index, subIndex: subIndex }]);
-          // setEditAtIndex(ContentData[index].subTitle[subIndex].contentData);
-          // Perform navigation or search with subTitle.contentData
-        }
-      } else {
-        const doc = docDatas[index];
-        if (doc) {
-          const ContentData = [...docDatas];
-          setCurrentPageData(ContentData[index].contentData);
-          setEditAtIndex([{ index: index, subIndex: null }]);
-
-          // Perform navigation or search with doc.contentData
-        }
-      }
-    }
-    else{
-      setShowWarningEdit(true)
-
-    }
-  };
-  const AbandonEditing= () => {
-    setShowWarningEdit(false)
-    setShowTextEditor(false)
-
-  }
-  const hideWarningModal = (
-    e: React.MouseEvent<HTMLElement>,
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    docId: string
   ) => {
-    if (e.target === e.currentTarget) {
+    setHeadingOptionModal((prev) => ({
+      ...prev,
+      [docId]: event.currentTarget,
+    }));
+  };
 
-      setShowWarningEdit(false);
+  const handleClose = (docId: string) => {
+    setHeadingOptionModal((prev) => ({
+      ...prev,
+      [docId]: null,
+    }));
+  };
+
+  // confirm and send to docpage
+  const handleHeadingDelete = () => {
+    if (selectedDocId) {
+      handleDeleteDoc(selectedDocId); // เรียกฟังก์ชันลบจาก props
+      setDeleteModalOpen(false);
     }
   };
- 
 
-    const handleSaveEditorModal = () => {
-      setShowSaveEditorModal(true);
-    };
-    const hideSaveEditorModal = (e: React.MouseEvent<HTMLElement>) => {
-      if (e.target === e.currentTarget) {
-        setShowSaveEditorModal(false);
+  // open Modal
+  const OpenSubDocDeleteModal = (subDocsId: string) => {
+    setSelectedSubDocId(subDocsId); // กำหนด subDocId ที่เลือก
+    setDeleteSubModalOpen(true); // เปิด Modal
+  };
+
+  const handleSubHeadingDelete = () => {
+    if (selectedSubDocId) {
+      // ลบ SubDocument
+      handleDeleteSubDoc(selectedSubDocId);
+      setDeleteSubModalOpen(false); // ปิด Modal
+    }
+  };
+
   
+
+  const [renameDocId, setRenameDocId] = useState(null);
+
+
+  
+
+  
+  const patchDocsTitle  = async (docsId, newTitle) => {
+    try {
+      const updatedDoc = await updateDocsTitle(docsId, newTitle);
+      console.log("Document renamed:", updatedDoc);
+    } catch (error) {
+      console.error("Failed to rename document:", error);
+    } finally {
+
+    }
+    };
+  const handleSubInputKeyDown = (
+    event: React.KeyboardEvent,
+    subDocsId: number
+  ) => {
+    if (event.key === "Enter") {
+      alert(subDocsId);
+      setRenameDocId(null);
+    }
+  };
+
+
+   const fetchData = async () => {
+      try {
+        let docsResponse;
+        docsResponse = await axios.get(
+          `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
+          {
+            withCredentials: true,
+          }
+        );
+        setDocs(docsResponse.data);
+       
+      } catch (error) {
+        console.error("Error fetching data!", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchData();
+    }, [docsId, subDocsId]);
+  
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
+    const handleTitleAdd = async () => {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-title`,
+          {
+            title: "New Heading",
+            content: "",
+          },
+          { withCredentials: true }
+        );
+  
+        console.log("Document added successfully:", response.data);
+        fetchData();
+        // Add any additional logic here if necessary (e.g., updating UI)
+      } catch (error) {
+        console.error("Error creating document:", error.message || error);
+        // Optional: Add user notification logic (e.g., toast)
       }
     };
 
-// drag n drop
-const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
-  const updatedDocDatas = [...docDatas];
-  updatedDocDatas[index].subTitle = newSubTitles;
-  setDocDatas(updatedDocDatas);
-};
+    const handleSubTitleAdd = async (docsId: number) => {
+        try {
+          const response = await axios.post(
+            `${
+              import.meta.env.VITE_NEST_BACKEND_API_URL
+            }/docs/add-subtitle/${docsId}`,
+            {
+              title: "New Sub Heading",
+              content: "",
+            },
+            { withCredentials: true }
+          );
+    
+          console.log("SubDocument added successfully:", response.data);
+          fetchData();
+        } catch (error) {
+          console.error("Error creating sub document:", error.message || error);
+        }
+      };
+    
+        const handleDeleteDoc = async (docsId: string) => {
+          try {
+            // เรียก API ลบ SubDocument
+            const response = await axios.delete(
+              `${
+                import.meta.env.VITE_NEST_BACKEND_API_URL
+              }/docs/delete-docs/${docsId}`,
+              { withCredentials: true } // ส่ง Cookies หากจำเป็น
+            );
+      
+            if (response.status === 200) {
+              console.log("SubDocument deleted successfully:", response.data);
+              // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
+              fetchData();
+              // alert('SubDocument deleted successfully');
+            }
+          } catch (error) {
+            console.error("Error deleting SubDocument:", error);
+            alert("Failed to delete Document. Please try again.");
+          }
+        };
 
-// const [items, setItems] = useState([0, 1, 2, 3])
+        const handleDeleteSubDoc = async (subDocsId: string) => {
+            try {
+              // เรียก API ลบ SubDocument
+              const response = await axios.delete(
+                `${
+                  import.meta.env.VITE_NEST_BACKEND_API_URL
+                }/docs/delete-subdocs/${subDocsId}`,
+                { withCredentials: true } // ส่ง Cookies หากจำเป็น
+              );
+        
+              if (response.status === 200) {
+                console.log("SubDocument deleted successfully:", response.data);
+                // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
+                fetchData();
+                // alert('SubDocument deleted successfully');
+              }
+            } catch (error) {
+              console.error("Error deleting SubDocument:", error);
+              alert("Failed to delete SubDocument. Please try again.");
+            }
+          };
+          const onchangeDocTitle = (e, docsId) => {
+            const newTitle = e.target.value;
+            const updatedDocs = docs.map(doc => {
+              if (doc.docsId === docsId) {
+                return { ...doc, title: newTitle };
+              }
+              return doc;
+            });
+            setDocs(updatedDocs);    
+          };
+        
+          const handleInputKeyDown = (e, docsId) => {
+            if (e.key === "Enter") {
+              setRenameDocId(null); // ซ่อน input field เมื่อทำการเปลี่ยนชื่อเสร็จสิ้น
+              const doc = docs.find(doc => doc.docsId === docsId);
+              if (doc) {
+                patchDocsTitle(docsId, doc.title); // ส่งชื่อที่อัปเดตไปยังเซิร์ฟเวอร์เมื่อกด Enter
+              }
+            }
+          };
+        
+          const onChangeSubTitle = (e, docsId, subDocsId, isEnterKey = false) => {
+            const newTitle = e.target.value;
+          
+            // อัปเดต State ทันทีเมื่อพิมพ์
+            const updatedDocs = docs.map(doc => {
+              if (doc.docsId === docsId) {
+                const updatedSubDocs = doc.subDocuments.map(subDoc => {
+                  if (subDoc.subDocsId === subDocsId) {
+                    return { ...subDoc, title: newTitle }; // อัปเดต title
+                  }
+                  return subDoc;
+                });
+                return { ...doc, subDocuments: updatedSubDocs };
+              }
+              return doc;
+            });
+            setDocs(updatedDocs);
+          
+            // บันทึกเมื่อกด Enter
+            if (isEnterKey) {
+              const doc = updatedDocs.find(doc => doc.docsId === docsId); // หา doc ที่ต้องการ
+              const subDoc = doc?.subDocuments.find(subDoc => subDoc.subDocsId === subDocsId); // หา subDoc ที่ต้องการ
+              if (subDoc) {
+                patchSubDocsTitle(subDocsId, subDoc.title); // ส่งข้อมูลไปเซิร์ฟเวอร์
+              }
+            }
+          };
+          
+          const patchSubDocsTitle = async (subDocsId, newTitle) => {
+            try {
+              await updateSubDocsTitle(subDocsId, newTitle);
+                console.log("Sub-document title updated!");
+            } catch (error) {
+              console.error("Failed to update sub-document title:", error);
+            }
+          };
+          
 
-
-
-
+          
+          
 
   return (
     <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
@@ -577,58 +578,124 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
         </Button>
       </div>
 
-      {docs.map((doc, index) => (
-        <div className="w-full">
-          <div className=" flex  justify-between">
-            <Link to={`/docs/${doc.docsId}`}>
-              <span
-                // onClick={() => NavigationToContent(index)}
-                className="py-2 flex-1 pl-3 whitespace-nowrap text-lg font-semibold hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
-              >
-                {doc.title}
-              </span>
-            </Link>
-            <MoreOutlined
-              onClick={(e) => showEditOptionModal(e, index)}
-              style={{ cursor: "pointer" }}
-            />
-          </div>
+      <>
+        {/* heading Delete Modal */}
+        {selectedDocId !== null && (
+          <DeleteSubDocModal
+            title={`Delete this heading?${selectedDocId}`}
+            open={deleteModalOpen}
+            onClose={() => {
+              setDeleteModalOpen(false);
+              setSelectedDocId(null);
+              setSelectedSubDocId(null);
+            }}
+            onDelete={handleHeadingDelete}
+          />
+        )}
+        {/* subheading Delete Modal */}
+        {selectedSubDocId !== null && (
+          <DeleteDocModal
+            title={`Delete this sub heading?${selectedSubDocId}`}
+            open={deleteSubModalOpen}
+            onClose={() => {
+              setDeleteSubModalOpen(false);
+              setSelectedDocId(null);
+              setSelectedSubDocId(null);
+            }}
+            onDelete={handleSubHeadingDelete}
+          />
+        )}
+        {docs.map((doc) => {
+          const open = Boolean(headingOptionModal[doc.docsId]);
+          return (
+            <div key={doc.docsId} className="w-full">
+              <div className="flex w-full justify-between ">
+                {/* เปลี่ยนเป็น text input เมื่อ rename */}
+                {renameDocId === doc.docsId ? (
+                  <div className="w-full h-fit">
+                    <TextField
+                      required
+                      id={`title-${doc.docsId}`}
+                      label="ใส่ชื่อที่ต้องการแก้ไข"
+                      inputProps={{ maxLength: 20 }}
+                      value={doc.title}
+                      onChange={(e) => onchangeDocTitle(e, doc.docsId)}
+                      onKeyDown={(e) => handleInputKeyDown(e, doc.docsId)}
+                      ref={wrapperRef}
+                    />
+                  </div>
+                ) : (
+                  // แสดงชื่อหัวข้อ
+                  <Link to={`/docs/${doc.docsId}`}>
+                    <span className="py-2 flex-1 pl-3  text-lg font-medium  cursor-pointer hover:text-indigo-800">
+                      {doc.title}
+                    </span>
+                  </Link>
+                )}
+                <div className="mx-2 flex items-center h-full w-fit">
+                  {/* แสดงปุ่มเมนู */}
+                  <Button
+                    className="hover:bg-gray-100 rounded-lg gap-3 cursor-pointer "
+                    id={`basic-button-${doc.docsId}`}
+                    aria-controls={
+                      open ? `basic-menu-${doc.docsId}` : undefined
+                    }
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={(e) => handleClick(e, doc.docsId)}
+                    style={{
+                      cursor: "pointer",
+                      minWidth: "auto",
+                      padding: "4px 8px",
+                    }}
+                  >
+                    <i className="bi bi-three-dots  text-gray-600 justify-between " />
+                  </Button>
+                  <Menu
+                    id={`basic-menu-${doc.docsId}`}
+                    anchorEl={headingOptionModal[doc.docsId]}
+                    open={open}
+                    onClose={() => handleClose(doc.docsId)}
+                    MenuListProps={{
+                      "aria-labelledby": `basic-button-${doc.docsId}`,
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setRenameDocId(doc.docsId);
+                        handleClose(doc.docsId);
+                      }}
+                    >
+                      <EditOutlined />
+                      Rename
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setSelectedDocId(doc.docsId);
+                        setDeleteModalOpen(true);
+                        handleClose(doc.docsId);
+                      }}
+                    >
+                      <DeleteOutlined />
+                      Delete
+                    </MenuItem>
+                  </Menu>
+                </div>
+              </div>
 
-
-          {doc.subDocuments.map((subDoc, subIndex) => (
-             <div className="flex " key={subIndex}>
-             <span
-               onClick={() =>
-                 NavigationToContent(index, subIndex)
-               }
-               className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
-             >
-               {subDoc.title}
-             </span>
-             <MoreOutlined
-               onClick={(e) =>
-                 showSubEditOptionModal(
-                   e,
-                   index,
-                   subIndex
-                 )
-               }
-               style={{ cursor: "pointer" }}
-             />
-           </div>
-          ))}
-          <div
-            onClick={() => handleSubTitleAdd(docsId)}
-            className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 "
-          >
-            <span className="text-blue-700">
-              <PlusCircleOutlined />
-              Add Sub Heading
-            </span>
-          </div>
-        </div>
-      ))}
-
+              <SubDocList
+                docsId={doc.docsId}
+                subDocuments={doc.subDocuments}
+                onShowSubEditOptionModal={showSubEditOptionModal}
+                onAddSubTitle={handleSubTitleAdd}
+                onDeleteSubDoc={OpenSubDocDeleteModal}
+                onChangeSubTitle={onChangeSubTitle}
+                parentIndex={doc.docsId}
+              />
+            </div>
+          );
+        })}
+      </>
       <Reorder.Group axis="y" values={docDatas} onReorder={setDocDatas}>
         {docDatas.map((doc, index) => (
           <Reorder.Item key={doc.id} value={doc} className="">
@@ -671,9 +738,9 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
                                   .showInput === false ? (
                                   <div className="flex " key={subIndex}>
                                     <span
-                                      onClick={() =>
-                                        NavigationToContent(index, subIndex)
-                                      }
+                                      // onClick={() =>
+                                      //   NavigationToContent(index, subIndex)
+                                      // }
                                       className="py-1 pl-14 flex w-full text-gray-600 justify-between hover:bg-gray-100 rounded-lg  gap-3 cursor-pointer"
                                     >
                                       {subTitle.name}
@@ -856,7 +923,7 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
                       </Reorder.Group>
                     </ul>
                     <div
-                      onClick={() => handleSubTitleAdd(index)}
+                      // onClick={() => handleSubTitleAdd(index)}
                       className="py-1 pl- flex w-full    text-blue-700 whitespace-nowrap  hover:bg-gray-100 rounded-lg  cursor-pointer px-4 my-2 "
                     >
                       <span className="text-blue-700">
@@ -887,64 +954,82 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
               )}
               {/* edit modal (rename ,delete) */}
               {docDatas[index].showEditModal === true ? (
-                <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-                  <div
-                    style={{
-                      top: doc.editPosition.top,
-                      left: doc.editPosition.left,
-                    }}
-                    className="z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
-                  >
-                    <ul>
-                      <li
-                        className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                        onClick={() => {
-                          handleEditClick(index);
-                          const updatedTitleModals = [...docDatas];
-                          updatedTitleModals[index].showEditModal = false;
-                          setDocDatas(updatedTitleModals);
-                        }}
-                      >
-                        <EditOutlined />
-                        rename
-                      </li>
-                      <li
-                        onClick={() => {
-                          showDeleteModal(index);
-                          // handleTitleDelete(index);
-                          // set modal to false
-                          const updatedTitleModals = [...docDatas];
-                          updatedTitleModals[index].showEditModal = false;
-                          setDocDatas(updatedTitleModals);
-                        }}
-                        className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
-                      >
-                        <span className="text-[#f93a37]">
-                          <DeleteOutlined />
-                          delete
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div
-                    className=" opacity-25 fixed inset-0 z-40 bg-black"
-                    onClick={(e) => hideEditOptionModal(e, index)}
-                  ></div>
-                </div>
-              ) : null}
+                <EditModal
+                  key={index}
+                  show={doc.showEditModal}
+                  position={doc.editPosition}
+                  onRename={() => {
+                    handleEditClick(index);
+                    const updatedDatas = [...docDatas];
+                    updatedDatas[index].showEditModal = false;
+                    setDocDatas(updatedDatas);
+                  }}
+                  onDelete={() => {
+                    showDeleteModal(index);
+                    const updatedDatas = [...docDatas];
+                    updatedDatas[index].showEditModal = false;
+                    setDocDatas(updatedDatas);
+                  }}
+                  onClose={(e) => hideEditOptionModal(e, index)}
+                />
+              ) : // <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+              //   <div
+              //     style={{
+              //       top: doc.editPosition.top,
+              //       left: doc.editPosition.left,
+              //     }}
+              //     className="z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit  py-2 bg-white "
+              //   >
+              //     <ul>
+              //       <li
+              //         className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+              //         onClick={() => {
+              //           handleEditClick(index);
+              //           const updatedTitleModals = [...docDatas];
+              //           updatedTitleModals[index].showEditModal = false;
+              //           setDocDatas(updatedTitleModals);
+              //         }}
+              //       >
+              //         <EditOutlined />
+              //         rename
+              //       </li>
+              //       <li
+              //         onClick={() => {
+              //           showDeleteModal(index);
+              //           // handleTitleDelete(index);
+              //           // set modal to false
+              //           const updatedTitleModals = [...docDatas];
+              //           updatedTitleModals[index].showEditModal = false;
+              //           setDocDatas(updatedTitleModals);
+              //         }}
+              //         className="cursor-pointer rounded-lg  hover:bg-gray-100  group focus:ring-4 focus:bg-blue-300 px-4 py-2"
+              //       >
+              //         <span className="text-[#f93a37]">
+              //           <DeleteOutlined />
+              //           delete
+              //         </span>
+              //       </li>
+              //     </ul>
+              //   </div>
+              //   <div
+              //     className=" opacity-25 fixed inset-0 z-40 bg-black"
+              //     onClick={(e) => hideEditOptionModal(e, index)}
+              //   ></div>
+              // </div>
+              null}
               {/* show delete modal */}
               {/* edit modal (rename ,delete) */}
               {docDatas[index].showDeleteModal === true ? (
                 <>
                   <div
                     className=" justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-                    onClick={(e) => hideDeleteModal(e, index)}
+                    onClick={() => hideDeleteModal(index)}
                   >
                     <div className="relative w-5/12 my-6 mx-auto">
                       {/*card */}
-                      <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                      <div className="border-0 rounded-lg  shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                         {/*header*/}
-                        <div className=" flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t ">
+                        <div className=" flex items-center justify-(between p-5 border-b border-solid border-blueGray-200 rounded-t ">
                           <h1
                             className=" text-3xl font-semibold text-center p-5 ml-5 mb-2 tracking-tight 
               text-indigo-900 "
@@ -960,7 +1045,7 @@ const handleSubTitleReorder = (index: number, newSubTitles: SubTitle[]) => {
                           <Button
                             variant="outlined"
                             size="large"
-                            onClick={(e) => hideDeleteModal(e, index)}
+                            onClick={() => hideDeleteModal(index)}
                           >
                             Cancel
                           </Button>

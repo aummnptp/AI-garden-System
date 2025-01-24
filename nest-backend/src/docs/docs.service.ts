@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UpdateDocumentDto } from './dto/update-document.dto';
+import { UpdateDocumentDto, UpdateSubDocumentDto } from './dto/update-document.dto';
 import { Document, SubDocument } from './entities/docs.entity';
 import { CreateDocsDto, CreateSubDocsDto } from './dto/create-document.dto';
 
@@ -20,7 +20,6 @@ export class DocsService {
         return this.documentRepository.save(document);
     }
 
-    // ***************************** เพิ่ม Docs_id (เป็นSubของหัวข้อใหญ่ใด)***************************************
     async createSubTitle(docsId: number, createSubDocumentDto: CreateSubDocsDto): Promise<SubDocument> {
       const parentDocument = await this.documentRepository.findOne({
         where: { docsId: docsId },
@@ -36,17 +35,36 @@ export class DocsService {
       });
     
       return this.subDocumentRepository.save(subDocument);
+      
     }
     
 // async getDocs(docsId: number):Promise<Document>{
   
 // }
 
+async delete(docsId: number): Promise<void> {
+  const document = await this.getDocs(docsId);
+  if (!document) {
+    throw new NotFoundException('Document not found');
+  }
+  
+  // Remove all sub-documents associated with this document
+  await this.subDocumentRepository.delete({ document: { docsId: docsId } });
+  
+  // Remove the document itself
+  await this.documentRepository.remove(document);
+}
 
-    delete(id: number): Promise<void> {
-        return this.documentRepository.delete(id).then(() => undefined);
-      }
-      
+
+
+async deleteSubDoc(subDocsId: number): Promise<void> {
+  const subDocument = await this.getSubDocs(subDocsId);
+  if (!subDocument) {
+    throw new NotFoundException('SubDocument not found');
+  }
+
+  await this.subDocumentRepository.remove(subDocument);
+}
 
     
     async findAll():Promise<Document[]>{
@@ -58,25 +76,48 @@ export class DocsService {
     }
 
 
-    async findOne(docsId:number):Promise<Document>{
-      return this.documentRepository.findOneBy({ docsId: docsId });
-        }
+  async getDocs(docsId: number): Promise<Document> {
+    return this.documentRepository.findOneBy({ docsId: docsId });
+  }
+  async updateDocs(docsId: number, updateDocumentDto: UpdateDocumentDto): Promise<Document> {
+    const document = await this.getDocs(docsId);
+    Object.assign(document, updateDocumentDto);
+    return this.documentRepository.save(document);
+  }
 
-        async findByTitle(title: string): Promise<Document> {
-          return this.documentRepository.findOneBy({ title: title });
-        }
 
-        async update(id: number, updateDocumentDto: UpdateDocumentDto): Promise<Document> {
-            const document = await this.findOne(id);
-            Object.assign(document, updateDocumentDto);
-            return this.documentRepository.save(document);
-          }
-        
-          async remove(id: number): Promise<void> {
-            const document = await this.findOne(id);
-            await this.documentRepository.remove(document);
-          }
-        
+
+
+  async removeDocs(id: number): Promise<void> {
+    const document = await this.getDocs(id);
+    await this.documentRepository.remove(document);
+  }
+
+
+  async findByTitle(title: string): Promise<Document> {
+    return this.documentRepository.findOneBy({ title: title });
+  }
+
+
+
+  async getSubDocs(subDocsId: number): Promise<SubDocument> {
+    return this.subDocumentRepository.findOneBy({ subDocsId: subDocsId });
+  }
+  async updateSubDocs(subDocsId: number, updateSubDocumentDto: UpdateSubDocumentDto): Promise<SubDocument> {
+    const subdocument = await this.getSubDocs(subDocsId);
+    Object.assign(subdocument, updateSubDocumentDto);
+    return this.subDocumentRepository.save(subdocument);
+  }
+
+  async removeSubDocs(subDocsId: number): Promise<void> {
+    const subdocument = await this.getSubDocs(subDocsId);
+    await this.subDocumentRepository.remove(subdocument);
+  }
+
+
+
+
+          
     
 
 }

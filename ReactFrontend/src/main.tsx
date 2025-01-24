@@ -84,6 +84,11 @@ const router = createBrowserRouter([
     element: <DocsPage/>,
   },
   {
+    path: "/docs/:docsId/:subDocsId",
+    element: <DocsPage/>,
+  },
+  
+  {
     path: "/workspaces",
     element: <RoleGuard requiredRole="user"><WorkspacePage/></RoleGuard>,
     children:[]

@@ -1,34 +1,40 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons';
-import { Button, TextField } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
-import { Reorder } from "framer-motion"
-import 'react-quill/dist/quill.snow.css'; // import styles
-import { Editor } from '@tinymce/tinymce-react';
-import DocList from '../components/docs/DocList';
-import ContentViewer from '../components/docs/ContentViewer';
-import ContentEditor from '../components/docs/ContentEditor';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MoreOutlined,
+  PlusCircleOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
+import { Button, TextField } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Reorder } from "framer-motion";
+import "react-quill/dist/quill.snow.css"; // import styles
+import { Editor } from "@tinymce/tinymce-react";
+import DocList from "../components/docs/DocList";
+import ContentViewer from "../components/docs/ContentViewer";
+import ContentEditor from "../components/docs/ContentEditor";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 interface SubTitle {
-  subId:number
+  subId: number;
   name: string;
-  contentData:string;
+  contentData: string;
   showEdit: boolean;
-  editPosition: { top: number; left: number }; 
+  editPosition: { top: number; left: number };
   showInput: boolean;
   showDelete: boolean;
-  text:string;
+  text: string;
 }
 
 interface DocData {
-  id:number
+  docsId: number;
   title: string;
-  contentData:string;
+  contentData: string;
   showEditModal: boolean;
-  editPosition: { top: number; left: number }; 
+  editPosition: { top: number; left: number };
   showInput: boolean;
-  showDeleteModal:boolean;
+  showDeleteModal: boolean;
   text: string;
   subTitle: SubTitle[];
 }
@@ -40,8 +46,9 @@ type EditAtIndexType = {
 
 const DocsPage = () => {
   // ข้อมูลของ Docdata
-  
-    let { docsId } = useParams();
+  let { docsId, subDocsId } = useParams();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const subwrapperRef = useRef<HTMLDivElement | null>(null);
   const [docDatas, setDocDatas] = useState<DocData[]>([
     {
       id: 1,
@@ -61,27 +68,14 @@ const DocsPage = () => {
           name: "Get Started",
           contentData: "get start content here",
           showEdit: false,
-          editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
+          editPosition: { top: 0, left: 0 },
           showInput: false,
           showDelete: false,
           text: ``,
         },
       ],
     },
-    {
-      id: 2,
-      title: "Workspaces",
-      contentData: "Workspaces content here",
-      showEditModal: false,
-      editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-
-      showInput: false,
-      showDeleteModal: false,
-      text: "",
-      subTitle: [],
-    },
   ]);
-
 
   const handleTitleSave = (index: number) => {
     const updatedTitles = [...docDatas];
@@ -97,10 +91,6 @@ const DocsPage = () => {
   };
 
 
-
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  const subwrapperRef = useRef<HTMLDivElement | null>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -134,7 +124,6 @@ const DocsPage = () => {
     };
   }, [docDatas]);
 
- 
   const handleSubTitleSave = (index: number, subIndex: number) => {
     // Create copies of the state arrays
     const updatedTitles = [...docDatas];
@@ -150,15 +139,16 @@ const DocsPage = () => {
     }
   };
 
- 
   // editor here
   const [value, setValue] = useState(docDatas[0].contentData);
   const [text, setText] = useState("");
   const [showTextEditor, setShowTextEditor] = useState(false);
   const [showSaveEditorModal, setShowSaveEditorModal] = useState(false);
   // const [currentHeadingId, setCurrentHeadingId] = useState(docDatas[0].id);
-  const [showWarningEdit,setShowWarningEdit] = useState(false);
-  const [editAtIndex, setEditAtIndex] = useState<EditAtIndexType[]>([{ index: 0, subIndex: null }]);
+  const [showWarningEdit, setShowWarningEdit] = useState(false);
+  const [editAtIndex, setEditAtIndex] = useState<EditAtIndexType[]>([
+    { index: 0, subIndex: null },
+  ]);
   const [currentPageData, setCurrentPageData] = useState(
     docDatas[0].contentData
   );
@@ -167,294 +157,266 @@ const DocsPage = () => {
     setText(editor.getContent());
   };
 
-
-// แก้ไขตัว content ด้วย editorใน เว็บ
-const EditContent = (index: number, subIndex: number | null) => {
-    if (subIndex !== null) {
-      setCurrentPageData(docDatas[index].subTitle[subIndex].contentData);
-      setValue(docDatas[index].subTitle[subIndex].contentData)
-    } else {
-      setCurrentPageData(docDatas[index].contentData);
-      setValue(docDatas[index].contentData)
-    }
-
-    setShowTextEditor(true);
-  };
-
-
-
+  // แก้ไขตัว content ด้วย editorใน เว็บ
 
   const SaveEditContent = (index: number, subIndex: number | null) => {
     if (subIndex !== null) {
       setCurrentPageData(text);
-      const    updatedDocDatas = [...docDatas];
-      updatedDocDatas[index].subTitle[subIndex].contentData  = text
-      setDocDatas(updatedDocDatas)
+      const updatedDocDatas = [...docDatas];
+      updatedDocDatas[index].subTitle[subIndex].contentData = text;
+      setDocDatas(updatedDocDatas);
     } else {
       setCurrentPageData(text);
-      const    updatedDocDatas = [...docDatas];
-      updatedDocDatas[index].contentData  = text
-      setDocDatas(updatedDocDatas)
+      const updatedDocDatas = [...docDatas];
+      updatedDocDatas[index].contentData = text;
+      setDocDatas(updatedDocDatas);
     }
     setShowTextEditor(false);
     setShowSaveEditorModal(false);
   };
 
-
-  const NavigationToContent = (index: number, subIndex?: number) => {
-    if(showTextEditor === false){
-      if (subIndex !== undefined) {
-        const subTitle = docDatas[index]?.subTitle[subIndex];
-        if (subTitle) {
-          const ContentData = [...docDatas];
-          setCurrentPageData(ContentData[index].subTitle[subIndex].contentData);
-          setEditAtIndex([{ index: index, subIndex: subIndex }]);
-          // setEditAtIndex(ContentData[index].subTitle[subIndex].contentData);
-          // Perform navigation or search with subTitle.contentData
-        }
-      } else {
-        const doc = docDatas[index];
-        if (doc) {
-          const ContentData = [...docDatas];
-          setCurrentPageData(ContentData[index].contentData);
-          setEditAtIndex([{ index: index, subIndex: null }]);
-
-          // Perform navigation or search with doc.contentData
-        }
-      }
-    }
-    else{
-      setShowWarningEdit(true)
-
-    }
+  const AbandonEditing = () => {
+    setShowWarningEdit(false);
+    setShowTextEditor(false);
   };
-  const AbandonEditing= () => {
-    setShowWarningEdit(false)
-    setShowTextEditor(false)
-
-  }
-  const hideWarningModal = (
-    e: React.MouseEvent<HTMLElement>,
-  ) => {
+  const hideWarningModal = (e: React.MouseEvent<HTMLElement>) => {
     if (e.target === e.currentTarget) {
-
       setShowWarningEdit(false);
     }
   };
 
-    const handleSaveEditorModal = () => {
-      setShowSaveEditorModal(true);
-    };
-    const hideSaveEditorModal = (e: React.MouseEvent<HTMLElement>) => {
-      if (e.target === e.currentTarget) {
-        setShowSaveEditorModal(false);
-  
-      }
-    };
+  // const [showTextEditor, setShowTextEditor] = useState(false);
+  // const [currentPageData, setCurrentPageData] = useState("<p>Initial content</p>");
+  const [editorValue, setEditorValue] = useState(currentPageData);
 
-    // const [showTextEditor, setShowTextEditor] = useState(false);
-    // const [currentPageData, setCurrentPageData] = useState("<p>Initial content</p>");
-    const [editorValue, setEditorValue] = useState(currentPageData);
-    
-    const handleEdit = () => {
-      setEditorValue(currentPageData);
-      setShowTextEditor(true);
-    };
-  
-    const handleSave = () => {
-      setCurrentPageData(editorValue);
-      setShowTextEditor(false);
-    };
-  
-    const handleDiscard = () => {
-      setShowTextEditor(false);
-    };
+  const handleEdit = () => {
+    setEditorValue(currentPageData);
+    setShowTextEditor(true);
+  };
 
-      const [docs, setDocs] = useState([])
-      const [loading, setLoading] = useState(true);
+  const handleSave = () => {
+    setCurrentPageData(editorValue);
+    setShowTextEditor(false);
+  };
 
-       const fetchData= async() =>{
-          try{
-            let docsResponse,contentDetailResponse;
-            docsResponse = await axios.get(
-              `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
-              {
-                withCredentials:true,
-              }
-            );
-            if(docsId){
-              contentDetailResponse = await axios.get(
-                `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-docs/${docsId}`,
-                {
-                  withCredentials: true,
-                }
-              );
-            }
-            setDocs(docsResponse.data);
-            if (contentDetailResponse) {
-              setCurrentPageData(contentDetailResponse.data.content);
-        
-            }
-          } catch (error) {
-            console.error("Error fetching data!", error);
-          } finally {
-            setLoading(false);
-          }};
-        // const fetchData = async () => {
-        //   try {
-        //     // เรียก API หลายตัวพร้อมกัน
-        //     const [docsResponse,contentDetailResponse] = await Promise.all([
-        //       axios.get(
-        //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
-        //         {
-        //           withCredentials: true,
-        //         }
-        //       ),
-        // axios.get(
-        //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-docs/${docsId}`,
-        //         {
-        //           withCredentials: true,
-        //         }
-        //       ),
-       
-        //     ]);
-        //     // console.log("",contentDetailResponse.data)
-        //     setDocs(docsResponse.data)
-        //     // setCurrentPageData(contentDetailResponse.data)
-        //     console.log(docs)
-        //     // console.log(docDatas)
-        //     // setMyWorkspace(myWorkspacesResponse.data);
-        //     // setInvitedWorkspace(inviteWorkspacesResponse.data);
-        //   } catch (error) {
-        //     console.error("Error fetching data!", error);
-        //   } finally {
-        //     setLoading(false);
-        //   }
-        // };
-      
-        useEffect(() => {
-          fetchData();
-        }, [docsId]);
-      
-        if (loading) {
-          return <div>Loading...</div>;
+  const handleDiscard = () => {
+    setShowTextEditor(false);
+  };
+
+  const [docs, setDocs] = useState<DocData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      let docsResponse, contentDetailResponse;
+      docsResponse = await axios.get(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
+        {
+          withCredentials: true,
         }
-        
+      );
+      if (subDocsId) {
+        contentDetailResponse = await axios.get(
+          `${
+            import.meta.env.VITE_NEST_BACKEND_API_URL
+          }/docs/content-subdocs/${subDocsId}`,
+          { withCredentials: true }
+        );
+      } else if (docsId) {
+        contentDetailResponse = await axios.get(
+          `${
+            import.meta.env.VITE_NEST_BACKEND_API_URL
+          }/docs/content-docs/${docsId}`,
+          { withCredentials: true }
+        );
+      }
+      // Add frontend-specific fields to docs data
+      const enrichedDocs = docsResponse.data.map((doc: any) => ({
+        ...doc,
+        showEdit: false,
+        editPosition: { top: 0, left: 0 },
+        showInput: false,
+        showDelete: false,
+      }));
+      setDocs(enrichedDocs);
+      if (contentDetailResponse) {
+        setCurrentPageData(contentDetailResponse.data.content);
+      }
+    } catch (error) {
+      console.error("Error fetching data!", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [docsId, subDocsId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  // const handleDeleteDoc = async (docsId: string) => {
+  //   try {
+  //     // เรียก API ลบ SubDocument
+  //     const response = await axios.delete(
+  //       `${
+  //         import.meta.env.VITE_NEST_BACKEND_API_URL
+  //       }/docs/delete-docs/${docsId}`,
+  //       { withCredentials: true } // ส่ง Cookies หากจำเป็น
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("SubDocument deleted successfully:", response.data);
+  //       // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
+  //       fetchData();
+  //       // alert('SubDocument deleted successfully');
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting SubDocument:", error);
+  //     alert("Failed to delete Document. Please try again.");
+  //   }
+  // };
+
+  // const handleDeleteSubDoc = async (subDocsId: string) => {
+  //   try {
+  //     // เรียก API ลบ SubDocument
+  //     const response = await axios.delete(
+  //       `${
+  //         import.meta.env.VITE_NEST_BACKEND_API_URL
+  //       }/docs/delete-subdocs/${subDocsId}`,
+  //       { withCredentials: true } // ส่ง Cookies หากจำเป็น
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log("SubDocument deleted successfully:", response.data);
+  //       // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
+  //       fetchData();
+  //       // alert('SubDocument deleted successfully');
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting SubDocument:", error);
+  //     alert("Failed to delete SubDocument. Please try again.");
+  //   }
+  // };
+
+  // const handleTitleAdd = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-title`,
+  //       {
+  //         title: "New Heading",
+  //         content: "",
+  //       },
+  //       { withCredentials: true }
+  //     );
+
+  //     console.log("Document added successfully:", response.data);
+  //     fetchData();
+  //     // Add any additional logic here if necessary (e.g., updating UI)
+  //   } catch (error) {
+  //     console.error("Error creating document:", error.message || error);
+  //     // Optional: Add user notification logic (e.g., toast)
+  //   }
+  // };
+
+  // const handleSubTitleAdd = async (docsId: number) => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${
+  //         import.meta.env.VITE_NEST_BACKEND_API_URL
+  //       }/docs/add-subtitle/${docsId}`,
+  //       {
+  //         title: "New Sub Heading",
+  //         content: "",
+  //       },
+  //       { withCredentials: true }
+  //     );
+
+  //     console.log("SubDocument added successfully:", response.data);
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error("Error creating sub document:", error.message || error);
+  //   }
+  // };
+
+
+  // const onchangeDocTitle = (docsId, newTitle:string) => {
+  //   const updatedDocs = docs.map((doc) => {
+  //     if (doc.docsId === docsId) {
+  //       return { ...doc, title: newTitle };
+  //     }
+  //     return doc;
+  //   });
+  //   setDocs(updatedDocs);    
+  // };
+
+  //  const patchDocsTitle  = (docsId, newTitle) => {
+  //   axios.patch(`/api/docs/${docsId}`, { title: newTitle })
+  //     .then(response => {
+  //       console.log('Document renamed:', response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error renaming document:', error);
+  //     });
+  // };
+
+  
+  const onchangeSubDocTitle = (subDocsId, newSubTitle:string) => {
+    const updatedDocs = docs.map((doc) => {
+      if (doc.subDocsId === subDocsId) {
+        return { ...doc, title: newSubTitle };
+      }
+      return doc;
+    });
+    setDocs(updatedDocs);    
+  };
+
+   const patchSubDocsTitle  = (subDocsId, newSubTitle) => {
+    axios.patch(`/api/docs/${docsId}`, { title: newTitle })
+      .then(response => {
+        console.log('Document renamed:', response.data);
+      })
+      .catch(error => {
+        console.error('Error renaming document:', error);
+      });
+  };
 
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
-  
-
-        {/* Doc SideBar Left */}
-        <DocList  docs={docs}/>
-    
+      {/* Doc SideBar Left */}
+      <DocList
+        // docs={docs}
+        // onDeleteDoc={handleDeleteDoc}
+        // onDeleteSubDoc={handleDeleteSubDoc}
+        // addTitle={handleTitleAdd}
+        // addSubTitle={handleSubTitleAdd}
+        // onchangeDocTitle={onchangeDocTitle}
+        // patchDocsTitle={patchDocsTitle}
+      />
 
       {/* content container */}
       <div className="w-[80%] ml-auto px-2 flex flex-col items-center pb-32  h-full min-h-screen bg-white ">
-      <div className="w-full justify-self-center relative">
-      {showTextEditor ? (
-        <ContentEditor
-          value={editorValue}
-          onSave={handleSave}
-          onDiscard={handleDiscard}
-          onEditorChange={setEditorValue}
-          setText={setEditorValue}
-        />
-      ) : (
-        <ContentViewer currentPageData={currentPageData} onEdit={handleEdit} />
-      )}
-    </div>
-        {/* <div className="w-full justify-self-center relative">
-          {showTextEditor === true ? (
-            <div>
-              <div className="pr-12 w-[80%] h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-between items-center pl-2">
-                <Button
-                variant="contained"
-                size="large"
-                color='error'
-                  onClick={() => {
-                    if (!showTextEditor) {
-                    } else {
-                      setShowWarningEdit(true);
-                    }
-                  }}
-                >
-                  <SaveOutlined />
-                  Discard Change
-                </Button>
-
-                <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#4f46e5",
-                  "&:hover": {
-                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                  },
-                }}
-                onClick={() =>
-                    handleSaveEditorModal()
-                  }
-                >
-                  <SaveOutlined />Save Content
-                </Button>
-              </div>
-              <Editor
-                apiKey="ncaou3be6pfqi22ceukdz7cyc2cf3nz3qhj33rqb8b5j8kxy"
-                init={{
-                  plugins:
-                  "" ,
-                  // "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
-                  toolbar:
-                    "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-                  tinycomments_mode: "embedded",
-                  tinycomments_author: "Author name",
-                  mergetags_list: [
-                    { value: "First.Name", title: "First Name" },
-                    { value: "Email", title: "Email" },
-                  ],
-
-                  ai_request: (request, respondWith) =>
-                    respondWith.string(() =>
-                      Promise.reject("See docs to implement AI Assistant")
-                    ),
-                }}
-                value={value}
-                onInit={(evt, editor) => {
-                  setText(editor.getContent());
-                }}
-                onEditorChange={handleEditorChange}
-                // initialValue={value}
-                
-              />
-            </div>
+        <div className="w-full justify-self-center relative">
+    
+          {showTextEditor ? (
+            <ContentEditor
+              value={editorValue}
+              onSave={handleSave}
+              onDiscard={handleDiscard}
+              onEditorChange={setEditorValue}
+              setText={setEditorValue}
+            />
           ) : (
-            <div>
-              <div className="pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
-                <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#4f46e5",
-                  "&:hover": {
-                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                  },
-                }}
-                onClick={() =>
-                      EditContent(editAtIndex[0].index, editAtIndex[0].subIndex)
-                    }
-                >
-                <EditOutlined />
-                Edit Document Content
-                </Button>
-              </div>
-              <div
-                className="pt-5 pl-8"
-                dangerouslySetInnerHTML={{ __html: currentPageData }}
+            <>
+            <div dangerouslySetInnerHTML={{ __html: currentPageData }} />
+            <ContentViewer
+              currentPageData={currentPageData}
+              onEdit={handleEdit}
               />
-            </div>
+              </>
           )}
-        </div> */}
+        </div>
 
         {showTextEditor === true && showWarningEdit === true ? (
           <>
@@ -479,24 +441,22 @@ const EditContent = (index: number, subIndex: number | null) => {
                   {/*body*/}
                   {/*footer*/}
                   <div className=" mx-auto flex items-center justify-end p-6">
-                <Button
-                variant="outlined"
-                size="large"
-                // color='error'
-                onClick={(e) => hideWarningModal(e)}
-                >
-                  Continue editing
-                </Button>
-                  <Button
-                variant="contained"
-                size="large"
-                color='error'
-                onClick={() => AbandonEditing()}
-                >
-                   Discard
-                </Button>
-              
-                   
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      // color='error'
+                      onClick={(e) => hideWarningModal(e)}
+                    >
+                      Continue editing
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      color="error"
+                      onClick={() => AbandonEditing()}
+                    >
+                      Discard
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -521,36 +481,38 @@ const EditContent = (index: number, subIndex: number | null) => {
                   text-indigo-900 "
                     >
                       <span className="mt-5 absolute inset-x-0 top-0 text-center">
-                      Do you want to save it?
+                        Do you want to save it?
                       </span>
                     </h1>
                   </div>
                   {/*body*/}
                   {/*footer*/}
                   <div className=" mx-auto flex items-center justify-end p-6">
-                  <Button
-                        variant="outlined"
-                        size="large"
-                        onClick={(e) => hideSaveEditorModal(e)}
-                        >
-                    Cancel
-                </Button>
-                <Button
-                        variant="contained"
-                        size="large"
-                        sx={{
-                          backgroundColor: "#4f46e5",
-                          "&:hover": {
-                            backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                          },
-                        }}
-                        onClick={() =>       SaveEditContent(
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      onClick={(e) => hideSaveEditorModal(e)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      sx={{
+                        backgroundColor: "#4f46e5",
+                        "&:hover": {
+                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                        },
+                      }}
+                      onClick={() =>
+                        SaveEditContent(
                           editAtIndex[0].index,
                           editAtIndex[0].subIndex
-                        )}
-                        >
-                       Save
-                </Button>
+                        )
+                      }
+                    >
+                      Save
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -558,8 +520,6 @@ const EditContent = (index: number, subIndex: number | null) => {
             <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
           </>
         ) : null}
-
-
       </div>
     </div>
   );

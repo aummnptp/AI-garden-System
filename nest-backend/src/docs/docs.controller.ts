@@ -4,6 +4,7 @@ import { CreateDocsDto, CreateSubDocsDto } from './dto/create-document.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
+import { UpdateDocumentDto, UpdateSubDocumentDto } from './dto/update-document.dto';
 
 
 
@@ -26,9 +27,9 @@ export class DocsController {
   
   @Role("admin")
   @UseGuards(JwtGuard,RolesGuard)
-  @Patch("/update-docs/docsId")
-  async updateDocs() {
-    return this.docsService.findAll();
+  @Patch("/update-docs/:docsId")
+  async updateDocs(@Param('docsId') docsId:string,@Request() req,@Body()updateDocumentDto:UpdateDocumentDto) {
+    return this.docsService.updateDocs(+docsId,updateDocumentDto);
   }
   @Role("admin")
   @UseGuards(JwtGuard,RolesGuard)
@@ -37,12 +38,26 @@ export class DocsController {
     return this.docsService.delete(+docsId);
   }
 
+  @Role("admin")
+  @UseGuards(JwtGuard,RolesGuard)
+  @Delete("/delete-subdocs/:subDocsId")
+  async deleteSubDocs(@Param('subDocsId') subDocsId:string) {
+    return this.docsService.deleteSubDoc(+subDocsId);
+  }
   
   // @UseGuards(JwtGuard) 
   @Get('/content-docs/:docsId')
   async getDocsConetent(@Param("docsId") docsId: number) {
-    return this.docsService.findOne(docsId)
+    return this.docsService.getDocs(docsId)
   }
+
+
+  // @UseGuards(JwtGuard) 
+  @Get('/content-subdocs/:subDocsId')
+  async getSubDocsConetent(@Param("subDocsId") subDocsId: number) {
+    return this.docsService.getSubDocs(subDocsId)
+  }
+
 
  
   @Get('/content-docs-by-title/:title')
@@ -59,21 +74,12 @@ export class DocsController {
     return this.docsService.createSubTitle(docsId,createSubDocsDto);
   }
   
-    @Get('/:subDocsId/detail')
-    async getSubDocsConetent() {
-      
-      // return this.workspacesService.getAllWorkspaceWithMembers(userId);
+
+    @Patch("update-subdocs/:subDocsId")
+    async updateSubDocs(@Param('subDocsId') subDocsId:string,@Request() req,@Body()updateSubDocumentDto:UpdateSubDocumentDto) {
+      return this.docsService.updateSubDocs(+subDocsId,updateSubDocumentDto);
     }
-    
-    @Patch("update-subDocs/docsId")
-    async updateSubDocs() {
-      // return this.workspacesService.getAllWorkspaceWithMembers(userId);
-    }
-    @Delete("/update-subDocs/docsId")
-    async deleteSubDocs() {
-      // return this.workspacesService.getAllWorkspaceWithMembers(userId);
-    }
-    
+
 
 
 }

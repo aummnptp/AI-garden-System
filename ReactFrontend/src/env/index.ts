@@ -1,0 +1,1 @@
+export const BACKEND_API_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;

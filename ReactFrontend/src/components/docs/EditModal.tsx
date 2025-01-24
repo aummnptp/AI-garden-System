@@ -1,42 +1,46 @@
-import React from "react";
+import React from 'react';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
-interface EditModalProps {
-  isVisible: boolean;
+type EditModalProps = {
+  show: boolean;
   position: { top: number; left: number };
   onRename: () => void;
-  onClose: () => void;
-}
+  onDelete: () => void;
+  onClose: (event: React.MouseEvent) => void;
+};
 
-const EditModal: React.FC<EditModalProps> = ({
-  isVisible,
-  position,
-  onRename,
-  onClose,
-}) => {
-  if (!isVisible) return null;
+const EditModal: React.FC<EditModalProps> = ({ show, position, onRename, onDelete, onClose }) => {
+  if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
       <div
-        style={{ top: position.top, left: position.left }}
-        className="absolute bg-white shadow-lg rounded-lg p-4"
+        style={{
+          top: position.top,
+          left: position.left,
+        }}
+        className="z-50 border-0 rounded-lg relative flex flex-col w-fit h-fit py-2 bg-white"
       >
         <ul>
           <li
-            className="cursor-pointer p-2 hover:bg-gray-100"
+            className="cursor-pointer rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
             onClick={onRename}
           >
-            Rename
+            <EditOutlined />
+            rename
           </li>
           <li
-            className="cursor-pointer p-2 text-red-500 hover:bg-gray-100"
-            onClick={onClose}
+            onClick={onDelete}
+            className="cursor-pointer rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 px-4 py-2"
           >
-            Close
+            <span className="text-[#f93a37]">
+              <DeleteOutlined />
+              delete
+            </span>
           </li>
         </ul>
       </div>
-      <div className="fixed inset-0 bg-black opacity-25" onClick={onClose} />
+      <div className="opacity-25 fixed inset-0 z-40 bg-black" onClick={onClose}></div>
     </div>
   );
 };
