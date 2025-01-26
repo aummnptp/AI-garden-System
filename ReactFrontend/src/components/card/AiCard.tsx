@@ -20,21 +20,6 @@ interface AiCardProps {
   
   const AiCard: React.FC<AiCardProps> = (props) => {
 
-    const handleSendRequest = async () => {
-      console.log("AI ID (props.id):", props.id); // Debug
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/ai-permission/add",
-          { ai_id: props.id }, // ต้องส่ง aiId ไป
-          { withCredentials: true }
-        );
-        alert(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || 'สำเร็จ'}`);
-      } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:', error);
-        alert('ไม่สามารถส่งคำขอใช้งานได้');
-      }
-    };
-    
   return (
     <Link to={`/ai/${props.id}/detail`}>
   

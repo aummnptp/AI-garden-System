@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Permission } from '../../permission/entities/permission.entity';
 
 @Entity()
 export class User{
@@ -18,5 +19,7 @@ export class User{
     @Column({ default: 'user' })
     role: string;
     
+    @OneToMany(() => Permission, (permission) => permission.aiModel)
+      permissions: Permission[];
 
 }

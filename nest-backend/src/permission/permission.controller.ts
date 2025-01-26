@@ -8,7 +8,7 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('ai-permission')
 export class AiPermissionController {
-  constructor(private readonly aiPermissionService: AiPermissionService) {}
+  constructor(private readonly aiPermissionService: AiPermissionService) { }
 
   @UseGuards(JwtGuard)
   @Post('add')
@@ -18,14 +18,19 @@ export class AiPermissionController {
     if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
     }
-  
+
     return this.aiPermissionService.create(data, req.user.userId);
   }
-  
+
 
   @Get()
   findAll() {
     return this.aiPermissionService.findAll();
+  }
+
+  @Get('detail')
+  findAllWithDetails() {
+    return this.aiPermissionService.findAllWithDetails();
   }
 
   @Get(':id')
@@ -33,14 +38,19 @@ export class AiPermissionController {
     return this.aiPermissionService.findOne(id);
   }
 
-  
-  
+
+
   @Patch(':id')
   update(
     @Param('id') id: number,
     @Body() updateAiPermissionDto: UpdateAiPermissionDto,
   ) {
     return this.aiPermissionService.update(id, updateAiPermissionDto);
+  }
+
+  @Patch(':id/approve')
+  async approve(@Param('id') id: number) {
+    return this.aiPermissionService.approvePermission(id);
   }
 
   @Delete(':id')

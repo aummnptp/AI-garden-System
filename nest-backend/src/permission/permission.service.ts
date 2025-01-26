@@ -39,6 +39,15 @@ export class AiPermissionService {
     return this.aiPermissionRepository.find();
   }
 
+  async findAllWithDetails() {
+    return this.aiPermissionRepository.find({
+      where: {
+        approve: false, // เพิ่มเงื่อนไขเพื่อเลือกเฉพาะ approve ที่เป็น false
+    },
+      relations: ['user', 'aiModel'], // ระบุความสัมพันธ์กับ user และ ai
+    });
+  }
+
   async findOne(id: number) {
     return this.aiPermissionRepository.findOne({ where: { id } });
   }
@@ -49,6 +58,19 @@ export class AiPermissionService {
 
   async update(id: number, data: UpdateAiPermissionDto) {
     await this.aiPermissionRepository.update(id, data);
+    return this.aiPermissionRepository.findOne({ where: { id } });
+  }
+
+  async approvePermission(id: number): Promise<Permission> {
+    // อัปเดตฟิลด์ approve เป็น true
+    const result = await this.aiPermissionRepository.update(id, { approve: true });
+  
+    // ตรวจสอบว่ามีเรคคอร์ดที่อัปเดตสำเร็จหรือไม่
+    if (result.affected === 0) {
+      throw new NotFoundException(`Permission with ID ${id} not found`);
+    }
+  
+    // ดึงข้อมูลเรคคอร์ดที่อัปเดตกลับมา
     return this.aiPermissionRepository.findOne({ where: { id } });
   }
 
