@@ -110,15 +110,15 @@ export class WorkspacesService {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId },
     });
-  
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
-  
-      // ตรวจสอบว่าผู้ใช้ที่พยายามลบเป็นผู้สร้างหรือไม่
-  if (workspace.createById === userId) {
-    throw new BadRequestException('Cannot remove the creator of the workspace');
-  }
+
+    // ตรวจสอบว่าผู้ใช้ที่พยายามลบเป็นผู้สร้างหรือไม่
+    if (workspace.createById === userId) {
+      throw new BadRequestException('Cannot remove the creator of the workspace');
+    }
     // ตรวจสอบว่าสมาชิกอยู่ใน Workspace หรือไม่
     const member = await this.workspaceMemberRepository.findOne({
       where: {
@@ -127,15 +127,15 @@ export class WorkspacesService {
       },
       relations: ['workspace', 'user'],
     });
-  
+
     if (!member) {
       throw new NotFoundException('User is not a member of this workspace');
     }
-  
+
     // ลบสมาชิก
     await this.workspaceMemberRepository.remove(member);
   }
-  
+
 
 
 
@@ -146,17 +146,14 @@ export class WorkspacesService {
     });
 
     if (!workspace) throw new NotFoundException('Workspace not found');
-     const creator = workspace.members.find(member => member.user.userId === workspace.createById);
+    const creator = workspace.members.find(member => member.user.userId === workspace.createById);
 
-  if (creator) {
-    // ลบ creator ออกจากสมาชิกแล้วเพิ่มเขากลับไปที่ตำแหน่งแรก
-    const membersWithoutCreator = workspace.members.filter(member => member.user.userId !== workspace.createById);
-    return [creator, ...membersWithoutCreator];
-  }
+    if (creator) {
+      // ลบ creator ออกจากสมาชิกแล้วเพิ่มเขากลับไปที่ตำแหน่งแรก
+      const membersWithoutCreator = workspace.members.filter(member => member.user.userId !== workspace.createById);
+      return [creator, ...membersWithoutCreator];
+    }
     return workspace.members;
-
-
-    
   }
 
 
@@ -170,15 +167,15 @@ export class WorkspacesService {
     });
     const memberIds = members.map(member => member.user.userId);
 
-      // ดึงข้อมูลคำเชิญที่ค้างอยู่ใน workspace
-  const pendingInvitations = await this.workspaceInvitationsRepository.find({
-    where: {
-      workspace: { workspaceId: workspaceId },
-      status: In(['pending', 'rejected']),
-    },
-    relations: ['user'],
-  });
-  const pendingUserIds = pendingInvitations.map(invitation => invitation.user.userId);
+    // ดึงข้อมูลคำเชิญที่ค้างอยู่ใน workspace
+    const pendingInvitations = await this.workspaceInvitationsRepository.find({
+      where: {
+        workspace: { workspaceId: workspaceId },
+        status: In(['pending', 'rejected']),
+      },
+      relations: ['user'],
+    });
+    const pendingUserIds = pendingInvitations.map(invitation => invitation.user.userId);
 
     // คัดกรองผู้ใช้ที่ไม่ได้อยู่ใน workspace ที่ระบุ
     const nonMembers = allUsers.filter(user =>
@@ -190,7 +187,7 @@ export class WorkspacesService {
   async getPendingUserList(workspaceId: number): Promise<WorkspaceInvitation[]> {
     const invitations = await this.workspaceInvitationsRepository.find({
       where: {
-        workspace: { workspaceId }, 
+        workspace: { workspaceId },
         status: "pending"// ตรวจสอบคำเชิญที่เชื่อมกับ workspaceId ที่กำหนด
       },
       relations: ['workspace', 'user', 'invitedBy'], // โหลดข้อมูล workspace, user และ invitedBy
@@ -203,7 +200,7 @@ export class WorkspacesService {
     return invitations;
   }
 
-  async pendingInvite(workspaceId: number,userId: number,email: string,)
+  async pendingInvite(workspaceId: number, userId: number, email: string,)
     : Promise<WorkspaceInvitation | { error: string }> {
     const userProfile = await this.userRepository.findOne({ where: { userId: userId } });
 
@@ -254,25 +251,25 @@ export class WorkspacesService {
     return this.workspaceInvitationsRepository.save(invitation);
   }
 
-  async cancelPendingInvite( inviteId: number): Promise<{ success: boolean; message: string }> {
+  async cancelPendingInvite(inviteId: number): Promise<{ success: boolean; message: string }> {
     // ค้นหาคำเชิญที่ต้องการลบโดยใช้ inviteId
     const invitation = await this.workspaceInvitationsRepository.findOne({
       where: { inviteId },
     });
-  
+
     if (!invitation) {
       throw new NotFoundException(`Invitation with id ${inviteId} not found`);
     }
-  
-   
+
+
     // ตรวจสอบสถานะของคำเชิญต้องเป็น 'pending'
     if (invitation.status !== 'pending') {
       throw new BadRequestException('Invitation is already accepted or canceled');
     }
-  
+
     // ลบคำเชิญ
     await this.workspaceInvitationsRepository.remove(invitation);
-  
+
     return {
       success: true,
       message: `Invitation with id ${inviteId} has been canceled successfully.`,
@@ -351,11 +348,11 @@ export class WorkspacesService {
 
         createById: Not(userId), // ผู้ใช้งานไม่ใช่คนสร้าง
       },
-      
+
       relations: ['members', 'members.user'], // Join ตารางที่ต้องการ
     });
-    const workspacesUserIsMember = 
-    workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId) );
+    const workspacesUserIsMember =
+      workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId));
 
     // if (!workspaces || workspaces.length === 0) {
     //   throw new NotFoundException('No workspaces found where user is a member but not the creator');
@@ -379,7 +376,11 @@ export class WorkspacesService {
     // return this.workspaceRepository.find();
   }
 
-  async changeUserRole(workspaceId: number,currentUserId: number,targetUserId: number,
+  // Example in Service
+
+
+
+  async changeUserRole(workspaceId: number, currentUserId: number, targetUserId: number,
     newRole: 'owner' | 'member'
   ): Promise<{ message: string }> {
     // ตรวจสอบว่า Workspace มีอยู่
@@ -387,16 +388,16 @@ export class WorkspacesService {
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
-  
+
     // ตรวจสอบว่าผู้ที่ส่งคำขอเป็น Owner ของ Workspace
     const currentUserMembership = await this.workspaceMemberRepository.findOne({
       where: { workspace: { workspaceId }, user: { userId: currentUserId }, role: 'owner' },
     });
-    
+
     if (!currentUserMembership) {
       throw new ForbiddenException('Only the workspace owner can change user roles');
     }
-  
+
     // ตรวจสอบว่าผู้ใช้เป้าหมายอยู่ใน Workspace
     const targetUserMembership = await this.workspaceMemberRepository.findOne({
       where: { workspace: { workspaceId }, user: { userId: targetUserId } },
@@ -404,7 +405,7 @@ export class WorkspacesService {
     if (!targetUserMembership) {
       throw new NotFoundException('Target user is not a member of this workspace');
     }
-  
+
     // ตรวจสอบว่า Owner อย่างน้อย 1 คนต้องยังอยู่ใน Workspace
     if (targetUserMembership.role === 'owner' && newRole === 'member') {
       const ownersCount = await this.workspaceMemberRepository.count({
@@ -414,18 +415,20 @@ export class WorkspacesService {
         throw new BadRequestException('Workspace must have at least one owner');
       }
     }
-  
+
     // อัปเดต Role ของผู้ใช้เป้าหมาย
     targetUserMembership.role = newRole;
     await this.workspaceMemberRepository.save(targetUserMembership);
-  
+
     return { message: `User role has been changed to ${newRole} successfully` };
   }
 
-  async getMyInvitation(userId:number){
+  async getMyInvitation(userId: number) {
     return this.workspaceInvitationsRepository.find({
-      where: { user: { userId: userId } ,
-      status: 'pending',},
+      where: {
+        user: { userId: userId },
+        status: 'pending',
+      },
       relations: ['workspace', 'invitedBy'],
     });
   }

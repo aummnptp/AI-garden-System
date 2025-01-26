@@ -35,6 +35,18 @@ export class AiPermissionService {
     return this.aiPermissionRepository.save(newPermission);
   }
 
+  async createBulk(data: CreateAiPermissionDto[], userId: number) {
+    const permissions = data.map((item) =>
+      this.aiPermissionRepository.create({
+        ...item,
+        user_id: userId,
+        approve: true,
+      })
+    );
+    return this.aiPermissionRepository.save(permissions);
+  }
+
+  
   async findAll() {
     return this.aiPermissionRepository.find();
   }
@@ -78,4 +90,26 @@ export class AiPermissionService {
   async delete(id: number) {
     return this.aiPermissionRepository.delete(id);
   }
+
+  async removeBulk(ids: number[]): Promise<{ id: number }> {
+    console.log('Received IDs:', ids);  // ตรวจสอบค่าที่ได้รับจาก frontend
+    
+    // ใช้ query builder แทน delete เฉยๆ เพื่อให้แน่ใจว่า query ทำงานได้ถูกต้อง
+    const deleteResult = await this.aiPermissionRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Permission)  // เช็คว่า AiPermission เป็น entity ที่ถูกต้อง
+      .where('id IN (:...ids)', { ids })  // ใช้ IN เพื่อกรองโดย id
+      .execute();
+  
+    if (deleteResult.affected === 0) {
+      throw new NotFoundException('No permissions were deleted.');
+    }
+  
+    return { id: deleteResult.affected };  // ส่งกลับจำนวนข้อมูลที่ถูกลบ
+  }
+  
+  
+  
+  
 }

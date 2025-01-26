@@ -10,13 +10,15 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    
   ) {}
   create(registerDTO: RegisterDTO): Promise<User> {
     const newUser = this.userRepository.create(registerDTO);
     return this.userRepository.save(newUser);
   }
 
-
+  
+  
   findAll():Promise<User[]> {
     return this.userRepository.find();
   }
@@ -30,4 +32,6 @@ export class UserService {
   findByEmail(email: string):Promise<User| null>{
     return this.userRepository.findOneBy({ email });
   } 
+
+  
 }

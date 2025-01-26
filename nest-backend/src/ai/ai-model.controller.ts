@@ -68,13 +68,26 @@ export class AIModelController {
     return this.aiModelService.findAll();
   }
 
+  @Get('/with_permission')
+  findAllWithDetails() {
+    return this.aiModelService.findAllWithDetails();
+  }
+
+  // แสดงในหน้า user detail จัดการสิทธิ์
+  @Get(':userId/models')
+  async getAllAiModelsWithStatus(@Param('userId') userId: number) {
+    const models = await this.aiModelService.findAllWithApprovalStatus(userId);
+    return models;
+  }
+
+
   @UseGuards(JwtGuard)
   @Get('/my_approved')
   async getMyApproved(@Request() req,) {
     const userId = req.user.userId;
     return this.aiModelService.getMyApproved(userId);
   }
-  
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.aiModelService.findOne(+id);

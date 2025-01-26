@@ -43,9 +43,7 @@ interface Data {
   date: Date;
 }
 
-function createData(  userId:number,name: string, email: string ,ai:number,workspace:number,date: string,): Data {
-  return { userId,name,email,ai,workspace, date: new Date(date), };
-}
+
 
 
 type Order = 'asc' | 'desc';
@@ -56,7 +54,7 @@ const UserListTable = () => {
   const [orderBy, setOrderBy] = useState<keyof Data>('date');
 
   const fetchUserData = () => {
-    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/`, {
+    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users`, {
       withCredentials: true, 
     })
       .then(response => {

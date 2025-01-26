@@ -26,10 +26,9 @@ export class UserController {
   //   return this.userService.findOne(+id);
   // }
 
-
+  
 
   @UseGuards(JwtGuard)
-
   @Get('profile')
   async getProfile(@Request() req) {
     // console.log  ("abc",req.user)

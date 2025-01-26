@@ -23,9 +23,11 @@ const UserDetailPage = () => {
       });
   };
 
-  const { userId } = useParams<{ userId?: string }>();
+  const { userId } = useParams();
   const [userData, setUserData] = useState<any>();
   const [myWorkspace, setMyWorkspace] = useState([]);
+  const [aiCount, setAiCount] = useState<number>(0);
+
   useEffect(() => {
     if (userId) {
       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/${userId}`, {
@@ -36,6 +38,19 @@ const UserDetailPage = () => {
         })
         .catch(error => {
           console.error('There was an error fetching the AI data!', error);
+        });
+      axios
+        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${userId}/models`)
+        .then((response) => {
+          // Filter AI models where permissions are approved (approve = true)
+          const approvedAiCount = response.data.filter((ai: any) =>
+            ai.permissions.some((permission: any) => permission.approve)
+          ).length;
+
+          setAiCount(approvedAiCount);
+        })
+        .catch((error) => {
+          console.error('Error fetching AI models:', error);
         });
     }
   }, [userId]);
@@ -118,7 +133,7 @@ const UserDetailPage = () => {
                 <div className="px-6">
                   <div className="flex justify-between items-center px-4 py-2 ">
                     <span className='text-xl font-medium text-indigo-800'>
-                      <i className="bi bi-file-earmark-check-fill"></i>AI ได้รับสิทธิ์ : {userData?.aiCount || 0}
+                      <i className="bi bi-file-earmark-check-fill"></i>AI ได้รับสิทธิ์ : {aiCount}
                     </span>
                     <AddAIDialog />
                   </div>
@@ -132,24 +147,30 @@ const UserDetailPage = () => {
                 </div>
               ) : userTab === "Workspace" ? (
                 <>
-
-                  {/* My wokspace Card group */}
-
-                  <div className={` grid grid-cols-3 pb-8 pt-2 `}>
-                    {myWorkspace.map((data, index) => (
-                      <div key={index} className={`mb-4`}>
-
-                        <Link to={`/workspaces/${data.workspaceId}/project-list`}>
-                          <WorkspaceCard id={data.workspaceId} name={data.name} description={data.description}
-                            members={data.members} updatedAt={data.updatedAt} createdAt={data.createdAt} />
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-
+                  {/* My workspace Card group */}
+                  {myWorkspace.length > 0 ? (
+                    <div className={`grid grid-cols-3 pb-8 pt-2`}>
+                      {myWorkspace.map((data, index) => (
+                        <div key={index} className={`mb-4`}>
+                          <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                            <WorkspaceCard
+                              id={data.workspaceId}
+                              name={data.name}
+                              description={data.description}
+                              members={data.members}
+                              updatedAt={data.updatedAt}
+                              createdAt={data.createdAt}
+                            />
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 text-gray-500 text-xl">
+                      <i className="bi bi-folder-x"></i> ไม่พบข้อมูล Workspace
+                    </div>
+                  )}
                 </>
-
-
               ) : null}
             </div>
           </div>

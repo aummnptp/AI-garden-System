@@ -128,6 +128,43 @@ export class AIModelService {
     }
   }
 
+  async findAllWithDetails() {
+    return this.aiModelRepository.find({
+      relations: ['permissions'], // ระบุความสัมพันธ์กับ user และ ai
+    });
+  }
+
+  // async findAllWithApprovalStatus(userId: number): Promise<any[]> {
+  //   const models = await this.aiModelRepository.find({
+  //     relations: ['permissions'], // Include permissions relation
+  //   });
+
+  //   // Map models to include approval status for the user
+  //   return models.map((model) => {
+  //     const userPermission = model.permissions.find(
+  //       (permission) => permission.user_id === userId,
+  //     );
+
+  //     return {
+  //       ...model,
+  //       approvalStatus: userPermission ? userPermission.approve : false, // Add approval status
+  //     };
+  //   });
+  // }
+  async findAllWithApprovalStatus(userId: number): Promise<any[]> {
+    const models = await this.aiModelRepository
+      .createQueryBuilder('aiModel')
+      .leftJoinAndSelect('aiModel.permissions', 'permission', 'permission.user_id = :userId', { userId })
+      .getMany();
+  
+    return models;
+  }
+  
+  
+
+
+
+
   async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
     return this.aiModelRepository
       .createQueryBuilder('aiModel')
