@@ -68,7 +68,13 @@ export class AIModelController {
     return this.aiModelService.findAll();
   }
 
-
+  @UseGuards(JwtGuard)
+  @Get('/my_approved')
+  async getMyApproved(@Request() req,) {
+    const userId = req.user.userId;
+    return this.aiModelService.getMyApproved(userId);
+  }
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.aiModelService.findOne(+id);
@@ -94,6 +100,7 @@ export class AIModelController {
   async getApprovedAiModels(@Param('userId') userId: number) {
     return this.aiModelService.getApprovedAiModelsByUserId(userId);
   }
+
 
 
 

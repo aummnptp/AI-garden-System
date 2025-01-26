@@ -6,7 +6,7 @@ import { Project } from './entities/project.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
-import { Role } from 'src/auth/guards/Roles';
+
 
 @Controller('workspaces/:workspaceId/projects')
 export class ProjectsController {

@@ -47,7 +47,8 @@ constructor(
       throw new NotFoundException('AI Model not found');
     }
 
-    const project = this.projectRepository.create({ ...createProjectDto, workspace: { workspaceId },
+    const project = this.projectRepository.create({ ...createProjectDto, 
+      workspace: { workspaceId },
       ai_model: aiModel,  
     });
     return this.projectRepository.save(project);
@@ -64,7 +65,7 @@ constructor(
   async findOne(workspaceId:number,projectId: number):Promise<Project> {
     await this.validateWorkspace(workspaceId);
     const project = await this.projectRepository.findOne({
-      where: { project_id: projectId, workspace: { workspaceId } },
+      where: { projectId: projectId, workspace: { workspaceId } },
       relations: ['ai_model'],
     });
 
@@ -91,12 +92,12 @@ constructor(
 
   async predictInProject (projectId: number, file: Express.Multer.File): Promise<any>{
 
-    const project = await this.projectRepository.findOne({ where: { project_id: projectId } });
+    const project = await this.projectRepository.findOne({ where: { projectId: projectId } });
     if (!project) {
       throw new NotFoundException('project not found!');
     }
   
-     const model = await this.aiModelRepository.findOne({ where: { id: project.project_id } });
+     const model = await this.aiModelRepository.findOne({ where: { id: project.projectId } });
         if (!model) {
           throw new NotFoundException('Model not found!');
         }

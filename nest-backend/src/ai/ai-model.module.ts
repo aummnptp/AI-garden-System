@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AIModel } from './entities/ai-model.entity';
 import { AIModelService } from './ai-model.service';
 import { AIModelController } from './ai-model.controller';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AIModel])],
+  imports: [TypeOrmModule.forFeature([AIModel]),TypeOrmModule.forFeature([User]),],
   controllers: [AIModelController],
   providers: [AIModelService],
 })

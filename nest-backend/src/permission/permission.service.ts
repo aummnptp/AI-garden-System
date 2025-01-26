@@ -56,6 +56,7 @@ export class AiPermissionService {
     return this.aiPermissionRepository.find({ where: { user_id: userId } });
   }
 
+
   async update(id: number, data: UpdateAiPermissionDto) {
     await this.aiPermissionRepository.update(id, data);
     return this.aiPermissionRepository.findOne({ where: { id } });

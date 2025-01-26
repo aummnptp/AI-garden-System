@@ -19,7 +19,7 @@ export class AIModelService {
   constructor(
     @InjectRepository(AIModel)
     private aiModelRepository: Repository<AIModel>,
-  ) {}
+  ) { }
 
   async addModel(
     createAIModelDto: CreateAIModelDto,
@@ -129,6 +129,15 @@ export class AIModelService {
   }
 
   async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
+    return this.aiModelRepository
+      .createQueryBuilder('aiModel')
+      .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+      .where('permission.user_id = :userId', { userId })
+      .andWhere('permission.approve = :approve', { approve: true })
+      .getMany();
+  }
+
+  async getMyApproved(userId: number): Promise<AIModel[]> {
     return this.aiModelRepository
       .createQueryBuilder('aiModel')
       .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, Req } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -17,7 +17,6 @@ import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 
 @Controller('workspaces')
 export class WorkspacesController {
-
   constructor(
     private readonly workspacesService: WorkspacesService
     
@@ -25,20 +24,13 @@ export class WorkspacesController {
   ) {}
   
 
-
   @Role("user")
   @UseGuards(JwtGuard,RolesGuard)
   @Post('create')
-
-  //async create(@Request() req, @Body() createWorkspaceDto: CreateWorkspaceDto) {
-    //const userEmail = req.user.email;
-    //return this.workspacesService.create(createWorkspaceDto, userEmail);
-
   async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
     const userId = req.user.userId; 
     // return  req.user
     return this.workspacesService.create(createWorkspaceDto, userId);
-
   }
 
   @Role("admin")
@@ -47,16 +39,7 @@ export class WorkspacesController {
   findAll() {
     return this.workspacesService.findAll();
   }
-  
-  
-  @Get(':userId')
-  findByUserId(@Param('userId') userId: string) {
-    return this.workspacesService.findOne(+userId);
-  }
 
-  
-
-    
   @Role("user")
   @UseGuards(JwtGuard,RolesGuard)
   @Get('/detail/:workspaceId')
@@ -118,7 +101,6 @@ export class WorkspacesController {
   async getUserListInvitation(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.getNonMembersProfiles(+workspaceId);
   }
-
 
 
 
@@ -237,5 +219,26 @@ async showmyInvitation(@Request() req, ) {
   const userId = req.user.userId;
   return this.workspacesService.getMyInvitation(userId);
 }
+
+@UseGuards(JwtGuard)
+@Get(':workspaceId/my-role')
+async getWorkspaceRole(@Param('workspaceId') workspaceId: number, @Req() req): Promise<{ role: string }> {
+  const userId = req.user.userId; // ดึง userId จาก JWT Payload
+
+  const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
+
+  if (!member) {
+    throw new NotFoundException('User is not a member of this workspace');
+  }
+
+  return { role: member.role };
+}
+
+@Role("admin")
+@UseGuards(JwtGuard, RolesGuard)
+@Get(':userId')
+findWithUserId(@Param('userId') userId: number) {
+  return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
+  }
 
 }

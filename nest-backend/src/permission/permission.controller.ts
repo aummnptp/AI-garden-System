@@ -28,7 +28,7 @@ export class AiPermissionController {
     return this.aiPermissionService.findAll();
   }
 
-  @Get('detail')
+  @Get('/detail')
   findAllWithDetails() {
     return this.aiPermissionService.findAllWithDetails();
   }
