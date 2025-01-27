@@ -13,5 +13,17 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  backend:
+    build:
+      context: .
+    restart: always
+    ports:
+      - "3000:3000" # เปิดพอร์ตสำหรับ Backend
+    volumes:
+      - ./uploads:/app/uploads # Map โฟลเดอร์ Local ไปยัง Docker Container
+    environment:
+      DATABASE_URL: postgres://postgres:admin@db:5432/ai_garden_db # ตั้งค่าเชื่อมต่อกับ Postgres
+      NODE_ENV: development
+
 volumes:
-  db-data:
+  db-data: # สำหรับ Postgres Database

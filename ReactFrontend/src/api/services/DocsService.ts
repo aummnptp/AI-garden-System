@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true;
 const updateDocsTitle = async (docsId: string, newTitle: string) => {
   try {
     const response = await axios.patch(
-      `${DOCS_ROUTES.updateTitle}${docsId}`,
+      `${DOCS_ROUTES.updateDocument}${docsId}`,
       { title: newTitle }
     );
     return response.data; // ส่งข้อมูลกลับไปยัง caller
@@ -15,7 +15,6 @@ const updateDocsTitle = async (docsId: string, newTitle: string) => {
     throw error; // ส่ง error กลับไปยัง caller
   }
 };
-
 
 const addSubtitle = async (docsId: string, subtitle: string) => {
   try {
@@ -34,7 +33,7 @@ const addSubtitle = async (docsId: string, subtitle: string) => {
 const updateSubDocsTitle = async (subDocsId: string, newTitle: string) => {
   try {
     const response = await axios.patch(
-      `${DOCS_ROUTES.updateSubTitle}${subDocsId}`,
+      `${DOCS_ROUTES.updateSubDocument}${subDocsId}`,
       { title: newTitle },
       { withCredentials: true }
     );

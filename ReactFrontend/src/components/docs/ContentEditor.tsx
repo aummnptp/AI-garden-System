@@ -3,6 +3,8 @@ import React from "react";
 import { Button } from "@mui/material";
 import { SaveOutlined } from "@ant-design/icons";
 import { Editor } from "@tinymce/tinymce-react";
+import SaveContentModal from "./modal/SaveContentModal";
+import { DeleteOutlined } from "@mui/icons-material";
 
 type ContentEditorProps = {
   value: string;
@@ -21,15 +23,15 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
 }) => {
   console.log(value)
   return (
-    <div>
-      <div className="pr-12 w-[80%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-between items-center pl-2">
+    <div className="w-full justify-self-center relative  ">
+      <div className=" pr-12 w-[80%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 z-50 flex justify-between items-center pl-2">
         <Button
           variant="contained"
           size="large"
           color="error"
           onClick={onDiscard}
         >
-          <SaveOutlined /> Discard Change
+            <DeleteOutlined /> Discard Change
         </Button>
 
         <Button
@@ -46,36 +48,17 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
           <SaveOutlined /> Save Content
         </Button>
       </div>
-
-      <Editor
-                apiKey="ncaou3be6pfqi22ceukdz7cyc2cf3nz3qhj33rqb8b5j8kxy"
-                init={{
-                  plugins:
-                  // "" ,
-                  "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
-                  toolbar:
-                    "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-                  tinycomments_mode: "embedded",
-                  tinycomments_author: "Author name",
-                  mergetags_list: [
-                    { value: "First.Name", title: "First Name" },
-                    { value: "Email", title: "Email" },
-                  ],
-
-                  ai_request: (request, respondWith) =>
-                    respondWith.string(() =>
-                      Promise.reject("See docs to implement AI Assistant")
-                    ),
-                }}
-        onEditorChange={onEditorChange}
-      />
-    
-      {/* <Editor
+{/* 
+     */}
+      <Editor 
         id="Editor"
+        
         tinymceScriptSrc={"/tinymce/tinymce.min.js"}
         onInit={(evt, editor) => setText(editor.getContent())}
         value={value}
         init={{
+
+
           // placeholder: "",
           min_height: 750,
           menubar: true,
@@ -99,14 +82,31 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
             "wordcount",
           ],
           toolbar:
-            "undo redo | blocks | " +
-            "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | " +
-            "removeformat | help",
+          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+
           resize: true,
+  //         selector: 'textarea',  // change this value according to your HTML
+  // file_picker_callback: (callback, value, meta) => {
+  //   // Provide file and text for the link dialog
+  //   if (meta.filetype == 'file') {
+  //     callback('mypage.html', { text: 'My text' });
+  //   }
+
+  //   // Provide image and alt text for the image dialog
+  //   if (meta.filetype == 'image') {
+  //     callback('myimage.jpg', { alt: 'My alt text' });
+  //   }
+
+  //   // Provide alternative source and posted for the media dialog
+  //   if (meta.filetype == 'media') {
+  //     callback('movie.mp4', { source2: 'alt.ogg', poster: 'image.jpg' });
+  //   }
+  // }
+// ,
+
         }}
         onEditorChange={onEditorChange}
-      /> */}
+      />
     </div>
   );
 };

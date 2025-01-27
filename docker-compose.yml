@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Database Service
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ai_garden_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  # Backend Service (NestJS)
+  nest-backend:
+    build:
+      context: ./nest-backend
+    restart: always
+    ports:
+      - "3000:3000" # พอร์ต Backend
+    volumes:
+      - ./nest-backend/uploads:/app/uploads # Map โฟลเดอร์ uploads
+    environment:
+      DATABASE_URL: postgres://postgres:admin@db:5432/ai_garden_db
+      NODE_ENV: development
+    depends_on:
+      - db # รอ Database ทำงานก่อน
+
+  # Frontend Service (React)
+  react-frontend:
+    build:
+      context: ./ReactFrontend
+    ports:
+      - "3001:3000" # พอร์ต Frontend
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./ReactFrontend:/app
+      - /app/node_modules
+    environment:
+      REACT_APP_API_URL: http://localhost:3000 # URL ของ Backend
+
+volumes:
+  db-data: # สำหรับเก็บข้อมูลของ Database
