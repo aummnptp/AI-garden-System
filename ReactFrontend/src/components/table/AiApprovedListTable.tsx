@@ -40,22 +40,15 @@ interface Data {
     ai_image:string;
     email: string;
     date: Date;
+    ai_type: string;
 }
 interface AiListTableProps {
   userId?: string;
 }
 
-function createData(name: string, ai: string, ai_image: string, email: string ,date: string,): Data {
-    return { name, ai,  ai_image,email , date: new Date(date), };
-}
 
-const initialRows = [
-    createData('John Doe', "Ai","/images/ai/Object-detection-Real-world-applications-and-benefits.png", 'john@example.com', '2021-06-02T11:30:00'),
-    createData('Jane Smith', "Pet","/images/ai/627d124572023b6948b6cdff_60ed9a4e09e2c648f1b8a013_object-detection-cover.png", 'jane@example.com', '2024-09-02T12:30:00'),
-    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2024-06-02T13:30:00'),
-    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2024-06-02T13:30:00'),
-    createData('Alice Johnson', "Heath","/images/ai/dermpic.jpg", 'alice@example.com', '2023-06-02T13:30:00'),
-];
+
+
 
 type Order = 'asc' | 'desc';
 
@@ -84,6 +77,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+  
 
   const handleAccept = (index: number) => {
     setRows((prevRows) => prevRows.filter((_, i) => i !== index));
@@ -150,7 +144,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
           {stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
             <StyledTableRow key={index}>
               <StyledTableCell>
-                <div className="flex items-center my-2 w-fit mx-auto">
+                <div className="flex items-center my-2 w-fit ml-32">
                   <img
                     className="w-14 h-14 rounded-[10px] border-2"
                     src={row.ai_image}
@@ -158,7 +152,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
                   <div className="ml-2">
                     <p className="text-black text-lg font-medium">{row.name}</p>
                     <p className="text-[#8D9BAE] text-sm font-normal">
-                      Classification
+                    {row.ai_type}
                     </p>
                   </div>
                 </div>
