@@ -133,14 +133,15 @@ async pendingInvite(@Request() req,@Param('workspaceId') workspaceId: number, @B
 @Role("user")
 @WorkspaceRole('owner') 
 @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
-@Delete('/cancel-invite/:inviteId')
+@Delete('/cancel-invite/:workspaceId')
 async cancelPendingInvite(
   @Request() req,
-  @Param('inviteId') inviteId: number,  // รับ inviteId จาก URL
-
+  @Param('workspaceId') workspaceId: string, 
+  @Body() body: { inviteId: number }
 ) {
+  console.log("User Data:", req.user); // ✅ Debug ดูว่า req.user มีค่าหรือไม่
 
-  return this.workspacesService.cancelPendingInvite( inviteId);
+  return this.workspacesService.cancelPendingInvite(body.inviteId);
 }
 
 @Role("user")

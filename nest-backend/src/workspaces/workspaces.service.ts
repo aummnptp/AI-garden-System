@@ -251,29 +251,20 @@ export class WorkspacesService {
     return this.workspaceInvitationsRepository.save(invitation);
   }
 
-  async cancelPendingInvite( inviteId: number): Promise<{ success: boolean; message: string }> {
-    // ค้นหาคำเชิญที่ต้องการลบโดยใช้ inviteId
+  async cancelPendingInvite(inviteId: number): Promise<void> {
     const invitation = await this.workspaceInvitationsRepository.findOne({
       where: { inviteId },
+      relations: ['workspace'],
     });
   
     if (!invitation) {
       throw new NotFoundException(`Invitation with id ${inviteId} not found`);
     }
   
-   
-    // ตรวจสอบสถานะของคำเชิญต้องเป็น 'pending'
-    if (invitation.status !== 'pending') {
-      throw new BadRequestException('Invitation is already accepted or canceled');
-    }
+    
+
   
-    // ลบคำเชิญ
     await this.workspaceInvitationsRepository.remove(invitation);
-  
-    return {
-      success: true,
-      message: `Invitation with id ${inviteId} has been canceled successfully.`,
-    };
   }
 
   async acceptInvitation(invitationId: number, userId: number): Promise<WorkspaceMember> {
@@ -296,8 +287,8 @@ export class WorkspacesService {
     }
 
     // อัปเดตสถานะคำเชิญเป็น accepted
-    invitation.status = 'accepted';
-    await this.workspaceInvitationsRepository.save(invitation);
+    // invitation.status = 'accepted';
+    await this.workspaceInvitationsRepository.remove(invitation);
 
     // เพิ่มสมาชิกเข้า Workspace
     const newMember = this.workspaceMemberRepository.create({

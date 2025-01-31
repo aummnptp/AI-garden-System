@@ -9,6 +9,7 @@ import axios from 'axios';
 import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
 import AddNoteDialog from '../components/ืNoteDialog';
+import ObjectDetectionResultComponent from '../components/aiDisplay/ObjectDetectionResultComponent';
 
 interface PredictResult {
   ai_type: string;
@@ -142,9 +143,9 @@ const PredictAiModelPage: React.FC = () => {
       // เตรียม FormData เพื่อส่งไฟล์
       const formData = new FormData();
       formData.append('file', file);
-  
+
       // ยิง axios เพื่ออัปโหลดไฟล์และส่งค่าที่ได้รับจาก response กลับ
-      const response = await axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/predict/${2}`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/predict/${projectId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -163,45 +164,46 @@ const PredictAiModelPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      console.log(file.size);
-      try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/predict/${modelId}`, {
-          method: 'POST',
-          body: formData,
-        });
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+  
+  //   event.preventDefault();
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append('file', file);
+  //     console.log(file.size);
+  //     try {
+  //       const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/predict/${projectId}`, {
+  //         method: 'POST',
+  //         body: formData,
+  //       });
 
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json();
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
 
-          // ดึงค่า prediction, regression_params และ ai_type จาก data
-          const { prediction, regression_params, ai_type, response_keys } = data;
+  //       const contentType = response.headers.get('content-type');
+  //       if (contentType && contentType.includes('application/json')) {
+  //         const data = await response.json();
 
-          navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
-            state: {
-              prediction: prediction,   // ผลลัพธ์การพยากรณ์
-              regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
-              ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
-              file: customedImageUrl,            // ไฟล์ที่อัปโหลด
-              fileName: file.name,
-              response_keys: response_keys       // ชื่อไฟล์ที่อัปโหลด
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    }
-  };
+  //         // ดึงค่า prediction, regression_params และ ai_type จาก data
+  //         // const { prediction, regression_params, ai_type, response_keys } = data;
+
+  //         navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
+  //           state: {
+  //             // prediction: prediction,   // ผลลัพธ์การพยากรณ์
+  //             // regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
+  //             // ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
+  //             // file: customedImageUrl,            // ไฟล์ที่อัปโหลด
+  //             file: file,
+  //             // response_keys: response_keys         // ชื่อไฟล์ที่อัปโหลด
+  //           }
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //     }
+  //   }
+  // };
   
   const handleSaveNote = () => {
     setSavedNote(note);
@@ -351,7 +353,7 @@ const PredictAiModelPage: React.FC = () => {
 
 
 
-            <form onSubmit={handleSubmit} className="m-6 space-y-4">
+            <form onSubmit={handleUpload} className="m-6 space-y-4">
             {  uploadStep == 1 ? (
               <div className="form-group">
                
@@ -442,7 +444,11 @@ const PredictAiModelPage: React.FC = () => {
                        {uploadStep == 4 && predictResult ? (
               customedImageUrl ? (
                 <>
-              <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl}/>
+              <ObjectDetectionResultComponent
+                      resultImage={customedImageUrl}
+                      predictResult={predictResult}
+                    />
+              {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}
               <AddNoteDialog/>
 
 

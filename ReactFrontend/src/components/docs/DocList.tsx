@@ -32,39 +32,41 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 import SaveReorderModal from "./modal/SaveReorderModal";
+import { Docs,SubDocs } from "../../types/Docs";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
-interface SubDoc {
-  subDocsId: string;
-  title: string;
-  content: string;
-  // showEdit: boolean;
-  order: number;
-  // editPosition: { top: number; left: number };
-  // showInput: boolean;
-  // showDelete: boolean;
-  // text: string;
-  hidden: boolean;
-}
+// interface SubDoc {
+//   subDocsId: string;
+//   title: string;
+//   content: string;
+//   // showEdit: boolean;
+//   order: number;
+//   // editPosition: { top: number; left: number };
+//   // showInput: boolean;
+//   // showDelete: boolean;
+//   // text: string;
+//   hidden: boolean;
+// }
 
-interface DocData {
-  docsId: string;
-  title: string;
-  content: string;
-  // showEditModal: boolean;
-  // editPosition: { top: number; left: number };
-  // showInput: boolean;
-  // showDeleteModal: boolean;
-  order: number;
-  // text: string;
-  hidden: boolean;
-  // subDocs: SubDoc[];
-  subDocuments: SubDoc[];
-}
+// interface DocData {
+//   docsId: string;
+//   title: string;
+//   content: string;
+//   // showEditModal: boolean;
+//   // editPosition: { top: number; left: number };
+//   // showInput: boolean;
+//   // showDeleteModal: boolean;
+//   order: number;
+//   // text: string;
+//   hidden: boolean;
+//   // subDocs: SubDoc[];
+//   subDocuments: SubDoc[];
+// }
 
 type DocListProps = {};
 const DocList: React.FC<DocListProps> = ({}) => {
   let { docsId, subDocsId } = useParams();
-  const [docs, setDocs] = useState<DocData[]>([]);
+  const [docs, setDocs] = useState<Docs[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteSubModalOpen, setDeleteSubModalOpen] = useState(false);
@@ -120,13 +122,31 @@ const DocList: React.FC<DocListProps> = ({}) => {
   const patchDocsTitle = async (docsId: string, newTitle: string) => {
     try {
       const updatedDoc = await updateDocsTitle(docsId, newTitle);
-      console.log("Document renamed:", updatedDoc);
     } catch (error) {
       console.error("Failed to rename document:", error);
     } finally {
     }
   };
 
+
+
+    // const {
+    //   data: docs,
+    //   isLoading: isLoadingDocs,
+    //   error: errorDocs,
+    //   refetch: refetchInvitedWorkspace, // <-- ดึง refetch ออกมา
+  
+    // } = useFetchQuery(
+    //   ["docs"],
+    //   `/workspaces/invite-workspaces`
+    // );
+  
+    // // ตรวจสอบสถานะการโหลด
+    // if (isLoadingDocs) return <div>Loading...</div>;
+    // // ตรวจสอบข้อผิดพลาด
+    // if (errorDocs) return <div>Error: { errorDocs?.message}</div>;
+  
+   
   const fetchData = async () => {
     try {
       let docsResponse;
@@ -302,13 +322,13 @@ const DocList: React.FC<DocListProps> = ({}) => {
     }
   };
 
-  const onReorder = async (newDocsOrder: DocData[]) => {
+  const onReorder = async (newDocsOrder: Docs[]) => {
     setDocs(newDocsOrder); // อัปเดต State
   };
 
   const onSubDocsReorder = async (
     docsId: string,
-    newSubDocsOrder: SubDoc[]
+    newSubDocsOrder: SubDocs[]
   ) => {
     setDocs((prevDocs) =>
       prevDocs.map((doc) =>
@@ -351,6 +371,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
     } catch (error) {
       console.error("Failed to save reorder:", error);
     }
+    setReorderModalOpen(false)
   };
   
   const handleDocsToggleVisibility = async (docsId: string, currentHiddenState: boolean) => {
@@ -380,24 +401,11 @@ const DocList: React.FC<DocListProps> = ({}) => {
     try {
       const response = await axios.patch(
         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-subdocs/${subDocsId}`,
-        { hidden: !currentHiddenState }, // ส่งค่าตรงข้ามของ currentHiddenState
-        { withCredentials: true } // ใช้สำหรับส่ง cookies หาก backend ต้องการ
+        { hidden: !currentHiddenState }, 
+        { withCredentials: true } 
       );
   
       if (response.status === 200) {
-        // อัปเดต state ของ subDocuments หลังจากได้รับการตอบกลับสำเร็จ
-        // const updatedDocs = docs.map((doc) => {
-        //   if (doc.docsId === docsId) {
-        //     const updatedSubDocuments = doc.subDocuments.map((subDoc) =>
-        //       subDoc.subDocsId === subDocsId
-        //         ? { ...subDoc, hidden: !currentHiddenState }
-        //         : subDoc
-        //     );
-        //     return { ...doc, subDocuments: updatedSubDocuments };
-        //   }
-        //   return doc;
-        // });
-        // setDocs(updatedDocs); // อัปเดต state ของ docs
         fetchData();
         console.log(`Visibility updated successfully for subdocument: ${subDocsId}`);
       } else {
@@ -453,7 +461,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
         {/* heading Delete Modal */}
         {selectedDocId !== null && (
           <DeleteSubDocModal
-            title={`Delete this heading?${selectedDocId}`}
+            title={`Delete this heading?`}
             open={deleteModalOpen}
             onClose={() => {
               setDeleteModalOpen(false);
@@ -466,7 +474,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
         {/* subheading Delete Modal */}
         {selectedSubDocId !== null && (
           <DeleteDocModal
-            title={`Delete this sub heading?${selectedSubDocId}`}
+            title={`Delete this sub heading?`}
             open={deleteSubModalOpen}
             onClose={() => {
               setDeleteSubModalOpen(false);

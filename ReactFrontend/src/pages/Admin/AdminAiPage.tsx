@@ -87,11 +87,12 @@ function AdminAi() {
             
             {AIData.map((data) => (
               <AdminAiCard
-              id={data.id}
+              id={data.aiId}
               name={data.name}
               aiDesc={data.description}
               tags={data.ai_tag}
-              img={"/images/ai/healthAi.webp"}
+              // img={"/images/ai/healthAi.webp"}
+              img={data.imagePath}
               type={data.ai_type}
               />
               

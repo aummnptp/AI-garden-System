@@ -11,29 +11,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import SaveContentModal from "../components/docs/modal/SaveContentModal";
 import DiscardContentModal from "../components/docs/modal/DiscardConentModal";
+import { Docs } from "../types/Docs";
 
-interface SubTitle {
-  subDocsId: number;
-  name: string;
-  contentData: string;
-  showEdit: boolean;
-  editPosition: { top: number; left: number };
-  showInput: boolean;
-  showDelete: boolean;
-  text: string;
-}
 
-interface DocData {
-  docsId: number;
-  title: string;
-  contentData: string;
-  showEditModal: boolean;
-  editPosition: { top: number; left: number };
-  showInput: boolean;
-  showDeleteModal: boolean;
-  text: string;
-  subTitle: SubTitle[];
-}
 
 
 
@@ -44,30 +24,18 @@ const DocsPage = () => {
   // const subwrapperRef = useRef<HTMLDivElement | null>(null);
   const [saveContentModal, setSaveContentModal] = useState(false);
   const [discardContentModal, setDiscardContentModal] = useState(false);
-  const [docDatas, setDocDatas] = useState<DocData[]>([
-    {
-      docsId: 1,
-      title: "AI Garden System",
-      contentData: `
-<p><span style="color: #353d81;"><strong><span style="font-size: 36pt;">Welcome to AI Garden System</span></strong></span></p>`,
-      showEditModal: false,
-      editPosition: { top: 0, left: 0 }, // แก้ไขจาก array เป็น object
-      showInput: false,
-      showDeleteModal: false,
-      text: "",
-      subTitle: [
-        {
-          subDocsId: 1,
-          name: "Get Started",
-          contentData: "get start content here",
-          showEdit: false,
-          editPosition: { top: 0, left: 0 },
-          showInput: false,
-          showDelete: false,
-          text: ``,
-        },
-      ],
-    },
+  const [docDatas, setDocDatas] = useState<Docs[]>([
+//     {
+//       docsId: "1",
+//       title: "AI Garden System",
+//       content: `
+// <p><span style="color: #353d81;"><strong><span style="font-size: 36pt;">Welcome to AI Garden System</span></strong></span></p>`,
+
+
+//       subDocuments: [
+//      null
+//       ],
+//     },
   ]);
 
   // const handleTitleSave = (index: number) => {
@@ -139,7 +107,8 @@ const DocsPage = () => {
   // const [showSaveEditorModal, setShowSaveEditorModal] = useState(false);
 
   const [currentPageData, setCurrentPageData] = useState(
-    docDatas[0].contentData
+    // docDatas[0].content
+    ""
   );
 
 

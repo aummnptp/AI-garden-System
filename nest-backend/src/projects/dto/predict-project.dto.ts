@@ -15,28 +15,26 @@ class ResponseKeyDto {
   }
   
 export class CreateProjectHistoryDto {
-  @IsNumber()
-  @IsNotEmpty()
-  projectId: number;
+  // @IsNumber()
+  // @IsNotEmpty()
+  // projectId: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  modelId: number;
+  // @IsNumber()
+  // @IsNotEmpty()
+  // modelId: number;
 
   @IsString()
-  @IsOptional()
-  filePath?: string;
+  filePath: string;
 
   
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ResponseKeyDto)
-  readonly response_keys: ResponseKeyDto[];
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => ResponseKeyDto)
+  // readonly response_keys: ResponseKeyDto[];
     
-  @IsArray()
-  @IsNotEmpty()
-  result:{}[];
+  // @IsArray()
+  // @IsNotEmpty()
+  // result:{}[];
 
-// @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-// response_keys: { key: string; meaning: string ,displayFormat:string}[];
+
 }

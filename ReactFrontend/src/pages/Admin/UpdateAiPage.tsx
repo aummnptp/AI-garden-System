@@ -238,59 +238,114 @@ const fetchAi = () => {
   };
 
 
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const modelData = {
+  //     name: aiName,
+  //     description: description,
+  //     ai_type: aiType,
+  //     api_uri: serviceUri,
+  //     ai_tag: tags,
+  //     input_desc: inputDescription,
+  //     response_keys: responseKeys.map((key) => ({
+  //       key: key.key,
+  //       meaning: key.meaning,
+  //       displayFormat: key.displayFormat,
+  //     })),
+  //   };
+  
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
+  //       {
+  //         method: 'PATCH',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify(modelData),
+  //         credentials: 'include',
+  //       }
+  //     );
+  
+  //     if (!response.ok) {
+  //       // ตรวจสอบว่าสถานะไม่ใช่ 2xx
+  //       const errorData = await response.json().catch(() => {
+  //         throw new Error(response.statusText); // ใช้ข้อความสถานะหากไม่มี JSON
+  //       });
+  //       throw new Error(errorData.message || 'Something went wrong!');
+  //     }
+  
+  //     // ตรวจสอบ Content-Type ก่อนแปลง JSON
+  //     const contentType = response.headers.get('Content-Type');
+  //     if (contentType && contentType.includes('application/json')) {
+  //       const data = await response.json();
+  //       console.log('Success:', data);
+  //     } else {
+  //       console.log('Success:', await response.text()); // แสดงข้อความ plain text
+  //     }
+  
+  //     navigate('/admin/admin-ai'); // Navigate back to admin page after submission
+  //   } catch (error) {
+  //     console.error('Error:', error || error);
+  //     alert(`Error: ${error|| 'Failed to update AI model'}`);
+  //   }
+  // };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const modelData = {
-      name: aiName,
-      description: description,
-      ai_type: aiType,
-      api_uri: serviceUri,
-      ai_tag: tags,
-      input_desc: inputDescription,
-      response_keys: responseKeys.map((key) => ({
-        key: key.key,
-        meaning: key.meaning,
-        displayFormat: key.displayFormat,
-      })),
-    };
-  
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modelData),
-          credentials: 'include',
-        }
-      );
-  
-      if (!response.ok) {
-        // ตรวจสอบว่าสถานะไม่ใช่ 2xx
-        const errorData = await response.json().catch(() => {
-          throw new Error(response.statusText); // ใช้ข้อความสถานะหากไม่มี JSON
-        });
-        throw new Error(errorData.message || 'Something went wrong!');
-      }
-  
-      // ตรวจสอบ Content-Type ก่อนแปลง JSON
-      const contentType = response.headers.get('Content-Type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        console.log('Success:', data);
-      } else {
-        console.log('Success:', await response.text()); // แสดงข้อความ plain text
-      }
-  
-      navigate('/admin/admin-ai'); // Navigate back to admin page after submission
-    } catch (error) {
-      console.error('Error:', error || error);
-      alert(`Error: ${error|| 'Failed to update AI model'}`);
-    }
+  event.preventDefault();
+  const modelData = {
+    name: aiName,
+    description: description,
+    ai_type: aiType,
+    api_uri: serviceUri,
+    ai_tag: tags,  // tags ที่ผู้ใช้กรอก
+    input_desc: inputDescription,
+    response_keys: responseKeys.map((key) => ({
+      key: key.key,
+      meaning: key.meaning,
+      displayFormat: key.displayFormat,
+    })),
   };
-  
+
+  const formData = new FormData();
+  if (uploadedFile) {
+    formData.append('file', uploadedFile);  // ไฟล์ที่เลือก
+  }
+  formData.append('modelData', JSON.stringify(modelData));  // ข้อมูลอื่นๆ
+
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
+      {
+        method: 'PATCH',
+        headers: {
+          // ไม่มีการตั้ง Content-Type เพราะ FormData จะจัดการเอง
+        },
+        body: formData,
+        credentials: 'include',
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => {
+        throw new Error(response.statusText);
+      });
+      throw new Error(errorData.message || 'Something went wrong!');
+    }
+
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      console.log('Success:', data);
+    } else {
+      console.log('Success:', await response.text());
+    }
+
+    navigate('/admin/admin-ai');
+  } catch (error) {
+    console.error('Error:', error || error);
+    alert(`Error: ${error || 'Failed to update AI model'}`);
+  }
+};
 
 
   // แก้
@@ -420,7 +475,7 @@ const fetchAi = () => {
                     onClick={() => {
                       setExamplePredictResultModal(true);
                       setPredictResult({
-                        response_keys: responseKeys,
+                        response_keys: responseKeys.map(key => key.key),
                         prediction: data,
                       });
                     }}

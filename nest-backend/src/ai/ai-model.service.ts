@@ -48,7 +48,7 @@ export class AIModelService {
   }  
 
   async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
+    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:id } });
   
     if (!existingModel) {
       throw new NotFoundException(`AI Model with Id ${id} not found`);
@@ -70,13 +70,34 @@ export class AIModelService {
   }
   
   
-  findAll(): Promise<AIModel[]> {
-    return this.aiModelRepository.find();
+  async findAll(): Promise<AIModel[]> {
+    const aiModels = await this.aiModelRepository.find();
+
+    return aiModels.map((aiModel) => ({ 
+      ...aiModel,
+      imagePath: aiModel.imagePath
+        ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
+        : null,
+    }));
   }
 
   // อ่าน AIModel ตาม id
-  findOne(id: number): Promise<AIModel | null> {
-    return this.aiModelRepository.findOneBy({ id });
+  async findOne(id: number): Promise<AIModel> {
+    const aiModel = await this.aiModelRepository.findOneBy({ aiId:id  });
+  
+    if (!aiModel) {
+      throw new NotFoundException(`AI Model with id ${id} not found`);
+    }
+  
+    // สร้าง URL ของรูปภาพ
+    const imageUrl  = aiModel.imagePath
+      ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
+      : null;
+  
+    return {
+      ...aiModel,
+      imagePath:imageUrl ,
+    };
   }
   
   remove(id: number): Promise<void> {
@@ -86,7 +107,7 @@ export class AIModelService {
   
   
   async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-    const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
+    const model = await this.aiModelRepository.findOne({ where: { aiId: modelId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
@@ -106,7 +127,7 @@ export class AIModelService {
       return {
         response_keys: model.response_keys,
         prediction: response.data,
-        ai_type: model.ai_type,
+        // ai_type: model.ai_type,
       };
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;

@@ -4,21 +4,22 @@ import { DeleteOutlined, EditOutlined, MoreOutlined, PlusCircleOutlined } from "
 import { Button, Menu, MenuItem, TextField } from "@mui/material";
 import { Reorder } from "framer-motion";
 import { HideSourceOutlined, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { SubDocs } from "../../types/Docs";
 
-type SubDoc = {
-  subDocsId: string;
-  order: number;
-  title: string;
-  hidden: boolean;
-};
+// type SubDoc = {
+//   subDocsId: string;
+//   order: number;
+//   title: string;
+//   hidden: boolean;
+// };
 
 type SubDocListProps = {
   docsId: string;
-  subDocuments: SubDoc[];
+  subDocuments: SubDocs[];
   onDeleteSubDoc: (subDocsId: string) => void; // ฟังก์ชันลบ
   onAddSubTitle: (docsId: string) => void;
   onChangeSubTitle:any,
-  onSubDocsReorder: (newSubDocuments: SubDoc[]) => void;
+  onSubDocsReorder: (newSubDocuments: SubDocs[]) => void;
   onReOrderMode: boolean;
   onSubDocToggleVisibility: (subDocsId: string, currentHiddenState: boolean) => void;
 };

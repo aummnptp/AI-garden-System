@@ -40,7 +40,8 @@ const AiDetail = () => {
             <div className="grid grid-cols-6">
               <img
                 className="col-span-2 h-[100%] object-cover"
-                src="/images/ai/healthAi.webp"
+                // src="/images/ai/healthAi.webp"
+                src={aiData.imagePath}
                 alt="AI"
               />
               <div className="col-span-4 p-6">

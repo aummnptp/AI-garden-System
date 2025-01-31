@@ -10,7 +10,7 @@ type RoleGuardProps = {
 };
 
 const RoleGuard: React.FC<RoleGuardProps> = ({ requiredRole, children }) => {
-  const { isAuthenticated,user, loading } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
 
 
   if (!isAuthenticated) {

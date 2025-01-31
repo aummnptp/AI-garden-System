@@ -15,6 +15,7 @@ import { Link, useParams } from "react-router-dom";
 import ProjectData from "../../data/ProjectData";
 import { Button, IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
 import axios from "axios";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
 
 
@@ -53,49 +54,74 @@ interface ResponseKey {
 
 
 const ProjectDetailPage = () => {
+  // const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
+  // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+  // const [loading, setLoading] = useState(true);
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
-  const [projectDetail, setProjectDetail] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
 
 
 
 
-  const fetchData = async () => {
-    try {
-      const [workspaceResponse, projectResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
-          ,
-          {
-            withCredentials: true,
-          }
-        ),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`  ,
-          {
-            withCredentials: true,
-          }
-        ),
-      ]);
+    const {
+      data: projectDetail,
+      isLoading: isLoadingProjectDetail,
+      error: errorProjectDetail,
+    } = useFetchQuery(
+      ["project-detail", workspaceId ?? "",projectId ?? ""],
+      `/workspaces/${workspaceId}/projects/detail/${projectId}`
+    );
   
-    setWorkspaceDetail(workspaceResponse.data);
-      setProjectDetail(projectResponse.data);
-    } catch (error) {
-      console.error("There was an error fetching the data!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
-  }, []);
+  //   // ดึงข้อมูล workspace detail
+    const {
+      data: workspaceDetail,
+      isLoading: isLoadingWorkspaceDetail,
+      error: errorWorkspaceDetail,
+    } = useFetchQuery(
+      ["workspace-detail", workspaceId ?? ""],
+      `/workspaces/detail/${workspaceId}`
+    );
+  
+    // ตรวจสอบสถานะการโหลด
+    if (isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
+    // ตรวจสอบข้อผิดพลาด
+    if (errorProjectDetail || errorWorkspaceDetail) return <div>Error: {errorProjectDetail?.message || errorWorkspaceDetail?.message}</div>;
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
-  if (!projectDetail) {
-    return <div>Error: Project details could not be loaded.</div>;
-  }
+  // const fetchData = async () => {
+  //   try {
+  //     const [workspaceResponse, projectResponse] = await Promise.all([
+  //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
+  //         ,
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       ),
+  //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`  ,
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       ),
+  //     ]);
+  
+  //   setWorkspaceDetail(workspaceResponse.data);
+  //     setProjectDetail(projectResponse.data);
+  //   } catch (error) {
+  //     console.error("There was an error fetching the data!", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+  // }, []);
+
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+
+  // if (!projectDetail) {
+  //   return <div>Error: Project details could not be loaded.</div>;
+  // }
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
   return (
@@ -123,10 +149,10 @@ const ProjectDetailPage = () => {
           {/* detail */}
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
-            {projectDetail.image_path ? (
+            {projectDetail.imagePath ? (
              <img
                className=" col-span-2 w-full h-[100%] object-cover"
-             src={projectDetail.image_path}
+             src={projectDetail.imagePath}
             //  alt={`${projectDetail.project_name} project`}
              />
             ) : (
@@ -211,7 +237,7 @@ const ProjectDetailPage = () => {
       <div className="mt-2 w-full border border-zinc-300" />
     </div>
   </div>
-      <Link to={`/workspaces/${workspaceId}/project/${projectId}/detail/test/${projectId}`} className="ml-16 mt-2">
+      <Link to={`/workspaces/${workspaceId}/project/${projectId}/predict`} className="ml-16 mt-2">
       <Button
               variant="contained"
               size="large"

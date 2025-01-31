@@ -24,6 +24,7 @@ export class AuthController{
       // httpOnly: true,
     });
     res.redirect(`${process.env.REACT_APP_API_URL}`)
+    // res.redirect(`http://localhost:5173/`);
     // return {
     //   message: 'Login Successful',
     // };

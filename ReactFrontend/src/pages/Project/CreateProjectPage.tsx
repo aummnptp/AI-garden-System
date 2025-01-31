@@ -57,7 +57,7 @@ function CreateProjectPage() {
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
   const handleSelectCard = (id: number) => {
-    const selectedCard = AIData.find(data => data.id === id);
+    const selectedCard = AIData.find(data => data.aiId === id);
     setSelectedAI(selectedCard);  // เก็บข้อมูล AI ที่ถูกเลือก
     setSelectedCardId(id);  // เก็บแค่ id ถ้าจำเป็น
     // alert(`Selected AI model: ${selectedCard?.name}`);
@@ -119,7 +119,7 @@ function CreateProjectPage() {
     description: projectDescription,
     input_type: inputType,
     ai_id:selectedCardId,
-    // image_path: image,
+    image_path: image,
   };
 
   try {
@@ -128,9 +128,11 @@ function CreateProjectPage() {
     formData.append("project_desc", projectData.description);
     formData.append("input_type", projectData.input_type);
     formData.append("ai_id", projectData.ai_id);
+    if (projectData.image_path) {
+      formData.append("file", projectData.image_path);
+    }
     
     // formData.append("image_path", image);
-
     await axios.post(
       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData, 
        {
@@ -325,14 +327,15 @@ function CreateProjectPage() {
                 <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
                   {AIData.map((data) => (
                     <CreateProjectCard
-                      id={data.id}
+                      id={data.aiId}
                       name={data.name}
                       aiDesc={data.description}
                       tags={data.ai_tag}
-                      img={`/images/ai/healthAi.webp`}
+                      // img={`/images/ai/healthAi.webp`}
+                      img={data.imagePath}
                       type={data.ai_type}
-                      isSelected={data.id === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
-                      onSelect={() => handleSelectCard(data.id)} // ส่งฟังก์ชัน onClick
+                      isSelected={data.aiId === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
+                      onSelect={() => handleSelectCard(data.aiId)} // ส่งฟังก์ชัน onClick
                     ></CreateProjectCard>
                   ))}
                 </div>
@@ -342,7 +345,7 @@ function CreateProjectPage() {
                 <img
                   className="w-full h-48 object-cover"
                   src={
-                    // selectedAI.imagePath ||
+                    selectedAI.imagePath ||
                     "/images/ai/healthAi.webp"
                   } // แสดงรูปจาก selectedAI หรือรูป default
                   alt={selectedAI.name}

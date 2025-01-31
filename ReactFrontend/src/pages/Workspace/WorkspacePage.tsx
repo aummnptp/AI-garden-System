@@ -8,10 +8,11 @@ import {DownOutlined, UpOutlined}  from '@ant-design/icons';
 
 // mockup data
 import MyWorkspaceData from "../../data/WorkspaceData";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import axios from "axios";
 import { Button } from "@mui/material";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
 
 interface WorkspaceProps {
@@ -36,8 +37,6 @@ interface WorkspaceProps {
 }
 function WorkspacePage() {
   // my workspace show
-  const [myWorkspace, setMyWorkspace] = useState<WorkspaceProps[]>([]); 
-  const [invitedWorkspace, setInvitedWorkspace]= useState<WorkspaceProps[]>([]); 
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
   const [showModal, setShowModal] = useState(false);
   const toggleWorkspaceRow = () => {
@@ -47,47 +46,36 @@ function WorkspacePage() {
   const [showInvitedRow, setShowInvitedRow] = useState(false); 
   const toggleInvitedRow = () => {
     setShowInvitedRow(!showInvitedRow);
-    console.log(showInvitedRow)
   };
 
+  const {
+    data: myWorkspace,
+    isLoading: isLoadingMyWorkspace,
+    error: errorMyWorkspace,
+    refetch: refetchMyWorkspace,
+  } = useFetchQuery(
+    ["my-workspace",],
+    `/workspaces/my-workspaces`
+  );
 
+//   // ดึงข้อมูล workspace detail
+  const {
+    data: invitedWorkspace,
+    isLoading: isLoadingInvitedWorkspace,
+    error: errorInvitedWorkspace,
+    refetch: refetchInvitedWorkspace, // <-- ดึง refetch ออกมา
 
-    const [loading, setLoading] = useState(true);
-    const fetchData = async () => {
-      try {
-        // เรียก API หลายตัวพร้อมกัน
-        const [myWorkspacesResponse,inviteWorkspacesResponse] = await Promise.all([
-          axios.get(
-            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/my-workspaces`,
-            {
-              withCredentials: true,
-            }
-          ),
-          axios.get(
-            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/invite-workspaces`,
-            {
-              withCredentials: true,
-            }
-          ),
-        ]);
-        setMyWorkspace(myWorkspacesResponse.data);
-        setInvitedWorkspace(inviteWorkspacesResponse.data);
-      } catch (error) {
-        console.error("Error fetching data!", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      fetchData();
-    }, []);
-  
-    if (loading) {
-      return <div>Loading...</div>;
-    }
-    
+  } = useFetchQuery(
+    ["invited-workspace"],
+    `/workspaces/invite-workspaces`
+  );
 
+  // ตรวจสอบสถานะการโหลด
+  if (isLoadingMyWorkspace || isLoadingInvitedWorkspace) return <div>Loading...</div>;
+  // ตรวจสอบข้อผิดพลาด
+  if (errorMyWorkspace || errorInvitedWorkspace) return <div>Error: {errorMyWorkspace?.message || errorInvitedWorkspace?.message}</div>;
+
+ 
 
 
   return (
@@ -97,7 +85,11 @@ function WorkspacePage() {
         <CreateWorkspace
           showModal={showModal}
           setShowModal={setShowModal}
-          fetchWorkspaces={fetchData}
+          fetchWorkspaces={() => {
+            refetchMyWorkspace();
+            refetchInvitedWorkspace();
+          }}
+          // fetchWorkspaces={fetchData}
         />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
