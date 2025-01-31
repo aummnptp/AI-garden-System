@@ -47,7 +47,7 @@ interface NotiData {
   user: User;
 }
 function Nav() {
-  const [notiData, setNotiData] = useState<NotiData[]>([
+  const [notiData, setNotiData] = useState<NotiData[]>([ 
     
     // {
     //   id: 1,

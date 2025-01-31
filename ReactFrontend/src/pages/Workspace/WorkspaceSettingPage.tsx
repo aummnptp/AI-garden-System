@@ -31,7 +31,29 @@ const WorkspaceSettingPage = () => {
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
-  
+  const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
+
+  // ดึงข้อมูล workspace detail
+  const {
+    data: workspaceDetail,
+    isLoading: isLoadingWorkspaceDetail,
+    error: errorWorkspaceDetail,
+  } = useFetchQuery(
+    ["workspace-detail", workspaceId ?? ""],
+    `/workspaces/detail/${workspaceId}`
+  );
+
+  useEffect(() => {
+    if (workspaceDetail) {
+      setName(workspaceDetail.name);
+      setDescription(workspaceDetail.description);
+    }
+  }, [workspaceDetail]);
+
+  // ตรวจสอบสถานะการโหลด
+  if (isLoadingWorkspaceDetail) return <div>Loading...</div>;
+  // ตรวจสอบข้อผิดพลาด
+  if (errorWorkspaceDetail) return <div>Error: {errorWorkspaceDetail?.message}</div>;
 
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
@@ -83,41 +105,6 @@ const WorkspaceSettingPage = () => {
   };
   const isDeleteDisabled = confirmText !== name;
 
-
-
-
-  const { workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
-
-  // ดึงข้อมูล workspace detail
-  const {
-    data: workspaceDetail,
-    isLoading: isLoadingWorkspaceDetail,
-    error: errorWorkspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
-
-  useEffect(() => {
-    if (workspaceDetail) {
-      setName(workspaceDetail.name);
-      setDescription(workspaceDetail.description);
-    }
-  }, [workspaceDetail]);
-
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingWorkspaceDetail) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorWorkspaceDetail) return <div>Error: {errorWorkspaceDetail?.message}</div>;
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [workspaceId]);
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-  
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">

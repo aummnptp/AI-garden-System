@@ -3,8 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('ai_model')
 export class AIModel {
-  @PrimaryGeneratedColumn({name:"ai_id"})
-  aiId: number;
+  @PrimaryGeneratedColumn(`uuid`,{name:"ai_id"})
+  aiId: string;
 
   @Column()
   name: string;
@@ -25,12 +25,12 @@ export class AIModel {
   api_uri: string;
 
   @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-  response_keys: { key: string; meaning: string ,displayFormat:string}[]; // รูปแบบ Array ของ JSON object
+  response_keys: { key: string; meaning: string ,displayFormat: string}[]; // รูปแบบ Array ของ JSON object
   
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({name:'update_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
 
@@ -40,6 +40,6 @@ export class AIModel {
   // @Column()
   // create_by: string[];
   
-  @Column({ nullable: true }) // เพิ่มฟิลด์ imagePath
+  @Column({name:'image_path', nullable: true }) // เพิ่มฟิลด์ imagePath
   imagePath: string;
 }

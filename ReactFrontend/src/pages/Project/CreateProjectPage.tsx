@@ -124,8 +124,8 @@ function CreateProjectPage() {
 
   try {
     const formData = new FormData();
-    formData.append("project_name", projectData.name);
-    formData.append("project_desc", projectData.description);
+    formData.append("name", projectData.name);
+    formData.append("description", projectData.description);
     formData.append("input_type", projectData.input_type);
     formData.append("ai_id", projectData.ai_id);
     if (projectData.image_path) {

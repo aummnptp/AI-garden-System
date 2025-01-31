@@ -117,23 +117,7 @@ useEffect(() => {
     setResponseKeys(newKeys);
   };
 
-  const handleAddRegressionParam = () => {
-    setRegressionParams([...regressionParams, { param: '' }]);
-  };
-
-  const handleRemoveParam = (index: number) => {
-    if (regressionParams.length > 1) {
-      const newParams = [...regressionParams];
-      newParams.splice(index, 1); // ลบ parameter ที่ index นั้นออก
-      setRegressionParams(newParams);
-    }
-  };
-
-  const handleParamChange = (index: number, value: string) => {
-    const newParams = [...regressionParams];
-    newParams[index].param = value;
-    setRegressionParams(newParams);
-  };
+  
 
   const handleTagAdd = () => {
     if (newTag && !tags.includes(newTag)) {
@@ -162,8 +146,8 @@ useEffect(() => {
       api_uri: serviceUri,
       ai_tag:tags,
       input_desc:inputDescription,
-      response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning })), // ส่งทั้ง key และ meaning
-      regression_params: regressionParams.map(param => param.param)
+      response_keys: responseKeys.map(key => ({ key: key.key, meaning: key.meaning, displayFormat: key.displayFormat})), // ส่งทั้ง key และ meaning
+      
     };
     // ****************** อย่าลืมใส่ alertหรือ try catchตอนไม่เจอด้วย
     fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`, {
@@ -340,42 +324,7 @@ useEffect(() => {
                   + Add Key
                 </Button>
               </div>
-              <div style={{ display: "none" }}>
-                <label>Regression Parameters (สำหรับพล็อตกราฟ)</label>
-                {regressionParams.map((param, index) => (
-                  <div
-                    key={index}
-                    className="response-param flex space-x-2 mb-2"
-                  >
-                    <input
-                      type="text"
-                      placeholder="Parameter"
-                      value={param.param}
-                      onChange={(e) => handleParamChange(index, e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-lg"
-                    />
-                    {regressionParams.length > 1 && (
-                      <Button
-                        variant="contained"
-                        style={{ marginRight: "8px" }}
-                        color="error"
-                        size="large"
-                        onClick={() => handleRemoveParam(index)}
-                        className="p-2 bg-red-600 text-white rounded-lg"
-                      >
-                        ลบ
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleAddRegressionParam}
-                  className="p-2  text-white bg-indigo-600 rounded-lg"
-                >
-                  + Add Parameter
-                </button>
-              </div>
+             
 
               <div className="form-group">
                 <label>
