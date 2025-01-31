@@ -87,7 +87,7 @@ async updateAI(
     @Post('predict/:aiId')
     @UseInterceptors(FileInterceptor('file'))
     async predict(@Param('aiId') aiId: string,@UploadedFile() file: Express.Multer.File,): Promise<any> {
-      return this.aiModelService.predict(+aiId, file);
+      return this.aiModelService.predict(aiId, file);
     }
 
 
