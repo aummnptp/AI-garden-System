@@ -21,7 +21,7 @@ const WorkspaceRoleGuard: React.FC<WorkspaceRoleGuardProps> = ({ requiredRole, c
           setChecking(false);
           return;
         }
-        const role = await getWorkspaceRole(workspaceId);
+        const role = await getWorkspaceRole(Number(workspaceId));
         setWorkspaceRole(role);
         setChecking(false);
       };

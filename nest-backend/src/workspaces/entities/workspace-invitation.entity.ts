@@ -11,8 +11,8 @@ import {
   
   @Entity()
   export class WorkspaceInvitation {
-    @PrimaryGeneratedColumn(`uuid`,{ name: 'invite_id' })
-    inviteId: string;
+    @PrimaryGeneratedColumn({ name: 'invite_id' })
+    inviteId: number;
 
     // @Column()
     // inviteById: number;
@@ -33,7 +33,7 @@ import {
     @Column({ default: 'pending' })
     status: string; // pending | accepted | rejected
   
-    @CreateDateColumn({ name: 'created_at' })
+    @CreateDateColumn()
     createdAt: Date;
   }
   

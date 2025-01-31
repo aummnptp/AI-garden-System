@@ -45,9 +45,25 @@ import { Role } from 'src/auth/decorator/roles-decoraters';
       return { message };
     } 
     
+    // @Role("admin")
+    // @UseGuards(JwtGuard,RolesGuard)
+    // @Patch(':id/update-ai') 
+    // @UseInterceptors(FileInterceptor('file',{
+    //   storage: multer.diskStorage({
+    //   destination: './uploads', // กำหนดโฟลเดอร์เก็บรูปภาพ
+    //   filename: (req, file, cb) => {
+    //       const uniqueName = `${Date.now()}-${file.originalname}`;
+    //       cb(null, uniqueName);
+    //     },
+    //   }),
+    // }))
+    // async updateAI( @Param('id') id:string,@Body() updateAIModelDto: UpdateAIModelDto,@UploadedFile() file: Express.Multer.File):Promise<string>{
+    //   const message = await this.aiModelService.update(+id, updateAIModelDto, file );
+    //   return message;
+    // }
     @Role("admin")
 @UseGuards(JwtGuard, RolesGuard)
-@Patch(':aiId/update-ai') 
+@Patch(':id/update-ai') 
 @UseInterceptors(FileInterceptor('file', {
   storage: multer.diskStorage({
     destination: './uploads', // กำหนดโฟลเดอร์เก็บไฟล์
@@ -58,7 +74,7 @@ import { Role } from 'src/auth/decorator/roles-decoraters';
   }),
 }))
 async updateAI(
-  @Param('aiId') aiId: string,
+  @Param('id') id: string,
   @Body('modelData') modelData: string, // ดึง modelData เป็น string
   @UploadedFile() file: Express.Multer.File // ดึงไฟล์
 ): Promise<string> {
@@ -66,7 +82,7 @@ async updateAI(
   const updateAIModelDto: UpdateAIModelDto = JSON.parse(modelData);
 
   // ส่งไปที่ service พร้อมกับไฟล์
-  const message = await this.aiModelService.update(aiId, updateAIModelDto, file);
+  const message = await this.aiModelService.update(+id, updateAIModelDto, file);
   return message;
 }
 
@@ -78,24 +94,29 @@ async updateAI(
 
     
     @Get(':aiId')
-    findOne(@Param('aiId') aiId: string):Promise<AIModel> {
-      return this.aiModelService.findOne(aiId);
+    findOne(@Param('aiId') aiId: number):Promise<AIModel> {
+      return this.aiModelService.findOne(+aiId);
     }
   
   
     // @UseGuards(JwtGuard) 
-    @Post('predict/:aiId')
+    @Post('predict/:id')
     @UseInterceptors(FileInterceptor('file'))
+<<<<<<< HEAD
     async predict(@Param('aiId') aiId: string,@UploadedFile() file: Express.Multer.File,): Promise<any> {
       return this.aiModelService.predict(aiId, file);
+=======
+    async predict(@Param('id') aiId: number,@UploadedFile() file: Express.Multer.File,): Promise<AIModel> {
+      return this.aiModelService.predict(+aiId, file);
+>>>>>>> parent of 8e7c3c3 (Merge branch 'AddRoleBranch' of https://github.com/aummnptp/AI-garden-System into AddRoleBranch)
     }
 
 
     @Role("admin")
     @UseGuards(JwtGuard,RolesGuard)
-    @Delete(':aiId/remove-ai')
-    async removeAI(@Param('aiId') aiId:string ){
-      return this.aiModelService.remove(aiId);
+    @Delete(':id/remove-ai')
+    async removeAI(@Param('id') id:string ){
+      return this.aiModelService.remove(+id);
     }
 
 

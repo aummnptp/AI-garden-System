@@ -10,7 +10,7 @@ export class ProjectHistory {
 historyId: string;
 
 // ภาพไม่ก็วิดีโอ
-@Column({name:"file_path",nullable: true })
+@Column({nullable: true })
 filePath: string;
 
 @Column('jsonb')

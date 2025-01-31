@@ -27,7 +27,7 @@ export class ProjectsController {
   }))
   create(
     @UploadedFile() file: Express.Multer.File,
-    @Param('workspaceId') workspaceId: string,
+    @Param('workspaceId') workspaceId: number,
     @Body() createProjectDto: CreateProjectDto):Promise<Project> {
       return this.projectsService.create(workspaceId, createProjectDto,file);
   }
@@ -35,14 +35,14 @@ export class ProjectsController {
   @UseGuards(JwtGuard) 
   @Get()
   findAll(
-    @Param('workspaceId') workspaceId: string):Promise<Project[]> {
+    @Param('workspaceId') workspaceId: number):Promise<Project[]> {
     return this.projectsService.findAll(workspaceId);
   }
 
   @UseGuards(JwtGuard) 
   @Get('detail/:projectId')
   findOne(
-    @Param('workspaceId') workspaceId: string,
+    @Param('workspaceId') workspaceId: number,
     @Param('projectId') projectId: string):Promise<Project> {
     return this.projectsService.findOne(workspaceId,projectId);
   }
@@ -60,7 +60,7 @@ export class ProjectsController {
   }))
   async update(
     @UploadedFile() file: Express.Multer.File,
-    @Param('workspaceId') workspaceId: string,
+    @Param('workspaceId') workspaceId: number,
     @Param('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
@@ -70,7 +70,7 @@ export class ProjectsController {
   @UseGuards(JwtGuard) 
   @Delete('delete/:projectId')
   remove(
-    @Param('workspaceId') workspaceId: string,
+    @Param('workspaceId') workspaceId: number,
     @Param('projectId') projectId: string,
   ): Promise<void> {
     return this.projectsService.remove(workspaceId, projectId);

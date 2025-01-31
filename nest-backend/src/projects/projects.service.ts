@@ -34,7 +34,7 @@ constructor(
 
     private readonly aiModelService: AIModelService, 
 ) {}
-  async validateWorkspace(workspaceId: string): Promise<Workspace> {
+  async validateWorkspace(workspaceId: number): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
     });
@@ -47,7 +47,7 @@ constructor(
   }
 
 
-  async create(workspaceId:string ,createProjectDto: CreateProjectDto, file?: Express.Multer.File):Promise<Project> {
+  async create(workspaceId:number ,createProjectDto: CreateProjectDto, file?: Express.Multer.File):Promise<Project> {
     await this.validateWorkspace(workspaceId)
     // const aiModel = await this.aiModelService.findOne({ where: { id: createProjectDto.ai_id } });
     const aiModel = await this.aiModelService.findOne(createProjectDto.ai_id);
@@ -69,7 +69,7 @@ constructor(
   }
 
 
-  async   update(workspaceId: string, projectId: string, updateProjectDto: UpdateProjectDto , file?: Express.Multer.File): Promise<Project> {
+  async   update(workspaceId: number, projectId: string, updateProjectDto: UpdateProjectDto , file?: Express.Multer.File): Promise<Project> {
     await this.validateWorkspace(workspaceId); // ตรวจสอบว่า workspace มีอยู่
 
     let filePath: string | undefined;
@@ -90,7 +90,7 @@ constructor(
 
 
 
-  async findAll(@Param('workspaceId') workspaceId: string) {
+  async findAll(@Param('workspaceId') workspaceId: number) {
     await this.validateWorkspace(workspaceId);
     const projects = await this.projectRepository.find({
       where:{workspace: {workspaceId}},
@@ -107,7 +107,7 @@ constructor(
 
   }
 
-  async findOne(workspaceId:string,projectId: string):Promise<Project> {
+  async findOne(workspaceId:number,projectId: string):Promise<Project> {
     await this.validateWorkspace(workspaceId);
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId, workspace: { workspaceId } },
@@ -128,7 +128,7 @@ constructor(
  
 
   // Delete a project from a specific workspace
-  async remove(workspaceId: string, projectId: string): Promise<void> {
+  async remove(workspaceId: number, projectId: string): Promise<void> {
     await this.validateWorkspace(workspaceId); // ตรวจสอบว่า workspace มีอยู่
 
     const project = await this.findOne(workspaceId, projectId); // ตรวจสอบว่าโปรเจคมีอยู่
@@ -137,7 +137,7 @@ constructor(
 
 
   
-  async predictInProject(userId: string,projectId: string, file: Express.Multer.File): Promise<ProjectHistory> {
+  async predictInProject(userId: number,projectId: string, file: Express.Multer.File): Promise<ProjectHistory> {
     const userProfile = await this.userRepository.findOne({ where: { userId: userId } });
     if (!userProfile) {
       throw new NotFoundException('User not found');

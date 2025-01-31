@@ -30,7 +30,14 @@ interface User {
   picture: string;
 }
 
-
+interface Invitation {
+  inviteId: number;
+  status: string; // อาจใช้เป็น `'pending' | 'accepted' | 'rejected'` หากสถานะมีค่าที่แน่นอน
+  createdAt: string; // ใช้ `string` เนื่องจากเป็นรูปแบบวันที่
+  workspace: Workspace;
+  invitedBy: User;
+  user: User;
+}
 interface NotiData {
   inviteId: number;
   status: string; // หรือ 'pending' | 'accepted' | 'rejected' หากต้องการเจาะจง
@@ -40,7 +47,32 @@ interface NotiData {
   user: User;
 }
 function Nav() {
-  const [notiData, setNotiData] = useState<NotiData[]>([ 
+  const [notiData, setNotiData] = useState<NotiData[]>([
+    
+    // {
+    //   id: 1,
+    //   firstName: "Putthipong",
+    //   lastName: "Chobngam",
+    //   workspace: "Project 67",
+     
+    // },
+    // {
+    //   id: 2,
+    //   firstName: "Apple",
+    //   lastName: "Banana",
+    //   workspace: "KMITL",
+      
+    // },
+    // {
+    //   id: 3,
+    //   firstName: "Apple",
+    //   lastName: "Banana",
+    //   workspace: "KMITL",
+      
+    // },
+   
+
+ 
   ]);
  
   const [isAuthenticated ,setIsAuthenticated] = useState(false)

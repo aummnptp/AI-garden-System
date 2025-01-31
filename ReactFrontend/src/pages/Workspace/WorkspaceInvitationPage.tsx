@@ -140,7 +140,7 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
   try {
     if (workspaceId) {
       await changeMemberRole(workspaceId,userId,newRole);
-      alert("sucess")
+      alert("sucees")
       refetchMemberDatas()
     } else {
             console.error("Workspace ID is undefined.");

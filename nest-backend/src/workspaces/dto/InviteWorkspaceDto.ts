@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
 
 // export class InviteWorkspaceDto {
 //   @IsEmail()
@@ -17,6 +17,6 @@ export class InviteWorkspaceDto {
 }
 
 export class AcceptInvitationDto {
-  @IsUUID()
-  userId: string;
+  @IsNumber()
+  userId: number;
 }

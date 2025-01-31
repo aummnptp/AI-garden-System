@@ -8,8 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { createTheme, ThemeProvider } from '@mui/material'
 import { AuthProvider } from './context/AuthContext';
-import { router } from './routes/router';
-
+import { router } from './router';
 
 
 
@@ -47,9 +46,9 @@ const queryClient = new QueryClient({
   queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, 
-      retry: 2,
-      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // ✅ ข้อมูลจะถือว่าใหม่เป็นเวลา 5 นาที
+      retry: 2, // ✅ รีลอง 2 ครั้งถ้า request ล้มเหลว
+      refetchOnWindowFocus: false, // ✅ ไม่ต้องโหลดใหม่เมื่อเปลี่ยนหน้า
     },
   },
 });

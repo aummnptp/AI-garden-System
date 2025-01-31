@@ -47,11 +47,11 @@ export class AIModelService {
     return 'Model added successfully!';
   }  
 
-  async update(aiId: string, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:aiId } });
+  async update(id: number, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
+    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:id } });
   
     if (!existingModel) {
-      throw new NotFoundException(`AI Model with Id ${aiId} not found`);
+      throw new NotFoundException(`AI Model with Id ${id} not found`);
     }
   
     // อัปเดตข้อมูลจาก DTO ที่ได้รับ
@@ -64,7 +64,7 @@ export class AIModelService {
     }
   
     // อัปเดตข้อมูลในฐานข้อมูล
-    await this.aiModelRepository.update(aiId, updatedModelData);
+    await this.aiModelRepository.update(id, updatedModelData);
   
     return 'Model updated successfully!';
   }
@@ -82,11 +82,11 @@ export class AIModelService {
   }
 
   // อ่าน AIModel ตาม id
-  async findOne(aiId: string): Promise<AIModel> {
-    const aiModel = await this.aiModelRepository.findOneBy({ aiId:aiId  });
+  async findOne(id: number): Promise<AIModel> {
+    const aiModel = await this.aiModelRepository.findOneBy({ aiId:id  });
   
     if (!aiModel) {
-      throw new NotFoundException(`AI Model with id ${aiId} not found`);
+      throw new NotFoundException(`AI Model with id ${id} not found`);
     }
   
     // สร้าง URL ของรูปภาพ
@@ -100,14 +100,14 @@ export class AIModelService {
     };
   }
   
-  remove(aiId: string): Promise<void> {
-    return this.aiModelRepository.delete(aiId).then(() => undefined);
+  remove(id: number): Promise<void> {
+    return this.aiModelRepository.delete(id).then(() => undefined);
   }
   
   
   
-  async predict(aiId: string, file: Express.Multer.File): Promise<any> {
-    const model = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
+  async predict(id: number, file: Express.Multer.File): Promise<any> {
+    const model = await this.aiModelRepository.findOne({ where: { aiId: id } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
