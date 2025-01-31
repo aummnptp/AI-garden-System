@@ -45,25 +45,9 @@ import { Role } from 'src/auth/decorator/roles-decoraters';
       return { message };
     } 
     
-    // @Role("admin")
-    // @UseGuards(JwtGuard,RolesGuard)
-    // @Patch(':id/update-ai') 
-    // @UseInterceptors(FileInterceptor('file',{
-    //   storage: multer.diskStorage({
-    //   destination: './uploads', // กำหนดโฟลเดอร์เก็บรูปภาพ
-    //   filename: (req, file, cb) => {
-    //       const uniqueName = `${Date.now()}-${file.originalname}`;
-    //       cb(null, uniqueName);
-    //     },
-    //   }),
-    // }))
-    // async updateAI( @Param('id') id:string,@Body() updateAIModelDto: UpdateAIModelDto,@UploadedFile() file: Express.Multer.File):Promise<string>{
-    //   const message = await this.aiModelService.update(+id, updateAIModelDto, file );
-    //   return message;
-    // }
     @Role("admin")
 @UseGuards(JwtGuard, RolesGuard)
-@Patch(':id/update-ai') 
+@Patch(':aiId/update-ai') 
 @UseInterceptors(FileInterceptor('file', {
   storage: multer.diskStorage({
     destination: './uploads', // กำหนดโฟลเดอร์เก็บไฟล์
@@ -74,7 +58,7 @@ import { Role } from 'src/auth/decorator/roles-decoraters';
   }),
 }))
 async updateAI(
-  @Param('id') id: string,
+  @Param('aiId') aiId: string,
   @Body('modelData') modelData: string, // ดึง modelData เป็น string
   @UploadedFile() file: Express.Multer.File // ดึงไฟล์
 ): Promise<string> {
@@ -82,7 +66,7 @@ async updateAI(
   const updateAIModelDto: UpdateAIModelDto = JSON.parse(modelData);
 
   // ส่งไปที่ service พร้อมกับไฟล์
-  const message = await this.aiModelService.update(+id, updateAIModelDto, file);
+  const message = await this.aiModelService.update(aiId, updateAIModelDto, file);
   return message;
 }
 
@@ -94,24 +78,24 @@ async updateAI(
 
     
     @Get(':aiId')
-    findOne(@Param('aiId') aiId: number):Promise<AIModel> {
-      return this.aiModelService.findOne(+aiId);
+    findOne(@Param('aiId') aiId: string):Promise<AIModel> {
+      return this.aiModelService.findOne(aiId);
     }
   
   
     // @UseGuards(JwtGuard) 
-    @Post('predict/:id')
+    @Post('predict/:aiId')
     @UseInterceptors(FileInterceptor('file'))
-    async predict(@Param('id') aiId: number,@UploadedFile() file: Express.Multer.File,): Promise<AIModel> {
+    async predict(@Param('aiId') aiId: string,@UploadedFile() file: Express.Multer.File,): Promise<any> {
       return this.aiModelService.predict(+aiId, file);
     }
 
 
     @Role("admin")
     @UseGuards(JwtGuard,RolesGuard)
-    @Delete(':id/remove-ai')
-    async removeAI(@Param('id') id:string ){
-      return this.aiModelService.remove(+id);
+    @Delete(':aiId/remove-ai')
+    async removeAI(@Param('aiId') aiId:string ){
+      return this.aiModelService.remove(aiId);
     }
 
 

@@ -6,17 +6,17 @@ import { Project } from 'src/projects/entities/project.entity';
    @Entity()
    export class Workspace {
       
-      @PrimaryGeneratedColumn({ name: 'workspace_id' })
-      workspaceId: number;
+      @PrimaryGeneratedColumn(`uuid`,{ name: 'workspace_id' })
+      workspaceId: string;
    
       @Column()
       name: string;
    
       @Column()
       description: string;
-   
-      @Column()
-      createById: number;
+
+      @Column({ name: 'created_by' })
+      createdById: string;
 
       @OneToMany(() => WorkspaceMember, (member) => member.workspace, { cascade: true })
       members: WorkspaceMember[]; // เชื่อมกับ WorkspaceMember
@@ -24,10 +24,10 @@ import { Project } from 'src/projects/entities/project.entity';
       // @Column("int", { array: true, nullable: true })
       // projects: number[]; // IDs of projects in the workspace, can be null
    
-      @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+      @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
       createdAt: Date;
    
-      @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+      @Column({ name:'updated_at',type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
       updatedAt: Date;
 
       @OneToMany(() => WorkspaceInvitation,(invitation) => invitation.workspace,)
