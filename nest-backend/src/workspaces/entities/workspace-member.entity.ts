@@ -12,10 +12,9 @@ import { User } from '../../user/entities/user.entity'; // Import User
 
 @Entity()
 export class WorkspaceMember {
-  @PrimaryGeneratedColumn({ name: 'member_id' })
-  member_id: number;
+  @PrimaryGeneratedColumn('uuid',{ name: 'member_id' })
+  memberId: string;
 
-  
   @ManyToOne(() => Workspace, (workspace) => workspace.members, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace; // ความสัมพันธ์กับ Workspace
@@ -26,13 +25,13 @@ export class WorkspaceMember {
   
 
   @Column({ default: 'member' })
-  role: string; // บทบาท เช่น 'owner', 'admin', 'member'
+  role: string; 
 
-  @CreateDateColumn()
-  createdAt: Date; // วันที่เข้าร่วม
+  // @CreateDateColumn()
+  // createdAt: Date; // วันที่เข้าร่วม
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  // @UpdateDateColumn()
+  // updatedAt: Date;
 }
 
 

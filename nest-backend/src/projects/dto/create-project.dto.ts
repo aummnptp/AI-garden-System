@@ -13,7 +13,7 @@ export class CreateProjectDto {
 
 
   @IsNumber()
-  ai_id: number
+  ai_id: string
 
   @IsOptional()
   @IsString()

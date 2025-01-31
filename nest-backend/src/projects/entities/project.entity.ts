@@ -9,10 +9,10 @@ export class Project {
 projectId: string;
 
 @Column()
-project_name: string;
+name: string;
 
 @Column()
-project_desc: string;
+description: string;
 
 @Column()
 input_type: string;
@@ -21,10 +21,10 @@ input_type: string;
 imagePath: string;
 
 @Column({type: 'timestamp', default: ()  => 'CURRENT_TIMESTAMP'})
-create_at: Date;
+created_at: Date;
 
 @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-update_at: Date;
+updated_at: Date;
 
 @Column({default: false})
 permission_only: boolean;

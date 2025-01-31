@@ -5,9 +5,7 @@ import { isString } from 'util';
 export class UpdateWorkspaceDto extends PartialType(CreateWorkspaceDto) {
 
     readonly name?: string;
-
     readonly description?: string;
 
-    // readonly members?: string[];
 }
 

@@ -5,7 +5,7 @@
   type User = { 
     email: string; 
     role: string; // Global role เช่น 'admin', 'user'
-    workspaceRoles?: { workspaceId: number; role: string }[]; // Workspace-specific roles
+    workspaceRoles?: { workspaceId: string; role: string }[]; // Workspace-specific roles
   };
   
   type AuthContextType = { 
@@ -14,7 +14,7 @@
       loading: boolean;
       login: (email: string, password: string) => Promise<void>;
       logout: () => void;
-      getWorkspaceRole: (workspaceId: number) => Promise<string | null>; // ฟังก์ชันสำหรับดึง workspaceRole
+      getWorkspaceRole: (workspaceId: string) => Promise<string | null>; // ฟังก์ชันสำหรับดึง workspaceRole
   };
 
   export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,14 +60,14 @@
 
 
     // ฟังก์ชันสำหรับดึง role ใน workspace ที่กำหนด
-    const getWorkspaceRole = async (workspaceId: number): Promise<string | null> => {
+    const getWorkspaceRole = async (workspaceId: string): Promise<string | null> => {
       try {
         // เรียก API เพื่อดึง role จาก workspaceId ที่ระบุ
         const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/my-role`, {
           withCredentials: true,
         });
         console.log(data.role)
-        return data.role; // คาดว่า Backend จะส่ง { role: 'member' } หรือ { role: 'owner' }
+        return data.role; 
       } catch (error) {
         console.error(`Error fetching role for workspace ${workspaceId}:`, error);
         return null;
