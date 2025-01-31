@@ -210,7 +210,7 @@ constructor(
 
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      console.error('Error during prediction:', errorMessage);
+      console.error('Error during prediction:', errorMessage,file);
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }

@@ -102,8 +102,8 @@ async updateAI(
     // @UseGuards(JwtGuard) 
     @Post('predict/:id')
     @UseInterceptors(FileInterceptor('file'))
-    async predict(@Param('id') id: number,@UploadedFile() file: Express.Multer.File,): Promise<any> {
-      return this.aiModelService.predict(+id, file);
+    async predict(@Param('id') aiId: number,@UploadedFile() file: Express.Multer.File,): Promise<AIModel> {
+      return this.aiModelService.predict(+aiId, file);
     }
 
 

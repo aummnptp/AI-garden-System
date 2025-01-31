@@ -106,8 +106,8 @@ export class AIModelService {
   
   
   
-  async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-    const model = await this.aiModelRepository.findOne({ where: { aiId: modelId } });
+  async predict(id: number, file: Express.Multer.File): Promise<any> {
+    const model = await this.aiModelRepository.findOne({ where: { aiId: id } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
@@ -118,6 +118,7 @@ export class AIModelService {
     try {
       const response = await axios.post(model.api_uri, formData, {
         headers: { ...formData.getHeaders() },
+        
       });
   
       if (!response.data) {
@@ -130,9 +131,19 @@ export class AIModelService {
         // ai_type: model.ai_type,
       };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      console.error('Error during prediction:', errorMessage);
-      throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
+      if (error.code === 'ECONNRESET') {
+        console.error('Connection Reset Error: The connection was forcibly closed by the remote host');
+        throw new InternalServerErrorException('Connection reset by the remote server');
+      } else if (error.response) {
+        console.error('API error:', error.response.data);
+        throw new InternalServerErrorException(`Prediction failed: ${error.response.data}`);
+      } else if (error.request) {
+        console.error('No response from API:', error.request);
+        throw new InternalServerErrorException('Prediction failed: No response from API');
+      } else {
+        console.error('Error message:', error.message);
+        throw new InternalServerErrorException(`Prediction failed: ${error.message}`);
+      }
     }
   }
   
