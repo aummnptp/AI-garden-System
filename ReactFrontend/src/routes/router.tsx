@@ -119,7 +119,7 @@ export const router = createBrowserRouter([
     },
     {
       path: "/ai/:ai_id/demo",
-      element: <AIDemoPage/>,
+      element: <AiDemoResultPage/>,
     },
     {
       path: "/admin/dashboard",
