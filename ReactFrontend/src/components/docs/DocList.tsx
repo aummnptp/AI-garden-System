@@ -17,56 +17,34 @@ import { Link, useParams } from "react-router-dom";
 import SubDocList from "./subDocList";
 import DeleteSubDocModal from "./modal/DeleteSubDocModal";
 import {
-  updateDocsTitle,
-  updateSubDocsTitle,
+
+  addSubtitleService,
+  addTitleService,
+  changeDocsVisiblityService,
+  changeSubDocsVisiblityService,
+  deleteSubTitleService,
+  deleteTitleService,
+  saveDocsOrderService,
+  saveSubDocsOrderService,
+  updateDocsTitleService,
+  updateSubDocsTitleService,
 } from "../../api/services/DocsService";
 import {
-  HideImageOutlined,
-  HideSourceOutlined,
-  SaveAltOutlined,
-  SaveAsOutlined,
   SaveOutlined,
   SwapVertOutlined,
-  VisibilityOff,
   VisibilityOffOutlined,
   VisibilityOutlined,
 } from "@mui/icons-material";
 import SaveReorderModal from "./modal/SaveReorderModal";
-import { Docs,SubDocs } from "../../types/Docs";
+import { Docs, SubDocListProps, SubDocs, DocListProps } from "../../types/Docs";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 
-// interface SubDoc {
-//   subDocsId: string;
-//   title: string;
-//   content: string;
-//   // showEdit: boolean;
-//   order: number;
-//   // editPosition: { top: number; left: number };
-//   // showInput: boolean;
-//   // showDelete: boolean;
-//   // text: string;
-//   hidden: boolean;
-// }
 
-// interface DocData {
-//   docsId: string;
-//   title: string;
-//   content: string;
-//   // showEditModal: boolean;
-//   // editPosition: { top: number; left: number };
-//   // showInput: boolean;
-//   // showDeleteModal: boolean;
-//   order: number;
-//   // text: string;
-//   hidden: boolean;
-//   // subDocs: SubDoc[];
-//   subDocuments: SubDoc[];
-// }
 
-type DocListProps = {};
-const DocList: React.FC<DocListProps> = ({}) => {
+const DocList: React.FC<DocListProps> = ({refetchDocsData}) => {
   let { docsId, subDocsId } = useParams();
-  const [docs, setDocs] = useState<Docs[]>([]);
+
+
   const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteSubModalOpen, setDeleteSubModalOpen] = useState(false);
@@ -80,6 +58,26 @@ const DocList: React.FC<DocListProps> = ({}) => {
   }>({});
   const [renameDocId, setRenameDocId] = useState<string|null>(null);
 
+  const [docs, setDocs] = useState<Docs[]>([]);
+    
+  const {
+    data: headingData,
+    isLoading: isLoadingHeading,
+    error: errorHeading,
+    refetch: refetchHeading,
+  } = useFetchQuery(["heading"], "/docs");
+        
+          // Sync ข้อมูลจาก fetchedDocs -> docs
+  useEffect(() => {
+    if (headingData && Array.isArray(headingData)) {
+      setDocs(headingData);
+    }
+  }, [headingData]); // ทำงานเมื่อ fetchedDocs เปลี่ยน
+    
+    // ตรวจสอบสถานะการโหลด
+    if (isLoadingHeading) return <div>Loading...</div>;
+    // ตรวจสอบข้อผิดพลาด
+    if (errorHeading) return <div>Error: {errorHeading?.message}</div>;
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     docId: string
@@ -119,139 +117,52 @@ const DocList: React.FC<DocListProps> = ({}) => {
     }
   };
 
-  const patchDocsTitle = async (docsId: string, newTitle: string) => {
+  const handleDocsTitleUpdate = async (docsId: string, newTitle: string) => {
     try {
-      const updatedDoc = await updateDocsTitle(docsId, newTitle);
+      await updateDocsTitleService(docsId, newTitle);
+      refetchHeading();
     } catch (error) {
       console.error("Failed to rename document:", error);
-    } finally {
     }
   };
 
 
 
-    // const {
-    //   data: docs,
-    //   isLoading: isLoadingDocs,
-    //   error: errorDocs,
-    //   refetch: refetchInvitedWorkspace, // <-- ดึง refetch ออกมา
-  
-    // } = useFetchQuery(
-    //   ["docs"],
-    //   `/workspaces/invite-workspaces`
-    // );
-  
-    // // ตรวจสอบสถานะการโหลด
-    // if (isLoadingDocs) return <div>Loading...</div>;
-    // // ตรวจสอบข้อผิดพลาด
-    // if (errorDocs) return <div>Error: { errorDocs?.message}</div>;
-  
-   
-  const fetchData = async () => {
-    try {
-      let docsResponse;
-      docsResponse = await axios.get(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`,
-        {
-          withCredentials: true,
-        }
-      );
-      setDocs(docsResponse.data);
-    } catch (error) {
-      console.error("Error fetching data!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, [docsId, subDocsId]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   const handleTitleAdd = async () => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/add-title`,
-        {
-          title: "New Heading",
-          content: "",
-        },
-        { withCredentials: true }
-      );
-
-      console.log("Document added successfully:", response.data);
-      fetchData();
-      // Add any additional logic here if necessary (e.g., updating UI)
+      await addTitleService();
+      refetchHeading();
     } catch (error) {
-      console.error("Error creating document:", error.message || error);
-      // Optional: Add user notification logic (e.g., toast)
+      console.error("Failed to update sub-document title:", error);
     }
   };
 
-  const handleSubTitleAdd = async (docsId: string) => {
+  const handleSubTitleAdd = async (docsId:string) => {
     try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/docs/add-subtitle/${docsId}`,
-        {
-          title: "New Sub Heading",
-          content: "",
-        },
-        { withCredentials: true }
-      );
-      console.log("SubDocument added successfully:", response.data);
-      fetchData();
+      await addSubtitleService(docsId);
+      refetchHeading();
     } catch (error) {
-      console.error("Error creating sub document:", error.message || error);
+      console.error("Failed to update sub-document title:", error);
     }
   };
 
   const handleDeleteDoc = async (docsId: string) => {
     try {
-      // เรียก API ลบ SubDocument
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/docs/delete-docs/${docsId}`,
-        { withCredentials: true } // ส่ง Cookies หากจำเป็น
-      );
-
-      if (response.status === 200) {
-        console.log("SubDocument deleted successfully:", response.data);
-        // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
-        fetchData();
-        // alert('SubDocument deleted successfully');
-      }
+      await deleteTitleService(docsId);
+      refetchHeading();
     } catch (error) {
-      console.error("Error deleting SubDocument:", error);
-      alert("Failed to delete Document. Please try again.");
+      console.error("Failed to update sub-document title:", error);
     }
   };
 
   const handleDeleteSubDoc = async (subDocsId: string) => {
     try {
-      // เรียก API ลบ SubDocument
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/docs/delete-subdocs/${subDocsId}`,
-        { withCredentials: true } // ส่ง Cookies หากจำเป็น
-      );
-
-      if (response.status === 200) {
-        console.log("SubDocument deleted successfully:", response.data);
-        // เพิ่ม logic เช่นอัปเดต UI หลังจากลบสำเร็จ
-        fetchData();
-        // alert('SubDocument deleted successfully');
-      }
+      await deleteSubTitleService(subDocsId);
+      refetchHeading();
     } catch (error) {
-      console.error("Error deleting SubDocument:", error);
-      alert("Failed to delete SubDocument. Please try again.");
+      console.error("Failed to update sub-document title:", error);
     }
   };
 
@@ -271,7 +182,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
       setRenameDocId(null); // ซ่อน input field เมื่อทำการเปลี่ยนชื่อเสร็จสิ้น
       const doc = docs.find((doc) => doc.docsId === docsId);
       if (doc) {
-        patchDocsTitle(docsId, doc.title); // ส่งชื่อที่อัปเดตไปยังเซิร์ฟเวอร์เมื่อกด Enter
+        handleDocsTitleUpdate(docsId, doc.title); // ส่งชื่อที่อัปเดตไปยังเซิร์ฟเวอร์เมื่อกด Enter
       }
     }
   };
@@ -315,7 +226,8 @@ const DocList: React.FC<DocListProps> = ({}) => {
 
   const patchSubDocsTitle = async (subDocsId: string, newTitle: string) => {
     try {
-      await updateSubDocsTitle(subDocsId, newTitle);
+      await updateSubDocsTitleService(subDocsId, newTitle);
+      refetchHeading();
       console.log("Sub-document title updated!");
     } catch (error) {
       console.error("Failed to update sub-document title:", error);
@@ -337,6 +249,8 @@ const DocList: React.FC<DocListProps> = ({}) => {
     );
   };
 
+
+
   const handleSaveReorder = async () => {
     try {
       // จัดลำดับใหม่สำหรับเอกสาร
@@ -344,7 +258,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
         docsId: doc.docsId,
         order: index + 1, // คำนวณลำดับใหม่ที่นี่
       }));
-  
+
       // จัดลำดับใหม่สำหรับเอกสารย่อย
       const subDocsToSave = docs.flatMap((doc) =>
         doc.subDocuments.map((subDoc, index) => ({
@@ -353,72 +267,47 @@ const DocList: React.FC<DocListProps> = ({}) => {
           order: index + 1, // คำนวณลำดับใหม่ที่นี่
         }))
       );
-      const saveDocsPromise = axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-docs-order`,
-        { documents: docsToSave },
-        { withCredentials: true }
-      );
-  
-      const saveSubDocsPromise = axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-subdocs-order`,
-        { subDocuments: subDocsToSave },
-        { withCredentials: true }
-      );
-  
-      await Promise.all([saveDocsPromise, saveSubDocsPromise]);
-  
+
+      // เรียกใช้ service เพื่อบันทึกลำดับของเอกสาร
+      await saveDocsOrderService(docsToSave);
+
+      // เรียกใช้ service เพื่อบันทึกลำดับของเอกสารย่อย
+      await saveSubDocsOrderService(subDocsToSave);
+      refetchHeading();
+
       console.log("Order saved successfully for docs and sub-docs");
     } catch (error) {
       console.error("Failed to save reorder:", error);
     }
-    setReorderModalOpen(false)
+
+    setReorderModalOpen(false);
   };
   
   const handleDocsToggleVisibility = async (docsId: string, currentHiddenState: boolean) => {
-    try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-docs/${docsId}`,
-        { hidden: !currentHiddenState }, // ส่งค่าตรงข้ามของ currentHiddenState
-        { withCredentials: true } // ใช้สำหรับส่ง cookies หาก backend ต้องการ
-      );
-  
-      if (response.status === 200) {
-        // อัปเดต docs ใน UI หลังจากได้รับการตอบกลับสำเร็จ
-        const updatedDocs = docs.map((doc) =>
-          doc.docsId === docsId ? { ...doc, hidden: !currentHiddenState } : doc
-        );
-        setDocs(updatedDocs); // ใช้ setDocs เพื่ออัปเดต state
-        console.log(`Visibility updated successfully for document: ${docsId}`);
-      } else {
-        console.error(`Failed to update visibility: ${response.statusText}`);
-      }
+   try {
+      await changeDocsVisiblityService(docsId, !currentHiddenState);
+      refetchHeading();
+      console.log("Sub-document title updated!");
     } catch (error) {
-      console.error("Error updating document visibility:", error.message || error);
+      console.error("Failed to update sub-document title:", error);
     }
   };
 
   const handleSubDocsToggleVisibility = async (subDocsId: string, currentHiddenState: boolean) => {
     try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-subdocs/${subDocsId}`,
-        { hidden: !currentHiddenState }, 
-        { withCredentials: true } 
-      );
-  
-      if (response.status === 200) {
-        fetchData();
-        console.log(`Visibility updated successfully for subdocument: ${subDocsId}`);
-      } else {
-        console.error(`Failed to update visibility: ${response.statusText}`);
-      }
+      await changeSubDocsVisiblityService(subDocsId, !currentHiddenState);
+      refetchHeading();
+      console.log("Sub-document title updated!");
     } catch (error) {
-      console.error("Error updating subdocument visibility:", error.message || error);
+      console.error("Failed to update sub-document title:", error);
     }
   };
   
 
   
-
+  if (!Array.isArray(docs)) {
+    return <div>Error: docs is not an array</div>;
+  }
 
   return (
     <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
@@ -450,7 +339,7 @@ const DocList: React.FC<DocListProps> = ({}) => {
           }}
           sx={onReOrderMode ? { color: "#4f46e5" } : { color: "#4f46e5" }}
           onClick={() => {setOnReOrderMode(!onReOrderMode)
-            fetchData();}
+            refetchHeading();}
           }
         >
           <SwapVertOutlined /> {onReOrderMode ? "Sorting" : "Sort"}
@@ -543,7 +432,10 @@ const DocList: React.FC<DocListProps> = ({}) => {
                       </span>
                     </Reorder.Item>
                   ) : (
-                    <Link to={`/docs/${doc.docsId}`}>
+                    <Link to={`/docs/${doc.docsId}`}
+                    onClick={() => {
+                    }}
+                    >
                       <span className="py-2 flex-1 pl-3 text-lg font-medium cursor-pointer hover:text-indigo-800">
                         {doc.title}
                       </span>

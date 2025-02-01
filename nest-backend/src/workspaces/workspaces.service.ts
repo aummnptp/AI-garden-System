@@ -263,30 +263,36 @@ export class WorkspacesService {
       relations: ['workspace', 'user'],
     });
 
-    if (!invitation) {
-      throw new NotFoundException('Invitation not found');
-    }
-
-    if (invitation.status !== 'pending') {
-      throw new BadRequestException('Invitation is not pending');
-    }
-
     if (invitation.user.userId !== userId) {
       throw new BadRequestException('User is not authorized to accept this invitation');
     }
-
-    // อัปเดตสถานะคำเชิญเป็น accepted
-    // invitation.status = 'accepted';
-    await this.workspaceInvitationsRepository.remove(invitation);
-
     // เพิ่มสมาชิกเข้า Workspace
     const newMember = this.workspaceMemberRepository.create({
       workspace: { workspaceId: invitation.workspace.workspaceId } as Workspace, // ใช้ id เท่านั้น
       user: { userId: invitation.user.userId } as User, // ใช้ id เท่านั้น
       role: 'member',
     });
+    
+    await this.workspaceMemberRepository.save(newMember);
+    await this.workspaceInvitationsRepository.remove(invitation);
+    return newMember
+  }
 
-    return this.workspaceMemberRepository.save(newMember);
+
+  async rejectInvitation(invitationId: string, userId: string): Promise<void> {
+    // ตรวจสอบคำเชิญ
+    const invitation = await this.workspaceInvitationsRepository.findOne({
+      where: { inviteId: invitationId },
+      relations: ['workspace', 'user'],
+    });
+
+    if (invitation.user.userId !== userId) {
+      throw new BadRequestException('User is not authorized to reject this invitation');
+    }
+  
+    
+    await this.workspaceInvitationsRepository.remove(invitation);
+    
   }
 
 

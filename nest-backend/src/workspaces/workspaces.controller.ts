@@ -139,7 +139,6 @@ async cancelPendingInvite(
   @Param('workspaceId') workspaceId: string, 
   @Body() body: { inviteId: string }
 ) {
-  console.log("User Data:", req.user); // ✅ Debug ดูว่า req.user มีค่าหรือไม่
 
   return this.workspacesService.cancelPendingInvite(body.inviteId);
 }
@@ -160,26 +159,24 @@ async getPendingUserList(@Param('workspaceId') workspaceId: string) {
 @Post('/accept-invite/:invitationId')
   async acceptInvitation(
     @Request() req,
-    @Param('invitationId', ParseIntPipe) invitationId: string,
-  ) {
+    @Param('invitationId') invitationId: string,
+  ):Promise<WorkspaceMember> {
     const userId = req.user.userId; 
     return this.workspacesService.acceptInvitation(invitationId,userId);
   }
 
 
+  @Role("user")
+  @UseGuards(JwtGuard,RolesGuard)
+  @Post('/reject-invite/:invitationId')
+    async rejectInvitation(
+      @Request() req,
+      @Param('invitationId') invitationId: string,
+    ):Promise<void> {
+      const userId = req.user.userId; 
+      return this.workspacesService.rejectInvitation(invitationId,userId);
+    }
 
-  
-  // Endpoint สำหรับดึง Workspace พร้อมกับข้อมูลสมาชิกทั้งหมด (workspaceMember entity) มีตาราง invite
-  // @Get(':workspaceId/with-members')
-  // async getWorkspaceWithMembers(@Param('id') workspaceId: number) {
-    //   return this.workspacesService.getWorkspaceWithMembers(workspaceId);
-    // }
-    
-    // Endpoint สำหรับดึงสมาชิกทั้งหมดใน Workspace (workspaceMember entity)
-    // @Get(':workspaceId/members')
-    // async getAllMembersInWorkspace(@Param('id') workspaceId: number) {
-    //     return this.workspacesService.getAllMembersInWorkspace(workspaceId);
-    //   }
 
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)

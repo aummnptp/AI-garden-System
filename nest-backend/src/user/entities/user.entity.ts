@@ -6,10 +6,10 @@ export class User{
     userId: string;
 
   
-    @Column({ unique: true })  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
+    @Column({ unique: true ,name:'google_id'})  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
     googleId: string;
   
-    @Column({ unique: true ,name:'google_id'}) // อีเมลควรจะเป็น unique เพื่อป้องกันการซ้ำกัน
+    @Column({ unique: true }) // อีเมลควรจะเป็น unique เพื่อป้องกันการซ้ำกัน
     email: string;
     @Column()
     name: string;

@@ -18,119 +18,13 @@ import { Docs } from "../types/Docs";
 
 
 const DocsPage = () => {
-  // ข้อมูลของ Docdata
+
   let { docsId, subDocsId } = useParams();
-  // const wrapperRef = useRef<HTMLDivElement | null>(null);
-  // const subwrapperRef = useRef<HTMLDivElement | null>(null);
   const [saveContentModal, setSaveContentModal] = useState(false);
   const [discardContentModal, setDiscardContentModal] = useState(false);
-  const [docDatas, setDocDatas] = useState<Docs[]>([
-//     {
-//       docsId: "1",
-//       title: "AI Garden System",
-//       content: `
-// <p><span style="color: #353d81;"><strong><span style="font-size: 36pt;">Welcome to AI Garden System</span></strong></span></p>`,
-
-
-//       subDocuments: [
-//      null
-//       ],
-//     },
-  ]);
-
-  // const handleTitleSave = (index: number) => {
-  //   const updatedTitles = [...docDatas];
-  //   updatedTitles[index].title = updatedTitles[index].text;
-  //   // save title input to docdata
-  //   setDocDatas(updatedTitles);
-  //   // clear txt input
-  //   updatedTitles[index].text = "";
-  //   // set input show to false
-
-  //   updatedTitles[index].showInput = false;
-  //   setDocDatas(updatedTitles);
-  // };
-
-
-
-  // const handleClickOutside = (event: MouseEvent) => {
-  //   if (
-  //     wrapperRef.current &&
-  //     !wrapperRef.current.contains(event.target as Node)
-  //   ) {
-  //     docDatas.forEach((data, index) => {
-  //       if (data.showInput) {
-  //         handleTitleSave(index);
-  //       }
-  //     });
-  //   }
-  //   if (
-  //     subwrapperRef.current &&
-  //     !subwrapperRef.current.contains(event.target as Node)
-  //   ) {
-  //     docDatas.forEach((data, index) => {
-  //       data.subTitle.forEach((sub, subIndex) => {
-  //         if (sub.showInput) {
-  //           handleSubTitleSave(index, subIndex);
-  //         }
-  //       });
-  //     });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [docDatas]);
-
-  // const handleSubTitleSave = (index: number, subIndex: number) => {
-  //   // Create copies of the state arrays
-  //   const updatedTitles = [...docDatas];
-
-  //   // Check if the necessary data exists
-  //   if (updatedTitles[index] && updatedTitles[index].subTitle) {
-  //     updatedTitles[index].subTitle[subIndex].name =
-  //       updatedTitles[index].subTitle[subIndex].text;
-  //     setDocDatas(updatedTitles);
-  //     updatedTitles[index].subTitle[subIndex].text = "";
-  //     updatedTitles[index].subTitle[subIndex].showInput = false;
-  //     setDocDatas(updatedTitles);
-  //   }
-  // };
-
-  // editor here
-  // const [value, setValue] = useState(docDatas[0].contentData);
-  // const [text, setText] = useState("");
+  // const [docDatas, setDocDatas] = useState<Docs[]>([]);
   const [showTextEditor, setShowTextEditor] = useState(false);
-  // const [showSaveEditorModal, setShowSaveEditorModal] = useState(false);
-
-  const [currentPageData, setCurrentPageData] = useState(
-    // docDatas[0].content
-    ""
-  );
-
-
-  // แก้ไขตัว content ด้วย editorใน เว็บ
-
-  // const SaveEditContent = (index: number, subIndex: number | null) => {
-  //   if (subIndex !== null) {
-  //     setCurrentPageData(text);
-  //     const updatedDocDatas = [...docDatas];
-  //     updatedDocDatas[index].subTitle[subIndex].contentData = text;
-  //     setDocDatas(updatedDocDatas);
-  //   } else {
-  //     setCurrentPageData(text);
-  //     const updatedDocDatas = [...docDatas];
-  //     updatedDocDatas[index].contentData = text;
-  //     setDocDatas(updatedDocDatas);
-  //   }
-  //   setShowTextEditor(false);
-  //   setShowSaveEditorModal(false);
-  // };
-
-  
+  const [currentPageData, setCurrentPageData] = useState("");  
   const [editorValue, setEditorValue] = useState(currentPageData);
 
   const handleEdit = () => {
@@ -138,20 +32,12 @@ const DocsPage = () => {
     setShowTextEditor(true);
   };
 
-  // const handleSave = () => {
-
-  //   setCurrentPageData(editorValue);
-  //   setShowTextEditor(false);
-  // };
-
+  
  const handleSave = async () => {
-  // let { docsId, subDocsId } = useParams(); // ใช้ useParams เพื่อดึง docsId และ subDocsId จาก URL
-
   try {
     const url = subDocsId
       ? `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-subdocs/${subDocsId}`
       : `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-docs/${docsId}`;
-
     const response = await axios.patch(
       url,
       { content: editorValue }, // ส่งค่าคอนเทนต์จาก Editor
@@ -173,7 +59,6 @@ const DocsPage = () => {
     setShowTextEditor(false);
     setDiscardContentModal(false);
   };
-
   const onCloseSaveModal = () => {
     // Implement your discard logic here
     setSaveContentModal(false);
@@ -192,7 +77,6 @@ const DocsPage = () => {
   };
 
   const [loading, setLoading] = useState(true);
-
   const fetchData = async () => {
     try {
       let  contentDetailResponse;
@@ -230,7 +114,72 @@ const DocsPage = () => {
     return <div>Loading...</div>;
   }
   
+  // const {
+  //   data: currentPageData , // กำหนดค่าเริ่มต้นให้เป็น string ว่าง ๆ
+  //   isLoading: isLoadingContent,
+  //   error: errorContent,
+  //   refetch: refetchDocsData,
+  // } = useFetchQuery(
+  //   ["docs"],
+  //   // ตรวจสอบว่า docsId หรือ subDocsId มีค่าหรือไม่
+  //   subDocsId
+  //     ? `/docs/content-subdocs/${subDocsId}`
+  //     : docsId
+  //     ? `/docs/content-docs/${docsId}`
+  //     : ""
+  // );
 
+  // ฟังก์ชัน fetcher สำหรับใช้กับ useQuery
+  // const fetchContentData = async () => {
+  //   try {
+  //     let response;
+  
+  //     if (subDocsId) {
+  //       response = await axios.get(
+  //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-subdocs/${subDocsId}`,
+  //         { withCredentials: true }
+  //       );
+  //     } else if (docsId) {
+  //       response = await axios.get(
+  //         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/content-docs/${docsId}`,
+  //         { withCredentials: true }
+  //       );
+  //     } else {
+  //       return null;
+  //     }
+  
+  //     return response.data.content;
+  //   } catch (error) {
+  //     throw new Error("Error fetching data!");
+  //   }
+  // };
+  // const {
+  //   data: currentPageData,
+  //   isLoading,
+  //   error,
+  //   refetch:refetchDocsData, // เพิ่มฟังก์ชัน refetch ที่ได้จาก useQuery
+  // } = useQuery({
+  //   queryKey: ['contentData', docsId || subDocsId],
+  //   queryFn: fetchContentData,
+  //   enabled: !!(docsId || subDocsId),
+  // });
+  // // ไม่ต้องจัดการสถานะการโหลดและข้อผิดพลาดด้วยตัวเองแล้ว
+  // // TanStack Query จะจัดการให้
+  // console.log(currentPageData)
+  // // ถ้าต้องการเซ็ตค่าให้กับ state อื่น สามารถใช้ useEffect
+  // useEffect(() => {
+  //   if (currentPageData) {
+  //     setEditorValue(currentPageData.content);
+  //   }
+  // }, [currentPageData]);
+  
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+  
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
 
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">

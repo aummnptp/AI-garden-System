@@ -70,10 +70,37 @@ const changeMemberRole = async (workspaceId: string, userId: string, newRole:str
         
         return response.data;
     } catch (error) {
+        console.error("Error change role:", error);
+        throw error;
+    }
+};
+
+const acceptInvitation = async (inviteId:string) => {
+    try {
+        const response = await axios.post(
+            `${MEMBER_ROUTES.acceptInvite}${inviteId}`,
+        );
+        
+        return response.data;
+    } catch (error) {
+        console.error("Error canceling invite:", error);
+        throw error;
+    }
+};
+
+const rejectInvitation = async (inviteId:string) => {
+    try {
+        const response = await axios.post(
+            `${MEMBER_ROUTES.RejectInvite}${inviteId}`,
+        );
+        
+        return response.data;
+    } catch (error) {
         console.error("Error canceling invite:", error);
         throw error;
     }
 };
 
 
-export { pendingInviteMember,cancelPendingInvite,removeMember,changeMemberRole};
+export { pendingInviteMember,cancelPendingInvite,removeMember,changeMemberRole,acceptInvitation,rejectInvitation};
+

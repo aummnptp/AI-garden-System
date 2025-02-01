@@ -21,7 +21,6 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
   onEditorChange,
   setText,
 }) => {
-  console.log(value)
   return (
     <div className="w-full justify-self-center relative  ">
       <div className=" pr-12 w-[80%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 z-50 flex justify-between items-center pl-2">

@@ -13,7 +13,7 @@ function Footer() {
             <div className="flex items-start">
               <img
                 className="h-8 me-3 rounded-full "
-                src="/images/logo/navlogo.png"
+                src="/images/logo/IMG_3713.png"
                 />
               <span className="  text-2xl font-medium ">AI Garden System</span>
             </div>
@@ -37,9 +37,9 @@ function Footer() {
                 <div className="">
                   <a
                     className="text-gray-500  text-2xl hover:text-blue-700 "
-                    href="mailto:IT@kmitl.ac.th"
+                    href="https://www.youtube.com/user/itkmitl1"
                   >
-                    <i className="bi bi-envelope-fill"></i>
+                    <i className="bi bi-youtube"></i>
                   </a>
                 </div>
 

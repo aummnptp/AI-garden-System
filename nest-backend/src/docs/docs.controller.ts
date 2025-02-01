@@ -78,7 +78,6 @@ export class DocsController {
   @Role("admin")
   @Patch('/save-docs-order')
   async saveDocsOrder(@Request() req,@Body() body: { documents: UpdateDocumentDto[] }) {
-    console.log("Received subDocuments to save:", body.documents);
 
     return this.docsService.saveDocsOrder(body.documents);
   }
@@ -86,7 +85,6 @@ export class DocsController {
   @Role("admin")
   @Patch('/save-subdocs-order')
   async saveSubDocsOrder(@Request() req,@Body() body: { subDocuments: UpdateSubDocumentDto[] }) {
-    console.log("Received subDocuments to save:", body.subDocuments);
 
     return this.docsService.saveSubDocsOrder(body.subDocuments);
   }

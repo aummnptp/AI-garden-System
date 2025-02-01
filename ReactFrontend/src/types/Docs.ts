@@ -23,3 +23,21 @@ export type SubDocs =  {
     order: number;
     subDocuments: SubDocs[];
   }
+
+  export type SubDocListProps = {
+    docsId: string;
+    subDocuments: SubDocs[];
+    onDeleteSubDoc: (subDocsId: string) => void; // ฟังก์ชันลบ
+    onAddSubTitle: (docsId: string) => void;
+    onChangeSubTitle:any,
+    onSubDocsReorder: (newSubDocuments: SubDocs[]) => void;
+    onReOrderMode: boolean;
+    onSubDocToggleVisibility: (subDocsId: string, currentHiddenState: boolean) => void;
+  };
+
+
+  
+  export type DocListProps = {
+    headingData:[]
+    refetchHeading:()=>void;
+  };

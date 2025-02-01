@@ -19,25 +19,27 @@ export class AuthController{
   @Get('google/redirect')
   async googleAuthRedirect(@Request() req, @Res({ passthrough: true }) res: Response) {
 
-    const { accessToken } = await this.authService.googleLogin(req); //  save to cookie
-    res.cookie('access_token', accessToken, {
-      // httpOnly: true,
-    });
-    res.redirect(`${process.env.REACT_APP_API_URL}`)
-    // res.redirect(`http://localhost:5173/`);
-    // return {
-    //   message: 'Login Successful',
-    // };
+    const { accessToken, user } = await this.authService.googleLogin(req); 
+
+  res.cookie('access_token', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+  res.redirect(`${process.env.REACT_APP_API_URL}`)
+ 
   }
   
   
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
-    res.clearCookie('jwt token', {
-      // httpOnly: true,
+    res.clearCookie('access_token', {  
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
     });
-    res.redirect(`${process.env.REACT_APP_API_URL}`)
-    // return res.json({ message: 'Successfully logged out' });
+  
+    res.status(200).json({ message: "Successfully logged out" });
   }
 
 
