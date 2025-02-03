@@ -55,10 +55,68 @@ export class AIModelService {
 
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
+  }  
+
+  async update(aiId: string, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
+    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:aiId } });
+    if (!existingModel) {
+      throw new NotFoundException(`AI Model with Id ${aiId} not found`);
+    }
+  
+    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
+  
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    if (file) {
+      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
+      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+    }
+  
+    // อัปเดตข้อมูลในฐานข้อมูล
+    await this.aiModelRepository.update(aiId, updatedModelData);
+  
+    return 'Model updated successfully!';
+  }
+  
+  
+  async findAll(): Promise<AIModel[]> {
+    const aiModels = await this.aiModelRepository.find();
+
+    return aiModels.map((aiModel) => ({ 
+      ...aiModel,
+      imagePath: aiModel.imagePath
+        ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
+        : null,
+    }));
   }
 
-  async predict(modelId: number, file: Express.Multer.File): Promise<any> {
-    const model = await this.aiModelRepository.findOne({ where: { id: modelId } });
+  // อ่าน AIModel ตาม id
+  async findOne(aiId: string): Promise<AIModel> {
+    const aiModel = await this.aiModelRepository.findOneBy({ aiId:aiId  });
+  
+    if (!aiModel) {
+      throw new NotFoundException(`AI Model with id ${aiId} not found`);
+    }
+  
+    // สร้าง URL ของรูปภาพ
+    const imageUrl  = aiModel.imagePath
+      ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
+      : null;
+  
+    return {
+      ...aiModel,
+      imagePath:imageUrl ,
+    };
+  }
+  
+  remove(aiId: string): Promise<void> {
+    return this.aiModelRepository.delete(aiId).then(() => undefined);
+  }
+  
+  
+  
+  async predict(aiId: string, file: Express.Multer.File): Promise<any> {
+    const model = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
@@ -69,6 +127,7 @@ export class AIModelService {
     try {
       const response = await axios.post(model.api_uri, formData, {
         headers: { ...formData.getHeaders() },
+        
       });
 
       if (!response.data) {
@@ -78,55 +137,27 @@ export class AIModelService {
       return {
         response_keys: model.response_keys,
         prediction: response.data,
-        ai_type: model.ai_type,
+        // ai_type: model.ai_type,
       };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      console.error('Error during prediction:', errorMessage);
-      throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
+      if (error.code === 'ECONNRESET') {
+        console.error('Connection Reset Error: The connection was forcibly closed by the remote host');
+        throw new InternalServerErrorException('Connection reset by the remote server');
+      } else if (error.response) {
+        console.error('API error:', error.response.data);
+        throw new InternalServerErrorException(`Prediction failed: ${error.response.data}`);
+      } else if (error.request) {
+        console.error('No response from API:', error.request);
+        throw new InternalServerErrorException('Prediction failed: No response from API');
+      } else {
+        console.error('Error message:', error.message);
+        throw new InternalServerErrorException(`Prediction failed: ${error.message}`);
+      }
     }
   }
 
-  async update(
-    id: number,
-    updateAIModelDto: UpdateAIModelDto,
-    file?: Express.Multer.File,
-  ): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { id } });
 
-    if (!existingModel) {
-      throw new NotFoundException(`AI Model with Id ${id} not found`);
-    }
 
-    // Prepare updated data
-    const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
-
-    // Update imagePath if a new file is provided
-    if (file) {
-      const fileName = file.filename;
-      updatedModelData.imagePath = `/uploads/${fileName}`;
-    }
-
-    // Save updates to the database
-    await this.aiModelRepository.update(id, updatedModelData);
-
-    return 'Model updated successfully!';
-  }
-
-  findAll(): Promise<AIModel[]> {
-    return this.aiModelRepository.find();
-  }
-
-  findOne(id: number): Promise<AIModel | null> {
-    return this.aiModelRepository.findOneBy({ id });
-  }
-
-  async remove(id: number): Promise<void> {
-    const deleteResult = await this.aiModelRepository.delete(id);
-    if (!deleteResult.affected) {
-      throw new NotFoundException(`AI Model with Id ${id} not found`);
-    }
-  }
 
   async findAllWithDetails() {
     return this.aiModelRepository.find({

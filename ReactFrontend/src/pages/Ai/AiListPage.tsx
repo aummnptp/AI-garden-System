@@ -3,12 +3,11 @@ import React, { useEffect, useState } from "react";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
-import AiData from "../../data/AiData";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import { AIDataType } from "../../types/Ai";
 
 function AIlist() {
-  const [AIData, setAIData] = useState([]);
+  const [AIData, setAIData] = useState<AIDataType[]>([]);
   const fetchAIData = () => {
 
     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
@@ -96,11 +95,12 @@ function AIlist() {
         {AIData.map((data) => (
     
           <AiCard
-            id={data.id}
+            id={data.aiId}
             name={data.name}
             aiDesc={data.description}
             tags={data.ai_tag}
-            img={"/images/ai/healthAi.webp"}
+            // img={"/images/ai/healthAi.webp"}
+            img={data.imagePath}
             type={data.ai_type}
             ></AiCard>
 

@@ -5,26 +5,26 @@ import { ProjectHistory } from "./project-history.entity";
 
 @Entity()
 export class Project {
-@PrimaryGeneratedColumn({name:"project_id"})
-projectId: number;
+@PrimaryGeneratedColumn('uuid',{name:"project_id"})
+projectId: string;
 
 @Column()
-project_name: string;
+name: string;
 
 @Column()
-project_desc: string;
+description: string;
 
 @Column()
 input_type: string;
 
-@Column({nullable: true})
-image_path: string;
+@Column({nullable: true, name:"image_path"})
+imagePath: string;
 
 @Column({type: 'timestamp', default: ()  => 'CURRENT_TIMESTAMP'})
-create_at: Date;
+created_at: Date;
 
 @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-update_at: Date;
+updated_at: Date;
 
 @Column({default: false})
 permission_only: boolean;

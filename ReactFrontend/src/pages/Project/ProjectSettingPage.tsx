@@ -101,7 +101,7 @@ const handleSave = async () => {
     }
 
     if (image) {
-      formData.append("image", image);
+      formData.append("file", image);
     }
 
     // ส่งคำขอ PATCH เพื่ออัปเดต Project

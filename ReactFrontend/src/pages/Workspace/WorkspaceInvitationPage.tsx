@@ -21,6 +21,8 @@ import {
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { useFetchQuery } from "../../hook/useFetchQuery";
+import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
 
 interface memberData {
   id: number;
@@ -39,17 +41,17 @@ interface userData {
 }
 
 const WorkspaceInvitationPage = () => {
-  let { workspaceId } = useParams();
+  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
   const [open, setOpen] = React.useState(false);
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
-  const [userDatas, setUserData] = useState<memberData[]>([]);
-  const [pendingDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
-  const [memberDatas, setMemberData] = useState<memberData[]>([]);
+  // const [userDatas, setUserData] = useState<memberData[]>([]);
+  // const [pendingUserDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
+  // const [memberDatas, setMemberData] = useState<memberData[]>([]);
   const [loading, setLoading] = useState(true);
 
 
-  const [workspaceDetail, setWorkspaceDetail] = useState([]);
+  // const [workspaceDetail, setWorkspaceDetail] = useState([]);
 
   
   
@@ -85,125 +87,157 @@ const WorkspaceInvitationPage = () => {
 
 
   const handleInviteButton = async () => {
-    if (selectedUsers.length === 0) {
-      alert("Please select at least one user to invite.");
-      return;
+    try {
+      if (workspaceId) {
+        await pendingInviteMember(workspaceId, selectedUsers);
+      } else {
+        console.error("Workspace ID is undefined.");
+      }
+      refetchUserDatas();
+      refetchPendingUser();
+      setSelectedUsers([]);
+    } catch (error) {
+      console.log(error)
+      // alert("An error occurred while sending invitations.");
     }
-    const requestBody = {
-      emails: selectedUsers.map((user) => user.email), // ดึง email จาก selectedUsers
-    };
-   try {
-  const response = await axios.post(
-    `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-invite/${workspaceId}`,
-    requestBody,
-    { withCredentials: true }
-  );
-
-  console.log("Response data:", response);
-
-  if (response.status >= 200 && response.status < 300) {
-    fetchData();
-
-    // alert("Invitations sent successfully!");
-    setSelectedUsers([]);
-  } else {
-    console.error("Unexpected response:", response);
-    alert("Failed to send invitations. Please try again.");
-  }
-} catch (error) {
-  console.error("Error sending invites", error);
-  alert("An error occurred while sending invitations.");
-}
   };
 
-const handleDeleteMember = async (userId: number) => {
-  // alert(userId)
+const handleRemoveMember = async (userId: string) => {
   try {
-    await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/remove-member/${workspaceId}`, {
-      data: { userId: userId }, // ใส่ userId ใน data
-      withCredentials: true,   // เปิดใช้งาน Credentials (เช่น Cookies หรือ Authorization headers)
-    });
-
-    alert("Member removed successfully!");
-    fetchData();
-  } catch (error) {
-    alert(`Error: ${error}`);
-    console.error(error);
-  }
+    if (workspaceId) {
+      await removeMember(workspaceId, userId);
+      refetchUserDatas()
+      refetchMemberDatas()
+    } else {
+            console.error("Workspace ID is undefined.");
+          }
+}catch (error) {
+  console.log(error)
+}
 };
+
 
  
- 
-  const handleCancelPending = async(inviteId: number) => {
-    // alert(inviteId)
-    try{
-      await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/cancel-invite/${inviteId}`,
-      {withCredentials: true,}
-      )
-      fetchData();
-    }catch(error){
-      alert(`Error deleting pending invite: ${error}`)
-  };
-}
-
-
-
-
-const handleChangeRole = async(userId: number ,newRole: string) => {
-  // alert(inviteId)
-  try{
-    await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/change-role/${workspaceId}`,
-      {userId:userId, role: newRole },
-      {withCredentials: true,}
-    )
-    alert("Role updated successfully!")
-    fetchData();
-    //  const UpdatedPending = [...pendingDatas]; 
-    //  UpdatedPending.splice(index, 1); 
-    //  setPendingData(UpdatedPending); setOpen(false);
-  }catch(error){
-    alert(`${error}`)
-};
-}
-
-const fetchData = async () => {
-  try {
-    // เรียก API หลายตัวพร้อมกัน
-    const [
-      workspaceResponse,allUserResponse,pendingListResponse,memberDataResponse,
-    ] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
-        withCredentials: true,
-      }),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`, {
-        withCredentials: true,
-      }),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`, {
-        withCredentials: true,
-      }),
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`, {
-        withCredentials: true,
-      }),
-    ]);
-
-    // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
-    setWorkspaceDetail(workspaceResponse.data);
-    setUserData(allUserResponse.data);
-    setPendingData(pendingListResponse.data);
-    setMemberData(memberDataResponse.data);
-  } catch (error) {
-    console.error("Error fetching data!", error);
-  } finally {
-    setLoading(false);
+  const handleCancelPending = async(inviteId: string) => {
+    try {
+      if (workspaceId) {
+        await cancelPendingInvite(workspaceId,inviteId);
+        refetchUserDatas()
+        refetchPendingUser()
+      } else {
+              console.error("Workspace ID is undefined.");
+            }
+  }catch (error) {
+    console.log(error)
   }
-};
-
-useEffect(() => {
-  fetchData();
-}, []);
-if (loading) {
-  return <div>Loading...</div>;
 }
+
+
+
+
+const handleChangeRole = async(userId: string ,newRole: string) => {
+  
+  try {
+    if (workspaceId) {
+      await changeMemberRole(workspaceId,userId,newRole);
+      alert("sucess")
+      refetchMemberDatas()
+    } else {
+            console.error("Workspace ID is undefined.");
+          }
+}catch (error) {
+  console.log(error)
+}
+}
+
+
+
+
+
+
+
+    const {
+      data: workspaceDetail,
+      isLoading: isLoadingProjectDetail,
+      error: errorProjectDetail,
+      // refetch: refetchProjectDetail
+    } = useFetchQuery(
+      ["project-detail", workspaceId ?? ""],
+      `/workspaces/detail/${workspaceId}`
+    );
+  
+  //   // ดึงข้อมูล workspace detail
+    const {
+      data: userDatas,
+      isLoading: isLoadingUserData,
+      error: errorUserData,
+      refetch: refetchUserDatas
+    } = useFetchQuery(
+      ["available-user", workspaceId ?? ""],
+      `/workspaces/available-users/${workspaceId}`
+    );
+  
+    const {
+      data: pendingUserDatas,
+      // isLoading: isLoadingPendingData,
+      // error: errorPendingData,
+      refetch: refetchPendingUser
+    } = useFetchQuery(
+      ["pending-user", workspaceId ?? ""],
+      `/workspaces/pending-users/${workspaceId}`
+    );
+    const {
+      data: memberDatas,
+      // isLoading: isLoadingMemberData,
+      // error: errorMemberData,
+      refetch: refetchMemberDatas
+    } = useFetchQuery(
+      ["member-user", workspaceId ?? ""],
+      `/workspaces/members-profiles/${workspaceId}`
+    );
+    // ตรวจสอบสถานะการโหลด
+    if (isLoadingProjectDetail || isLoadingUserData) return <div>Loading...</div>;
+    // ตรวจสอบข้อผิดพลาด
+    if (errorProjectDetail || errorUserData) return <div>Error: {errorProjectDetail?.message || errorUserData?.message}</div>;
+
+// const fetchData = async () => {
+//   try {
+//     // เรียก API หลายตัวพร้อมกัน
+//     const [
+//       workspaceResponse,allUserResponse,pendingListResponse,memberDataResponse,
+//     ] = await Promise.all([
+//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
+//         withCredentials: true,
+//       }),
+//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`, {
+//         withCredentials: true,
+//       }),
+//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`, {
+//         withCredentials: true,
+//       }),
+//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`, {
+//         withCredentials: true,
+//       }),
+//     ]);
+
+//     // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
+//     setWorkspaceDetail(workspaceResponse.data);
+//     setUserData(allUserResponse.data);
+//     setPendingData(pendingListResponse.data);
+//     setMemberData(memberDataResponse.data);
+//   } catch (error) {
+//     console.error("Error fetching data!", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// useEffect(() => {
+//   fetchData();
+// }, []);
+// if (loading) {
+//   return <div>Loading...</div>;
+// }
 
 
 
@@ -332,22 +366,22 @@ if (loading) {
                             aria-describedby="alert-dialog-description"
                           >
                             <DialogTitle id="alert-dialog-title">
-                              {"ต้องการที่จะลบสมาชิกนี้ออกจาก Workspaceใช่ไหม?"}
+                              {"remove this member from workspace?"}
                             </DialogTitle>
                   
                             <DialogActions>
+                              <Button  variant="outlined" color="info"onClick={handleCloseRemoveMemberDialog} >
+                                cancel
+                              </Button>
 
                               <Button variant="contained" color="error"  
                                     onClick={() => {
                                       if (member.user?.userId) {
-                                        handleDeleteMember(member.user.userId);  // ลบสมาชิกที่เลือก
+                                        handleRemoveMember(member.user.userId);  // ลบสมาชิกที่เลือก
                                         handleCloseRemoveMemberDialog();  // ปิด dialog
                                       }
                                     }}
-                              autoFocus >ลบสมาชิก</Button>
-                              <Button  variant="outlined" color="info"onClick={handleCloseRemoveMemberDialog} >
-                                ไม่
-                              </Button>
+                              autoFocus >remove</Button>
                             </DialogActions>
                           </Dialog>
                     </>         
@@ -356,9 +390,9 @@ if (loading) {
 
               <div className=" w-full h-fit bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4  my-5">
                 <h1 className="text-black text-3xl px-10 pb-4">
-                  Pending invitation ({pendingDatas.length})
+                  Pending invitation ({pendingUserDatas.length})
                 </h1>
-                {pendingDatas.map((member, index) => (
+                {pendingUserDatas.map((member, index) => (
                   <div>
                     <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
                     <div

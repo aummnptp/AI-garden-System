@@ -1,15 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { AIUsageLimit } from "src/ai-setting/entities/ai-usage-limit.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Permission } from '../../permission/entities/permission.entity';
 
 @Entity()
 export class User{
-    @PrimaryGeneratedColumn({ name: 'user_id' })// ใช้ id เป็น Primary Key
-    userId: number;
+    @PrimaryGeneratedColumn('uuid',{ name: 'user_id' })// ใช้ id เป็น Primary Key
+    userId: string;
+
   
-    @Column({ unique: true })  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
+    @Column({ unique: true ,name:'google_id'})  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
     googleId: string;
   
-    @Column({ unique: true })  // อีเมลควรจะเป็น unique เพื่อป้องกันการซ้ำกัน
+    @Column({ unique: true }) // อีเมลควรจะเป็น unique เพื่อป้องกันการซ้ำกัน
     email: string;
     @Column()
     name: string;
@@ -18,6 +20,10 @@ export class User{
 
     @Column({ default: 'user' })
     role: string;
+
+    @OneToMany(() => AIUsageLimit, (usageLimit) => usageLimit.user)
+    usageLimits: AIUsageLimit[];
+    
     
     @OneToMany(() => Permission, (permission) => permission.aiModel)
       permissions: Permission[];

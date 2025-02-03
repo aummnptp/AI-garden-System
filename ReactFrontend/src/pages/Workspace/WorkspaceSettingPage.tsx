@@ -16,6 +16,7 @@ import {
 import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
 import { Close, Delete } from "@mui/icons-material";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 interface memberData {
   id: number;
   firstName: string;
@@ -25,12 +26,34 @@ interface memberData {
 }
 
 const WorkspaceSettingPage = () => {
-  let { workspaceId } = useParams();
+  // let { workspaceId } = useParams();
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
-  
+  const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
+
+  // ดึงข้อมูล workspace detail
+  const {
+    data: workspaceDetail,
+    isLoading: isLoadingWorkspaceDetail,
+    error: errorWorkspaceDetail,
+  } = useFetchQuery(
+    ["workspace-detail", workspaceId ?? ""],
+    `/workspaces/detail/${workspaceId}`
+  );
+
+  useEffect(() => {
+    if (workspaceDetail) {
+      setName(workspaceDetail.name);
+      setDescription(workspaceDetail.description);
+    }
+  }, [workspaceDetail]);
+
+  // ตรวจสอบสถานะการโหลด
+  if (isLoadingWorkspaceDetail) return <div>Loading...</div>;
+  // ตรวจสอบข้อผิดพลาด
+  if (errorWorkspaceDetail) return <div>Error: {errorWorkspaceDetail?.message}</div>;
 
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
@@ -82,37 +105,6 @@ const WorkspaceSettingPage = () => {
   };
   const isDeleteDisabled = confirmText !== name;
 
-
-
-  const [loading, setLoading] = useState(true);
-  const fetchData = async () => {
-    try {
-      // เรียก API หลายตัวพร้อมกัน
-      const [workspaceResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
-          {
-            withCredentials: true,
-          }
-        ),
-      ]);
-      const { name, description } = workspaceResponse.data;
-      setName(name);
-      setDescription(description);
-    } catch (error) {
-      console.error("Error fetching data!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [workspaceId]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">

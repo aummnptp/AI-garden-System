@@ -13,7 +13,7 @@ import { Role } from 'src/auth/decorator/roles-decoraters';
 import { WorkspaceRoleGuard } from 'src/auth/guards/workspace-role.guard';
 
 import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
-
+import { WorkspaceMember } from './entities/workspace-member.entity';
 
 @Controller('workspaces')
 export class WorkspacesController {
@@ -44,7 +44,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/detail/:workspaceId')
   findOne(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.findOne(+workspaceId);
+    return this.workspacesService.findOne(workspaceId);
   }
 
   
@@ -56,7 +56,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Patch('/update/:workspaceId')
   update(@Param('workspaceId') workspaceId: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
-    return this.workspacesService.update(+workspaceId, updateWorkspaceDto);
+    return this.workspacesService.update(workspaceId, updateWorkspaceDto);
   }
 
   @Role("user")
@@ -64,7 +64,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Delete('/delete/:workspaceId')
   remove(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.remove(+workspaceId);
+    return this.workspacesService.remove(workspaceId);
   }
 
   @Role("user")
@@ -75,7 +75,7 @@ export class WorkspacesController {
     @Param('workspaceId') workspaceId: string,
     @Body() body: { email: string; role: string }
   ) {
-    return this.workspacesService.addMember(+workspaceId, body.email, body.role || 'member');
+    return this.workspacesService.addMember(workspaceId, body.email, body.role || 'member');
   }
 
   @Role("user")
@@ -83,10 +83,10 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Delete('/remove-member/:workspaceId')
   async removeMember(
-    @Param('workspaceId') workspaceId: string,
-    @Body('userId') userId: number) {
+    @Param('workspaceId') workspaceId: string, 
+    @Body('userId') userId: string) {
     // เปลี่ยนuserEmail เป็น role
-    return this.workspacesService.removeMember(+workspaceId, userId);
+    return this.workspacesService.removeMember(workspaceId, userId);
   }
 
   @Role("user")
@@ -94,7 +94,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Get('/members-profiles/:workspaceId')
   async getMembersProfiles(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.getMembersProfiles(+workspaceId);
+    return this.workspacesService.getMembersProfiles(workspaceId);
   }
 
   @Role("user")
@@ -102,7 +102,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Get('/available-users/:workspaceId')
   async getUserListInvitation(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.getNonMembersProfiles(+workspaceId);
+    return this.workspacesService.getNonMembersProfiles(workspaceId);
   }
 
 
@@ -113,75 +113,73 @@ export class WorkspacesController {
   //   return this.workspacesService.create(createWorkspaceDto, userId);
   // }
 
-  // รายชื่อที่ชวนไป
-  @Role("user")
-  @WorkspaceRole('owner')
-  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
-  // @UseGuards(JwtGuard)
-  @Post('/pending-invite/:workspaceId')
-  async pendingInvite(@Request() req, @Param('workspaceId') workspaceId: number, @Body() inviteWorkspaceDto: InviteWorkspaceDto,) {
-    const userId = req.user.userId;
-    const results = await Promise.all(inviteWorkspaceDto.emails.map(async (email) => {
-      try {
-        return await this.workspacesService.pendingInvite(workspaceId, userId, email);
-      } catch (error) {
-        return { email, error: error.message }
-      }
-    }),
-    );
-    return results;
-  }
+// รายชื่อที่ชวนไป
+@Role("user")
+@WorkspaceRole('owner') 
+@UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+// @UseGuards(JwtGuard)
+@Post('/pending-invite/:workspaceId')
+async pendingInvite(@Request() req,@Param('workspaceId') workspaceId: string, @Body() inviteWorkspaceDto: InviteWorkspaceDto,) {
+  const userId = req.user.userId; 
+  const results = await Promise.all( inviteWorkspaceDto.emails.map(async (email) => {
+    try{
+      return await this.workspacesService.pendingInvite(workspaceId, userId ,email);
+    }catch (error){
+      return {email, error: error.message}
+    }
+  }),
+);
+  return results ;
+}
 
-  // เพิ่มเช็คrole ในการcancel
-  @Role("user")
-  @WorkspaceRole('owner')
-  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
-  @Delete('/cancel-invite/:inviteId')
-  async cancelPendingInvite(
-    @Request() req,
-    @Param('inviteId') inviteId: number,  // รับ inviteId จาก URL
+// เพิ่มเช็คrole ในการcancel
+@Role("user")
+@WorkspaceRole('owner') 
+@UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+@Delete('/cancel-invite/:workspaceId')
+async cancelPendingInvite(
+  @Request() req,
+  @Param('workspaceId') workspaceId: string, 
+  @Body() body: { inviteId: string }
+) {
 
-  ) {
+  return this.workspacesService.cancelPendingInvite(body.inviteId);
+}
 
-    return this.workspacesService.cancelPendingInvite(inviteId);
-  }
-
-  @Role("user")
-  @WorkspaceRole('owner')
-  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
-  // @UseGuards(JwtGuard)
-  @Get('/pending-users/:workspaceId')
-  async getPendingUserList(@Param('workspaceId') workspaceId: string) {
-    return this.workspacesService.getPendingUserList(+workspaceId);
-  }
+@Role("user")
+@WorkspaceRole('owner') 
+@UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+// @UseGuards(JwtGuard)
+@Get('/pending-users/:workspaceId')
+async getPendingUserList(@Param('workspaceId') workspaceId: string) {
+  return this.workspacesService.getPendingUserList(workspaceId);
+}
 
 
 
-  @Role("user")
-  @UseGuards(JwtGuard, RolesGuard)
-  @Post('/accept-invite/:invitationId')
+@Role("user")
+@UseGuards(JwtGuard,RolesGuard)
+@Post('/accept-invite/:invitationId')
   async acceptInvitation(
     @Request() req,
-    @Param('invitationId', ParseIntPipe) invitationId: number,
-  ) {
-    const userId = req.user.userId;
-    return this.workspacesService.acceptInvitation(invitationId, userId);
+    @Param('invitationId') invitationId: string,
+  ):Promise<WorkspaceMember> {
+    const userId = req.user.userId; 
+    return this.workspacesService.acceptInvitation(invitationId,userId);
   }
 
 
+  @Role("user")
+  @UseGuards(JwtGuard,RolesGuard)
+  @Post('/reject-invite/:invitationId')
+    async rejectInvitation(
+      @Request() req,
+      @Param('invitationId') invitationId: string,
+    ):Promise<void> {
+      const userId = req.user.userId; 
+      return this.workspacesService.rejectInvitation(invitationId,userId);
+    }
 
-
-  // Endpoint สำหรับดึง Workspace พร้อมกับข้อมูลสมาชิกทั้งหมด (workspaceMember entity) มีตาราง invite
-  // @Get(':workspaceId/with-members')
-  // async getWorkspaceWithMembers(@Param('id') workspaceId: number) {
-  //   return this.workspacesService.getWorkspaceWithMembers(workspaceId);
-  // }
-
-  // Endpoint สำหรับดึงสมาชิกทั้งหมดใน Workspace (workspaceMember entity)
-  // @Get(':workspaceId/members')
-  // async getAllMembersInWorkspace(@Param('id') workspaceId: number) {
-  //     return this.workspacesService.getAllMembersInWorkspace(workspaceId);
-  //   }
 
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
@@ -201,19 +199,19 @@ export class WorkspacesController {
   }
 
 
-  @Role("user")
-  @WorkspaceRole('owner')
-  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
-  @Patch('/change-role/:workspaceId')
-  async changeRole(
-    @Request() req, @Param('workspaceId') workspaceId: number,
-    @Body() body: { userId: number; role: 'owner' | 'member' }
-  ) {
-    const currentUserId = req.user.userId; // ดึงข้อมูล `userId` ของผู้ที่ส่งคำขอ
-    return this.workspacesService.changeUserRole(workspaceId, currentUserId, body.userId, body.role);
+   // @Role("user")
+  // @WorkspaceRole('owner') 
+  // @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  // @Patch('/change-role/:workspaceId')
+  // async changeRole(
+  //   @Request() req,   @Param('workspaceId') workspaceId: string,   
+  //    @Body() updateProjectDto: UpdateProjectDto,
+  // ):Promise<WorkspaceMember>{
+  //   const currentUserId = req.user.userId; // ดึงข้อมูล `userId` ของผู้ที่ส่งคำขอ
+  //   return this.workspacesService.changeUserRole(workspaceId, currentUserId, body.memberId, body.role,);
+    
 
-  }
-
+// }
 
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
@@ -223,25 +221,38 @@ export class WorkspacesController {
     return this.workspacesService.getMyInvitation(userId);
   }
 
-  @UseGuards(JwtGuard)
-  @Get(':workspaceId/my-role')
-  async getWorkspaceRole(@Param('workspaceId') workspaceId: number, @Req() req): Promise<{ role: string }> {
-    const userId = req.user.userId; // ดึง userId จาก JWT Payload
+  // @UseGuards(JwtGuard)
+  // @Get(':workspaceId/my-role')
+  // async getWorkspaceRole(@Param('workspaceId') workspaceId: number, @Req() req): Promise<{ role: string }> {
+  //   const userId = req.user.userId; // ดึง userId จาก JWT Payload
 
-    const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
+  //   const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
 
-    if (!member) {
-      throw new NotFoundException('User is not a member of this workspace');
-    }
+  //   if (!member) {
+  //     throw new NotFoundException('User is not a member of this workspace');
+  //   }
 
-    return { role: member.role };
-  }
+  //   return { role: member.role };
+  // }
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Get(':userId')
-  findWithUserId(@Param('userId') userId: number) {
+  findWithUserId(@Param('userId') userId: string) {
     return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
   }
 
+@UseGuards(JwtGuard)
+@Get(':workspaceId/my-role')
+async getWorkspaceRole(@Param('workspaceId') workspaceId: string, @Req() req): Promise<{ role: string }> {
+  const userId = req.user.userId; // ดึง userId จาก JWT Payload
+
+  const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
+
+  if (!member) {
+    throw new NotFoundException('User is not a member of this workspace');
+  }
+
+  return { role: member.role };
+}
 }

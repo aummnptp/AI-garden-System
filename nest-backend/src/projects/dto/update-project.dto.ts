@@ -16,7 +16,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   
     // @IsString()
     // @IsOptional()
-    image_path?: string;
+    imagePath?: string;
   
     // @IsBoolean()
     // @IsOptional()

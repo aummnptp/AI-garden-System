@@ -10,11 +10,13 @@ export class CreateProjectDto {
   @IsString()
   input_type: string;
 
-  @IsString()
-  @IsOptional()
-  image_path: string;
+
 
   @IsNumber()
-  ai_id: number
+  ai_id: string
+
+  @IsOptional()
+  @IsString()
+  readonly imagePath: string; 
 
 }

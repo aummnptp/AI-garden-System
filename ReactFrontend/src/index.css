@@ -22,3 +22,61 @@
     margin: 0;
   }
 }
+
+.reset-tailwind {
+  all: initial;
+  display: block;
+}
+
+
+.custom-editor {
+  font-family: 'Kanit', sans-serif;
+  color: #374151; 
+}
+
+/* Heading styles */
+.custom-editor h1 {
+  font-weight: bold;
+}
+
+.custom-editor h2 {
+  font-weight: bold;
+}
+
+.custom-editor h3 {
+  font-weight: bold;
+}
+
+
+/* Lists */
+.custom-editor ul {
+  list-style-type: disc;
+}
+
+.custom-editor ol {
+  list-style-type: decimal;
+}
+
+/* Tables */
+.custom-editor table {
+  border-collapse: collapse;
+}
+
+.custom-editor th,
+.custom-editor td {
+  border: 1px solid #d1d5db;
+  text-align: left;
+}
+
+.custom-editor th {
+  background-color: #f3f4f6;
+  font-weight: bold;
+}
+
+
+/* Blockquotes */
+.custom-editor blockquote {
+  border-left: 4px solid #d1d5db; /* Tailwind's gray-300 */
+  color: #6b7280; /* Tailwind's neutral-500 */
+  font-style: italic;
+}

@@ -5,72 +5,38 @@ import ProjectCard from "../../components/card/ProjectCard";
 // import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
-import axios from "axios";
-import ProjectData from "../../data/ProjectData";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
 const ProjectListPage = () => {
-  const { workspaceId } = useParams<{ workspaceId?: string }>();
-  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
-  const [projectData, setProjectData] = useState([]); 
+ const { workspaceId } = useParams<{
+    workspaceId: string;
+  }>();
+  const {
+    data: projectData,
+    isLoading: isLoadingProject,
+    error: errorProject,
+  } = useFetchQuery(
+    ["project", workspaceId ?? "",],
+    `/workspaces/${workspaceId}/projects`
+  );
+
+//   // ดึงข้อมูล workspace detail
+  const {
+    data: workspaceDetail,
+    isLoading: isLoadingWorkspace,
+    error: errorWorkspace,
+  } = useFetchQuery(
+    ["workspace-detail", workspaceId ?? ""],
+    `/workspaces/detail/${workspaceId}`
+  );
+
+  // ตรวจสอบสถานะการโหลด
+  if (isLoadingProject || isLoadingWorkspace) return <div>Loading...</div>;
+  // ตรวจสอบข้อผิดพลาด
+  if (errorProject || errorWorkspace) return <div>Error: {errorProject?.message || errorWorkspace?.message}</div>;
 
 
-  if (typeof workspaceId === 'undefined') {
-    // Handle the case where workspaceId is undefined
-    return <div>No workspace ID provided</div>;
 
-  }
-
-
-  // const fetchData =async () => {
-  //   try{
-  //     const [workspaceResponse, projectResponse] = await axios.all([
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`),
-  //   ]);
-  //     setWorkspaceDetail(workspaceResponse.data);
-  //     setProjectData(projectResponse.data)
-  //     console.log(projectResponse.data); // แสดงข้อมูล project ที่โหลดมา
-  //   } catch (error) {
-  //     console.error("There was an error fetching the data!", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  // }, []);
-  const [loading, setLoading] = useState(true);
-  const fetchData = async () => {
-    try {
-      // เรียก API หลายตัวพร้อมกัน
-      const [
-        workspaceResponse,projectResponse
-         ] = await Promise.all([
-              axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
-                withCredentials: true,
-              }),
-              axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects`, {
-                withCredentials: true,
-              }),
-             
-            ]);  
-      // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
-      setWorkspaceDetail(workspaceResponse.data);
-      setProjectData(projectResponse.data)
-    } catch (error) {
-      console.error("Error fetching data!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData();
-  }, []);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-console.log(projectData)
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -153,11 +119,11 @@ console.log(projectData)
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">
         {projectData.map(data => (
-              <Link key={data.project_id} to={`/workspaces/${workspaceId}/project/${data.project_id}/detail`}>
+              <Link key={data.projectId} to={`/workspaces/${workspaceId}/project/${data.projectId}/detail`}>
                 <ProjectCard
-                  name={data.project_name}
-                  desc={data.project_desc}
-                  projectImage={data.image_path}
+                  name={data.name}
+                  desc={data.description}
+                  projectImage={data.imagePath}
                   ai_tags={data.ai_model.ai_tag}
                   ai_type={data.ai_model.ai_type}
                 />

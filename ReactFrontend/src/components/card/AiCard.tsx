@@ -1,6 +1,6 @@
 import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
-import { Button } from '@mui/material';
+import { Button, Card, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 import axios from 'axios';
@@ -9,7 +9,7 @@ import ProjectImage from './ProjectLetterImage';
 
 
 interface AiCardProps {
-    id:number;
+    id:string;
     name:string;
     aiDesc: string;
     img:string;
@@ -22,7 +22,8 @@ interface AiCardProps {
 
   return (
     <Link to={`/ai/${props.id}/detail`}>
-  
+    {/* <Card sx={{ minWidth: 275 }}>
+    <CardContent> */}
     <div className="mx-auto mt-10 pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
     {/* {props.img ? (
           //  <div className='mx-2 w-fit h-fit  flex items-center  '>
@@ -80,6 +81,8 @@ interface AiCardProps {
           </div>
           </div>
         </div>
+        {/* </CardContent>
+        </Card> */}
         </Link>
   )
 }

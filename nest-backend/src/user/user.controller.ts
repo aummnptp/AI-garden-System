@@ -28,8 +28,8 @@ export class UserController {
 
   
 
-  @UseGuards(JwtGuard)
-  @Get('profile')
+  @UseGuards(JwtGuard)  
+  @Get('profile')    
   async getProfile(@Request() req) {
     // console.log  ("abc",req.user)
     const userId = req.user.userId;

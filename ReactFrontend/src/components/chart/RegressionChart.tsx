@@ -3,10 +3,10 @@ import { Line } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 
 interface RegressionChartProps {
-  regressionParams: number[];
+  detections: number[];
 }
 
-const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) => {
+const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
   const [chartData, setChartData] = useState<any>(null);
   const chartRef = useRef<any>(null); // สร้าง ref สำหรับ Chart
 
@@ -15,13 +15,13 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) =
       chartRef.current.destroy(); // ทำลายกราฟเดิมก่อนสร้างใหม่
     }
 
-    if (regressionParams && regressionParams.length > 0) {
+    if (detections && detections.length > 0) {
       const newChartData = {
-        labels: regressionParams.map((_, index) => (index + 1).toString()), // กำหนด labels ให้เป็นตัวเลข
+        labels: detections.map((_, index) => (index + 1).toString()), // กำหนด labels ให้เป็นตัวเลข
         datasets: [
           {
             label: 'Regression Data',
-            data: regressionParams, // ข้อมูลที่ใช้ในแกน y
+            data: detections, // ข้อมูลที่ใช้ในแกน y
             borderColor: 'rgba(75,192,192,1)',
             borderWidth: 2,
             fill: false, // ปิดการเติมสีด้านล่างกราฟ
@@ -79,7 +79,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ regressionParams }) =
         chartRef.current.destroy(); // ทำลายกราฟเมื่อคอมโพเนนต์ถูก unmount
       }
     };
-  }, [regressionParams]);
+  }, [detections]);
 
   return (
     <div className="w-full h-[400px]">

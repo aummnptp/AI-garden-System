@@ -18,19 +18,19 @@ export class WorkspaceRoleGuard implements CanActivate{
           const workspaceId = request.params.workspaceId;
 
           if(!user ||!workspaceId){
-            throw new ForbiddenException("Invalid user or workspace")
+            throw new ForbiddenException("Role Guard Invalid user or workspace")
           }
 
           const member = await this.dataSource.getRepository(WorkspaceMember).findOne({
             where: { user: { userId: user.userId }, workspace: { workspaceId: workspaceId } }, })
 
             if (!member) {
-                throw new ForbiddenException('You are not a member of this workspace');
+                throw new ForbiddenException(' Role Guard You are not a member of this workspace');
               }
           
               // ตรวจสอบบทบาท
               if (member.role !== requiredRole) {
-                throw new ForbiddenException(`Required workspace role: ${requiredRole}`);
+                throw new ForbiddenException(`Role Guard Required workspace role: ${requiredRole}`);
               }
               return true;          
     }

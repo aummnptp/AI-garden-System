@@ -1,0 +1,141 @@
+import axios from "axios";
+import DOCS_ROUTES from "../routes/DocsRoutes";
+
+axios.defaults.withCredentials = true;
+
+const addTitleService = async () => {
+  try {
+    const response = await axios.post(
+      `${DOCS_ROUTES.addTitle}`,
+      { title: "new title", content: "new content here" },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error addSubtitle :", error);
+    throw error;
+  }
+};
+const addSubtitleService = async (docsId: string) => {
+  try {
+    const response = await axios.post(
+      `${DOCS_ROUTES.addSubtitle}${docsId}`,
+      { title: "new sub title", content: "new sub content here" },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error addSubtitle :", error);
+    throw error;
+  }
+};
+
+const updateDocsTitleService = async (docsId: string, newTitle: string) => {
+  try {
+    const response = await axios.patch(
+      `${DOCS_ROUTES.updateDocument}${docsId}`,
+      { title: newTitle }
+    );
+    return response.data; 
+  } catch (error) {
+    console.error("Error updateDocs:", error);
+    throw error; 
+  }
+};
+
+const updateSubDocsTitleService = async (subDocsId: string, newTitle: string) => {
+  try {
+
+    const response = await axios.patch(
+      `${DOCS_ROUTES.updateSubDocument}${subDocsId}`,
+      { title: newTitle },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updateSubDocsTitle", error);
+    throw error;
+  }
+};
+
+const deleteTitleService = async (docsId: string) => {
+  try {
+    const response = await axios.delete(
+      `${DOCS_ROUTES.deleteDocument}${docsId}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updateSubDocsTitle", error);
+    throw error;
+  }
+};
+
+const deleteSubTitleService = async (subDocsId: string) => {
+  try {
+    const response = await axios.delete(
+      `${DOCS_ROUTES.deleteSubDocument}${subDocsId}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updateSubDocsTitle", error);
+    throw error;
+  }
+};
+
+const changeDocsVisiblityService = async (docsId: string, hiddenChangeState: boolean) => {
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-docs/${docsId}`,
+      { hidden: hiddenChangeState }, 
+    );
+    return response.data; 
+  } catch (error) {
+    console.error("Error updating document visibility:", error);
+    throw error;
+  }
+};
+
+const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeState: boolean) => {
+  try {
+    const response = await axios.patch(
+      `${DOCS_ROUTES.updateSubDocument}${subDocsId}`,
+      { hidden: hiddenChangeState },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updateSubDocsTitle", error);
+    throw error;
+  }
+};
+
+ const saveDocsOrderService = async (docsToSave: { docsId: string; order: number }[]) => {
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-docs-order`,
+      { documents: docsToSave },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error saving docs order:", error);
+    throw error;
+  }
+};
+
+// ฟังก์ชันสำหรับบันทึกลำดับของเอกสารย่อย
+ const saveSubDocsOrderService = async (subDocsToSave: { docsId: string; subDocsId: string; order: number }[]) => {
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-subdocs-order`,
+      { subDocuments: subDocsToSave },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error saving subdocs order:", error);
+    throw error;
+  }
+};
+
+export {
+  updateDocsTitleService, updateSubDocsTitleService,
+  addSubtitleService, addTitleService, deleteTitleService,
+  deleteSubTitleService, changeDocsVisiblityService,
+  changeSubDocsVisiblityService, saveDocsOrderService,
+  saveSubDocsOrderService,
+};

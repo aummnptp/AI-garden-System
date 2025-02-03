@@ -9,7 +9,7 @@ interface SidebarProps {
   aiName:string;
   aiType:string;
 }
-const Sidebar: React.FC<SidebarProps> = ({ workspaceName ,projectName,aiName,aiType})=> {
+const Sidebar: React.FC<SidebarProps> = ({ workspaceName, projectName, aiName, aiType }) => {
   let {workspaceId,projectId} = useParams()
   const location = useLocation();
   const isProjectPage = location.pathname.includes('/project/');

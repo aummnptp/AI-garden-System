@@ -9,6 +9,7 @@ import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
 
 import axios from "axios";
+import AISettingDialog from "../../components/ai/AISettingComponent";
 
 
 function AdminAi() {
@@ -28,6 +29,24 @@ function AdminAi() {
   useEffect(() => {
     fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [limit, setLimit] = useState<number>(10);  // ค่าตั้งต้นเป็น 10
+  const [isLimitEnabled, setIsLimitEnabled] = useState<boolean>(true);
+
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleSaveSettings = (newLimit: number, isLimitEnabled: boolean) => {
+    setLimit(newLimit);
+    setIsLimitEnabled(isLimitEnabled);
+    // บันทึกการตั้งค่าใหม่ไปที่ backend ที่นี่ (อาจใช้ API call)
+    console.log('Saved new settings:', newLimit, isLimitEnabled);
+  };
 
   return (
     <>
@@ -84,22 +103,32 @@ function AdminAi() {
                 className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
               >
                 tag filter <ControlOutlined />
-              </button></div>
-
+              </button>
+              <Button variant="contained" color="primary" onClick={handleDialogOpen}>
+        Open Settings
+      </Button>
+      <AISettingDialog
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        initialLimit={limit}
+        isLimitEnabled={isLimitEnabled}
+        onSave={handleSaveSettings}
+      /></div>
             </div>
           </div>
 
           {/* Card container */}
-          <div className="mt-4 h-fit  w-[95%] grid grid-cols-3  bg-white rounded-[15px] justify-self-center relative">
+          <div className="px-20 p-8 mt-4 h-fit w-[95%] grid grid-cols-3 gap-4 bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
 
             {AIData.map((data) => (
               <AdminAiCard
-              id={data.id}
+              id={data.aiId}
               name={data.name}
               aiDesc={data.description}
               tags={data.ai_tag}
-              img={"/images/ai/healthAi.webp"}
+              // img={"/images/ai/healthAi.webp"}
+              img={data.imagePath}
               type={data.ai_type}
               />
               
