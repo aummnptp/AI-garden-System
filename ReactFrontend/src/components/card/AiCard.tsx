@@ -2,7 +2,11 @@ import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
 import { Button, Card, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
+
+import axios from 'axios';
+
 import ProjectImage from './ProjectLetterImage';
+
 
 interface AiCardProps {
     id:string;
@@ -13,7 +17,9 @@ interface AiCardProps {
     tags:string[];
   }
 
-const AiCard :React.FC<AiCardProps> = (props) => {
+  
+  const AiCard: React.FC<AiCardProps> = (props) => {
+
   return (
     <Link to={`/ai/${props.id}/detail`}>
     {/* <Card sx={{ minWidth: 275 }}>
@@ -59,18 +65,19 @@ const AiCard :React.FC<AiCardProps> = (props) => {
             ))}
             </div>
             <div className="flex justify-center"> 
-              <Button
+            <Button
               variant="contained"
               size="large"
               sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
+                backgroundColor: '#4f46e5',
+                '&:hover': { backgroundColor: '#3730a3' },
               }}
-              >
+
+            >
+
               <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ดูรายละเอียด
               </Button>
+
           </div>
           </div>
         </div>

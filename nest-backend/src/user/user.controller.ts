@@ -6,15 +6,17 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   create(@Body() registerDTO: RegisterDTO) {
     return this.userService.create(registerDTO);
   }
 
+
+
   @UseGuards(JwtGuard)
-  @Get()    
+  @Get()
   findAll() {
     return this.userService.findAll();
   }
@@ -24,6 +26,7 @@ export class UserController {
   //   return this.userService.findOne(+id);
   // }
 
+  
 
   @UseGuards(JwtGuard)  
   @Get('profile')    
@@ -34,6 +37,9 @@ export class UserController {
     return user;
     // return this.userService.findAll();
   }
- 
 
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.userService.findOne(id);
+  }
 }

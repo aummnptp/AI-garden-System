@@ -158,7 +158,7 @@ function CreateProjectPage() {
             withCredentials: true,
           }
         ),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`  ,
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/my_approved`  ,
           {
             withCredentials: true,
           }

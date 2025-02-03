@@ -9,6 +9,21 @@ const AiDetail = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();
   const [aiData, setAiData] = useState<any>(null);
 
+  const handleSendRequest = async () => {
+        console.log("AI ID (ai_id):", ai_id); // Debug
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add`,
+            { ai_id: ai_id }, // ต้องส่ง aiId ไป
+            { withCredentials: true }
+          );
+          alert(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || 'สำเร็จ'}`);
+        } catch (error) {
+          console.error('เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:', error);
+          alert('ไม่สามารถส่งคำขอใช้งานได้');
+        }
+      };
+
   useEffect(() => {
     if (ai_id) {
       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
@@ -120,7 +135,8 @@ const AiDetail = () => {
                   ทดลองใช้งาน
                 </Button>
               </Link>
-              {/* <Button
+              <Button
+                onClick={handleSendRequest}
                 variant="contained"
                 size="large"
                 sx={{
@@ -130,7 +146,7 @@ const AiDetail = () => {
                 }}
               >
                 ส่งคำขอใช้งาน
-              </Button> */}
+              </Button>
             </div>
           </div>
         </div>

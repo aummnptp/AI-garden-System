@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AIModel } from './entities/ai-model.entity';
@@ -7,17 +12,22 @@ import * as FormData from 'form-data';
 import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
+import { Permission } from '../permission/entities/permission.entity';
 
 @Injectable()
 export class AIModelService {
   constructor(
     @InjectRepository(AIModel)
     private aiModelRepository: Repository<AIModel>,
-  ) {}
+  ) { }
 
-  async addModel(createAIModelDto: CreateAIModelDto, file: Express.Multer.File): Promise<string> {
+  async addModel(
+    createAIModelDto: CreateAIModelDto,
+    file: Express.Multer.File,
+  ): Promise<string> {
     let responseKeys = [];
-  
+
+    // Parse response_keys to ensure it's an array
     if (typeof createAIModelDto.response_keys === 'string') {
       try {
         responseKeys = JSON.parse(createAIModelDto.response_keys);
@@ -27,7 +37,7 @@ export class AIModelService {
     } else if (Array.isArray(createAIModelDto.response_keys)) {
       responseKeys = createAIModelDto.response_keys;
     }
-  
+
     const newModel = this.aiModelRepository.create({
       name: createAIModelDto.name,
       description: createAIModelDto.description,
@@ -42,7 +52,7 @@ export class AIModelService {
       })),
       imagePath: file ? `/uploads/${file.filename}` : null,
     });
-  
+
     await this.aiModelRepository.save(newModel);
     return 'Model added successfully!';
   }  
@@ -110,20 +120,20 @@ export class AIModelService {
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-  
+
     const formData = new FormData();
     formData.append('file', file.buffer, file.originalname);
-  
+
     try {
       const response = await axios.post(model.api_uri, formData, {
         headers: { ...formData.getHeaders() },
         
       });
-  
+
       if (!response.data) {
         throw new BadRequestException('No response from external API');
       }
-  
+
       return {
         response_keys: model.response_keys,
         prediction: response.data,
@@ -145,5 +155,62 @@ export class AIModelService {
       }
     }
   }
+
+
+
+
+  async findAllWithDetails() {
+    return this.aiModelRepository.find({
+      relations: ['permissions'], // ระบุความสัมพันธ์กับ user และ ai
+    });
+  }
+
+  // async findAllWithApprovalStatus(userId: number): Promise<any[]> {
+  //   const models = await this.aiModelRepository.find({
+  //     relations: ['permissions'], // Include permissions relation
+  //   });
+
+  //   // Map models to include approval status for the user
+  //   return models.map((model) => {
+  //     const userPermission = model.permissions.find(
+  //       (permission) => permission.user_id === userId,
+  //     );
+
+  //     return {
+  //       ...model,
+  //       approvalStatus: userPermission ? userPermission.approve : false, // Add approval status
+  //     };
+  //   });
+  // }
+  async findAllWithApprovalStatus(userId: number): Promise<any[]> {
+    const models = await this.aiModelRepository
+      .createQueryBuilder('aiModel')
+      .leftJoinAndSelect('aiModel.permissions', 'permission', 'permission.user_id = :userId', { userId })
+      .getMany();
   
+    return models;
+  }
+  
+  
+
+
+
+
+  async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
+    return this.aiModelRepository
+      .createQueryBuilder('aiModel')
+      .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+      .where('permission.user_id = :userId', { userId })
+      .andWhere('permission.approve = :approve', { approve: true })
+      .getMany();
+  }
+
+  async getMyApproved(userId: number): Promise<AIModel[]> {
+    return this.aiModelRepository
+      .createQueryBuilder('aiModel')
+      .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+      .where('permission.user_id = :userId', { userId })
+      .andWhere('permission.approve = :approve', { approve: true })
+      .getMany();
+  }
 }

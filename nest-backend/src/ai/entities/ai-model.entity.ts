@@ -1,3 +1,6 @@
+
+import { Permission } from '../../permission/entities/permission.entity';
+
 import { Project } from 'src/projects/entities/project.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { AIUsageLimit } from '../../ai-setting/entities/ai-usage-limit.entity';
@@ -47,6 +50,10 @@ export class AIModel {
   @OneToMany(() => AIUsageLimit, (usageLimit) => usageLimit.ai)
   usageLimits: AIUsageLimit[];
 
+  @OneToMany(() => Permission, (permission) => permission.aiModel)
+  permissions: Permission[];
+
+
   @OneToMany(() => Project,(project) => project.ai_model,)
   projects: Project[];
 
@@ -55,4 +62,5 @@ export class AIModel {
   
   @Column({name:'image_path', nullable: true }) // เพิ่มฟิลด์ imagePath
   imagePath: string;
+
 }

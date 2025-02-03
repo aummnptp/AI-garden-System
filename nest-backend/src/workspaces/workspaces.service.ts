@@ -51,6 +51,9 @@ export class WorkspacesService {
     return this.workspaceRepository.findOneBy({ workspaceId: workspaceId });
   }
 
+  findWithUserId(userId: number): Promise<Workspace[]> {
+    return this.workspaceRepository.find({ where: { createById: userId } });
+  }
 
   // ลบ workspace
   remove(workspaceId: string): Promise<void> {
@@ -96,7 +99,7 @@ export class WorkspacesService {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId },
     });
-  
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -113,15 +116,15 @@ export class WorkspacesService {
       },
       relations: ['workspace', 'user'],
     });
-  
+
     if (!member) {
       throw new NotFoundException('User is not a member of this workspace');
     }
-  
+
     // ลบสมาชิก
     await this.workspaceMemberRepository.remove(member);
   }
-  
+
 
 
 
@@ -140,9 +143,6 @@ export class WorkspacesService {
     return [creator, ...membersWithoutCreator];
   }
     return workspace.members;
-
-
-    
   }
 
 
@@ -176,7 +176,7 @@ export class WorkspacesService {
   async getPendingUserList(workspaceId: string): Promise<WorkspaceInvitation[]> {
     const invitations = await this.workspaceInvitationsRepository.find({
       where: {
-        workspace: { workspaceId }, 
+        workspace: { workspaceId },
         status: "pending"// ตรวจสอบคำเชิญที่เชื่อมกับ workspaceId ที่กำหนด
       },
       relations: ['workspace', 'user', 'invitedBy'], // โหลดข้อมูล workspace, user และ invitedBy
@@ -245,7 +245,7 @@ export class WorkspacesService {
       where: { inviteId },
       relations: ['workspace'],
     });
-  
+
     if (!invitation) {
       throw new NotFoundException(`Invitation with id ${inviteId} not found`);
     }
@@ -334,11 +334,11 @@ export class WorkspacesService {
 
         createdById: Not(userId), // ผู้ใช้งานไม่ใช่คนสร้าง
       },
-      
+
       relations: ['members', 'members.user'], // Join ตารางที่ต้องการ
     });
-    const workspacesUserIsMember = 
-    workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId) );
+    const workspacesUserIsMember =
+      workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId));
 
     // if (!workspaces || workspaces.length === 0) {
     //   throw new NotFoundException('No workspaces found where user is a member but not the creator');
@@ -382,8 +382,10 @@ export class WorkspacesService {
 
 async getMyInvitation(userId:string){
     return this.workspaceInvitationsRepository.find({
-      where: { user: { userId: userId } ,
-      status: 'pending',},
+      where: {
+        user: { userId: userId },
+        status: 'pending',
+      },
       relations: ['workspace', 'invitedBy'],
     });
   }

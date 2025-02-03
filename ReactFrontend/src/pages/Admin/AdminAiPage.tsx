@@ -1,17 +1,22 @@
+
 import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
+
 import axios from "axios";
 import AISettingDialog from "../../components/ai/AISettingComponent";
+
 
 function AdminAi() {
 
   const [AIData, setAIData] = useState([]);
   const fetchAIData = () => {
+
     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
       .then(response => {
         setAIData(response.data);
@@ -48,28 +53,30 @@ function AdminAi() {
       <div className="flex bg-neutral-100 h-full pb-32  min-h-screen ">
         {/* Slidebar placeholder */}
         <AdminSidebar></AdminSidebar>
-   
+
 
         {/* Main content */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* Top card (create sort workspace name) */}
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
-          <div className="flex justify-between items-center p-5">
+            <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                รายชื่อ AI 
+                รายชื่อ AI
               </h1>
 
               <Link to="/admin/createai" >
-                  <Button
-                           variant="contained"
+                <Button
+                  variant="contained"
                   sx={{
                     backgroundColor: "#4f46e5",
                     "&:hover": {
                       backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
                     },
                   }}
+
                   >
                 + Add New AI 
+
                 </Button>
 
               </Link>
@@ -84,6 +91,7 @@ function AdminAi() {
                 required
               />
               <div>
+
               <button
                 type="button"
                 className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
@@ -112,7 +120,7 @@ function AdminAi() {
           {/* Card container */}
           <div className="px-20 p-8 mt-4 h-fit w-[95%] grid grid-cols-3 gap-4 bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
-            
+
             {AIData.map((data) => (
               <AdminAiCard
               id={data.aiId}
@@ -125,8 +133,8 @@ function AdminAi() {
               />
               
             ))}
-            
-            
+
+
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { AIUsageLimit } from "src/ai-setting/entities/ai-usage-limit.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Permission } from '../../permission/entities/permission.entity';
 
 @Entity()
 export class User{
@@ -24,5 +25,7 @@ export class User{
     usageLimits: AIUsageLimit[];
     
     
+    @OneToMany(() => Permission, (permission) => permission.aiModel)
+      permissions: Permission[];
 
 }

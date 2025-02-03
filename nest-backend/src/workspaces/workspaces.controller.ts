@@ -9,9 +9,9 @@ import { InviteWorkspaceDto } from './dto/InviteWorkspaceDto';
 
 
 import { RolesGuard } from 'src/auth/guards/role.guard';
-
-import { WorkspaceRoleGuard } from 'src/auth/guards/workspace-role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
+import { WorkspaceRoleGuard } from 'src/auth/guards/workspace-role.guard';
+
 import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 
@@ -19,54 +19,57 @@ import { WorkspaceMember } from './entities/workspace-member.entity';
 export class WorkspacesController {
   constructor(
     private readonly workspacesService: WorkspacesService
-    
 
-  ) {}
-  
+
+  ) { }
+
 
   @Role("user")
-  @UseGuards(JwtGuard,RolesGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Post('create')
-  async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
-    const userId = req.user.userId; 
+  async create(@Request() req, @Body() createWorkspaceDto: CreateWorkspaceDto) {
+    const userId = req.user.userId;
     // return  req.user
     return this.workspacesService.create(createWorkspaceDto, userId);
   }
 
   @Role("admin")
-  @UseGuards(JwtGuard,RolesGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get()
   findAll() {
     return this.workspacesService.findAll();
   }
 
   @Role("user")
-  @UseGuards(JwtGuard,RolesGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get('/detail/:workspaceId')
   findOne(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.findOne(workspaceId);
   }
 
+  
+
+
 
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Patch('/update/:workspaceId')
   update(@Param('workspaceId') workspaceId: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
     return this.workspacesService.update(workspaceId, updateWorkspaceDto);
   }
 
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Delete('/delete/:workspaceId')
   remove(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.remove(workspaceId);
   }
-  
+
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Patch('/add-member/:workspaceId')
   async addMember(
     @Param('workspaceId') workspaceId: string,
@@ -76,8 +79,8 @@ export class WorkspacesController {
   }
 
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Delete('/remove-member/:workspaceId')
   async removeMember(
     @Param('workspaceId') workspaceId: string, 
@@ -87,16 +90,16 @@ export class WorkspacesController {
   }
 
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Get('/members-profiles/:workspaceId')
   async getMembersProfiles(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.getMembersProfiles(workspaceId);
   }
 
   @Role("user")
-  @WorkspaceRole('owner') 
-  @UseGuards(JwtGuard,RolesGuard,WorkspaceRoleGuard)
+  @WorkspaceRole('owner')
+  @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Get('/available-users/:workspaceId')
   async getUserListInvitation(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.getNonMembersProfiles(workspaceId);
@@ -104,11 +107,11 @@ export class WorkspacesController {
 
 
 
-// async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
-//   const userId = req.user.userId; 
-//   // return  req.user
-//   return this.workspacesService.create(createWorkspaceDto, userId);
-// }
+  // async create(@Request() req,@Body() createWorkspaceDto: CreateWorkspaceDto) {
+  //   const userId = req.user.userId; 
+  //   // return  req.user
+  //   return this.workspacesService.create(createWorkspaceDto, userId);
+  // }
 
 // รายชื่อที่ชวนไป
 @Role("user")
@@ -186,12 +189,12 @@ async getPendingUserList(@Param('workspaceId') workspaceId: string) {
     return this.workspacesService.getAllWorkspaceWithMembers(userId);
   }
 
-  
+
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   @Get('/invite-workspaces')
   async getInvitedWorkspacesWithMembers(@Request() req,) {
-    const userId = req.user.userId; 
+    const userId = req.user.userId;
     return this.workspacesService.getWorkspacesWhereUserIsMember(userId);
   }
 
@@ -210,13 +213,34 @@ async getPendingUserList(@Param('workspaceId') workspaceId: string) {
 
 // }
 
-@Role("user")
-@UseGuards(JwtGuard,RolesGuard)
-@Get('/get-my-invitation')
-async showmyInvitation(@Request() req, ) {
-  const userId = req.user.userId;
-  return this.workspacesService.getMyInvitation(userId);
-}
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get('/get-my-invitation')
+  async showmyInvitation(@Request() req,) {
+    const userId = req.user.userId;
+    return this.workspacesService.getMyInvitation(userId);
+  }
+
+  // @UseGuards(JwtGuard)
+  // @Get(':workspaceId/my-role')
+  // async getWorkspaceRole(@Param('workspaceId') workspaceId: number, @Req() req): Promise<{ role: string }> {
+  //   const userId = req.user.userId; // ดึง userId จาก JWT Payload
+
+  //   const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
+
+  //   if (!member) {
+  //     throw new NotFoundException('User is not a member of this workspace');
+  //   }
+
+  //   return { role: member.role };
+  // }
+
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get(':userId')
+  findWithUserId(@Param('userId') userId: string) {
+    return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
+  }
 
 @UseGuards(JwtGuard)
 @Get(':workspaceId/my-role')

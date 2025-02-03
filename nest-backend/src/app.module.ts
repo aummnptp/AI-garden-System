@@ -8,7 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Workspace } from './workspaces/entities/workspace.entity';
-// import { InvitationModule } from './invitation/invitation.module';
+
+
+import { Permission } from './permission/entities/permission.entity';
+import { AiPermissionModule } from './permission/permission.module';
 import { AIModel } from './ai/entities/ai-model.entity';
 import { AIModelModule } from './ai/ai-model.module';
 import { ProjectsController } from './projects/projects.controller';
@@ -24,14 +27,28 @@ import { DocsModule } from './docs/docs.module';
 import { AISettingModule } from './ai-setting/ai-setting.module';
 
 
+//@Module({
+  //imports: [
+    //ConfigModule.forRoot({isGlobal:true}),
+    //TypeOrmModule.forRoot({
+      //type: 'postgres',
+      //host: process.env.POSTGRES_HOST,
+      //port: parseInt(<string>process.env.POSTGRES_PORT),
+      //username: process.env.POSTGRES_USER,
+      //password: process.env.POSTGRES_PASSWORD,
+      //database: process.env.POSTGRES_DATABASE,
+      //entities: [User, Workspace, AIModel, Permission], // เพิ่ม AIModel ที่นี่
+      //synchronize: true, // ปิดในการใช้งาน production
+      //logging: true,
 
-
+// import { InvitationModule } from './invitation/invitation.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm]
+
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -45,7 +62,7 @@ import { AISettingModule } from './ai-setting/ai-setting.module';
     ProjectsModule,
     DocsModule,
     AISettingModule,
-    
+    AiPermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService
