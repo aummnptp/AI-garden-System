@@ -20,6 +20,7 @@ import * as multer from 'multer';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
+import { AIUsageLimitGuard } from 'src/ai-setting/guards/ai-usage-limit.guard';
 
 
   
@@ -84,7 +85,9 @@ async updateAI(
     }
   
   
-    // @UseGuards(JwtGuard) 
+    @UseGuards(JwtGuard,
+      AIUsageLimitGuard
+    ) 
     @Post('predict/:aiId')
     @UseInterceptors(FileInterceptor('file'))
 

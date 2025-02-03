@@ -6,6 +6,7 @@ import axios from 'axios';
 import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
 import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Modal, Typography } from '@mui/material';
+import ColorPickerTags from '../../components/ai/ColorPickerTags';
 
 
 
@@ -74,8 +75,9 @@ const fetchAi = () => {
   }, []);
 
   useEffect(() => {
-    const responseKeysArray = responseKeys.map((keyObj) => keyObj);
-    setPredictResult((prev) => ({ ...prev, response_keys: responseKeysArray }));
+    const responseKeysArray = responseKeys.map((keyObj) => keyObj.key);
+    // setPredictResult((prev) => ({ ...prev, response_keys: responseKeysArray }));
+    setPredictResult((prev) => ({ ...prev, response_keys: responseKeysArray as string[], prediction: prev?.prediction || {} }));
   }, [responseKeys]);
   
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,58 +240,6 @@ const fetchAi = () => {
   };
 
 
-  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   const modelData = {
-  //     name: aiName,
-  //     description: description,
-  //     ai_type: aiType,
-  //     api_uri: serviceUri,
-  //     ai_tag: tags,
-  //     input_desc: inputDescription,
-  //     response_keys: responseKeys.map((key) => ({
-  //       key: key.key,
-  //       meaning: key.meaning,
-  //       displayFormat: key.displayFormat,
-  //     })),
-  //   };
-  
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
-  //       {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify(modelData),
-  //         credentials: 'include',
-  //       }
-  //     );
-  
-  //     if (!response.ok) {
-  //       // ตรวจสอบว่าสถานะไม่ใช่ 2xx
-  //       const errorData = await response.json().catch(() => {
-  //         throw new Error(response.statusText); // ใช้ข้อความสถานะหากไม่มี JSON
-  //       });
-  //       throw new Error(errorData.message || 'Something went wrong!');
-  //     }
-  
-  //     // ตรวจสอบ Content-Type ก่อนแปลง JSON
-  //     const contentType = response.headers.get('Content-Type');
-  //     if (contentType && contentType.includes('application/json')) {
-  //       const data = await response.json();
-  //       console.log('Success:', data);
-  //     } else {
-  //       console.log('Success:', await response.text()); // แสดงข้อความ plain text
-  //     }
-  
-  //     navigate('/admin/admin-ai'); // Navigate back to admin page after submission
-  //   } catch (error) {
-  //     console.error('Error:', error || error);
-  //     alert(`Error: ${error|| 'Failed to update AI model'}`);
-  //   }
-  // };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
   const modelData = {
@@ -305,6 +255,9 @@ const fetchAi = () => {
       displayFormat: key.displayFormat,
     })),
   };
+
+
+
 
   const formData = new FormData();
   if (uploadedFile) {
@@ -348,7 +301,7 @@ const fetchAi = () => {
 };
 
 
-  // แก้
+
   let PredictDrawData = null;
   let ai_text_type = null;
   
@@ -366,7 +319,7 @@ const fetchAi = () => {
       
       // แยก key ออกเป็นส่วนย่อย (เช่น detections.position)
       const keyParts = searchDrawKey.key.split(".");
-      let data = predictResult.prediction;
+      let data: { [key: string]: any } = predictResult.prediction;
       
       // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
       for (const part of keyParts) {
@@ -418,6 +371,7 @@ const fetchAi = () => {
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 />
               </div>
+              <ColorPickerTags/>
               <div className="form-group">
                 <label>AI type</label>
                 <select

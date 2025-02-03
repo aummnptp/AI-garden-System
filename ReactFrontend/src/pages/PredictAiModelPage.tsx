@@ -9,7 +9,7 @@ import axios from 'axios';
 import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
 import AddNoteDialog from '../components/ืNoteDialog';
-import ObjectDetectionResultComponent from '../components/aiDisplay/ObjectDetectionResultComponent';
+import AIDisPlayResultComponent from '../components/aiDisplay/AIDisPlayResultComponent';
 import ChartResultDisplay from '../components/aiDisplay/ChartResultDisplay';
 
 interface PredictResult {
@@ -478,7 +478,7 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 4 && predictResult ? (
                   customedImageUrl ? (
                     <>
-                      <ObjectDetectionResultComponent
+                      <AIDisPlayResultComponent
                         resultImage={customedImageUrl}
                         predictResult={predictResult}
                       />

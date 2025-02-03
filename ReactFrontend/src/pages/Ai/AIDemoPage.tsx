@@ -19,7 +19,7 @@ import {
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
-import ObjectDetectionResultComponent from "../../components/aiDisplay/ObjectDetectionResultComponent";
+import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
 import SegmentationResultComponent from "../../components/aiDisplay/SegmentationResultComponent";
 
 
@@ -439,22 +439,10 @@ const AIDemo = () => {
               )}
               {uploadStep === 4 && predictResult ? (
                 customedImageUrl ? (
-                  // predictResult.ai_type === "Classification" ? (
-                  //   <DemoPredictResult
-                  //     predictResult={predictResult}
-                  //     resultImage={customedImageUrl}  aiDataProp={aiData}
-                  //   />
-                  // ) : predictResult.ai_type === "Object Detection" ? (
-                    <ObjectDetectionResultComponent
+                    <AIDisPlayResultComponent
                       resultImage={customedImageUrl}
                       predictResult={predictResult}
                     />
-                  // ):
-                  //  predictResult.ai_type === "Segmentation" ? (
-                  //   <SegmentationResultComponent
-                  //   resultImage={customedImageUrl} 
-                  //   predictResult={predictResult} aiDataProp={aiData}/>
-                  // ) : null
                 ) : null
               ) : null}
 

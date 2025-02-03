@@ -3,54 +3,19 @@ import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 
 
-import {  ExclamationCircleOutlined, InfoCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import {  ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import Barchart from "../../components/chart/BarChart";
-
 import DoughnutChart from "../../components/chart/doughnutChart";
 import SummaryCard from "../../components/chart/sumaryCard";
-import UsageBarChart from "../../components/chart/UsageBarChart";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
-import ProjectData from "../../data/ProjectData";
-import { Button, IconButton, ImageList, ImageListItem, ImageListItemBar, ListSubheader } from "@mui/material";
-import axios from "axios";
+import { Button, } from "@mui/material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 
 
 
 
-interface Project {
-  project_id: number;
-  project_name: string;
-  project_desc: string;
-  input_type: string;
-  image_path: string | null;
-  create_at: string;
-  update_at: string;
-  permission_only: boolean;
-  ai_model: AIModel;
-}
-
-interface AIModel {
-  id: number;
-  name: string;
-  description: string;
-  ai_type: string;
-  ai_tag: string[];
-  input_desc: string;
-  api_uri: string;
-  response_keys: ResponseKey[];
-  createdAt: string;
-  updatedAt: string;
-  imagePath: string | null;
-}
-
-interface ResponseKey {
-  key: string;
-  meaning: string;
-  displayFormat: string;
-}
 
 
 const ProjectDetailPage = () => {
@@ -86,42 +51,6 @@ const ProjectDetailPage = () => {
     // ตรวจสอบข้อผิดพลาด
     if (errorProjectDetail || errorWorkspaceDetail) return <div>Error: {errorProjectDetail?.message || errorWorkspaceDetail?.message}</div>;
 
-
-  // const fetchData = async () => {
-  //   try {
-  //     const [workspaceResponse, projectResponse] = await Promise.all([
-  //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
-  //         ,
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       ),
-  //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`  ,
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       ),
-  //     ]);
-  
-  //   setWorkspaceDetail(workspaceResponse.data);
-  //     setProjectDetail(projectResponse.data);
-  //   } catch (error) {
-  //     console.error("There was an error fetching the data!", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
-  // }, []);
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (!projectDetail) {
-  //   return <div>Error: Project details could not be loaded.</div>;
-  // }
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
   return (
@@ -129,7 +58,7 @@ const ProjectDetailPage = () => {
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
         <Sidebar workspaceName={workspaceDetail.name} 
-        projectName={projectDetail.project_name}
+        projectName={projectDetail.name}
         aiName={projectDetail.ai_model.name}
         aiType={projectDetail.ai_model.ai_type}
          />
@@ -153,12 +82,12 @@ const ProjectDetailPage = () => {
              <img
                className=" col-span-2 w-full h-[100%] object-cover"
              src={projectDetail.imagePath}
-            //  alt={`${projectDetail.project_name} project`}
+            //  alt={`${projectDetail.name} project`}
              />
             ) : (
            
               <ProjectImage
-              projectName={projectDetail.project_name}
+              projectName={projectDetail.name}
               className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
               /> 
            )}
@@ -170,7 +99,7 @@ const ProjectDetailPage = () => {
                       className=" mb-2 text-3xl font-medium tracking-tight 
                   text-indigo-900 "
                     >
-                      {projectDetail.project_name}
+                      {projectDetail.name}
                     </h1>
 
                     <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
@@ -198,7 +127,7 @@ const ProjectDetailPage = () => {
                   รายละเอียด
                 </p>
                 <p>
-                {projectDetail.project_desc}
+                {projectDetail.description}
                 </p>
                 <div className="mb-2 mt-4">
                 {projectDetail.ai_model.ai_tag.map((tag) => (

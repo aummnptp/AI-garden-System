@@ -1,6 +1,6 @@
 import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
-import { Button } from '@mui/material';
+import { Button, Card, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { EditOffOutlined, EditOutlined } from '@mui/icons-material';
 
@@ -15,8 +15,9 @@ interface AdminAiCardProps {
 const AdminAiCard:React.FC<AdminAiCardProps> = (props) => { 
     return (
         <Link to={`/admin/updateai/${props.id}`}>
-      
-        <div className="mx-auto mt-10  pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
+        {/* <div className="mx-auto mt-10  pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b"> */}
+        <Card sx={{ minWidth: 275 }}>
+        <CardContent>
         
               <img
                 className=" w-full h-48 
@@ -57,7 +58,9 @@ const AdminAiCard:React.FC<AdminAiCardProps> = (props) => {
                   </Button> */}
               </div>
               </div>
-            </div>
+            </CardContent>
+            </Card>
+            {/* </div> */}
             </Link>
       )
 }

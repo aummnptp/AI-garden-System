@@ -5,8 +5,6 @@ import ProjectCard from "../../components/card/ProjectCard";
 // import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
-import axios from "axios";
-import ProjectData from "../../data/ProjectData";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 
 const ProjectListPage = () => {
@@ -123,8 +121,8 @@ const ProjectListPage = () => {
         {projectData.map(data => (
               <Link key={data.projectId} to={`/workspaces/${workspaceId}/project/${data.projectId}/detail`}>
                 <ProjectCard
-                  name={data.project_name}
-                  desc={data.project_desc}
+                  name={data.name}
+                  desc={data.description}
                   projectImage={data.imagePath}
                   ai_tags={data.ai_model.ai_tag}
                   ai_type={data.ai_model.ai_type}

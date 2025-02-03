@@ -21,6 +21,7 @@ import { DocsController } from './docs/docs.controller';
 
 import { DocsService } from './docs/docs.service';
 import { DocsModule } from './docs/docs.module';
+import { AISettingModule } from './ai-setting/ai-setting.module';
 
 
 
@@ -43,6 +44,8 @@ import { DocsModule } from './docs/docs.module';
     AIModelModule,
     ProjectsModule,
     DocsModule,
+    AISettingModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService

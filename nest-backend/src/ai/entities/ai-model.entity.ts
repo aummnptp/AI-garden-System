@@ -1,5 +1,7 @@
 import { Project } from 'src/projects/entities/project.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { AIUsageLimit } from '../../ai-setting/entities/ai-usage-limit.entity';
+
 
 @Entity('ai_model')
 export class AIModel {
@@ -15,8 +17,17 @@ export class AIModel {
   @Column()
   ai_type: string;
 
-  @Column("simple-array")
+  @Column("simple-array",{nullable:true})
   ai_tag: string[];
+
+  @Column("simple-array",{nullable:true})
+  color_set: string[];
+
+  @Column({type:'boolean',default:true})
+  enable:boolean;
+
+  @Column({type:'boolean',default:true})
+  visible:boolean;
 
   @Column({ length: 200, nullable: true })
   input_desc: string;
@@ -33,9 +44,11 @@ export class AIModel {
   @Column({name:'update_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
+  @OneToMany(() => AIUsageLimit, (usageLimit) => usageLimit.ai)
+  usageLimits: AIUsageLimit[];
 
   @OneToMany(() => Project,(project) => project.ai_model,)
-       projects: Project[];
+  projects: Project[];
 
   // @Column()
   // create_by: string[];

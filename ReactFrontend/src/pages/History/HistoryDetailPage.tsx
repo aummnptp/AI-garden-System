@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import MiniFooter from '../../components/MiniFooter';
-import { Button } from '@mui/material';
-import ObjectDetectionResultComponent from '../../components/aiDisplay/ObjectDetectionResultComponent';
-import Sidebar from '../../components/Sidebar';
-import { useFetchQuery } from '../../hook/useFetchQuery';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import MiniFooter from "../../components/MiniFooter";
+import { Button } from "@mui/material";
+import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
+import Sidebar from "../../components/Sidebar";
+import { useFetchQuery } from "../../hook/useFetchQuery";
+import { useParams } from "react-router-dom";
+
 
 const HistoryDetailPage = () => {
-  // const [historyData, setHistoryData] = useState<any>({
-  //   detections: [],
-  //   filePath: "",
-  // });
-
-  // const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
- const { workspaceId, projectId,historyId } = useParams<{
+  const { workspaceId, projectId, historyId } = useParams<{
     workspaceId: string;
     projectId: string;
-    historyId:string;
+    historyId: string;
   }>();
   const {
     data: historyData,
@@ -42,53 +36,37 @@ const HistoryDetailPage = () => {
   if (isLoadingHistory || isLoadingWorkspace) return <div>Loading...</div>;
 
   // ตรวจสอบข้อผิดพลาด
-  if (errorHistory || errorWorkspace) return <div>Error: {errorHistory?.message || errorWorkspace?.message}</div>;
-
-    
-
+  if (errorHistory || errorWorkspace)
+    return <div>Error: {errorHistory?.message || errorWorkspace?.message}</div>;
 
   return (
     <>
-    <div className="flex h-full min-h-screen bg-neutral-100">
-      <Sidebar workspaceName={workspaceDetail} 
-        // projectName={projectDetail.project_name}
-        // aiName={projectDetail.ai_model.name}
-        // aiType={projectDetail.ai_model.ai_type}
-         />
+      <div className="flex h-full min-h-screen bg-neutral-100">
+        <Sidebar
+          workspaceName={workspaceDetail}
+          // projectName={projectDetail.project_name}
+          // aiName={projectDetail.ai_model.name}
+          // aiType={projectDetail.ai_model.ai_type}
+        />
 
+        <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
+          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
+            <div className="flex justify-between items-center p-5">
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
+                {/* {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'} */}
+              </h1>
+            </div>
+            <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
 
-      <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-        <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
-          <div className="flex justify-between items-center p-5">
-            <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-              {/* {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'} */}
-            </h1>
-          </div>
-          <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
-
-   {/* upload step */}
-  
-
-
-
-
-              <>
-            <ObjectDetectionResultComponent
-                    resultImage={historyData.filePath}
-                    predictResult={historyData}
-                  />
-            {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}
-            {/* <AddNoteDialog/> */}
-
-
-                   </>
-
-            
-           
-
+            {/* upload step */}
+            <>
+              <AIDisPlayResultComponent
+                resultImage={historyData.filePath}
+                predictResult={historyData}
+              />
+            </>
             <div className="flex justify-end">
-          
-            <Button
+              <Button
                 variant="contained"
                 size="large"
                 sx={{
@@ -102,15 +80,13 @@ const HistoryDetailPage = () => {
                 {" "}
                 ถัดไป
               </Button>
-      
             </div>
-       
+          </div>
         </div>
       </div>
-    </div>
-    <MiniFooter />
-  </>
-  )
-}
+      <MiniFooter />
+    </>
+  );
+};
 
-export default HistoryDetailPage
+export default HistoryDetailPage;

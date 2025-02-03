@@ -115,15 +115,15 @@ export const router = createBrowserRouter([
     },
     {
       path: "/ai-list",
-      element: <AIlistPage/>,
+      element: <RoleGuard requiredRole="user"><AIlistPage/></RoleGuard>,
     },
     {
       path: "/ai/:ai_id/detail",
-      element: <AiDetailPage/>,
+      element: <RoleGuard requiredRole="user"><AiDetailPage/></RoleGuard>,
     },
     {
       path: "/ai/:ai_id/demo",
-      element: <AiDemoResultPage/>,
+      element: <RoleGuard requiredRole="user"><AIDemoPage/></RoleGuard>,
     },
     {
       path: "/admin/dashboard",

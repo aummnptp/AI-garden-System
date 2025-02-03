@@ -15,34 +15,10 @@ import { Button } from "@mui/material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 
 
-interface WorkspaceProps {
-  workspaceId: number;
-  name: string;
-  description: string;
-  updatedAt: string;
-  createdAt: string;
-  members: {
-    id: number;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
-    user: {
-      id: number;
-      googleId: string;
-      email: string;
-      name: string;
-      picture: string;
-    };
-  }[];
-}
 function WorkspacePage() {
-  // my workspace show
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
   const [showModal, setShowModal] = useState(false);
-  const toggleWorkspaceRow = () => {
-    setShowWorkspaceRow(!showWorkspaceRow); // สลับค่าของ showSecondRow กับ true/false
-  };
-  // invited workspace show 
+  const toggleWorkspaceRow = () => {setShowWorkspaceRow(!showWorkspaceRow);};
   const [showInvitedRow, setShowInvitedRow] = useState(false); 
   const toggleInvitedRow = () => {
     setShowInvitedRow(!showInvitedRow);
@@ -171,6 +147,7 @@ function WorkspacePage() {
                           members={data.members}
                           updatedAt={data.updatedAt}
                           createdAt={data.createdAt}
+                          createById={data.createById}
                         />
                       </Link>
                     </div>

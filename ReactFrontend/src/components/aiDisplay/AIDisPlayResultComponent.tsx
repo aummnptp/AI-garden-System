@@ -9,12 +9,12 @@ interface PredictResult {
   response_keys?: { key: string; meaning: string; displayFormat: string }[];
 }
 
-interface ObjectDetectionResultComponentProps {
+interface AIDisPlayResultComponentProps {
   predictResult: PredictResult;
   resultImage: string;
 }
 
-const ObjectDetectionResultComponent: React.FC<ObjectDetectionResultComponentProps> = ({
+const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
   predictResult,
   resultImage,
 }) => {
@@ -78,9 +78,7 @@ const ObjectDetectionResultComponent: React.FC<ObjectDetectionResultComponentPro
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
         <ObjectDetectionDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
-          
-    
-           <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>
@@ -88,4 +86,4 @@ const ObjectDetectionResultComponent: React.FC<ObjectDetectionResultComponentPro
   );
 };
 
-export default ObjectDetectionResultComponent;
+export default AIDisPlayResultComponent;

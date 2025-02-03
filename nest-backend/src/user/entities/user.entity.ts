@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AIUsageLimit } from "src/ai-setting/entities/ai-usage-limit.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User{
@@ -18,6 +19,10 @@ export class User{
 
     @Column({ default: 'user' })
     role: string;
+
+    @OneToMany(() => AIUsageLimit, (usageLimit) => usageLimit.user)
+    usageLimits: AIUsageLimit[];
+    
     
 
 }
