@@ -14,11 +14,8 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
   const [isLimitActive, setIsLimitActive] = useState<boolean>(isLimitEnabled);
 
   const handleSave = () => {
-    if (limit < 1) {
-      alert('Please enter a valid limit.');
-      return;
-    }
-    onSave(limit, isLimitActive);
+    
+    onSave(limit, isLimitActive); // ส่งค่าล่าสุดไปให้ `onSave`
     onClose();
   };
 
@@ -35,7 +32,10 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
           control={
             <Switch
               checked={isLimitActive}
-              onChange={(e) => setIsLimitActive(e.target.checked)}
+              onChange={(e) => {
+                console.log("Switch changed: ", e.target.checked);
+                setIsLimitActive(e.target.checked);
+              }}
               name="limitSwitch"
               color="primary"
             />

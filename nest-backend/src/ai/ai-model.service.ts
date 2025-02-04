@@ -116,30 +116,33 @@ export class AIModelService {
   
   
   async predict(aiId: string, file: Express.Multer.File): Promise<any> {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
     const model = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-
+    
     const formData = new FormData();
+    // เมื่อ file มีค่าแล้ว เราจะเข้าถึง file.buffer
     formData.append('file', file.buffer, file.originalname);
-
+    
     try {
       const response = await axios.post(model.api_uri, formData, {
         headers: { ...formData.getHeaders() },
-        
       });
-
+    
       if (!response.data) {
         throw new BadRequestException('No response from external API');
       }
-
+    
       return {
         response_keys: model.response_keys,
         prediction: response.data,
-        // ai_type: model.ai_type,
+        ai_type: model.ai_type,
       };
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'ECONNRESET') {
         console.error('Connection Reset Error: The connection was forcibly closed by the remote host');
         throw new InternalServerErrorException('Connection reset by the remote server');

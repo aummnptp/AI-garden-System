@@ -10,6 +10,7 @@ import {
   Delete,
   Patch,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AIModelService } from './ai-model.service';
@@ -100,11 +101,12 @@ export class AIModelController {
   // )
   @Post('predict/:aiId')
   @UseInterceptors(FileInterceptor('file'))
-
-  async predict(@Param('aiId') aiId: string, @UploadedFile() file: Express.Multer.File,): Promise<any> {
+  async predict(@Request() req,@Param('aiId') aiId: string, @UploadedFile() file: Express.Multer.File): Promise<any> {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
     return this.aiModelService.predict(aiId, file);
   }
-
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
