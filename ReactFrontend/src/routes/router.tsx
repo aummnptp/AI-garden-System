@@ -13,6 +13,7 @@ import AdminDashboardPage from '../pages/Admin/AdminDashboardPage.tsx'
 import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
 import UpdateAiPage from '../pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from '../pages/Admin/AdminAiPage.tsx'
+import WorkspaceListPage from '../pages/Admin/WorkspaceListPage.tsx'
 import PredictAiModelPage from '../pages/PredictAiModelPage.tsx'
 
 import DocsPage from '../pages/DocsPage.tsx'
@@ -134,6 +135,10 @@ export const router = createBrowserRouter([
     {
       path: "/admin/createai",
       element: <RoleGuard requiredRole="admin"><CreateAiPage/></RoleGuard>,
+    },
+    {
+      path: "/admin/workspace",
+      element: <RoleGuard requiredRole="admin"><WorkspaceListPage/></RoleGuard>,
     },
   
     {
