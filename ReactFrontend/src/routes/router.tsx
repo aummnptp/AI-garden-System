@@ -14,7 +14,7 @@ import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
 import UpdateAiPage from '../pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from '../pages/Admin/AdminAiPage.tsx'
 import PredictAiModelPage from '../pages/PredictAiModelPage.tsx'
-import PredictionResultPage from '../pages/PredictionResultPage.tsx';
+
 import DocsPage from '../pages/DocsPage.tsx'
 import AiDetailPage from '../pages/Ai/AiDetailPage.tsx'
 import WorkspaceInvitationPage from '../pages/Workspace/WorkspaceInvitationPage.tsx'
@@ -109,10 +109,7 @@ export const router = createBrowserRouter([
       path: "/workspaces/:workspaceId/project/:projectId/predict",
       element: <PredictAiModelPage/>,
     },
-    {
-      path: "/workspaces/:workspaceId/project/:projectId/detail/test/:modelId/result",
-      element: <PredictionResultPage />,
-    },
+    
     {
       path: "/ai-list",
       element: <RoleGuard requiredRole="user"><AIlistPage/></RoleGuard>,

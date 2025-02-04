@@ -1,7 +1,8 @@
 import React from "react";
-import ObjectDetectionDraw from "./ImageDetectionResultDraw";
+import ImageDetectionResultDraw from "./ImageDetectionResultDraw";
 import { ClassNames } from "@emotion/react";
 import TextResultDisplay from "./TextResultDisplay";
+import RegressionChart from "./RegressionResultDraw";
 
 interface PredictResult {
   ai_type: string;
@@ -13,6 +14,7 @@ interface AIDisPlayResultComponentProps {
   predictResult: PredictResult;
   resultImage: string;
 }
+
 
 const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
   predictResult,
@@ -26,7 +28,8 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
   const searchDrawKey = predictResult.response_keys?.find(
     (responseKey) =>
       responseKey.displayFormat === "objectdetection" || 
-      responseKey.displayFormat === "segmentation"
+      responseKey.displayFormat === "segmentation" || 
+      responseKey.displayFormat === "chart"
   );
   
   if (searchDrawKey) {
@@ -75,13 +78,23 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
 
   return (
     <div className="w-full">
+      {searchDrawKey && (searchDrawKey.displayFormat === "chart") ? (
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
-        <ObjectDetectionDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
+        <RegressionChart detections={PredictDrawData} aiDisplayType={ai_text_type || ''}/>
         <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>
+      ) : (
+        <div className="flex w-full flex-wrap">
+        {/* Render each response key */}
+        <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
+        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        
+        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
+        </div>
+      )}
     </div>
   );
 };
