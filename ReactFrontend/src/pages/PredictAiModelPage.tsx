@@ -292,11 +292,11 @@ const PredictAiModelPage: React.FC = () => {
         />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          {projectDetail?.inputType === "รูปภาพ" ? (
+          {projectDetail?.input_type === "รูปภาพ" ? (
             <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
               <div className="flex justify-between items-center p-5">
                 <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                  {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
+                  {projectDetail.input_type === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
                 </h1>
               </div>
               <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
@@ -391,7 +391,7 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 1 ? (
                   <div className="form-group">
 
-                    {/* <label>{projectDetail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
+                    {/* <label>{projectDetail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
@@ -446,7 +446,7 @@ const PredictAiModelPage: React.FC = () => {
                   type="file"
                   onChange={handleFileChange}
                   className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
+                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
                 /> */}
                   </div>
                 ) : null}
@@ -492,7 +492,7 @@ const PredictAiModelPage: React.FC = () => {
 
                 {/* {customedImageUrl && (
                 <div className="w-1/2 mx-auto mt-4">
-                  {detail.inputType === 'รูปภาพ' ? (
+                  {detail.input_type === 'รูปภาพ' ? (
                     <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
                   ) : (
                     <video controls className="w-full">
@@ -540,46 +540,13 @@ const PredictAiModelPage: React.FC = () => {
                     </Button>) : null}
                 </div>
               </form>
-              <div className="flex justify-end">
-                {uploadStep == 1 ? (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      backgroundColor: "#3b82f6",
-                      "&:hover": {
-                        backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                      },
-                    }}
-                    onClick={handleToCustomStep}
-                  >
-                    {" "}
-                    ถัดไป
-                  </Button>
-                ) : null}
-
-                {uploadStep !== 1 && uploadStep !== 3 ? (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      backgroundColor: "#3b82f6",
-                      "&:hover": {
-                        backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                      },
-                    }}
-                    onClick={handleUpload}
-                  >
-                    {uploadStep == 2 ? ("ประมวลผล") : ("อัพโหลดอีกครั้ง")}
-                  </Button>) : null}
-              </div>
+              
             </div>
           ) : (
             <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
               <div className="flex justify-between items-center p-5">
                 <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                  {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
+                  {projectDetail.input_type === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
                 </h1>
               </div>
               <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
@@ -656,7 +623,7 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 1 ? (
                   <div className="form-group">
 
-                    {/* <label>{detail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
+                    {/* <label>{detail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
@@ -714,7 +681,7 @@ const PredictAiModelPage: React.FC = () => {
                   type="file"
                   onChange={handleFileChange}
                   className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
+                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
                 /> */}
                   </div>
                 ) : null}
@@ -751,7 +718,7 @@ const PredictAiModelPage: React.FC = () => {
 
                 {/* {customedImageUrl && (
                 <div className="w-1/2 mx-auto mt-4">
-                  {detail.inputType === 'รูปภาพ' ? (
+                  {detail.input_type === 'รูปภาพ' ? (
                     <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
                   ) : (
                     <video controls className="w-full">
