@@ -1,2 +1,1 @@
-git add .gitignore
-git commit -m "Add src/uploads to .gitignore"
+/uploads/
