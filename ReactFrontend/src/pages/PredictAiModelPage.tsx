@@ -8,7 +8,7 @@ import ImageUploader from '../components/ImageUploader';
 import axios from 'axios';
 import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
-import AddNoteDialog from '../components/ืNoteDialog';
+import AddNoteDialog from '../components/NoteDialog';
 import AIDisPlayResultComponent from '../components/aiDisplay/AIDisPlayResultComponent';
 import ChartResultDisplay from '../components/aiDisplay/ChartResultDisplay';
 

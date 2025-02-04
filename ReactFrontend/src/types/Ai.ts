@@ -19,3 +19,18 @@ export type AIDataType ={
   // createdAt: string;
   // updatedAt: string;
   // imagePath: string | null;
+  export type AiModelData ={
+    name: string;
+    description: string;
+    api_uri: string;
+    response_keys: ResponseKey[];
+    input_desc: string;
+    ai_type: string;
+    ai_tag: any[];
+  }
+
+  export type ResponseKey= {
+    key: string;
+    meaning: string;
+    displayFormat: string;
+  }

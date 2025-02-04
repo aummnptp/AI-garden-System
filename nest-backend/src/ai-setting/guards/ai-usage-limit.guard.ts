@@ -30,6 +30,11 @@ export class AIUsageLimitGuard implements CanActivate {
 
         // ดึงค่าจำนวน limit ที่ตั้งไว้
         const limitSetting = await this.aiSettingRepository.findOne({});
+
+
+        if (limitSetting && !limitSetting.isLimitEnabled) {
+        return true;
+        }
         const maxUsagePerDay = limitSetting ? limitSetting.maxUsagePerDay : 10;
 
         // ตรวจสอบจำนวนที่ใช้งานไปแล้ววันนี้

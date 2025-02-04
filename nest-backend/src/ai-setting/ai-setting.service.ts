@@ -26,6 +26,7 @@ export class AISettingService {
     if (!setting) {
       setting = this.aiUsageLimitSettingRepository.create({
         maxUsagePerDay: updateDto.maxUsagePerDay,
+        isLimitEnabled: updateDto.isLimitEnabled,
       });
     } else {
       setting.maxUsagePerDay = updateDto.maxUsagePerDay;

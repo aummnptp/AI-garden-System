@@ -9,7 +9,8 @@ import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
 
 import axios from "axios";
-import AISettingDialog from "../../components/ai/AISettingComponent";
+import AISettingDialog from "../../components/ai/AISettingDialog";
+import AISettingsComponent from "../../components/ai/AISettingsComponent";
 
 
 function AdminAi() {
@@ -104,16 +105,8 @@ function AdminAi() {
               >
                 tag filter <ControlOutlined />
               </button>
-              <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-        Open Settings
-      </Button>
-      <AISettingDialog
-        open={isDialogOpen}
-        onClose={handleDialogClose}
-        initialLimit={limit}
-        isLimitEnabled={isLimitEnabled}
-        onSave={handleSaveSettings}
-      /></div>
+
+     <AISettingsComponent/></div>
             </div>
           </div>
 

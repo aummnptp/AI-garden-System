@@ -94,7 +94,7 @@ export class AIModelController {
     return this.aiModelService.findOne(aiId);
   }
 
-
+  
   @UseGuards(JwtGuard,
     AIUsageLimitGuard
   )

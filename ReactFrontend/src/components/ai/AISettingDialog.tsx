@@ -15,7 +15,7 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
 
   const handleSave = () => {
     if (limit < 1) {
-      alert('Please enter a valid limit.');  // ใช้ alert แทน Snackbar เพื่อแจ้งเตือน
+      alert('Please enter a valid limit.');
       return;
     }
     onSave(limit, isLimitActive);
@@ -50,9 +50,7 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
             variant="outlined"
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
-            inputProps={{
-              min: 1, // กำหนดค่าต่ำสุด
-            }}
+            inputProps={{ min: 1 }}
             margin="normal"
           />
         )}
