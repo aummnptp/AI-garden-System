@@ -95,9 +95,9 @@ export class AIModelController {
   }
 
   
-  @UseGuards(JwtGuard,
-    AIUsageLimitGuard
-  )
+  // @UseGuards(JwtGuard,
+  //   // AIUsageLimitGuard
+  // )
   @Post('predict/:aiId')
   @UseInterceptors(FileInterceptor('file'))
 

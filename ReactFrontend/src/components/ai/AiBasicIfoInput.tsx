@@ -1,4 +1,4 @@
-// src/components/ai/AiBasicInfo.tsx
+
 import React from 'react';
 
 interface AiBasicInfoProps {
@@ -15,11 +15,9 @@ interface AiBasicInfoProps {
 const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
   aiName,
   description,
-  serviceUri,
   aiType,
   onNameChange,
   onDescriptionChange,
-  onServiceUriChange,
   onTypeChange,
 }) => {
   return (

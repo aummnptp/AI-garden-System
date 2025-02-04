@@ -1,4 +1,4 @@
-// src/components/ai/AiResponseKey.tsx
+
 import React from 'react';
 import { Button } from '@mui/material';
 import { ResponseKey } from '../../types/Ai';

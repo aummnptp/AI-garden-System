@@ -20,22 +20,13 @@ import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
-import SegmentationResultComponent from "../../components/aiDisplay/SegmentationResultComponent";
 
-
-interface Prediction {
-  class_name: string;
-  confidence: number;
-}
 
 interface PredictResult {
   ai_type: string;
   prediction: any;
   regression_params?: any | null;
 }
-
-
-
 
 const AIDemo = () => {
   const [uploadStep, setUploadStep] = useState(1);
@@ -370,11 +361,6 @@ const AIDemo = () => {
                       </p>
                       <p>
                       {aiData.description}
-                        {/* Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the
-                        industry's Lorem Ipsum is simply dummy text of the
-                        printing and typesetting industry. Lorem Ipsum has been
-                        the industry's{" "} */}
                       </p>
                       <div className="mb-2 mt-4">
                             <div className="mb-2 mt-4">
@@ -384,15 +370,6 @@ const AIDemo = () => {
                           </span>
                         ))}
                       </div>
-                        {/* <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                          tag1
-                        </span>
-                        <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                          tag2
-                        </span>
-                        <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                          tag3
-                        </span> */}
                       </div>
                     </div>
                   </div>
@@ -405,10 +382,6 @@ const AIDemo = () => {
                   <p className="ml-3">
             {aiData.input_desc}
             </p>
-                  {/* <p className="ml-3">
-                    ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้
-                    ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค{" "}
-                  </p> */}
                 </>
               ) : null}
               {/* upload step 2 customimaage */}
@@ -511,19 +484,7 @@ const AIDemo = () => {
                         {" "}
                         ทดลองอีกครั้ง
                       </Button>
-                      {/* <Button
-                        variant="contained"
-                        size="large"
-                        sx={{
-                          backgroundColor: "#4f46e5",
-                          "&:hover": {
-                            backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                          },
-                        }}
-                      >
-                        {" "}
-                        ขอใช้งาน
-                      </Button> */}
+                      
                     </div>
                      <Link to={`/ai-list`}>
                     <Button

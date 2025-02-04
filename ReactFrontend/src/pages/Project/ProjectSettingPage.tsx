@@ -89,8 +89,8 @@ const handleSave = async () => {
   try {
     // เตรียมข้อมูล payload
     const payload = {
-      project_name: name,
-      project_desc: description,
+      name: name,
+      description: description,
       input_type: inputType,
     };
 
@@ -159,8 +159,8 @@ const handleDelte = async () => {
     
         setWorkspaceDetail(workspaceResponse.data);
         setProjectDetail(projectResponse.data)
-        setName(projectResponse.data.project_name);
-        setDescription(projectResponse.data.project_desc)
+        setName(projectResponse.data.name);
+        setDescription(projectResponse.data.description)
         setImage(projectResponse.data.image_path)
         setInputType(projectResponse.data.input_type)
       } catch (error) {
