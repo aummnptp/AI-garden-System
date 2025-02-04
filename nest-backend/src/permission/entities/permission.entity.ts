@@ -4,14 +4,14 @@ import { User } from '../../user/entities/user.entity';
 
 @Entity('ai_permission') // ระบุชื่อ table ใน database
 export class Permission {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn(`uuid`,{name:"permission_id"})
+  id: string;
 
   @Column()
-  user_id: number;
+  user_id: string;
 
   @Column()
-  ai_id: number;
+  ai_id: string;
 
   @Column({ nullable: true })
   approve: boolean;

@@ -51,8 +51,8 @@ export class WorkspacesService {
     return this.workspaceRepository.findOneBy({ workspaceId: workspaceId });
   }
 
-  findWithUserId(userId: number): Promise<Workspace[]> {
-    return this.workspaceRepository.find({ where: { createById: userId } });
+  findWithUserId(userId: string): Promise<Workspace[]> {
+    return this.workspaceRepository.find({ where: { createdById: userId } });
   }
 
   // ลบ workspace
@@ -345,6 +345,20 @@ export class WorkspacesService {
     // }
 
     return workspacesUserIsMember;
+  }
+
+  async getWorkspaceWithMembersByUserId(userId: string): Promise<Workspace[]> {
+
+    const workspaces = await this.workspaceRepository.find(
+      {
+        where: { createdById: userId },
+        relations: ['members', 'members.user',], // Join ตารางที่ต้องการ
+      });
+    if (!workspaces) {
+      throw new NotFoundException('Workspace not found');
+    }
+    return workspaces;
+    // return this.workspaceRepository.find();
   }
 
   async changeUserRole(

@@ -182,7 +182,7 @@ export class AIModelService {
   //     };
   //   });
   // }
-  async findAllWithApprovalStatus(userId: number): Promise<any[]> {
+  async findAllWithApprovalStatus(userId: string): Promise<any[]> {
     const models = await this.aiModelRepository
       .createQueryBuilder('aiModel')
       .leftJoinAndSelect('aiModel.permissions', 'permission', 'permission.user_id = :userId', { userId })
@@ -196,7 +196,7 @@ export class AIModelService {
 
 
 
-  async getApprovedAiModelsByUserId(userId: number): Promise<AIModel[]> {
+  async getApprovedAiModelsByUserId(userId: string): Promise<AIModel[]> {
     return this.aiModelRepository
       .createQueryBuilder('aiModel')
       .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
@@ -205,7 +205,7 @@ export class AIModelService {
       .getMany();
   }
 
-  async getMyApproved(userId: number): Promise<AIModel[]> {
+  async getMyApproved(userId: string): Promise<AIModel[]> {
     return this.aiModelRepository
       .createQueryBuilder('aiModel')
       .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined

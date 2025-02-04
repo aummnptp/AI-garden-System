@@ -16,7 +16,7 @@ export class AiPermissionService {
   ) {}
 
   // ฟังก์ชันสร้าง Permission
-  async create(data: CreateAiPermissionDto, id: number) {
+  async create(data: CreateAiPermissionDto, id: string) {
     // ตรวจสอบว่าผู้ใช้มีอยู่ในระบบ
     const user = await this.userRepository.findOne({ where: { userId: id } });
     if (!user) {
@@ -35,7 +35,7 @@ export class AiPermissionService {
     return this.aiPermissionRepository.save(newPermission);
   }
 
-  async createBulk(data: CreateAiPermissionDto[], userId: number) {
+  async createBulk(data: CreateAiPermissionDto[], userId: string) {
     const permissions = data.map((item) =>
       this.aiPermissionRepository.create({
         ...item,
@@ -60,21 +60,21 @@ export class AiPermissionService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.aiPermissionRepository.findOne({ where: { id } });
   }
 
-  async findByUserId(userId: number) {
+  async findByUserId(userId: string) {
     return this.aiPermissionRepository.find({ where: { user_id: userId } });
   }
 
 
-  async update(id: number, data: UpdateAiPermissionDto) {
+  async update(id: string, data: UpdateAiPermissionDto) {
     await this.aiPermissionRepository.update(id, data);
     return this.aiPermissionRepository.findOne({ where: { id } });
   }
 
-  async approvePermission(id: number): Promise<Permission> {
+  async approvePermission(id: string): Promise<Permission> {
     // อัปเดตฟิลด์ approve เป็น true
     const result = await this.aiPermissionRepository.update(id, { approve: true });
   
@@ -87,11 +87,11 @@ export class AiPermissionService {
     return this.aiPermissionRepository.findOne({ where: { id } });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return this.aiPermissionRepository.delete(id);
   }
 
-  async removeBulk(ids: number[]): Promise<{ id: number }> {
+  async removeBulk(ids: string[]): Promise<{ deletedCount: number }> {
     console.log('Received IDs:', ids);  // ตรวจสอบค่าที่ได้รับจาก frontend
     
     // ใช้ query builder แทน delete เฉยๆ เพื่อให้แน่ใจว่า query ทำงานได้ถูกต้อง
@@ -106,10 +106,6 @@ export class AiPermissionService {
       throw new NotFoundException('No permissions were deleted.');
     }
   
-    return { id: deleteResult.affected };  // ส่งกลับจำนวนข้อมูลที่ถูกลบ
+    return { deletedCount: deleteResult.affected };  // ส่งกลับจำนวนข้อมูลที่ถูกลบ
   }
-  
-  
-  
-  
 }

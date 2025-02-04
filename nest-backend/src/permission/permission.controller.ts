@@ -46,7 +46,7 @@ export class AiPermissionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: string) {
     return this.aiPermissionService.findOne(id);
   }
 
@@ -54,14 +54,14 @@ export class AiPermissionController {
 
   @Patch(':id')
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateAiPermissionDto: UpdateAiPermissionDto,
   ) {
     return this.aiPermissionService.update(id, updateAiPermissionDto);
   }
 
   @Patch(':id/approve')
-  async approve(@Param('id') id: number) {
+  async approve(@Param('id') id: string) {
     return this.aiPermissionService.approvePermission(id);
   }
 
@@ -70,7 +70,7 @@ export class AiPermissionController {
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('remove-bulk')
-  async removeBulk(@Req() req, @Body() data: { ids: number[] }) {
+  async removeBulk(@Req() req, @Body() data: { ids: string[] }) {
     console.log('IDs to remove:', data.ids);  // ตรวจสอบค่าที่ส่งมา
     if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
@@ -80,7 +80,7 @@ export class AiPermissionController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: string) {
     return this.aiPermissionService.delete(id);
   }
 
