@@ -12,6 +12,7 @@ import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
 import { Button, } from "@mui/material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
+import { formatDate } from "../../function/util";
 
 
 
@@ -296,7 +297,7 @@ const ProjectDetailPage = () => {
                     <div className="py-4">
                     <p className="text-gray-600">วันที่สร้าง</p>
                     <span className="text-indigo-900 text-2xl font-bold">
-                      2 มิถุนายน 2567
+                      {formatDate(projectDetail.created_at)}
                     </span>
                     </div>
                   </div>
@@ -308,7 +309,7 @@ const ProjectDetailPage = () => {
                   <div className="py-4">
                     <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
                     <span className="text-indigo-900 text-2xl font-bold">
-                      15 มิถุนายน 2567
+                    {formatDate(projectDetail.updated_at)}
                     </span>
                     </div>
                   </div>

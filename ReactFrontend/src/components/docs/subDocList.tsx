@@ -164,10 +164,12 @@ const SubDocList: React.FC<SubDocListProps> = ({
          onClick={() => onAddSubTitle(docsId)}
          className="py-1 pl-6 flex w-full text-blue-700 whitespace-nowrap hover:bg-gray-100 rounded-lg cursor-pointer px-4 my-2"
        >
-         <span className="text-blue-700">
+         {!onReOrderMode && (
+           <span className="text-blue-700">
            <PlusCircleOutlined />
            Add Sub Heading
-         </span>
+           </span>
+         )}
        </div>
      </>
    );

@@ -8,10 +8,12 @@ import { AIUsageLimitGuard } from 'src/ai-setting/guards/ai-usage-limit.guard';
 import { AIUsageLimit } from 'src/ai-setting/entities/ai-usage-limit.entity';
 import { AISetting } from 'src/ai-setting/entities/ai-setting.entity';
 import { User } from 'src/user/entities/user.entity';
+import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AIModel,AIUsageLimit,AISetting,User]) ],
+  imports: [TypeOrmModule.forFeature([AIModel,])
+ , AISettingModule, ],
   controllers: [AIModelController],
-  providers: [AIModelService, AIUsageLimitGuard],
+  providers: [AIModelService, AIUsageLimitGuard,AIEnableGuard],
 })
 export class AIModelModule {}

@@ -29,7 +29,7 @@ export class AISettingService {
       });
     } else {
       setting.maxUsagePerDay = updateDto.maxUsagePerDay;
-      setting.isLimitEnabled = updateDto.isLimitEnabled;  // อัปเดตค่า isLimitEnabled ด้วย
+      setting.isLimitEnabled = updateDto.isLimitEnabled; 
     }
     return this.aiUsageLimitSettingRepository.save(setting);
   }

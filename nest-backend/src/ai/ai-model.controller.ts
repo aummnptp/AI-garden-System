@@ -22,6 +22,8 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
 import { AIUsageLimitGuard } from 'src/ai-setting/guards/ai-usage-limit.guard';
+import { AIVisibleGuard } from 'src/ai-setting/guards/ai-visible.guard';
+import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 
 
 
@@ -96,9 +98,9 @@ export class AIModelController {
   }
 
   
-  // @UseGuards(JwtGuard,
-  //   // AIUsageLimitGuard
-  // )
+  @UseGuards(JwtGuard,
+   AIEnableGuard,AIVisibleGuard, AIUsageLimitGuard
+  )
   @Post('predict/:aiId')
   @UseInterceptors(FileInterceptor('file'))
   async predict(@Request() req,@Param('aiId') aiId: string, @UploadedFile() file: Express.Multer.File): Promise<any> {

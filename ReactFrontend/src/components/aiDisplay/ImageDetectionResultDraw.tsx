@@ -20,11 +20,26 @@ interface ImageDetectionResultDrawProps {
   aiDisplayType: string; 
   detections: ObjectDetection[] | SegmentationDetection[] | null;
   InputImage: string;
+  colorSet: string[];
+
 }
 
+const hexToRgba = (hex: string, alpha: number): string => {
+  let c: any;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split("");
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = "0x" + c.join("");
+    return "rgba(" + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") + `,${alpha})`;
+  }
+  // หากไม่ใช่ hex ให้คืนค่าเดิม (เช่นชื่อสี)
+  return hex;
+};
 
 // component สำหรับวาดผลลัพธ์การตรวจจับวัตถุ
-const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ detections, InputImage ,  aiDisplayType,
+const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ detections, InputImage ,  aiDisplayType, colorSet,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showAnnotations, setShowAnnotations] = useState(true);
@@ -34,85 +49,101 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     if (!context) return;
 
     const image = new Image();
     image.src = InputImage;
     image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      context.drawImage(image, 0, 0);
+      // ตั้งค่า canvas ตามขนาดของรูป (หรือกำหนดค่าอื่นๆ ตามที่ต้องการ)
+      if (aiDisplayType === "segmentation") {
+        // สำหรับ segmentation เราอาจจะกำหนดขนาดเฉพาะ
+        const canvasWidth = 1152;
+        const canvasHeight = 640;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+      }
 
       if (showAnnotations && detections) {
-        if (aiDisplayType === 'objectdetection') {
-          // วาด Bounding Boxes
-          (detections as ObjectDetection[]).forEach((detection) => {
-            const confidence = detection.confidence.toFixed(2); 
-            const labelText = `${detection.label} (${confidence})`;
+        if (aiDisplayType === "objectdetection") {
+          // วาด Bounding Boxes สำหรับ Object Detection
+          (detections as ObjectDetection[]).forEach((detection, index) => {
+            const confidence = detection.confidence.toFixed(2);
+            const labelText = `${index + 1}. ${detection.label} (${confidence})`;
             const { x1, y1, x2, y2 } = detection.position;
+
+            // วนลูปใช้สีจาก colorSet
+            const color =
+              colorSet && colorSet.length > 0
+                ? colorSet[index % colorSet.length]
+                : "green";
+
+            // สำหรับ fill style ให้ใช้สีที่มี alpha (0.2)
+            const fillColor = hexToRgba(color, 0.2);
+
             context.beginPath();
             context.rect(x1, y1, x2 - x1, y2 - y1);
             context.lineWidth = 2;
-            context.strokeStyle = 'red';
-            context.fillStyle = 'rgba(255, 0, 0, 0.2)';
+            context.strokeStyle = color;
+            context.fillStyle = fillColor;
             context.fill();
             context.stroke();
-            context.font = '30px Arial';
-            context.fillStyle = 'red';
-            context.fillText(labelText, x1, y1 - 5); // แสดงข้อความรวม confidence
-
+            context.font = "30px Arial";
+            // ใช้สีเดียวกันสำหรับข้อความ (หรือปรับตามต้องการ)
+            context.fillStyle = color;
+            context.fillText(labelText, x1, y1 - 5);
           });
-        } else if (aiDisplayType === 'segmentation') {
+        } else if (aiDisplayType === "segmentation") {
+          // กำหนดขนาดของ canvas สำหรับ segmentation
           const canvasWidth = 1152;
           const canvasHeight = 640;
           canvas.width = canvasWidth;
           canvas.height = canvasHeight;
           context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-        
-          const usedPositions: { x: number; y: number }[] = [];
-        
-          (detections as SegmentationDetection[]).forEach((detection) => {
+
+          (detections as SegmentationDetection[]).forEach((detection, index) => {
             const { label, polygon } = detection;
+
+            // ใช้สีจาก colorSet โดยวนลูป
+            const color =
+              colorSet && colorSet.length > 0
+                ? colorSet[index % colorSet.length]
+                : "green";
+            // สำหรับ segmentation, ปรับสี fill ให้มี alpha 0.3
+            const fillColor = hexToRgba(color, 0.3);
+
             context.beginPath();
-            polygon.forEach(([x, y], index) => {
-              if (index === 0) {
+            polygon.forEach(([x, y], idx) => {
+              if (idx === 0) {
                 context.moveTo(x, y);
               } else {
                 context.lineTo(x, y);
               }
             });
             context.closePath();
-            context.fillStyle = 'rgba(255, 0, 0, 0.3)';
-            context.strokeStyle = 'red';
+            context.fillStyle = fillColor;
+            context.strokeStyle = color;
             context.lineWidth = 2;
             context.fill();
             context.stroke();
-        
+
+            // กำหนดตำแหน่งสำหรับ label (ปรับตามที่ต้องการ)
             const minY = Math.min(...polygon.map((point) => point[1]));
-            let labelX = polygon.find((point) => point[1] === minY)?.[0] || 0;
-        
-            // ปรับตำแหน่ง Label เพื่อหลีกเลี่ยงการทับซ้อน
-            let labelY = minY - 5;
-            for (const pos of usedPositions) {
-              if (Math.abs(pos.x - labelX) < 50 && Math.abs(pos.y - labelY) < 30) {
-                labelY -= 30; // เพิ่ม Offset หากทับซ้อน
-              }
-            }
-        
-            usedPositions.push({ x: labelX, y: labelY });
-        
-            context.font = '25px Arial';
-            context.fillStyle = 'red';
-            context.fillText(label, labelX, labelY);
+            const labelX = polygon.find((point) => point[1] === minY)?.[0] || 0;
+            const labelY = minY - 5;
+            context.font = "25px Arial";
+            context.fillStyle = color;
+            context.fillText(`${index + 1}. ${label}`, labelX, labelY);
           });
         }
-        
-        
-        
       }
     };
-  }, [InputImage, detections, showAnnotations, aiDisplayType]);
+  }, [InputImage, detections, showAnnotations, aiDisplayType, colorSet]);
 
 
   const toggleAnnotations = () => {
@@ -149,7 +180,6 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
           }}
         />
       </div>
-          {/* <pre> {JSON.stringify(detections, null, 2)} </pre> */}
     </div>
   );
 };

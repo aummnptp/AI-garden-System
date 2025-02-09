@@ -57,20 +57,21 @@ const removeMember = async (workspaceId: string, userId: string) => {
     }
 };
 
-const changeMemberRole = async (workspaceId: string, userId: string, newRole:string) => {
+const changeMemberRole = async (workspaceId: string, memberId: string, newRole:string) => {
+    
     const requestBody = {
-        userId:userId,
+        memberId:memberId,
         role: newRole, 
     };
     try {
         const response = await axios.patch(
             `${MEMBER_ROUTES.changeRole}${workspaceId}`,
-            { data: requestBody }
+            requestBody 
         );
         
         return response.data;
     } catch (error) {
-        console.error("Error change role:", error);
+        console.error("Error change role:", error.response.data.message);
         throw error;
     }
 };

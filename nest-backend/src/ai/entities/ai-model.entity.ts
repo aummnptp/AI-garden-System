@@ -23,8 +23,8 @@ export class AIModel {
   @Column("simple-array",{nullable:true})
   ai_tag: string[];
 
-  @Column("simple-array",{nullable:true})
-  color_set: string[];
+  @Column("simple-array",{default:"#00ff00",name:"color_set"})
+  colorSet: string[];
 
   @Column({type:'boolean',default:true})
   enable:boolean;
@@ -37,6 +37,7 @@ export class AIModel {
 
   @Column()
   api_uri: string;
+
 
   @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
   response_keys: { key: string; meaning: string ,displayFormat: string}[]; // รูปแบบ Array ของ JSON object
@@ -62,5 +63,8 @@ export class AIModel {
   
   @Column({name:'image_path', nullable: true }) // เพิ่มฟิลด์ imagePath
   imagePath: string;
+
+
+  
 
 }

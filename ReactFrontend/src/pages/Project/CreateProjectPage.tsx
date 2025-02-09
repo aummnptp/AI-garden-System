@@ -32,28 +32,6 @@ function CreateProjectPage() {
   const [alertText, setAlertText] = useState("");
 
   
-  // const fetchData = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const [workspaceResponse, aiModelsResponse] = await axios.all([
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
-  //   ])
-   
-  //     setWorkspaceDetail(workspaceResponse.data);
-  //     setAIData(aiModelsResponse.data);
-
-  //   } catch (err) {
-  //     setError("There was an error fetching the data!");
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  // }, []);
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
   const handleSelectCard = (id: number) => {

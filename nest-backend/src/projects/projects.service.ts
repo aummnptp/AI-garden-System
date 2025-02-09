@@ -194,8 +194,6 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       const history = this.projectHistoryRepository.create({
         project: project,
         ai_model: model,
-
-        // filePath: file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, '/uploads/'), // แปลง backslash เป็น forward slash และตัดส่วนเกิน
         filePath:filePath,
         response_keys: predictionResult.response_keys,
         prediction: predictionResult.prediction, // เก็บผลลัพธ์การทำนาย
@@ -244,6 +242,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       filePath: history.filePath
         ? `${process.env.NEST_APP_API_URL}${history.filePath}`
         : null,
+        
     };
   }
 }

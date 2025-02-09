@@ -12,5 +12,6 @@ import { WorkspaceInvitation } from './entities/workspace-invitation.entity';
   imports: [TypeOrmModule.forFeature([Workspace,User,WorkspaceMember,WorkspaceInvitation]),    ],
   controllers: [WorkspacesController],
   providers: [WorkspacesService,UserService],
+  exports: [TypeOrmModule.forFeature([WorkspaceMember])] 
 })
 export class WorkspacesModule {}

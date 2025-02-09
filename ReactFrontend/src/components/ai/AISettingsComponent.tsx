@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import AISettingDialog from './AISettingDialog';
 import { useFetchQuery } from '../../hook/useFetchQuery';
 import { updateAISettingService } from '../../api/services/AiSettingService';
+import { SettingFilled } from '@ant-design/icons';
 
 const AISettingsComponent: React.FC = () => {
   // เรียก API เพื่อดึงข้อมูลการตั้งค่า AI Usage Limit
@@ -39,9 +40,9 @@ const AISettingsComponent: React.FC = () => {
   if (error) return <div>Error loading settings: {error.message}</div>;
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleOpenDialog}>
-        Open AI Settings
+<>
+      <Button variant="outlined" color="info" onClick={handleOpenDialog}>
+       <SettingFilled/> AI Demo Settings
       </Button>
       <AISettingDialog
         open={dialogOpen}
@@ -50,7 +51,7 @@ const AISettingsComponent: React.FC = () => {
         isLimitEnabled={isLimitEnabled}
         onSave={handleSaveSettings}
       />
-    </div>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import React from "react";
-import ObjectDetectionDraw from "./ImageDetectionResultDraw";
 import { ClassNames } from "@emotion/react";
 import TextResultDisplay from "./TextResultDisplay";
 import RegressionChart from "../chart/RegressionChart";
@@ -77,7 +76,6 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
         {/* Render each response key */}
         <RegressionChart detections={PredictData}/>
           
-    
            <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}

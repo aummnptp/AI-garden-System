@@ -34,6 +34,7 @@ import { AuthProvider } from '../context/AuthContext.tsx'
 import WorkspaceRoleGuard from '../components/auth/WorkspaceRoleGuard.tsx'
 import HistoryDetailPage from '../pages/History/HistoryDetailPage.tsx'
 import AiDemoResultPage from "../pages/Ai/AiDemoResultPage";
+import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       element: <DocsPage/>,
     },
     
+    {
+      path:"/invite",
+      element: <InvitedPage/>,
+    },
     {
       path: "/workspaces",
       element: <RoleGuard requiredRole="user"><WorkspacePage/></RoleGuard>,
@@ -91,8 +96,7 @@ export const router = createBrowserRouter([
       path: "/workspaces/:workspaceId/setting/invitation",
     element:  <WorkspaceRoleGuard requiredRole="owner"><WorkspaceInvitationPage/></WorkspaceRoleGuard>,
     },
-  
-  
+
     {
       path: "/workspaces/:workspaceId/create",
       element:  <CreateProjectPage/>,

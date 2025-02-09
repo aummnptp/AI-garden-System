@@ -1,6 +1,5 @@
 import React from "react";
-import ObjectDetectionDraw from "./ImageDetectionResultDraw";
-import { ClassNames } from "@emotion/react";
+import ImageDetectionResultDraw from "./ImageDetectionResultDraw";
 import TextResultDisplay from "./TextResultDisplay";
 
 interface PredictResult {
@@ -77,8 +76,10 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
     <div className="w-full">
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
-        <ObjectDetectionDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
-        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} 
+        aiDisplayType={ai_text_type || ''} colorSet={predictResult.ai_model.colorSet}/>
+        <TextResultDisplay predictResult={predictResult} tags={[predictResult.ai_model.ai_tag]}
+        aiName={predictResult.ai_model.name}ai_type={predictResult.ai_model.ai_type} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>

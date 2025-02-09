@@ -26,7 +26,7 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>AI Usage Limit Settings</DialogTitle>
+      <DialogTitle>AI Demo Usage Manage</DialogTitle>
       <DialogContent>
         <FormControlLabel
           control={

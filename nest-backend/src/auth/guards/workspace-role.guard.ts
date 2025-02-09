@@ -1,37 +1,49 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { BadRequestException, CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ProjectPermission } from "src/projects/entities/project-permission.entity";
+import { Project } from "src/projects/entities/project.entity";
 import { WorkspaceMember } from "src/workspaces/entities/workspace-member.entity";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 
 @Injectable()
-export class WorkspaceRoleGuard implements CanActivate{
-    constructor(private reflector: Reflector, private dataSource: DataSource) {}
+export class WorkspaceRoleGuard implements CanActivate {
+  constructor(
+    private reflector: Reflector,
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMemberRepository: Repository<WorkspaceMember>
+  ) {}
 
-    async canActivate(context:ExecutionContext):Promise<boolean>{
-        const requiredRole = this.reflector.get<string>('workspaceRole',context.getHandler())
-        if (!requiredRole) {
-            return true; // หากไม่มีการกำหนด workspaceRole
-          }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const requiredRole = this.reflector.get<string>('workspaceRole', context.getHandler());
+    const request = context.switchToHttp().getRequest();
+    const { user } = request;
+    const workspaceId = request.params.workspaceId;
 
-          const request = context.switchToHttp().getRequest();
-          const{user } =request;
-          const workspaceId = request.params.workspaceId;
-
-          if(!user ||!workspaceId){
-            throw new ForbiddenException("Role Guard Invalid user or workspace")
-          }
-
-          const member = await this.dataSource.getRepository(WorkspaceMember).findOne({
-            where: { user: { userId: user.userId }, workspace: { workspaceId: workspaceId } }, })
-
-            if (!member) {
-                throw new ForbiddenException(' Role Guard You are not a member of this workspace');
-              }
-          
-              // ตรวจสอบบทบาท
-              if (member.role !== requiredRole) {
-                throw new ForbiddenException(`Role Guard Required workspace role: ${requiredRole}`);
-              }
-              return true;          
+    if (!user || !workspaceId) {
+      throw new ForbiddenException("Workspaec Role Guard: Invalid user or workspace");
     }
+
+    const member = await this.workspaceMemberRepository.findOne({
+      where: { user: { userId: user.userId }, workspace: { workspaceId } }
+    });
+
+    if (!member) {
+      throw new ForbiddenException("Role Guard: You are not a member of this workspace");
+    }
+
+    if (!requiredRole) {
+      return true;
+    }
+    
+    if (member.role === 'owner') {
+      return true;
+    }
+
+    if (member.role !== requiredRole) {
+      throw new ForbiddenException(`Role Guard: Required workspace role: ${requiredRole}`);
+    }
+
+    return true;
+  }
 }

@@ -1,39 +1,61 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import MiniFooter from '../../components/MiniFooter';
-import AdminSidebar from '../../components/AdminSidebar';
-import ColorPickerTags from '../../components/ai/ColorPickerTags';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import MiniFooter from "../../components/MiniFooter";
+import AdminSidebar from "../../components/AdminSidebar";
+import ColorPickerTags from "../../components/ai/ColorPickerTags";
 
-import AiFileUpload from '../../components/ai/AiFileUpload';
-import AiResponseKeys from '../../components/ai/AiResponseKey';
-import AiTagInput from '../../components/ai/AiTagInputComponent';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { ResponseKey } from '../../types/Ai';
-import AiBasicInfo from '../../components/ai/AiBasicIfoInput';
-import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
-import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
+import AiFileUpload from "../../components/ai/AiFileUpload";
+import AiResponseKeys from "../../components/ai/AiResponseKey";
+import AiTagInput from "../../components/ai/AiTagInputComponent";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
+import { ResponseKey } from "../../types/Ai";
+import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
+import ImageDetectionResultDraw from "../../components/aiDisplay/ImageDetectionResultDraw";
+import TextResultDisplay from "../../components/aiDisplay/TextResultDisplay";
 
 const AddAiPage: React.FC = () => {
   const navigate = useNavigate();
 
   // States สำหรับข้อมูล AI Model (เริ่มต้นเป็นค่าว่าง)
-  const [aiName, setAiName] = useState('');
-  const [description, setDescription] = useState('');
-  const [serviceUri, setServiceUri] = useState('');
+  const [aiName, setAiName] = useState("");
+  const [description, setDescription] = useState("");
+  const [serviceUri, setServiceUri] = useState("");
   const [responseKeys, setResponseKeys] = useState<ResponseKey[]>([
-    { key: '', meaning: '', displayFormat: '' }
+    { key: "", meaning: "", displayFormat: "" },
   ]);
-  const [inputDescription, setInputDescription] = useState('');
-  const [aiType, setAiType] = useState('Object Detection');
+  const [enable, setEnable] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(true);
+  const [colorSet, setColorSet] = useState<string[]>(["#00ff00"]);
+  const [inputDescription, setInputDescription] = useState("");
+  const [aiType, setAiType] = useState("Object Detection");
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   // state สำหรับ preview predict result (ถ้ามี)
-  const [predictResult, setPredictResult] = useState<{ response_keys: string[]; prediction: any } | undefined>();
+  const [predictResult, setPredictResult] = useState<
+    | {
+        response_keys: {
+          key: string;
+          meaning: string;
+          displayFormat?: string;
+        }[];
+        prediction: any;
+      }
+    | undefined
+  >();
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
-  const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
+  const [examplePredictResultModal, setExamplePredictResultModal] =
+    useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -44,47 +66,63 @@ const AddAiPage: React.FC = () => {
       setUploadedFile(file);
       const formData = new FormData();
       formData.append("file", file);
-  
+
       if (!serviceUri) {
         alert("กรุณาใส่ Service URI ก่อน");
         return;
       }
-  
+
       try {
-        const response = await fetch(serviceUri, { method: "POST", body: formData });
+        const response = await fetch(serviceUri, {
+          method: "POST",
+          body: formData,
+        });
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
           console.log("Response from API:", jsonData);
           // Update predictResult state
-          const updatedPredictResult = { 
-            response_keys: responseKeys.map((rk) => rk.key), 
-            prediction: jsonData 
+          const updatedPredictResult = {
+            response_keys: responseKeys,
+            prediction: jsonData,
           };
           setPredictResult(updatedPredictResult);
           console.log("PredictResult updated:", updatedPredictResult);
           // Set image preview URL
           setCustomedImageUrl(URL.createObjectURL(file));
-  
+
           // Extract keys from JSON
-          const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
+          const extractKeys = (
+            obj: any,
+            parentKey = "",
+            depth = 1,
+            maxDepth = 2
+          ): string[] => {
             const keys: string[] = [];
             if (depth > maxDepth) return keys;
             Object.keys(obj).forEach((key) => {
               const fullPath = parentKey ? `${parentKey}.${key}` : key;
               if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
                 keys.push(fullPath);
-                keys.push(...extractKeys(obj[key], fullPath, depth + 1, maxDepth));
-              } else if (Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === "object") {
+                keys.push(
+                  ...extractKeys(obj[key], fullPath, depth + 1, maxDepth)
+                );
+              } else if (
+                Array.isArray(obj[key]) &&
+                obj[key].length > 0 &&
+                typeof obj[key][0] === "object"
+              ) {
                 keys.push(fullPath);
-                keys.push(...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth));
+                keys.push(
+                  ...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth)
+                );
               } else {
                 keys.push(fullPath);
               }
             });
             return keys;
           };
-  
+
           const extractedKeys = extractKeys(jsonData);
           console.log("Extracted keys:", extractedKeys);
           setSelectOptions(extractedKeys);
@@ -98,9 +136,19 @@ const AddAiPage: React.FC = () => {
       alert("กรุณาเลือกไฟล์ก่อน");
     }
   };
-
+  useEffect(() => {
+    setPredictResult((prev) => ({
+      ...prev,
+      response_keys: responseKeys,
+      prediction: prev?.prediction || {},
+    }));
+  }, [responseKeys]);
   // Handlers สำหรับ Response Keys
-  const handleAddKey = () => setResponseKeys([...responseKeys, { key: '', meaning: '', displayFormat: '' }]);
+  const handleAddKey = () =>
+    setResponseKeys([
+      ...responseKeys,
+      { key: "", meaning: "", displayFormat: "" },
+    ]);
   const handleRemoveKey = (index: number) => {
     if (responseKeys.length > 1) {
       const newKeys = [...responseKeys];
@@ -121,7 +169,8 @@ const AddAiPage: React.FC = () => {
       setNewTag("");
     }
   };
-  const handleTagRemove = (tagToRemove: string) => setTags(tags.filter((tag) => tag !== tagToRemove));
+  const handleTagRemove = (tagToRemove: string) =>
+    setTags(tags.filter((tag) => tag !== tagToRemove));
 
   // Handler สำหรับ File input (อื่น ๆ)
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,27 +194,35 @@ const AddAiPage: React.FC = () => {
         meaning: key.meaning,
         displayFormat: key.displayFormat,
       })),
+      enable, // New field: enable (boolean)
+      visible, // New field: visible (boolean)
+      colorSet, // New field: colorSet (array of colors)
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(modelData),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(modelData),
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => { throw new Error(response.statusText); });
+        const errorData = await response.json().catch(() => {
+          throw new Error(response.statusText);
+        });
         throw new Error(errorData.message || "Something went wrong!");
       }
       const data = await response.json();
-      console.log('Success:', data);
-      navigate('/admin/admin-ai');
+      console.log("Success:", data);
+      navigate("/admin/admin-ai");
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       alert(`Error: ${error || "Failed to add AI model"}`);
     }
   };
@@ -174,7 +231,9 @@ const AddAiPage: React.FC = () => {
   let ai_text_type = null;
   if (predictResult) {
     const searchDrawKey = responseKeys.find(
-      (rk) => rk.displayFormat === "objectdetection" || rk.displayFormat === "segmentation"
+      (rk) =>
+        rk.displayFormat === "objectdetection" ||
+        rk.displayFormat === "segmentation"
     );
     if (searchDrawKey) {
       ai_text_type = searchDrawKey.displayFormat;
@@ -189,7 +248,9 @@ const AddAiPage: React.FC = () => {
         <div className="w-4/5 grid grid-cols-1 items-center justify-center h-full">
           <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] mx-auto relative">
             <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900">Add AI</h1>
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
+                Add AI
+              </h1>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
             <form onSubmit={handleSubmit} className="m-6 space-y-4">
@@ -203,7 +264,34 @@ const AddAiPage: React.FC = () => {
                 onServiceUriChange={setServiceUri}
                 onTypeChange={setAiType}
               />
-              <ColorPickerTags />
+              <ColorPickerTags
+                colors={colorSet}
+                onChange={(newColors: string[]) => setColorSet(newColors)}
+              />
+              <div className="form-group">
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={enable}
+                      onChange={(e) => setEnable(e.target.checked)}
+                      name="enableSwitch"
+                      color="primary"
+                    />
+                  }
+                  label="Enable"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={visible}
+                      onChange={(e) => setVisible(e.target.checked)}
+                      name="visibilitySwitch"
+                      color="primary"
+                    />
+                  }
+                  label="Visibility"
+                />
+              </div>
               <AiFileUpload
                 serviceUri={serviceUri}
                 onServiceUriChange={setServiceUri}
@@ -260,28 +348,39 @@ const AddAiPage: React.FC = () => {
                 </Button>
 
                 <Dialog
-              open={examplePredictResultModal}
-              onClose={() => setExamplePredictResultModal(false)}
-              aria-labelledby="modal-title"
-              aria-describedby="modal-description"
-              maxWidth="lg"
-              fullWidth
-            >
-              <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
-              <DialogContent>
-                <ImageDetectionResultDraw
-                  detections={predictResult?.prediction?.detections || []}
-                  InputImage={customedImageUrl!}
-                  aiDisplayType={ai_text_type}
-                />
-                <TextResultDisplay predictResult={predictResult} tags={['tag1', 'tag2', 'tag3']} />
-              </DialogContent>
-              <DialogActions>
-                <Button variant="contained" color="primary" onClick={() => setExamplePredictResultModal(false)}>
-                  ปิด
-                </Button>
-              </DialogActions>
-            </Dialog>
+                  open={examplePredictResultModal}
+                  onClose={() => setExamplePredictResultModal(false)}
+                  aria-labelledby="modal-title"
+                  aria-describedby="modal-description"
+                  maxWidth="lg"
+                  fullWidth
+                >
+                  <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
+                  <DialogContent>
+                    <ImageDetectionResultDraw
+                      detections={predictResult?.prediction?.detections || []}
+                      InputImage={customedImageUrl!}
+                      aiDisplayType={ai_text_type || ""}
+                    />
+                    {predictResult && (
+                      <TextResultDisplay
+                        predictResult={predictResult}
+                        tags={tags}
+                        aiName={aiName}
+                        ai_type={aiType}
+                      />
+                    )}
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => setExamplePredictResultModal(false)}
+                    >
+                      ปิด
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </div>
             </form>
           </div>

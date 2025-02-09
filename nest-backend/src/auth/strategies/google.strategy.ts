@@ -9,17 +9,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google'){
         super({
           clientID: configService.get('GOOGLE_CLIENT_ID'),
           clientSecret: configService.get('GOOGLE_SECRET'),
-            callbackURL:'http://localhost:3000/auth/google/redirect',
+            callbackURL:`${process.env.NEST_APP_API_URL}/auth/google/redirect`,
             scope:['profile','email'],
         })
     }
+    
     async validate(accessToken:string, refreshToken:string, profile:Profile ,done: VerifyCallback): Promise<any>  {
-        const { id, emails, photos } = profile;
-        const { givenName, familyName } = profile.name || {};
+      const { id, emails,displayName, photos } = profile;
         const user = {
           googleId: id,
           email: emails[0].value,
-          name: `${givenName||``} ${familyName||``}`,
+          name: displayName,
           picture: photos[0].value,
           accessToken,
         };

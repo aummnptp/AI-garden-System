@@ -3,11 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
 import ProjectData from "../data/ProjectData";
-import { Button, Skeleton } from '@mui/material';
+import { Alert, AlertTitle, Button, Skeleton } from '@mui/material';
 import ImageUploader from '../components/ImageUploader';
 import axios from 'axios';
-import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
-import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
 import AddNoteDialog from '../components/NoteDialog';
 import AIDisPlayResultComponent from '../components/aiDisplay/AIDisPlayResultComponent';
 import ChartResultDisplay from '../components/aiDisplay/ChartResultDisplay';
@@ -64,7 +62,8 @@ const PredictAiModelPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false); // State for editing mode
   const [savedNote, setSavedNote] = useState(''); // State for saved note
 
-
+  const [alertText, setAlertText] = useState<string | null>(null);
+  const [openAlert, setOpenAlert] = useState(false);
   const [workspaceDetail, setWorkspaceDetail] = useState([]);
   const [projectData, setProjectData] = useState([]);
   const [projectDetail, setProjectDetail] = useState<Project | null>(null);
@@ -163,8 +162,13 @@ const PredictAiModelPage: React.FC = () => {
       // เปลี่ยน uploadStep เป็น 4 หลังจากอัปโหลดเสร็จสมบูรณ์
       setUploadStep(4);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file', error);
+      if (error.response && error.response.status === 400) {
+        setAlertText(error.response.data.message); // ตั้งค่า alertText จาก response
+        setOpenAlert(true); // เปิด Alert
+        setUploadStep(2);
+      }
     }
   };
   const handleUploadVideo = async () => {
@@ -241,6 +245,18 @@ const PredictAiModelPage: React.FC = () => {
   //     }
   //   }
   // };
+  const startTimer = () => {
+    setTimeout(() => {
+      setOpenAlert(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
+    }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
+  };
+
+
+
+  // เริ่มทำงาน timer เมื่อ Alert ถูกแสดง
+  if (openAlert) {
+    startTimer();
+  }
 
   const handleSaveNote = () => {
     setSavedNote(note);
@@ -285,6 +301,14 @@ const PredictAiModelPage: React.FC = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
+        {openAlert && (
+                <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
+                  <Alert severity="error" onClose={() => setOpenAlert(false)}>
+                    <AlertTitle>Error</AlertTitle>
+                    {alertText}
+                  </Alert>
+                </div>
+              )}
         <Sidebar workspaceName={workspaceDetail.name}
           projectName={projectDetail.project_name}
           aiName={projectDetail.ai_model.name}
@@ -292,11 +316,11 @@ const PredictAiModelPage: React.FC = () => {
         />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          {projectDetail?.inputType === "รูปภาพ" ? (
+          {projectDetail?.input_type === "รูปภาพ" ? (
             <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
               <div className="flex justify-between items-center p-5">
                 <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                  {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
+                  {projectDetail.input_type === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
                 </h1>
               </div>
               <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
@@ -391,7 +415,7 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 1 ? (
                   <div className="form-group">
 
-                    {/* <label>{projectDetail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
+                    {/* <label>{projectDetail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
@@ -446,7 +470,7 @@ const PredictAiModelPage: React.FC = () => {
                   type="file"
                   onChange={handleFileChange}
                   className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
+                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
                 /> */}
                   </div>
                 ) : null}
@@ -492,7 +516,7 @@ const PredictAiModelPage: React.FC = () => {
 
                 {/* {customedImageUrl && (
                 <div className="w-1/2 mx-auto mt-4">
-                  {detail.inputType === 'รูปภาพ' ? (
+                  {detail.input_type === 'รูปภาพ' ? (
                     <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
                   ) : (
                     <video controls className="w-full">
@@ -540,46 +564,13 @@ const PredictAiModelPage: React.FC = () => {
                     </Button>) : null}
                 </div>
               </form>
-              <div className="flex justify-end">
-                {uploadStep == 1 ? (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      backgroundColor: "#3b82f6",
-                      "&:hover": {
-                        backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                      },
-                    }}
-                    onClick={handleToCustomStep}
-                  >
-                    {" "}
-                    ถัดไป
-                  </Button>
-                ) : null}
-
-                {uploadStep !== 1 && uploadStep !== 3 ? (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      backgroundColor: "#3b82f6",
-                      "&:hover": {
-                        backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                      },
-                    }}
-                    onClick={handleUpload}
-                  >
-                    {uploadStep == 2 ? ("ประมวลผล") : ("อัพโหลดอีกครั้ง")}
-                  </Button>) : null}
-              </div>
+              
             </div>
           ) : (
             <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
               <div className="flex justify-between items-center p-5">
                 <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                  {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
+                  {projectDetail.input_type === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'}
                 </h1>
               </div>
               <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
@@ -656,7 +647,7 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 1 ? (
                   <div className="form-group">
 
-                    {/* <label>{detail.inputType === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
+                    {/* <label>{detail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
@@ -714,7 +705,7 @@ const PredictAiModelPage: React.FC = () => {
                   type="file"
                   onChange={handleFileChange}
                   className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.inputType === 'รูปภาพ' ? 'image/*' : 'video/*'}
+                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
                 /> */}
                   </div>
                 ) : null}
@@ -751,7 +742,7 @@ const PredictAiModelPage: React.FC = () => {
 
                 {/* {customedImageUrl && (
                 <div className="w-1/2 mx-auto mt-4">
-                  {detail.inputType === 'รูปภาพ' ? (
+                  {detail.input_type === 'รูปภาพ' ? (
                     <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
                   ) : (
                     <video controls className="w-full">

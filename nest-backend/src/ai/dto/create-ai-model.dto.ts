@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray, ValidateNested, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsArray, ValidateNested, IsUUID, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ResponseKeyDto {
@@ -52,4 +52,16 @@ export class CreateAIModelDto {
   @IsString()
   readonly imagePath?: string; // เพิ่มฟิลด์ imagePath
 
+  @IsOptional()
+  @IsBoolean()
+  readonly enable?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly visible?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly color_set?: string[];
 }

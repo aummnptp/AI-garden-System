@@ -1,11 +1,11 @@
-import React from 'react'
+// import React from 'react'
 
-const SegmentationDrawtsx = () => {
-  return (
-    <div>
+// const SegmentationDrawtsx = () => {
+//   return (
+//     <div>
       
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
 
-export default SegmentationDrawtsx
+// export default SegmentationDrawtsx

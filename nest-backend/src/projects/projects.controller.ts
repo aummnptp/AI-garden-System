@@ -8,6 +8,7 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import * as multer from 'multer';
 import { CreateProjectHistoryDto } from './dto/predict-project.dto';
 import { ProjectHistory } from './entities/project-history.entity';
+import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
 
 
@@ -76,7 +77,7 @@ export class ProjectsController {
     return this.projectsService.remove(workspaceId, projectId);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard,AIEnableGuard)
   @Post('predict/:projectId')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({

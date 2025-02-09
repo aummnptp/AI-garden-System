@@ -5,14 +5,9 @@ interface Prediction {
   [key: string]: any;
 }
 
-interface ResponseKey {
-  key: string;
-  meaning: string;
-  displayFormat?: string;
-}
+
 
 interface PredictResult {
-  ai_type: string;
   prediction: {
     detections?: Prediction[];
     [key: string]: any;
@@ -27,11 +22,14 @@ interface PredictResult {
 interface TextResultDisplayProps {
   predictResult: PredictResult;
   tags?: string[];
+  aiName:string;
+  ai_type:string;
 }
 
 const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
   predictResult,
   tags = [],
+  aiName,ai_type
 }) => {
   const getMeaningForKey = (key: string) => {
     const keyWithMeaning = predictResult.response_keys?.find(
@@ -54,8 +52,8 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
         </h1>
       </div>
       <div className="flex justify-start items-center p-0 space-x-4">
-        <span className="text-gray-600 text-lg">AI Name</span>
-        <span className="text-gray-400">|</span>
+        <span className="text-gray-600 text-lg">{aiName}</span>
+        <span className="text-gray-400">| {ai_type}</span>
         {/* <span className="text-gray-400 text-lg">{predictResult.ai_type}</span> */}
       </div>
       <div className="flex justify-start mb-2 mt-4 flex-wrap gap-2">

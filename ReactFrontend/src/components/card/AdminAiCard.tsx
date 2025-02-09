@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { EditOffOutlined, EditOutlined } from '@mui/icons-material';
 
 interface AdminAiCardProps {
-    id:number;
+    id:string;
     name:string;
     aiDesc: string;
     img:string;

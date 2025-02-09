@@ -23,27 +23,27 @@ const HistoryDetailPage = () => {
   );
 
   // ดึงข้อมูล workspace detail
-  const {
-    data: workspaceDetail,
-    isLoading: isLoadingWorkspace,
-    error: errorWorkspace,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/${workspaceId}/workspaces/detail/${workspaceId}`
-  );
+  // const {
+  //   data: workspaceDetail,
+  //   isLoading: isLoadingWorkspace,
+  //   error: errorWorkspace,
+  // } = useFetchQuery(
+  //   ["workspace-detail", workspaceId ?? ""],
+  //   `/workspaces/${workspaceId}/workspaces/detail/${workspaceId}`
+  // );
 
   // ตรวจสอบสถานะการโหลด
-  if (isLoadingHistory || isLoadingWorkspace) return <div>Loading...</div>;
+  if (isLoadingHistory ) return <div>Loading...</div>;
 
   // ตรวจสอบข้อผิดพลาด
-  if (errorHistory || errorWorkspace)
-    return <div>Error: {errorHistory?.message || errorWorkspace?.message}</div>;
+  if (errorHistory )
+    return <div>Error: {errorHistory?.message }</div>;
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         <Sidebar
-          workspaceName={workspaceDetail}
+          // workspaceName={workspaceDetail.name}
           // projectName={projectDetail.project_name}
           // aiName={projectDetail.ai_model.name}
           // aiType={projectDetail.ai_model.ai_type}

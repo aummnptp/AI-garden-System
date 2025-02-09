@@ -6,6 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import ProjectImageInput from '../../components/input/ProjectImageInput'
 import { Close } from '@mui/icons-material'
+import { useFetchQuery } from '../../hook/useFetchQuery'
 
 interface Project {
   project_id: number;
@@ -48,22 +49,43 @@ const ProjectSetting = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   const [image, setImage] = useState<File | null>(null);
-  const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]); 
+  // const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
   const [loading, setLoading] = useState(true);
- const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+//  const [projectDetail, setProjectDetail] = useState<Project | null>(null);
  const isDeleteDisabled = confirmText !== name;
   // สำหรับ demo รูป *****
-  // const initialImageUrl = "/images/ai/dermpic.jpg"; // URL ของรูปเริ่มต้น
-  // useEffect(() => {
-  //   const fetchImage = async () => {
-  //     const response = await fetch(initialImageUrl);
-  //     const blob = await response.blob();
-  //     const file = new File([blob], "default-image.jpg", { type: blob.type });
-  //     setImage(file);
-  //   };
+
+
+    const {
+      data: workspaceDetail,
+      isLoading: isLoadingWorkspaceDetail,
+      error: errorWorkspaceDetail,
+    } = useFetchQuery(
+      ["workspace-detail", workspaceId ?? ""],
+      `/workspaces/detail/${workspaceId}`
+    );
   
-  //   fetchImage();
-  // }, []);
+const {
+    data: projectDetail,
+    isLoading,
+    error
+  } = useFetchQuery(
+    ["project-detail", workspaceId ?? "", projectId ?? ""],
+    `/workspaces/${workspaceId}/projects/detail/${projectId}`
+  );
+
+  useEffect(() => {
+    if (projectDetail) {
+      setName(projectDetail.name);
+      setDescription(projectDetail.description)
+      setImage(projectDetail.image_path)
+      setInputType(projectDetail.input_type)
+    }
+  }, [projectDetail]);
+
+  
+
   const navigate = useNavigate();
   
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -143,32 +165,34 @@ const handleDelte = async () => {
   };
 
   
-    const fetchData = async () => {
-      try {
-        const [workspaceResponse, projectResponse] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
-            {
-              withCredentials: true,}
-          ),
-          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
-            {
-              withCredentials: true,}
-          ),
+
+  
+    // const fetchData = async () => {
+    //   try {
+    //     const [workspaceResponse, projectResponse] = await Promise.all([
+    //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
+    //         {
+    //           withCredentials: true,}
+    //       ),
+    //       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
+    //         {
+    //           withCredentials: true,}
+    //       ),
         
-        ]);
+    //     ]);
     
-        setWorkspaceDetail(workspaceResponse.data);
-        setProjectDetail(projectResponse.data)
-        setName(projectResponse.data.name);
-        setDescription(projectResponse.data.description)
-        setImage(projectResponse.data.image_path)
-        setInputType(projectResponse.data.input_type)
-      } catch (error) {
-        console.error("There was an error fetching the data!", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     setWorkspaceDetail(workspaceResponse.data);
+    //     // setProjectDetail(projectResponse.data)
+    //     setName(projectResponse.data.name);
+    //     setDescription(projectResponse.data.description)
+    //     setImage(projectResponse.data.image_path)
+    //     setInputType(projectResponse.data.input_type)
+    //   } catch (error) {
+    //     console.error("There was an error fetching the data!", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
 
     const handleModalDelete = () => {
@@ -179,17 +203,24 @@ const handleDelte = async () => {
       setOpen(false);
     };
 
-    useEffect(() => {
-      fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
-    }, []);
+    // useEffect(() => {
+    //   fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+    // }, []);
 
-    if (loading) {
-      return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //   return <div>Loading...</div>;
+    // }
   
-    if (!projectDetail) {
-      return <div>Error: Project details could not be loaded.</div>;
-    }
+    // if (!projectDetail) {
+    //   return <div>Error: Project details could not be loaded.</div>;
+    // }
+
+
+
+
+
+
+    
     return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* confirm modal delete */}

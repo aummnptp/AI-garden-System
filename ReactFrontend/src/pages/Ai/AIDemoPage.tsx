@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
-import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
+// import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
 
 
@@ -33,9 +33,11 @@ const AIDemo = () => {
   const [image, setImage] = useState<File | null>(null);
   // first step of customimage for rotate grayscale
   const [customImage, setCustomImage] = useState<File | null>(image);
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null); // URL ของรูปที่กำลังแสดง
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
+  const [alertText, setAlertText] = useState<string | null>(null);
+  const [openAlert, setOpenAlert] = useState(false);
 
   const { ai_id } = useParams<{ ai_id?: string }>();
   // ปิด alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -59,16 +61,14 @@ const AIDemo = () => {
 
   const startTimer = () => {
     setTimeout(() => {
-      setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
+      setOpenAlert(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
     }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+
 
   // เริ่มทำงาน timer เมื่อ Alert ถูกแสดง
-  if (open) {
+  if (openAlert) {
     startTimer();
   }
 
@@ -91,13 +91,14 @@ const AIDemo = () => {
   };
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setOpenAlert(true);
   };
 
   const handleToCustomStep = () => {
     if(uploadStep===1){
       if (image === null) {
-        handleClickOpen(); // เรียกฟังก์ชันเปิด dialog หรือ popup
+        handleClickOpen();
+        setAlertText("กรุณาอัพโหลดภาพ") // เรียกฟังก์ชันเปิด dialog หรือ popup
       } 
       else {
         setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
@@ -154,19 +155,24 @@ const AIDemo = () => {
       // เปลี่ยน uploadStep เป็น 4 หลังจากอัปโหลดเสร็จสมบูรณ์
       setUploadStep(4);
   
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file', error);
+      if (error.response && error.response.status === 400) {
+        setAlertText(error.response.data.message); // ตั้งค่า alertText จาก response
+        setOpenAlert(true); // เปิด Alert
+        setUploadStep(2);
+      }
     }
   };
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-        {open && (
+      {openAlert && (
           <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
-            <Alert severity="error" onClose={handleClose}>
+            <Alert severity="error" onClose={() => setOpenAlert(false)}>
               <AlertTitle>Error</AlertTitle>
-              กรุณาอัปโหลดภาพก่อน
+              {alertText}
             </Alert>
           </div>
         )}
@@ -332,11 +338,11 @@ const AIDemo = () => {
                             className=" mb-2 text-3xl font-medium tracking-tight 
                 text-indigo-900  "
                           >
-                          {aiData.name}
+                            {aiData.name}
                           </h1>
 
                           <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                          {aiData.ai_type}
+                            {aiData.ai_type}
                           </span>
                         </div>
                         <div className=" w-full border border-zinc-300" />
@@ -359,17 +365,18 @@ const AIDemo = () => {
                       <p className=" text-neutral-700 text-lg font-normal">
                         รายละเอียด
                       </p>
-                      <p>
-                      {aiData.description}
-                      </p>
+                      <p>{aiData.description}</p>
                       <div className="mb-2 mt-4">
-                            <div className="mb-2 mt-4">
-                        {aiData.ai_tag.map((tag: string, index: number) => (
-                          <span key={index} className="w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                        <div className="mb-2 mt-4">
+                          {aiData.ai_tag.map((tag: string, index: number) => (
+                            <span
+                              key={index}
+                              className="w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -379,9 +386,7 @@ const AIDemo = () => {
                       เกี่ยวกับรูปภาพและวิดีโอที่จะนำไปประมวลผล
                     </span>
                   </div>
-                  <p className="ml-3">
-            {aiData.input_desc}
-            </p>
+                  <p className="ml-3">{aiData.input_desc}</p>
                 </>
               ) : null}
               {/* upload step 2 customimaage */}
@@ -412,10 +417,10 @@ const AIDemo = () => {
               )}
               {uploadStep === 4 && predictResult ? (
                 customedImageUrl ? (
-                    <AIDisPlayResultComponent
-                      resultImage={customedImageUrl}
-                      predictResult={predictResult}
-                    />
+                  <AIDisPlayResultComponent
+                    resultImage={customedImageUrl}
+                    predictResult={predictResult}
+                  />
                 ) : null
               ) : null}
 
@@ -484,23 +489,22 @@ const AIDemo = () => {
                         {" "}
                         ทดลองอีกครั้ง
                       </Button>
-                      
                     </div>
-                     <Link to={`/ai-list`}>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        backgroundColor: "#4f46e5",
-                        "&:hover": {
-                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                        },
-                      }}
+                    <Link to={`/ai-list`}>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        sx={{
+                          backgroundColor: "#4f46e5",
+                          "&:hover": {
+                            backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                          },
+                        }}
                       >
-                      {" "}
-                      กลับไปยังหน้ารายชื่อ AI
-                    </Button>
-                      </Link>
+                        {" "}
+                        กลับไปยังหน้ารายชื่อ AI
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>

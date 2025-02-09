@@ -1,4 +1,4 @@
-import { BarsOutlined, FileDoneOutlined, FileImageOutlined, HistoryOutlined, LaptopOutlined, PlaySquareOutlined, ProfileOutlined, ProjectOutlined, SettingOutlined} from '@ant-design/icons'
+import { BarsOutlined, FileDoneOutlined, HistoryOutlined, LaptopOutlined, ProfileOutlined, ProjectOutlined, SettingOutlined} from '@ant-design/icons'
 import React from 'react'
 
 import { Link, useParams, useLocation } from 'react-router-dom'
@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workspaceName, projectName, aiName, a
 
   const isActive = (path: string) => location.pathname === path;
   return (
-    <div className="px-3 pt-6 pb-24 h-full w-2/12 bg-white shadow border  fixed z-40 overflow-y-scroll ">
+    <div className="px-3 pt-6  pb-[12%] h-full w-2/12 bg-white shadow border  fixed z-40 overflow-y-scroll ">
       <div className="flex items-center">
         <div className="mx-1 w-[45px] h-[45px] bg-blue-100 rounded-full flex items-center justify-center ">
           <LaptopOutlined style={{ color: "#353D81", fontSize: "2em" }} />

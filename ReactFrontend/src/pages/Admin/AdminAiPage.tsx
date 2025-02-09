@@ -11,11 +11,12 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import AISettingDialog from "../../components/ai/AISettingDialog";
 import AISettingsComponent from "../../components/ai/AISettingsComponent";
+import { AIDataType } from "../../types/Ai";
 
 
 function AdminAi() {
 
-  const [AIData, setAIData] = useState([]);
+  const [AIData, setAIData] = useState<AIDataType[]>([]);
   const fetchAIData = () => {
 
     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
@@ -83,7 +84,7 @@ function AdminAi() {
               </Link>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
-            <div className="m-6 flex justify-between items-center gap-4">
+            <div className="m-6 flex justify-between items-center gap-4 ">
               <input
                 type="text"
                 id="first_name"
@@ -93,20 +94,20 @@ function AdminAi() {
               />
               <div>
 
-              <button
-                type="button"
-                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
+              <Button
+                type="button" variant="outlined" color="info"
+                
               >
                 type filter <SortAscendingOutlined />
-              </button>
-              <button
-                type="button"
-                className="rounded-[25px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 text-black text-lg font-normal px-5 py-2.5  focus:outline-none "
+              </Button>
+              <Button
+                type="button" variant="outlined" color="info"
+              
               >
                 tag filter <ControlOutlined />
-              </button>
-
+              </Button>
      <AISettingsComponent/></div>
+
             </div>
           </div>
 

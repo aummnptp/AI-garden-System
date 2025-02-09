@@ -58,18 +58,18 @@ export class AIModelService {
   }  
 
   async update(aiId: string, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:aiId } });
+    const existingModel = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
     if (!existingModel) {
       throw new NotFoundException(`AI Model with Id ${aiId} not found`);
     }
   
-    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+
     const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
   
-    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์และอัปเดต imagePath
     if (file) {
-      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
-      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+      const fileName = file.filename;
+      updatedModelData.imagePath = `/uploads/${fileName}`;
     }
   
     // อัปเดตข้อมูลในฐานข้อมูล
@@ -77,7 +77,6 @@ export class AIModelService {
   
     return 'Model updated successfully!';
   }
-  
   
   async findAll(): Promise<AIModel[]> {
     const aiModels = await this.aiModelRepository.find();
@@ -140,7 +139,7 @@ export class AIModelService {
       return {
         response_keys: model.response_keys,
         prediction: response.data,
-        ai_type: model.ai_type,
+        ai_model: model,
       };
     } catch (error: any) {
       if (error.code === 'ECONNRESET') {
@@ -168,23 +167,6 @@ export class AIModelService {
     });
   }
 
-  // async findAllWithApprovalStatus(userId: number): Promise<any[]> {
-  //   const models = await this.aiModelRepository.find({
-  //     relations: ['permissions'], // Include permissions relation
-  //   });
-
-  //   // Map models to include approval status for the user
-  //   return models.map((model) => {
-  //     const userPermission = model.permissions.find(
-  //       (permission) => permission.user_id === userId,
-  //     );
-
-  //     return {
-  //       ...model,
-  //       approvalStatus: userPermission ? userPermission.approve : false, // Add approval status
-  //     };
-  //   });
-  // }
   async findAllWithApprovalStatus(userId: string): Promise<any[]> {
     const models = await this.aiModelRepository
       .createQueryBuilder('aiModel')

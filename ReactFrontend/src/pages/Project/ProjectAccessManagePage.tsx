@@ -17,13 +17,13 @@ interface memberData {
 
 const ProjectAccessManagePage = () => {
   let { workspaceId, projectId } = useParams();
-  const [name, setName] = useState<string>("");
   const [memberDatas, setMemberData] = useState<memberData[]>(memberMockupData);
   const [accessProjectType, setAccessProjectType] =useState<string>("access_all");
   const [projectDetail, setProjectDetail] = useState<any | null>(null);
   const [workspaceDetail, setWorkspaceDetail] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-   
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const fetchData = async () => {
     try {
       const [workspaceResponse, projectResponse,memberResponse] = await Promise.all([
@@ -47,7 +47,7 @@ const ProjectAccessManagePage = () => {
     }
   };
      useEffect(() => {
-        fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+        fetchData();
       }, []);
   
 
@@ -58,6 +58,45 @@ if (loading) {
   if (!projectDetail) {
     return <div>Error: Project details could not be loaded.</div>;
   }
+
+  const handleMemberCheckboxChange = (memberId: string) => {
+    setSelectedMembers((prev) =>
+      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
+    );
+  };
+  const handleSave = async () => {
+    setSaving(true);
+  
+    try {
+    
+      await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/projects/${projectId}`, {
+        permission_only: accessProjectType === "only_allowed",
+      }, { withCredentials: true });
+  
+    
+      if (accessProjectType === "only_allowed") {
+        await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/projects/permissions/${projectId}`, {
+          withCredentials: true,
+        });
+  
+      
+        await Promise.all(
+          selectedMembers.map((memberId) =>
+            axios.post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/projects/permission/${projectId}`, 
+            { userId: memberId }, 
+            { withCredentials: true })
+          )
+        );
+      }
+  
+      alert("Access settings updated successfully!");
+    } catch (error) {
+      console.error("Error updating project access:", error);
+      alert("Failed to update access settings.");
+    } finally {
+      setSaving(false);
+    }
+  };
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Sidebar */}
@@ -184,8 +223,10 @@ if (loading) {
                             <span className="">Project Owner</span>
                           ) : (
                             <Checkbox
-                              disabled={accessProjectType === "access_all"}
-                            />
+                            disabled={accessProjectType === "access_all"}
+                            checked={selectedMembers.includes(member.memberId)}
+                            onChange={() => handleMemberCheckboxChange(member.memberId)}
+                          />
                           )}
                         </div>
                       </div>

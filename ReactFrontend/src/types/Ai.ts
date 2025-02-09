@@ -27,10 +27,13 @@ export type AIDataType ={
     input_desc: string;
     ai_type: string;
     ai_tag: any[];
+    colorSet:[];
+    enable:boolean;
+    visible:boolean;
   }
 
   export type ResponseKey= {
     key: string;
-    meaning: string;
+    meaning: string
     displayFormat: string;
   }

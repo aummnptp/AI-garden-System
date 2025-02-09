@@ -30,7 +30,7 @@ export class AIUsageLimitGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const userId = req.user?.userId;
     if (!userId) {
-      throw new BadRequestException('Unauthorized request');
+      throw new BadRequestException('AIUsageLimitGuard: undefine user request');
     }
   
     const aiIdFromParams = req.params.aiId;

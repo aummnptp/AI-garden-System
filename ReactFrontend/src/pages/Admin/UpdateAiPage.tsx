@@ -5,7 +5,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 import axios from 'axios';
 import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
 import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Switch } from '@mui/material';
 import ColorPickerTags from '../../components/ai/ColorPickerTags';
 import { useQuery } from '@tanstack/react-query';
 import { AiModelData, ResponseKey } from '../../types/Ai';
@@ -29,10 +29,13 @@ const UpdateAiPage: React.FC = () => {
   const [aiType, setAiType] = useState('Object Detection');
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
+  const [enable, setEnable] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(true);
+  const [colorSet, setColorSet] = useState<string[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const [selectDisplayOptions, setSelectDisplayOptions] = useState<string[]>([]);
-  const [predictResult, setPredictResult] = useState<{ response_keys: string[]; prediction: any } | undefined>();
+  const [predictResult, setPredictResult] = useState<{ response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined>();
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
@@ -66,18 +69,19 @@ const UpdateAiPage: React.FC = () => {
       setSelectOptions(keys);
       const displayformats = data.response_keys.map((item) => item.displayFormat);
       setSelectDisplayOptions(displayformats);
+      setColorSet(data.colorSet)
+      setEnable(data.enable)
+      setVisible(data.visible)
     }
   }, [data]);
 
   useEffect(() => {
-    const responseKeysArray = responseKeys.map((rk) => rk.key);
     setPredictResult((prev) => ({
       ...prev,
-      response_keys: responseKeysArray,
+      response_keys: responseKeys,
       prediction: prev?.prediction || {},
     }));
   }, [responseKeys]);
-
   // Handler for file upload & testing Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -95,7 +99,7 @@ const UpdateAiPage: React.FC = () => {
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
           console.log("Response from API:", jsonData);
-          setPredictResult({ response_keys: responseKeys.map((rk) => rk.key), prediction: jsonData });
+          setPredictResult({ response_keys: responseKeys, prediction: jsonData });
           setCustomedImageUrl(URL.createObjectURL(file));
           // Extract keys from JSON
           const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
@@ -187,6 +191,9 @@ const UpdateAiPage: React.FC = () => {
         meaning: rk.meaning,
         displayFormat: rk.displayFormat,
       })),
+      enable,         // New field: enable (boolean)
+      visible,     // New field: visible (boolean)
+      colorSet,      // New field: colorSet (array of colors)
     };
 
     const formData = new FormData();
@@ -229,6 +236,7 @@ const UpdateAiPage: React.FC = () => {
   if (isLoading) return <div>Loading AI data...</div>;
   if (error) return <div>Error loading AI data: {(error as Error).message}</div>;
 
+  console.log(predictResult)
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
@@ -251,7 +259,34 @@ const UpdateAiPage: React.FC = () => {
                 onServiceUriChange={setServiceUri}
                 onTypeChange={setAiType}
               />
-              <ColorPickerTags />
+              <ColorPickerTags
+              colors={colorSet}
+              onChange={(newColors: string[]) => setColorSet(newColors)}
+              />
+              <div className="form-group">
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={enable}
+                      onChange={(e) => setEnable(e.target.checked)}
+                      name="enableSwitch"
+                      color="primary"
+                    />
+                  }
+                  label="Enable"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={visible}
+                      onChange={(e) => setVisible(e.target.checked)}
+                      name="visibilitySwitch"
+                      color="primary"
+                    />
+                  }
+                  label="Visibility"
+                />
+              </div>
               <AiFileUpload
                 serviceUri={serviceUri}
                 onServiceUriChange={setServiceUri}
@@ -325,9 +360,11 @@ const UpdateAiPage: React.FC = () => {
                 <ImageDetectionResultDraw
                   detections={predictResult?.prediction?.detections || []}
                   InputImage={customedImageUrl!}
-                  aiDisplayType={ai_text_type}
+                  aiDisplayType={ai_text_type || ''}
+                  colorSet={colorSet} 
+
                 />
-                <TextResultDisplay predictResult={predictResult} tags={['tag1', 'tag2', 'tag3']} />
+                {predictResult && <TextResultDisplay predictResult={predictResult} tags={tags} aiName={aiName} ai_type={aiType} />}
               </DialogContent>
               <DialogActions>
                 <Button variant="contained" color="primary" onClick={() => setExamplePredictResultModal(false)}>
