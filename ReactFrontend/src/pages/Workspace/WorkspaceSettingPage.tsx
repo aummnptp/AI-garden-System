@@ -36,8 +36,6 @@ const WorkspaceSettingPage = () => {
   // ดึงข้อมูล workspace detail
   const {
     data: workspaceDetail,
-    isLoading: isLoadingWorkspaceDetail,
-    error: errorWorkspaceDetail,
   } = useFetchQuery(
     ["workspace-detail", workspaceId ?? ""],
     `/workspaces/detail/${workspaceId}`
@@ -50,10 +48,7 @@ const WorkspaceSettingPage = () => {
     }
   }, [workspaceDetail]);
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingWorkspaceDetail) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorWorkspaceDetail) return <div>Error: {errorWorkspaceDetail?.message}</div>;
+
 
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก

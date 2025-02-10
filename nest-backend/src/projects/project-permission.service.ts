@@ -25,7 +25,7 @@ export class  ProjectPermissionService{
       return this.projectPermissionRepository.save(newPermission);
     }
 
-    async updatePermission(projectId: string, userId: string, role: string): Promise<ProjectPermission> {
+    async updatePermission(projectId: string, userId: string,): Promise<ProjectPermission> {
       const permission = await this.projectPermissionRepository.findOne({
         where: { project: { projectId }, user: { userId } },
       });

@@ -9,6 +9,8 @@ import * as multer from 'multer';
 import { CreateProjectHistoryDto } from './dto/predict-project.dto';
 import { ProjectHistory } from './entities/project-history.entity';
 import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
+import { ProjectPermissionGuard } from './guards/project-permission.guard';
+import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
 
 
@@ -40,7 +42,8 @@ export class ProjectsController {
     return this.projectsService.findAll(workspaceId);
   }
 
-  @UseGuards(JwtGuard) 
+  @WorkspaceRole('member')
+  @UseGuards(JwtGuard,ProjectPermissionGuard) 
   @Get('detail/:projectId')
   findOne(
     @Param('workspaceId') workspaceId: string,
@@ -60,10 +63,10 @@ export class ProjectsController {
     }),
   }))
   async update(
-    @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
     @Param('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Project> {
     return this.projectsService.update(workspaceId, projectId, updateProjectDto,file);
   }
@@ -111,5 +114,7 @@ export class ProjectsController {
     @Param('historyId') historyId: string,): Promise<ProjectHistory> {
     return this.projectsService.getHistory(historyId);
   }
+
+  
 
 }

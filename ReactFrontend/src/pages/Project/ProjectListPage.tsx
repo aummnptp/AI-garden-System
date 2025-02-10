@@ -13,8 +13,6 @@ const ProjectListPage = () => {
   }>();
   const {
     data: projectData,
-    isLoading: isLoadingProject,
-    error: errorProject,
   } = useFetchQuery(
     ["project", workspaceId ?? "",],
     `/workspaces/${workspaceId}/projects`
@@ -23,18 +21,12 @@ const ProjectListPage = () => {
 //   // ดึงข้อมูล workspace detail
   const {
     data: workspaceDetail,
-    isLoading: isLoadingWorkspace,
-    error: errorWorkspace,
   } = useFetchQuery(
     ["workspace-detail", workspaceId ?? ""],
     `/workspaces/detail/${workspaceId}`
   );
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingProject || isLoadingWorkspace) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorProject || errorWorkspace) return <div>Error: {errorProject?.message || errorWorkspace?.message}</div>;
-
+  
 
 
   return (

@@ -1,14 +1,14 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import MiniFooter from '../components/MiniFooter';
-import Sidebar from "../components/Sidebar";
-import ProjectData from "../data/ProjectData";
+import MiniFooter from '../../components/MiniFooter';
+import Sidebar from "../../components/Sidebar";
+import ProjectData from "../../data/ProjectData";
 import { Alert, AlertTitle, Button, Skeleton } from '@mui/material';
-import ImageUploader from '../components/ImageUploader';
+import ImageUploader from '../../components/ImageUploader';
 import axios from 'axios';
-import AddNoteDialog from '../components/NoteDialog';
-import AIDisPlayResultComponent from '../components/aiDisplay/AIDisPlayResultComponent';
-import ChartResultDisplay from '../components/aiDisplay/ChartResultDisplay';
+import AddNoteDialog from '../../components/NoteDialog';
+import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
+import ChartResultDisplay from '../../components/aiDisplay/ChartResultDisplay';
 
 interface PredictResult {
   ai_type: string;
@@ -286,7 +286,7 @@ const PredictAiModelPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลด ครั้งแรก
   }, []);
 
 

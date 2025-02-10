@@ -11,17 +11,17 @@ export class WorkspaceRoleGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     @InjectRepository(WorkspaceMember)
-    private readonly workspaceMemberRepository: Repository<WorkspaceMember>
+    protected readonly workspaceMemberRepository: Repository<WorkspaceMember>
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRole = this.reflector.get<string>('workspaceRole', context.getHandler());
+    const requiredRole = this.reflector.get<string>("workspaceRole", context.getHandler());
     const request = context.switchToHttp().getRequest();
     const { user } = request;
     const workspaceId = request.params.workspaceId;
 
     if (!user || !workspaceId) {
-      throw new ForbiddenException("Workspaec Role Guard: Invalid user or workspace");
+      throw new ForbiddenException("Workspace Role Guard: Invalid user or workspace");
     }
 
     const member = await this.workspaceMemberRepository.findOne({
@@ -35,8 +35,8 @@ export class WorkspaceRoleGuard implements CanActivate {
     if (!requiredRole) {
       return true;
     }
-    
-    if (member.role === 'owner') {
+
+    if (member.role === "owner") {
       return true;
     }
 

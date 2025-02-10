@@ -1,3 +1,4 @@
+import { CircularProgress, Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
@@ -11,7 +12,7 @@ const InvitePage = () => {
     const checkAuth = async () => {
       if (!token) {
         console.error("No token found in invite link!");
-        alert("Invalid invite link.");
+   
         navigate("/");
         return;
       }
@@ -31,7 +32,7 @@ const InvitePage = () => {
             { withCredentials: true }
           );
 
-          alert(" Successfully joined workspace!");
+         
           navigate("/workspaces");
         } else {
           console.warn("User not authenticated, redirecting to Google Login...");
@@ -51,7 +52,10 @@ const InvitePage = () => {
     checkAuth();
   }, [token, navigate]);
 
-  return <div>Processing invite...</div>;
+  return  <>
+  <CircularProgress size={50} color="primary" />
+  <Typography variant="body1" sx={{ mt: 2 }}>กรุณารอสักครู่...</Typography>
+</>;;
 };
 
 export default InvitePage;

@@ -1,21 +1,20 @@
-// import axios from "axios";
-// // import DOCS_ROUTES from "../routes/DocsRoutes";
+import axios from "axios";
+import { BACKEND_API_URL } from "../../env";
 
-// axios.defaults.withCredentials = true;
-
-// const updateDocsTitle = async (docsId: string, newTitle: string) => {
-//   try {
-//     const response = await axios.patch(
-//       `${DOCS_ROUTES.updateDocument}${docsId}`,
-//       { title: newTitle }
-//     );
-//     return response.data; // ส่งข้อมูลกลับไปยัง caller
-//   } catch (error) {
-//     console.error("Error renaming document:", error);
-//     throw error; // ส่ง error กลับไปยัง caller
-//   }
-// };
-
-
-
-// export { updateDocsTitle,};
+export const addNoteService = async (projectId: string, historyId: string, title: string, content: string) => {
+    try {
+      console.log("📤 Sending request to add note:", { projectId, historyId, title, content });
+  
+      const response = await axios.post(
+        `${BACKEND_API_URL}/projects/${projectId}/notes/add-note/${historyId}`,
+        { title, content },
+        { withCredentials: true } // ✅ Ensure auth is included
+      );
+  
+      console.log("✅ Note added successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Error adding note:", error.response?.data || error.message);
+      throw error;
+    }
+  };

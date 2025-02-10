@@ -1,8 +1,9 @@
 import { AIModel } from "src/ai/entities/ai-model.entity";
 import { Workspace } from "src/workspaces/entities/workspace.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Project } from "./project.entity";
 import { User } from "src/user/entities/user.entity";
+import { Note } from "src/note_history/entites/note.entity";
 
 @Entity()
 export class ProjectHistory {
@@ -36,6 +37,8 @@ response_keys: { key: string; meaning: string ,displayFormat:string}[]; // à¸£à¸
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'create_at' })
   createdAt: Date;
 
+  @OneToMany(() => Note, (note) => note.history)
+  image_notes: Note[];
 }
 
 

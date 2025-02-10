@@ -26,8 +26,6 @@ function WorkspacePage() {
 
   const {
     data: myWorkspace,
-    isLoading: isLoadingMyWorkspace,
-    error: errorMyWorkspace,
     refetch: refetchMyWorkspace,
   } = useFetchQuery(
     ["my-workspace",],
@@ -37,8 +35,7 @@ function WorkspacePage() {
 //   // ดึงข้อมูล workspace detail
   const {
     data: invitedWorkspace,
-    isLoading: isLoadingInvitedWorkspace,
-    error: errorInvitedWorkspace,
+
     refetch: refetchInvitedWorkspace, // <-- ดึง refetch ออกมา
 
   } = useFetchQuery(
@@ -46,10 +43,6 @@ function WorkspacePage() {
     `/workspaces/invite-workspaces`
   );
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingMyWorkspace || isLoadingInvitedWorkspace) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorMyWorkspace || errorInvitedWorkspace) return <div>Error: {errorMyWorkspace?.message || errorInvitedWorkspace?.message}</div>;
 
  
 

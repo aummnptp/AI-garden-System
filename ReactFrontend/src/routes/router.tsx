@@ -13,7 +13,7 @@ import AdminDashboardPage from '../pages/Admin/AdminDashboardPage.tsx'
 import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
 import UpdateAiPage from '../pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from '../pages/Admin/AdminAiPage.tsx'
-import PredictAiModelPage from '../pages/PredictAiModelPage.tsx'
+import PredictAiModelPage from '../pages/Project/ProjectPredictAiModelPage.tsx'
 import PredictionResultPage from '../pages/PredictionResultPage.tsx';
 import DocsPage from '../pages/DocsPage.tsx'
 import AiDetailPage from '../pages/Ai/AiDetailPage.tsx'

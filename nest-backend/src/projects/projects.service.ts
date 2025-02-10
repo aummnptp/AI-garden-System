@@ -236,7 +236,6 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     if (!history) {
       throw new NotFoundException('History not found');
     }
-
     return {
       ...history,
       filePath: history.filePath

@@ -1,11 +1,11 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Project } from "./project.entity";
 import { User } from "src/user/entities/user.entity";
 
 @Entity()
-
+@Unique(["project", "user"]) 
 export class ProjectPermission{
-    @PrimaryColumn("uuid",{name:"permission_id"})
+    @PrimaryGeneratedColumn("uuid",{name:"permission_id"})
     permissionId:string;
 
     @ManyToOne(() => Project, (project) => project.project_permissions, { onDelete: "CASCADE" })

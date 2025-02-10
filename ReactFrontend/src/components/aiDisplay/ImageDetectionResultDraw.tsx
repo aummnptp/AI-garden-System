@@ -105,10 +105,12 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
           canvas.width = canvasWidth;
           canvas.height = canvasHeight;
           context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-
+  
+          // ---------------------- แก้ส่วนนี้ ----------------------
           (detections as SegmentationDetection[]).forEach((detection, index) => {
-            const { label, polygon } = detection;
-
+            // ปรับเป็น polygons แทน polygon
+            const { label, polygons } = detection;
+  
             // ใช้สีจาก colorSet โดยวนลูป
             const color =
               colorSet && colorSet.length > 0
@@ -116,29 +118,34 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
                 : "green";
             // สำหรับ segmentation, ปรับสี fill ให้มี alpha 0.3
             const fillColor = hexToRgba(color, 0.3);
-
-            context.beginPath();
-            polygon.forEach(([x, y], idx) => {
-              if (idx === 0) {
-                context.moveTo(x, y);
-              } else {
-                context.lineTo(x, y);
-              }
+  
+            // วาดทีละ polygon ใน polygons
+            polygons.forEach((polygon) => {
+              context.beginPath();
+              polygon.forEach(([x, y], idx) => {
+                if (idx === 0) {
+                  context.moveTo(x, y);
+                } else {
+                  context.lineTo(x, y);
+                }
+              });
+              context.closePath();
+              context.fillStyle = fillColor;
+              context.strokeStyle = color;
+              context.lineWidth = 2;
+              context.fill();
+              context.stroke();
             });
-            context.closePath();
-            context.fillStyle = fillColor;
-            context.strokeStyle = color;
-            context.lineWidth = 2;
-            context.fill();
-            context.stroke();
-
-            // กำหนดตำแหน่งสำหรับ label (ปรับตามที่ต้องการ)
-            const minY = Math.min(...polygon.map((point) => point[1]));
-            const labelX = polygon.find((point) => point[1] === minY)?.[0] || 0;
-            const labelY = minY - 5;
+  
+            // หาจุดสูงสุดเพื่อแปะ label (กรณีมีหลาย polygon ก็รวมจุดหมด)
+            const allPoints = polygons.flat(); // รวมจุดจากทุก polygon
+            const minY = Math.min(...allPoints.map((point) => point[1]));
+            const labelPoint = allPoints.find((point) => point[1] === minY) || [0, 0];
+            const [labelX, labelY] = labelPoint;
+  
             context.font = "25px Arial";
             context.fillStyle = color;
-            context.fillText(`${index + 1}. ${label}`, labelX, labelY);
+            context.fillText(`${index + 1}. ${label}`, labelX, labelY - 5);
           });
         }
       }

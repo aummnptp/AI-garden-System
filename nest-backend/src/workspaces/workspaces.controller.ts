@@ -238,7 +238,7 @@ async joinWorkspace(@Body() { token }: { token: string }, @Req() req) {
       throw new BadRequestException("Token is required");
     }
     // Redirect ผู้ใช้ไปยัง Frontend
-    const frontendUrl = `http://localhost:5173/invite?token=${token}`;
+    const frontendUrl = `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
     return res.redirect(frontendUrl);
   }
 

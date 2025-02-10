@@ -9,8 +9,8 @@ import Barchart from "../../components/chart/BarChart";
 import DoughnutChart from "../../components/chart/doughnutChart";
 import SummaryCard from "../../components/chart/sumaryCard";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
-import { Link, useParams } from "react-router-dom";
-import { Button, } from "@mui/material";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Alert, Button, Snackbar, } from "@mui/material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 import { formatDate } from "../../function/util";
 
@@ -24,7 +24,8 @@ const ProjectDetailPage = () => {
   // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   // const [loading, setLoading] = useState(true);
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-
+  const navigate = useNavigate(); // ✅ ใช้ navigate สำหรับ redirect
+  const [openAlert, setOpenAlert] = useState(false); // ✅ ควบคุม Alert
 
 
 
@@ -54,8 +55,23 @@ const ProjectDetailPage = () => {
 
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
+  useEffect(() => {
+    if (errorProjectDetail?.response?.status === 403 || errorWorkspaceDetail?.response?.status === 403) {
+      setOpenAlert(true); // เปิด Alert
+      setTimeout(() => {
+        navigate(`/workspaces/${workspaceId}`); // Redirect กลับไปที่หน้า workspace
+      }, 3000); // รอ 3 วินาทีแล้วเปลี่ยนหน้า
+    }
+  }, [errorProjectDetail, errorWorkspaceDetail, navigate, workspaceId]);
+
+  if (isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
   return (
     <>
+    <Snackbar open={openAlert} autoHideDuration={6000}>
+        <Alert severity="error" sx={{ width: "100%" }}>
+          this project not allowed
+        </Alert>
+      </Snackbar>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
         <Sidebar workspaceName={workspaceDetail.name} 

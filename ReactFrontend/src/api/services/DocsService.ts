@@ -3,7 +3,7 @@ import DOCS_ROUTES from "../routes/DocsRoutes";
 
 axios.defaults.withCredentials = true;
 
-const addTitleService = async () => {
+export const addTitleService = async () => {
   try {
     const response = await axios.post(
       `${DOCS_ROUTES.addTitle}`,
@@ -15,7 +15,8 @@ const addTitleService = async () => {
     throw error;
   }
 };
-const addSubtitleService = async (docsId: string) => {
+
+export const addSubtitleService = async (docsId: string) => {
   try {
     const response = await axios.post(
       `${DOCS_ROUTES.addSubtitle}${docsId}`,
@@ -28,7 +29,7 @@ const addSubtitleService = async (docsId: string) => {
   }
 };
 
-const updateDocsTitleService = async (docsId: string, newTitle: string) => {
+export const updateDocsTitleService = async (docsId: string, newTitle: string) => {
   try {
     const response = await axios.patch(
       `${DOCS_ROUTES.updateDocument}${docsId}`,
@@ -41,7 +42,7 @@ const updateDocsTitleService = async (docsId: string, newTitle: string) => {
   }
 };
 
-const updateSubDocsTitleService = async (subDocsId: string, newTitle: string) => {
+export const updateSubDocsTitleService = async (subDocsId: string, newTitle: string) => {
   try {
 
     const response = await axios.patch(
@@ -55,7 +56,7 @@ const updateSubDocsTitleService = async (subDocsId: string, newTitle: string) =>
   }
 };
 
-const deleteTitleService = async (docsId: string) => {
+export const deleteTitleService = async (docsId: string) => {
   try {
     const response = await axios.delete(
       `${DOCS_ROUTES.deleteDocument}${docsId}`,
@@ -67,7 +68,7 @@ const deleteTitleService = async (docsId: string) => {
   }
 };
 
-const deleteSubTitleService = async (subDocsId: string) => {
+export const deleteSubTitleService = async (subDocsId: string) => {
   try {
     const response = await axios.delete(
       `${DOCS_ROUTES.deleteSubDocument}${subDocsId}`,
@@ -79,7 +80,7 @@ const deleteSubTitleService = async (subDocsId: string) => {
   }
 };
 
-const changeDocsVisiblityService = async (docsId: string, hiddenChangeState: boolean) => {
+export const changeDocsVisiblityService = async (docsId: string, hiddenChangeState: boolean) => {
   try {
     const response = await axios.patch(
       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/update-docs/${docsId}`,
@@ -92,7 +93,7 @@ const changeDocsVisiblityService = async (docsId: string, hiddenChangeState: boo
   }
 };
 
-const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeState: boolean) => {
+export const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeState: boolean) => {
   try {
     const response = await axios.patch(
       `${DOCS_ROUTES.updateSubDocument}${subDocsId}`,
@@ -105,7 +106,7 @@ const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeStat
   }
 };
 
- const saveDocsOrderService = async (docsToSave: { docsId: string; order: number }[]) => {
+export const saveDocsOrderService = async (docsToSave: { docsId: string; order: number }[]) => {
   try {
     const response = await axios.patch(
       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-docs-order`,
@@ -119,7 +120,7 @@ const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeStat
 };
 
 // ฟังก์ชันสำหรับบันทึกลำดับของเอกสารย่อย
- const saveSubDocsOrderService = async (subDocsToSave: { docsId: string; subDocsId: string; order: number }[]) => {
+export const saveSubDocsOrderService = async (subDocsToSave: { docsId: string; subDocsId: string; order: number }[]) => {
   try {
     const response = await axios.patch(
       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs/save-subdocs-order`,
@@ -130,12 +131,4 @@ const changeSubDocsVisiblityService = async (subDocsId: string, hiddenChangeStat
     console.error("Error saving subdocs order:", error);
     throw error;
   }
-};
-
-export {
-  updateDocsTitleService, updateSubDocsTitleService,
-  addSubtitleService, addTitleService, deleteTitleService,
-  deleteSubTitleService, changeDocsVisiblityService,
-  changeSubDocsVisiblityService, saveDocsOrderService,
-  saveSubDocsOrderService,
 };

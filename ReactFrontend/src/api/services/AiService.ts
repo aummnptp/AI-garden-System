@@ -2,7 +2,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const uploadFileService = async (serviceUri: string, file: File) => {
+export const uploadFileService = async (serviceUri: string, file: File) => {
   if (!serviceUri) {
     throw new Error("Service URI is required");
   }
@@ -42,7 +42,7 @@ const uploadFileService = async (serviceUri: string, file: File) => {
   }
 };
 
-const updateAiModelService = async (
+export const updateAiModelService = async (
     aiId: string,
     modelData: any,
     file?: File
@@ -70,4 +70,3 @@ const updateAiModelService = async (
     }
   };
 
-export { uploadFileService,updateAiModelService };

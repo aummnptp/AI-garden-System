@@ -144,8 +144,6 @@ const handleChangeRole = async(memberId: string ,newRole: string) => {
 
 const { 
   data: inviteLink,
-  isLoading: isLoadingInviteLink,
-  error: errorInviteLink,
   refetch: refetchInviteLink
 } = useFetchQuery(
   ["invite-link", workspaceId ?? ""],
@@ -154,8 +152,6 @@ const {
 
 const {
   data: workspaceDetail,
-  isLoading: isLoadingProjectDetail,
-  error: errorProjectDetail,
   // refetch: refetchProjectDetail
 } = useFetchQuery(
   ["project-detail", workspaceId ?? ""],
@@ -165,8 +161,7 @@ const {
 //   // ดึงข้อมูล workspace detail
 const {
   data: userDatas,
-  isLoading: isLoadingUserData,
-  error: errorUserData,
+
   refetch: refetchUserDatas
 } = useFetchQuery(
   ["available-user", workspaceId ?? ""],
@@ -175,8 +170,7 @@ const {
 
 const {
   data: pendingUserDatas,
-  // isLoading: isLoadingPendingData,
-  // error: errorPendingData,
+
   refetch: refetchPendingUser
 } = useFetchQuery(
   ["pending-user", workspaceId ?? ""],
@@ -184,17 +178,12 @@ const {
 );
 const {
   data: memberDatas,
-  // isLoading: isLoadingMemberData,
-  // error: errorMemberData,
+
   refetch: refetchMemberDatas
 } = useFetchQuery(
   ["member-user", workspaceId ?? ""],
   `/workspaces/members-profiles/${workspaceId}`
 );
-// ตรวจสอบสถานะการโหลด
-if (isLoadingProjectDetail || isLoadingUserData) return <div>Loading...</div>;
-// ตรวจสอบข้อผิดพลาด
-if (errorProjectDetail || errorUserData) return <div>Error: {errorProjectDetail?.message || errorUserData?.message}</div>;
 
   return (
     <>
@@ -453,6 +442,7 @@ if (errorProjectDetail || errorUserData) return <div>Error: {errorProjectDetail?
                       <TextField
                         id="standard-number"
                         defaultValue={inviteLink}
+                        value={inviteLink}
                         InputProps={{
                           readOnly: true,
                         }}

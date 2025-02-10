@@ -15,15 +15,19 @@ const ProjectHistoryPage = () => {
   }>();
   const {
     data: historyData,
-    isLoading,
-    error,
   } = useFetchQuery(
     ["project-history", workspaceId ?? "", projectId ?? ""],
     `/workspaces/${workspaceId}/projects/all-history/${projectId}`
   );
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
+  const {
+    data: projectNotes = [], // ✅ กำหนดค่าเริ่มต้นเป็น []
+    isLoading: isLoadingNotes,
+    error: errorNotes,
+} = useFetchQuery(
+    ["project-notes", projectId ?? ""], // ✅ queryKey ให้กระชับขึ้น
+    `/projects/${projectId}/notes`
+);
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
@@ -70,7 +74,7 @@ const ProjectHistoryPage = () => {
               />
             ) : // <div></div>
             historyTab === "Note" ? (
-              <NoteSection projectNoteData={[]} />
+              <NoteSection projectNoteData={projectNotes} />
             ) : null}
           </div>
         </div>

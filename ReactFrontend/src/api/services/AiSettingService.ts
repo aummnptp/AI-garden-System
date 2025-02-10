@@ -4,7 +4,7 @@ import AI_SETTING_ROUTES from "../routes/AiSettingRoutes";
 
 axios.defaults.withCredentials = true;
 
-const updateAISettingService = async (maxUsagePerDay: number, isLimitEnabled: boolean) => {
+export const updateAISettingService = async (maxUsagePerDay: number, isLimitEnabled: boolean) => {
     try {
       const response = await axios.put(
         `${AI_SETTING_ROUTES.updateSetting}`,
@@ -20,5 +20,3 @@ const updateAISettingService = async (maxUsagePerDay: number, isLimitEnabled: bo
     }
   };
 
-
-export {updateAISettingService};
