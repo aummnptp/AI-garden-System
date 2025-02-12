@@ -78,8 +78,11 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
         {/* Render each response key */}
         <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} 
         aiDisplayType={ai_text_type || ''} colorSet={predictResult.ai_model.colorSet}/>
+        
         <TextResultDisplay predictResult={predictResult} tags={[predictResult.ai_model.ai_tag]}
-        aiName={predictResult.ai_model.name}ai_type={predictResult.ai_model.ai_type} />
+        aiName={predictResult.ai_model.name}ai_type={predictResult.ai_model.ai_type} 
+        colorSet={predictResult.ai_model.colorSet} 
+        />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>

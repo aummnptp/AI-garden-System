@@ -259,39 +259,19 @@ const AddAiPage: React.FC = () => {
                 description={description}
                 serviceUri={serviceUri}
                 aiType={aiType}
+                enable={enable}
+                visible={visible}
                 onNameChange={setAiName}
                 onDescriptionChange={setDescription}
                 onServiceUriChange={setServiceUri}
                 onTypeChange={setAiType}
+                onEnableChange={setEnable}    
+                onVisibleChange={setVisible} 
               />
               <ColorPickerTags
                 colors={colorSet}
                 onChange={(newColors: string[]) => setColorSet(newColors)}
               />
-              <div className="form-group">
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={enable}
-                      onChange={(e) => setEnable(e.target.checked)}
-                      name="enableSwitch"
-                      color="primary"
-                    />
-                  }
-                  label="Enable"
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={visible}
-                      onChange={(e) => setVisible(e.target.checked)}
-                      name="visibilitySwitch"
-                      color="primary"
-                    />
-                  }
-                  label="Visibility"
-                />
-              </div>
               <AiFileUpload
                 serviceUri={serviceUri}
                 onServiceUriChange={setServiceUri}

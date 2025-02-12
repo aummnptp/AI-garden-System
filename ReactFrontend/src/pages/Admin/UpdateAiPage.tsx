@@ -249,44 +249,24 @@ const UpdateAiPage: React.FC = () => {
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
             <form onSubmit={handleSubmit} className="m-6 space-y-4">
-              <AiBasicInfo
+            <AiBasicInfo
                 aiName={aiName}
                 description={description}
                 serviceUri={serviceUri}
                 aiType={aiType}
+                enable={enable}
+                visible={visible}
                 onNameChange={setAiName}
                 onDescriptionChange={setDescription}
                 onServiceUriChange={setServiceUri}
                 onTypeChange={setAiType}
+                onEnableChange={setEnable}    
+                onVisibleChange={setVisible} 
               />
               <ColorPickerTags
               colors={colorSet}
               onChange={(newColors: string[]) => setColorSet(newColors)}
               />
-              <div className="form-group">
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={enable}
-                      onChange={(e) => setEnable(e.target.checked)}
-                      name="enableSwitch"
-                      color="primary"
-                    />
-                  }
-                  label="Enable"
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={visible}
-                      onChange={(e) => setVisible(e.target.checked)}
-                      name="visibilitySwitch"
-                      color="primary"
-                    />
-                  }
-                  label="Visibility"
-                />
-              </div>
               <AiFileUpload
                 serviceUri={serviceUri}
                 onServiceUriChange={setServiceUri}

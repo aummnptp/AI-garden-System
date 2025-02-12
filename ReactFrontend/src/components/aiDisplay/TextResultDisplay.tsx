@@ -24,12 +24,14 @@ interface TextResultDisplayProps {
   tags?: string[];
   aiName:string;
   ai_type:string;
+  colorSet?: string[]; 
 }
 
 const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
   predictResult,
   tags = [],
-  aiName,ai_type
+  aiName,ai_type,
+  colorSet = [], 
 }) => {
   const getMeaningForKey = (key: string) => {
     const keyWithMeaning = predictResult.response_keys?.find(
@@ -72,26 +74,29 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
           <i className="bi bi-clipboard-check-fill text-blue-600 mr-2"></i> ผลลัพธ์การทำนาย
         </h4>
         <table className="min-w-full mt-4 bg-white rounded-lg shadow">
-          <thead>
+        <thead>
             <tr className="bg-indigo-600 text-white">
               <th className="py-3 px-4 text-left text-lg font-medium"></th>
-              {isDetectionBased ? (
-                Object.keys(detections[0] || {}).filter(key => {
-                  const fullKey = `detections.${key}`;
-                  const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
-                  return keyItem?.displayFormat === 'text';
-                }).map((key) => (
-                  <th key={key} className="py-3 px-4 text-left text-lg font-medium">
-                    {getMeaningForKey(`detections.${key}`)}
-                  </th>
-                ))
-              ) : (
-                predictResult.response_keys?.filter(keyItem => keyItem.displayFormat === 'text').map((keyItem) => (
-                  <th key={keyItem.key} className="py-3 px-4 text-left text-lg font-medium">
-                    {keyItem.meaning}
-                  </th>
-                ))
-              )}
+              {isDetectionBased
+                ? Object.keys(detections[0] || {})
+                    .filter((key) => {
+                      const fullKey = `detections.${key}`;
+                      const keyItem = predictResult.response_keys?.find((item) => item.key === fullKey);
+                      return keyItem?.displayFormat === "text";
+                    })
+                    .map((key) => (
+                      <th key={key} className="py-3 px-4 text-left text-lg font-medium">
+                        {getMeaningForKey(`detections.${key}`)}
+                      </th>
+                    ))
+                : predictResult.response_keys
+                    ?.filter((keyItem) => keyItem.displayFormat === "text")
+                    .map((keyItem) => (
+                      <th key={keyItem.key} className="py-3 px-4 text-left text-lg font-medium">
+                        {keyItem.meaning}
+                      </th>
+                    ))}
+              <th className="py-3 px-4 text-left text-lg font-medium">Color</th> {/* ✅ เพิ่มคอลัมน์สี */}
             </tr>
           </thead>
           <tbody>
@@ -102,28 +107,43 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
                     <td className="py-3 px-4 text-indigo-800 text-2xl font-medium">
                       {index + 1}
                     </td>
-                    {Object.keys(detection).filter(key => {
-                      const fullKey = `detections.${key}`;
-                      const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
-                      return keyItem?.displayFormat === 'text';
-                    }).map((key) => (
-                      <td key={key} className="py-3 px-4 text-gray-800 text-xl">
-                        {Array.isArray(detection[key])
-                          ? detection[key].map((coord: number[], coordIndex: number) => (
-                              <div key={coordIndex}>{coord.join(", ")}</div>
-                            ))
-                          : formatValue(detection[key]) || "-"}
-                      </td>
-                    ))}
+                    {Object.keys(detection)
+                      .filter((key) => {
+                        const fullKey = `detections.${key}`;
+                        const keyItem = predictResult.response_keys?.find((item) => item.key === fullKey);
+                        return keyItem?.displayFormat === "text";
+                      })
+                      .map((key) => (
+                        <td key={key} className="py-3 px-4 text-gray-800 text-xl">
+                          {Array.isArray(detection[key])
+                            ? detection[key].map((coord: number[], coordIndex: number) => (
+                                <div key={coordIndex}>{coord.join(", ")}</div>
+                              ))
+                            : formatValue(detection[key]) || "-"}
+                        </td>
+                      ))}
+                    <td className="py-3 px-4 text-gray-800 text-xl">
+                      <div
+                        className="w-8 h-8 rounded-full border-2"
+                        style={{
+                          backgroundColor: colorSet[index % colorSet.length] || "#4f46e5",
+                        }}
+                      ></div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={Object.keys(detections[0] || {}).filter(key => {
-                    const fullKey = `detections.${key}`;
-                    const keyItem = predictResult.response_keys?.find(item => item.key === fullKey);
-                    return keyItem?.displayFormat === 'text';
-                  }).length + 1} className="text-center py-4">
+                  <td
+                    colSpan={
+                      Object.keys(detections[0] || {}).filter((key) => {
+                        const fullKey = `detections.${key}`;
+                        const keyItem = predictResult.response_keys?.find((item) => item.key === fullKey);
+                        return keyItem?.displayFormat === "text";
+                      }).length + 2
+                    }
+                    className="text-center py-4"
+                  >
                     ไม่มีข้อมูล
                   </td>
                 </tr>
@@ -131,11 +151,23 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
             ) : (
               <tr className="bg-gray-100 border-b">
                 <td className="py-3 px-4 text-indigo-800 text-2xl font-medium">1</td>
-                {predictResult.response_keys?.filter(keyItem => keyItem.displayFormat === 'text').map((keyItem) => (
-                  <td key={keyItem.key} className="py-3 px-4 text-gray-800 text-xl">
-                    {predictResult.prediction[keyItem.key] !== undefined ?formatValue( predictResult.prediction[keyItem.key]) : "-"}
-                  </td>
-                ))}
+                {predictResult.response_keys
+                  ?.filter((keyItem) => keyItem.displayFormat === "text")
+                  .map((keyItem) => (
+                    <td key={keyItem.key} className="py-3 px-4 text-gray-800 text-xl">
+                      {predictResult.prediction[keyItem.key] !== undefined
+                        ? formatValue(predictResult.prediction[keyItem.key])
+                        : "-"}
+                    </td>
+                  ))}
+                <td className="py-3 px-4 text-gray-800 text-xl">
+                  <div
+                    className="w-8 h-8 rounded-full border-2"
+                    style={{
+                      backgroundColor: colorSet[0] || "#4f46e5",
+                    }}
+                  ></div>
+                </td>
               </tr>
             )}
           </tbody>

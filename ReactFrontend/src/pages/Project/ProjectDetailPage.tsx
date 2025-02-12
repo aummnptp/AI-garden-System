@@ -24,8 +24,8 @@ const ProjectDetailPage = () => {
   // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   // const [loading, setLoading] = useState(true);
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const navigate = useNavigate(); // ✅ ใช้ navigate สำหรับ redirect
-  const [openAlert, setOpenAlert] = useState(false); // ✅ ควบคุม Alert
+  const navigate = useNavigate(); 
+  const [openAlert, setOpenAlert] = useState(false); 
 
 
 
