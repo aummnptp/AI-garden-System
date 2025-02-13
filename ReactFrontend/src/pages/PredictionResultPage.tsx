@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
@@ -10,7 +10,7 @@ import { NoteAddOutlined } from '@mui/icons-material';
 
 const PredictionResultPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const { modelId } = useParams<{ modelId: string }>();
+
   const [note, setNote] = useState(''); // State for note
   const [isEditing, setIsEditing] = useState(false); // State for editing mode
   const [savedNote, setSavedNote] = useState(''); // State for saved note

@@ -1,11 +1,7 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from "react";
+import  { ChangeEvent, DragEvent, useEffect, useState } from "react";
 import {
   ExclamationCircleOutlined,
-  PictureOutlined,
-  ScheduleOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+
 } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";

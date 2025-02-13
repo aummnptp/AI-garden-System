@@ -1,7 +1,6 @@
-import { BarsOutlined, FileDoneOutlined, FileImageOutlined, HistoryOutlined, LaptopOutlined, PlaySquareOutlined, ProfileOutlined, ProjectOutlined, SettingOutlined} from '@ant-design/icons'
-import { AdminPanelSettings, Assessment, AssessmentOutlined, Desk, Monitor, PeopleAltOutlined, Psychology, PsychologyOutlined, Shield } from '@mui/icons-material';
-import React from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom';
+import {  AssessmentOutlined, Desk, Monitor, PeopleAltOutlined, PsychologyOutlined, } from '@mui/icons-material';
+
+import { Link, useLocation,  } from 'react-router-dom';
 
 
 

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";

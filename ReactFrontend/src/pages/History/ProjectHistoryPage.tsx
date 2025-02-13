@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import{  useState } from "react";
+import {  useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import { NoteAltOutlined, UploadFile } from "@mui/icons-material";

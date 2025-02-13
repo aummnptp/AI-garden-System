@@ -1,44 +1,16 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
-import MiniFooter from '../../components/MiniFooter'
+
 import Sidebar from '../../components/Sidebar'
-import { Box, Button, Dialog, DialogActions, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogTitle, FormControl, FormControlLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import ProjectImageInput from '../../components/input/ProjectImageInput'
 import { Close } from '@mui/icons-material'
 import { useFetchQuery } from '../../hook/useFetchQuery'
 
-interface Project {
-  project_id: number;
-  project_name: string;
-  project_desc: string;
-  input_type: string;
-  image_path: string | null;
-  create_at: string;
-  update_at: string;
-  permission_only: boolean;
-  ai_model: AIModel;
-}
 
-interface AIModel {
-  id: number;
-  name: string;
-  description: string;
-  ai_type: string;
-  ai_tag: string[];
-  input_desc: string;
-  api_uri: string;
-  response_keys: ResponseKey[];
-  createdAt: string;
-  updatedAt: string;
-  imagePath: string | null;
-}
 
-interface ResponseKey {
-  key: string;
-  meaning: string;
-  displayFormat: string;
-}
+
 
 const ProjectSetting = () => {
   
@@ -49,10 +21,9 @@ const ProjectSetting = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   const [image, setImage] = useState<File | null>(null);
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([]); 
-  // const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
-  const [loading, setLoading] = useState(true);
-//  const [projectDetail, setProjectDetail] = useState<Project | null>(null);
+
+
+  
  const isDeleteDisabled = confirmText !== name;
   // สำหรับ demo รูป *****
 

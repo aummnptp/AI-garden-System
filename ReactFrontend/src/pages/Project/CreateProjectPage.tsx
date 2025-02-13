@@ -2,9 +2,8 @@ import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 
 import Sidebar from '../../components/Sidebar'
 import { Input } from "antd";
-// import AiData from '../../data/AiData';
 import CreateProjectCard from '../../components/card/CreateProjectCard';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
@@ -18,7 +17,6 @@ function CreateProjectPage() {
  const navigate = useNavigate();
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription ] = useState('');
-  // const [projectImage, setProjecImage] = useState('');
 
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);

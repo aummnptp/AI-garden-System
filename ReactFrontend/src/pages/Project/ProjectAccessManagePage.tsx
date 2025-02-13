@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import MiniFooter from "../../components/MiniFooter";
+
 import Sidebar from "../../components/Sidebar";
-import { Button, Checkbox, TextField } from "@mui/material";
+import { Button, Checkbox, } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
 import { useFetchQuery } from "../../hook/useFetchQuery";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {  useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 

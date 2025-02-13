@@ -11,8 +11,7 @@ import {
     DialogActions,
     Typography,
 } from '@mui/material';
-import formatDate from '../../function/formatDate';
-import formatTime from '../../function/formatTime';
+
 import { styled } from '@mui/material/styles';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

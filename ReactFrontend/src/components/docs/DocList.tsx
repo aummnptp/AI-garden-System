@@ -1,18 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Reorder } from "framer-motion";
 
-import EditableInput from "./EditableInput";
-import EditModal from "./EditModal";
+
 import DeleteDocModal from "./modal/DeleteDocModal";
 import {
   DeleteOutlined,
   EditOutlined,
-  MoreOutlined,
+
   PlusCircleOutlined,
 } from "@ant-design/icons";
 
-import { Button, Divider, Menu, MenuItem, TextField } from "@mui/material";
-import axios from "axios";
+import { Button,Menu, MenuItem, TextField } from "@mui/material";
+
 import { Link, useParams } from "react-router-dom";
 import SubDocList from "./subDocList";
 import DeleteSubDocModal from "./modal/DeleteSubDocModal";

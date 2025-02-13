@@ -14,7 +14,9 @@ const config = {
     entities: ["dist/**/*.entity{.ts,.js}"],
     migrations: ["dist/migrations/*{.ts,.js}"],
     autoLoadEntities: true,
-    synchronize: true 
+    synchronize: true ,
+    retryAttempts: 10, 
+    retryDelay: 5000,
 }
 
 export default registerAs('typeorm', () => config)

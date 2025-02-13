@@ -24,16 +24,12 @@ import AIDemoPage from '../pages/Ai/AIDemoPage.tsx'
 import UserListPage from '../pages/Admin/UserListPage.tsx'
 
 import Layout from '../Layout.tsx'
-import { createTheme, ThemeProvider } from '@mui/material'
 import ProjectSetting from '../pages/Project/ProjectSettingPage.tsx'
 import ProjectAccessManagePage from '../pages/Project/ProjectAccessManagePage.tsx'
 import UserDetailPage from '../pages/Admin/UserDetailPage.tsx'
-import Videotest from '../pages/Videotest.tsx'
 import RoleGuard from '../components/auth/RoleGurad.tsx'
-import { AuthProvider } from '../context/AuthContext.tsx'
 import WorkspaceRoleGuard from '../components/auth/WorkspaceRoleGuard.tsx'
 import HistoryDetailPage from '../pages/History/HistoryDetailPage.tsx'
-import AiDemoResultPage from "../pages/Ai/AiDemoResultPage";
 import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
 
 export const router = createBrowserRouter([

@@ -1,11 +1,9 @@
 import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
-import { Button, Card, CardContent } from '@mui/material';
+import { Button,} from '@mui/material';
 import { Link } from 'react-router-dom';
 
-import axios from 'axios';
 
-import ProjectImage from './ProjectLetterImage';
 
 
 interface AiCardProps {

@@ -14,6 +14,7 @@ import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
 import { Close, Delete } from "@mui/icons-material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
+import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
 
 const WorkspaceSettingPage = () => {
   // let { workspaceId } = useParams();
@@ -41,28 +42,11 @@ const WorkspaceSettingPage = () => {
 
 
 
-  // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
   const handleSave = async () => {
     try {
-      const payload = {
-        name,
-        description,
-      };
-
-      // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/update/${workspaceId}`,
-        payload
-      ,{
-        withCredentials: true,}
-      );
+      await updateWorkspaceService(workspaceId ?? "", name, description);
       window.location.href = "/workspaces";
-      // จัดการเมื่ออัปเดตสำเร็จ
-      console.log("อัปเดต Workspace สำเร็จ:", response.data);
-
     } catch (error) {
-      // จัดการข้อผิดพลาด
-      console.error("เกิดข้อผิดพลาดในการอัปเดต Workspace:", error);
       alert("เกิดข้อผิดพลาดในการอัปเดต Workspace");
     }
   };
@@ -76,14 +60,9 @@ const WorkspaceSettingPage = () => {
   };
   const handleDelte = async () => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/delete/${workspaceId}`,
-        {
-          withCredentials: true,}
-      );
+      await deleteWorkspaceService(workspaceId ?? "");
       window.location.href = "/workspaces";
-      console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการลบ Workspace:", error);
       alert("เกิดข้อผิดพลาดในการลบ Workspace");
     }
   };

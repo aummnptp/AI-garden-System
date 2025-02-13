@@ -1,9 +1,9 @@
-# ---- Stage 1: Build ----
-    FROM node:18 AS build
+# ---- Base Image ----
+    FROM node:18 AS base
 
     WORKDIR /app
     
-    # คัดลอกไฟล์ที่จำเป็นต่อการติดตั้ง dependencies
+    # คัดลอก package.json และ package-lock.json เพื่อติดตั้ง dependencies
     COPY package.json package-lock.json ./
     
     # ติดตั้ง dependencies
@@ -12,17 +12,9 @@
     # คัดลอกโค้ดทั้งหมด
     COPY . .
     
-    # รันคำสั่ง build ของ Vite
-    RUN npm run build
+    # เปิดพอร์ตที่ใช้ใน Vite (ปกติคือ 5173)
+    EXPOSE 5173
     
-    # ---- Stage 2: Production (Serve) ----
-    FROM nginx:alpine
+    # รันแบบ Development Mode
+    CMD ["npm", "run", "dev", "--", "--host"]
     
-    # คัดลอกไฟล์ในโฟลเดอร์ dist (ที่ได้จากการ build)
-    COPY --from=build /app/dist /usr/share/nginx/html
-    
-    # เปิด port 80
-    EXPOSE 80
-    
-    # คำสั่งเริ่มต้น
-    CMD ["nginx", "-g", "daemon off;"]

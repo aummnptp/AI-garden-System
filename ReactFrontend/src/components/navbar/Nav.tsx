@@ -1,14 +1,14 @@
-import { Avatar, Button, Menu, MenuItem, Typography } from "@mui/material";
-import axios from "axios";
-import React, { useState, useRef, useEffect } from "react";
+import { Button, } from "@mui/material";
+
+import React, {  useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Cookies, withCookies } from "react-cookie";
+
 import {
   acceptInvitation,
   rejectInvitation,
 } from "../../api/services/MemberService";
 import { useFetchQuery } from "../../hook/useFetchQuery";
-import { AuthContext, useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import ProfileMenu from "./ProfileMenu";
 import NotificationMenu from "./NotificationTab";
 
@@ -68,7 +68,7 @@ function Nav() {
         <div className="flex items-center space-x-3">
           <img className="w-12 h-12 rounded-full" src="/images/logo/IMG_3713.png" />
           <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap">
-            AI Garden System
+            AI Garden
           </span>
         </div>
       </Link>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+
 import MiniFooter from "../../components/MiniFooter";
-import { Button } from "@mui/material";
+
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
 import Sidebar from "../../components/Sidebar";
 import { useFetchQuery } from "../../hook/useFetchQuery";

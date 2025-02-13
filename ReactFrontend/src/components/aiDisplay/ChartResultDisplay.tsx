@@ -1,5 +1,5 @@
 import React from "react";
-import { ClassNames } from "@emotion/react";
+
 import TextResultDisplay from "./TextResultDisplay";
 import RegressionChart from "../chart/RegressionChart";
 

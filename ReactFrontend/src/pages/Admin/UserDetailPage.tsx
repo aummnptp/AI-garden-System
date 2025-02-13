@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import MiniFooter from '../../components/MiniFooter'
 import AdminSidebar from '../../components/AdminSidebar'
 import { Link, useParams } from 'react-router-dom';
 import AiApprovedListTable from '../../components/table/AiApprovedListTable';
 import axios from 'axios';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+
 import WorkspaceCard from '../../components/card/WorkspaceCard';
 import AddAIDialog from '../../components/AddAIDialog';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from '@mui/material';

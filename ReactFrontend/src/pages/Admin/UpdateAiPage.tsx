@@ -5,7 +5,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 import axios from 'axios';
 import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
 import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Switch } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle,} from '@mui/material';
 import ColorPickerTags from '../../components/ai/ColorPickerTags';
 import { useQuery } from '@tanstack/react-query';
 import { AiModelData, ResponseKey } from '../../types/Ai';

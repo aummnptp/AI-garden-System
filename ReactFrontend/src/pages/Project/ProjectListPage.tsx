@@ -1,6 +1,6 @@
-import { Button, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Button,} from "@mui/material";
+
+import { Link, useParams } from "react-router-dom";
 import ProjectCard from "../../components/card/ProjectCard";
 // import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";

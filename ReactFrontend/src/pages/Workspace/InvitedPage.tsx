@@ -39,7 +39,7 @@ const InvitePage = () => {
 
     
           Cookies.set("redirect_after_login", `/invite?token=${token}`, { expires: 1 / 144, path: "/" }); // หมดอายุใน 10 นาที
-          console.log("🔍 Storing redirect in cookies:", `/invite?token=${token}`);
+          console.log("Storing redirect in cookies:", `/invite?token=${token}`);
 
           window.location.href = `${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`;
         }

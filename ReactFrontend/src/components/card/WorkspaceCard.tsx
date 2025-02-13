@@ -1,8 +1,6 @@
 import React from 'react'
 
-import {MoreOutlined}  from '@ant-design/icons';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
-import { AvatarGroup } from '@mui/material';
 
 interface WorkspaceCardProps {
   id: number;

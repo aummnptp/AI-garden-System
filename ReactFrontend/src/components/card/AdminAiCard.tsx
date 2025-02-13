@@ -1,8 +1,6 @@
-import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
-import { Button, Card, CardContent } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { EditOffOutlined, EditOutlined } from '@mui/icons-material';
 
 interface AdminAiCardProps {
     id:string;

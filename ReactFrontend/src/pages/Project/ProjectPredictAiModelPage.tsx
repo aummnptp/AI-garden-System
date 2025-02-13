@@ -51,7 +51,6 @@ interface ResponseKey {
 
 const PredictAiModelPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const { modelId } = useParams<{ modelId: string }>();
   const [uploadStep, setUploadStep] = useState(1);
   const [file, setFile] = useState<File | null>(null);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
@@ -65,20 +64,13 @@ const PredictAiModelPage: React.FC = () => {
   const [alertText, setAlertText] = useState<string | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const [projectData, setProjectData] = useState([]);
   const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
 
-  if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
-    return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
-  }
 
-  const workspaceIdNum = parseInt(workspaceId, 10);
-  const projectIdNum = parseInt(projectId, 10);
 
-  const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
+
 
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {

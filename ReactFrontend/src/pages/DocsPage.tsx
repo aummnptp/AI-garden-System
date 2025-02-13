@@ -1,9 +1,9 @@
 
-import { Button, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { Reorder } from "framer-motion";
+
+import { useEffect,  useState } from "react";
+
 import "react-quill/dist/quill.snow.css"; // import styles
-import { Editor } from "@tinymce/tinymce-react";
+
 import DocList from "../components/docs/DocList";
 import ContentViewer from "../components/docs/ContentViewer";
 import ContentEditor from "../components/docs/ContentEditor";
@@ -11,7 +11,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import SaveContentModal from "../components/docs/modal/SaveContentModal";
 import DiscardContentModal from "../components/docs/modal/DiscardConentModal";
-import { Docs } from "../types/Docs";
+
 
 
 
