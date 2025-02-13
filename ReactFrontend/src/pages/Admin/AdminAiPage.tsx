@@ -7,48 +7,23 @@ import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
-
-import axios from "axios";
-import AISettingDialog from "../../components/ai/AISettingDialog";
 import AISettingsComponent from "../../components/ai/AISettingsComponent";
 import { AIDataType } from "../../types/Ai";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
 
 function AdminAi() {
 
-  const [AIData, setAIData] = useState<AIDataType[]>([]);
-  const fetchAIData = () => {
 
-    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
-      .then(response => {
-        setAIData(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the workspace data!", error);
-      });
-  };
+  const {
+      data: AIData,
+    } = useFetchQuery(
+      ["ai-models", ],
+      `/ai-models/`
+    );
+ 
 
-  useEffect(() => {
-    fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [limit, setLimit] = useState<number>(10);  // ค่าตั้งต้นเป็น 10
-  const [isLimitEnabled, setIsLimitEnabled] = useState<boolean>(true);
 
-  const handleDialogOpen = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-  };
-
-  const handleSaveSettings = (newLimit: number, isLimitEnabled: boolean) => {
-    setLimit(newLimit);
-    setIsLimitEnabled(isLimitEnabled);
-    // บันทึกการตั้งค่าใหม่ไปที่ backend ที่นี่ (อาจใช้ API call)
-    console.log('Saved new settings:', newLimit, isLimitEnabled);
-  };
 
   return (
     <>
@@ -115,7 +90,7 @@ function AdminAi() {
           <div className="px-20 p-8 mt-4 h-fit w-[95%] grid grid-cols-3 gap-4 bg-white rounded-[15px] justify-self-center relative">
             {/* Card */}
 
-            {AIData.map((data) => (
+            {AIData.map((data:AIDataType) => (
               <AdminAiCard
               id={data.aiId}
               name={data.name}

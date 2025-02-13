@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
+
 import DialogTitle from "@mui/material/DialogTitle";
 import { QRCodeCanvas } from "qrcode.react";
 import { saveAs } from "file-saver"; 
@@ -12,26 +11,15 @@ import {
   Button,
   Chip,
   FormControl,
-  FormHelperText,
-  List,
-  ListItem,
-  ListItemText,
   MenuItem,
   TextField,
 } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
+import { memberData } from "../../types/Invitation";
 
-interface memberData {
-  id: number;
-  name: string;
-  email: string;
-  picture:string;
-  role: string;
-}
 
 interface userData {
   id: number;
@@ -42,18 +30,16 @@ interface userData {
 }
 
 const WorkspaceInvitationPage = () => {
-  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const { workspaceId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
   const [removeMembeIndex, setRemoveMembeIndex] = useState<number | null>(null);
   
   const handleOpenRemoveMemberDialog = (index: number) => {
-    setRemoveMembeIndex(index);  // เก็บค่า index ของสมาชิกที่ต้องการให้เปิด dialog
+    setRemoveMembeIndex(index); 
   };
   
   const handleCloseRemoveMemberDialog= () => {
-    setRemoveMembeIndex(null);  // ปิด dialog โดยการรีเซ็ต index
+    setRemoveMembeIndex(null);  
   };
 
  
@@ -189,7 +175,8 @@ const {
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name} />
+        <Sidebar workspace={workspaceDetail} />
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
@@ -383,7 +370,6 @@ const {
                             e.currentTarget.onerror = null; // ป้องกัน loop error
                             e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
                           }}
-                          alt="profile"
                           style={{
                             width: 30,
                             height: 30,
@@ -480,12 +466,7 @@ const {
                   >
                     Download QR Code
                   </Button>
-                  {/* <Button
-                    variant="outlined"
-                    onClick={() => refetchInviteLink()} // โหลดลิงก์เชิญใหม่
-                  >
-                    Refresh Invite Link
-                  </Button> */}
+
                   </div>
                 </div>
               </div>

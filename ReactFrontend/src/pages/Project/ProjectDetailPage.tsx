@@ -55,14 +55,7 @@ const ProjectDetailPage = () => {
 
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
-  useEffect(() => {
-    if (errorProjectDetail?.response?.status === 403 || errorWorkspaceDetail?.response?.status === 403) {
-      setOpenAlert(true); // เปิด Alert
-      setTimeout(() => {
-        navigate(`/workspaces/${workspaceId}`); // Redirect กลับไปที่หน้า workspace
-      }, 3000); // รอ 3 วินาทีแล้วเปลี่ยนหน้า
-    }
-  }, [errorProjectDetail, errorWorkspaceDetail, navigate, workspaceId]);
+  
 
   if (isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
   return (
@@ -74,11 +67,8 @@ const ProjectDetailPage = () => {
       </Snackbar>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name} 
-        projectName={projectDetail.name}
-        aiName={projectDetail.ai_model.name}
-        aiType={projectDetail.ai_model.ai_type}
-         />
+        <Sidebar workspace={workspaceDetail} project={projectDetail}/>
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* top card (create sort workspace name) */}
@@ -99,7 +89,6 @@ const ProjectDetailPage = () => {
              <img
                className=" col-span-2 w-full h-[100%] object-cover"
              src={projectDetail.imagePath}
-            //  alt={`${projectDetail.name} project`}
              />
             ) : (
            

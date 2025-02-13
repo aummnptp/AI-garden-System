@@ -8,6 +8,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
+import { AIDataType } from '../../types/Ai';
 
 const { TextArea } = Input;
 
@@ -20,21 +21,20 @@ function CreateProjectPage() {
   // const [projectImage, setProjecImage] = useState('');
 
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
-  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [inputType, setInputType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [uploadStep, setUploadStep] = useState(1);
   const [selectedAI, setSelectedAI] = useState();
   const [AIData, setAIData] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [alertText, setAlertText] = useState("");
 
   
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
-  const handleSelectCard = (id: number) => {
+  const handleSelectCard = (id: string) => {
     const selectedCard = AIData.find(data => data.aiId === id);
     setSelectedAI(selectedCard);  // เก็บข้อมูล AI ที่ถูกเลือก
     setSelectedCardId(id);  // เก็บแค่ id ถ้าจำเป็น
@@ -60,8 +60,8 @@ function CreateProjectPage() {
   
   const startTimer = () => {
     setTimeout(() => {
-      setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-    }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
+      setOpen(false); 
+    }, 5000); 
   };
 
   const handleClose = () => {
@@ -96,7 +96,7 @@ function CreateProjectPage() {
     name: projectName,
     description: projectDescription,
     input_type: inputType,
-    ai_id:selectedCardId,
+    ai_id: selectedCardId,
     image_path: image,
   };
 
@@ -110,7 +110,6 @@ function CreateProjectPage() {
       formData.append("file", projectData.image_path);
     }
     
-    // formData.append("image_path", image);
     await axios.post(
       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData, 
        {
@@ -169,7 +168,7 @@ function CreateProjectPage() {
             </Alert>
           </div>
         )}
-        <Sidebar workspaceName={workspaceDetail.name} />
+        <Sidebar workspace={workspaceDetail} />
 
         <div 
           onSubmit={handleSubmit}
@@ -303,7 +302,7 @@ function CreateProjectPage() {
                 </div>
 
                 <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
-                  {AIData.map((data) => (
+                  {AIData.map((data:AIDataType) => (
                     <CreateProjectCard
                       id={data.aiId}
                       name={data.name}

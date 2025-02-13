@@ -8,23 +8,20 @@ import Sidebar from "../../components/Sidebar";
 import { useFetchQuery } from "../../hook/useFetchQuery";
 
 const ProjectListPage = () => {
- const { workspaceId } = useParams<{
-    workspaceId: string;
-  }>();
-  const {
-    data: projectData,
-  } = useFetchQuery(
-    ["project", workspaceId ?? "",],
+  const { workspaceId } = useParams();
+
+  const { data: projectData, isLoading: isLoadingProjects, error: errorProjects } = useFetchQuery(
+    ["projects", workspaceId ?? ""],
     `/workspaces/${workspaceId}/projects`
   );
 
-//   // ดึงข้อมูล workspace detail
-  const {
-    data: workspaceDetail,
-  } = useFetchQuery(
+  const { data: workspaceDetail, isLoading: isLoadingWorkspace, error: errorWorkspace } = useFetchQuery(
     ["workspace-detail", workspaceId ?? ""],
     `/workspaces/detail/${workspaceId}`
   );
+
+  if (isLoadingProjects || isLoadingWorkspace) return <div>Loading...</div>;
+  if (errorProjects || errorWorkspace) return <div>Error: {errorProjects?.message || errorWorkspace?.message}</div>;
 
   
 
@@ -33,8 +30,8 @@ const ProjectListPage = () => {
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
            {/* side bar */}
-           <Sidebar workspaceName={workspaceDetail.name} />
-        {/* content container */}
+           <Sidebar workspace={workspaceDetail} />
+           {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
             <h1 className="p-5 ml-5 mb-2 text-3xl font-medium tracking-tight text-indigo-900 ">

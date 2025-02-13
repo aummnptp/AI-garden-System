@@ -5,32 +5,25 @@ import CustomizedTables from '../../components/table/Table'
 import EnhancedTable from '../../components/table/WorkspaceTable'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
+import { useFetchQuery } from '../../hook/useFetchQuery'
 
 const WorkspaceHistoryPage = () => {
   let {workspaceId} = useParams()
-  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
-  const fetchData = () => {
-    axios.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
+
+    const {
+      data: workspaceDetail,
+      isLoading: isLoadingWorkspaceDetail,
+      error: errorWorkspaceDetail,
+    } = useFetchQuery(
+      ["workspace-detail", workspaceId ?? ""],
+      `/workspaces/detail/${workspaceId}`
+    );
   
-    ])
-    .then(axios.spread((workspaceResponse) => {
-      setWorkspaceDetail(workspaceResponse.data);
-   
-    }))
-    .catch(error => {
-      console.error("There was an error fetching the data!", error);
-    });
-  };
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
   return (
     <>
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* side bar */}
-      <Sidebar workspaceName={workspaceDetail.name} />
-      {/* content container */}
+      <Sidebar workspace={workspaceDetail} />   
       <div className=" w-10/12 ml-auto  flex flex-col items-center pb-32  h-full min-h-screen">
       <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">
         <h1

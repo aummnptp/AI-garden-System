@@ -309,10 +309,8 @@ const PredictAiModelPage: React.FC = () => {
                   </Alert>
                 </div>
               )}
-        <Sidebar workspaceName={workspaceDetail.name}
-          projectName={projectDetail.project_name}
-          aiName={projectDetail.ai_model.name}
-          aiType={projectDetail.ai_model.ai_type}
+        <Sidebar workspace={workspaceDetail}
+          project={projectDetail}
         />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
@@ -506,7 +504,6 @@ const PredictAiModelPage: React.FC = () => {
                         resultImage={customedImageUrl}
                         predictResult={predictResult}
                       />
-                      {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}
                       <AddNoteDialog />
 
 
@@ -599,7 +596,6 @@ const PredictAiModelPage: React.FC = () => {
                 <div className="flex-1 h-0.5 bg-gray-300 mx-2" />
                 {/* Step 2 */}
 
-
                 {/* Step 3 */}
                 <div className="flex items-center space-x-2">
                   <div
@@ -640,21 +636,16 @@ const PredictAiModelPage: React.FC = () => {
                 </div>
               </div>
 
-
-
-
               <form onSubmit={handleUpload} className="m-6 space-y-4">
                 {uploadStep == 1 ? (
                   <div className="form-group">
-
-                    {/* <label>{detail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
                         <div
                           onClick={() => {
                             setFile(null);
-                          }} // ฟังก์ชันสำหรับจัดการการคลิกเพื่อปิดรูปภาพ
+                          }} 
                           className="absolute top-[1rem] right-[5rem] bg-gray-800 text-white rounded-full h-8 w-8 flex items-center justify-center p-1 hover:bg-red-500 cursor-pointer"
                         >
                           <i className="bi bi-x-lg"></i>
@@ -698,18 +689,9 @@ const PredictAiModelPage: React.FC = () => {
                           className="hidden"
                         />
                       </label>
-                      
                     )}
-                    
-                    {/* <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
-                /> */}
                   </div>
                 ) : null}
-
                 {uploadStep == 2 && (
 
                   <div className="w-full">

@@ -7,9 +7,6 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  FormControl,
-  FormHelperText,
-  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
@@ -17,13 +14,6 @@ import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
 import { Close, Delete } from "@mui/icons-material";
 import { useFetchQuery } from "../../hook/useFetchQuery";
-interface memberData {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-}
 
 const WorkspaceSettingPage = () => {
   // let { workspaceId } = useParams();
@@ -69,8 +59,7 @@ const WorkspaceSettingPage = () => {
       window.location.href = "/workspaces";
       // จัดการเมื่ออัปเดตสำเร็จ
       console.log("อัปเดต Workspace สำเร็จ:", response.data);
-      // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
-      // navigate(`/workspaces/${workspaceId}`);
+
     } catch (error) {
       // จัดการข้อผิดพลาด
       console.error("เกิดข้อผิดพลาดในการอัปเดต Workspace:", error);
@@ -160,7 +149,8 @@ const WorkspaceSettingPage = () => {
           </DialogActions>
         </Dialog>
         {/* side bar */}
-      <Sidebar workspaceName={name} />
+        <Sidebar workspace={workspaceDetail} />
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">

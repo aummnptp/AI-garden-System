@@ -86,10 +86,8 @@ refetch:refetchPermissions,
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Sidebar */}
       <Sidebar
-        // workspaceName={workspaceDetail.name}
-        // projectName={projectDetail.project_name}
-        // aiName={projectDetail.ai_model.name}
-        // aiType={projectDetail.ai_model.ai_type}
+      workspace={workspaceDetail}
+      project={projectDetail}
       />
 
       {/* Content Container */}

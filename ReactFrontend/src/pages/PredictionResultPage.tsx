@@ -4,7 +4,7 @@ import MiniFooter from '../components/MiniFooter';
 import Sidebar from "../components/Sidebar";
 import RegressionChart from '../components/chart/RegressionChart'; // Import RegressionChart
 import ProjectData from "../data/ProjectData";
-import { PictureOutlined, VideoCameraOutlined, SaveOutlined, EditOutlined, CloseOutlined } from "@ant-design/icons";
+import { PictureOutlined, VideoCameraOutlined, } from "@ant-design/icons";
 import Button from '@mui/material/Button';
 import { NoteAddOutlined } from '@mui/icons-material';
 
