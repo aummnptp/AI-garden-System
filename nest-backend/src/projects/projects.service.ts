@@ -13,13 +13,15 @@ import { AIModelService } from 'src/ai/ai-model.service';
 import { ProjectHistory } from './entities/project-history.entity';
 import * as fs from 'fs';
 import { User } from 'src/user/entities/user.entity';
+import { RankingData } from './interfaces/ranking-data.interface';
+
 
 @Injectable()
 export class ProjectsService {
-constructor(
+  constructor(
     @InjectRepository(Project)
     private projectRepository: Repository<Project>,
-    
+
     @InjectRepository(ProjectHistory)
     private projectHistoryRepository: Repository<ProjectHistory>,
 
@@ -32,14 +34,14 @@ constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
-    private readonly aiModelService: AIModelService, 
-) {}
-async validateWorkspace(workspaceId: string): Promise<Workspace> {
+    private readonly aiModelService: AIModelService,
+  ) { }
+  async validateWorkspace(workspaceId: string): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
     });
 
-    
+
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
@@ -47,7 +49,8 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   }
 
 
-  async create(workspaceId:string ,createProjectDto: CreateProjectDto, file?: Express.Multer.File):Promise<Project> {    await this.validateWorkspace(workspaceId)
+  async create(workspaceId: string, createProjectDto: CreateProjectDto, file?: Express.Multer.File): Promise<Project> {
+    await this.validateWorkspace(workspaceId)
     // const aiModel = await this.aiModelService.findOne({ where: { id: createProjectDto.ai_id } });
     const aiModel = await this.aiModelService.findOne(createProjectDto.ai_id);
     if (!aiModel) {
@@ -58,17 +61,17 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       // บันทึกไฟล์ในตำแหน่งที่ต้องการ
       filePath = `/uploads/project/${file.filename}`;
     }
-    const project = this.projectRepository.create({ 
-      ...createProjectDto, 
+    const project = this.projectRepository.create({
+      ...createProjectDto,
       workspace: { workspaceId },
-      ai_model: aiModel,  
+      ai_model: aiModel,
       imagePath: filePath, // เพิ่มไฟล์พาธลงในโปรเจค
     });
     return this.projectRepository.save(project);
   }
 
 
-  async   update(workspaceId: string, projectId: string, updateProjectDto: UpdateProjectDto , file?: Express.Multer.File): Promise<Project> {
+  async update(workspaceId: string, projectId: string, updateProjectDto: UpdateProjectDto, file?: Express.Multer.File): Promise<Project> {
 
     let filePath: string | undefined;
     if (file) {
@@ -91,39 +94,39 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   async findAll(@Param('workspaceId') workspaceId: string) {
     await this.validateWorkspace(workspaceId);
     const projects = await this.projectRepository.find({
-      where:{workspace: {workspaceId}},
-      relations: ['ai_model'], 
+      where: { workspace: { workspaceId } },
+      relations: ['ai_model'],
     });
-     
 
-   return projects.map((project) => ({
-    ...project,  // ใช้ project ไม่ใช่ projects
-    imagePath: project.imagePath
-      ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
-      : null,
-  }));
+
+    return projects.map((project) => ({
+      ...project,  // ใช้ project ไม่ใช่ projects
+      imagePath: project.imagePath
+        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
+        : null,
+    }));
 
   }
 
-  async findOne(workspaceId:string,projectId: string):Promise<Project> {
+  async findOne(workspaceId: string, projectId: string): Promise<Project> {
     await this.validateWorkspace(workspaceId);
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId, workspace: { workspaceId } },
       relations: ['ai_model'],
     });
-    
+
 
     if (!project) throw new NotFoundException('Project not found');
-      // เพิ่มการตรวจสอบและสร้าง imagePath URL
-  return {
-    ...project,  // รวมข้อมูล project ทั้งหมด
-    imagePath: project.imagePath
-      ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
-      : null,
-  };
+    // เพิ่มการตรวจสอบและสร้าง imagePath URL
+    return {
+      ...project,  // รวมข้อมูล project ทั้งหมด
+      imagePath: project.imagePath
+        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
+        : null,
+    };
   }
 
- 
+
 
   // Delete a project from a specific workspace
   async remove(workspaceId: string, projectId: string): Promise<void> {
@@ -134,8 +137,8 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   }
 
 
-  
-  async predictInProject(userId: string,projectId: string, file: Express.Multer.File): Promise<ProjectHistory> {
+
+  async predictInProject(userId: string, projectId: string, file: Express.Multer.File): Promise<ProjectHistory> {
     const userProfile = await this.userRepository.findOne({ where: { userId: userId } });
     if (!userProfile) {
       throw new NotFoundException('User not found');
@@ -161,7 +164,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
 
     // ตรวจสอบว่า file หรือ file.originalname เป็น undefined หรือไม่
     if (!file || !file.originalname) {
-      
+
       throw new BadRequestException('File is required and must have a valid name');
     }
 
@@ -185,7 +188,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
         prediction: response.data,
       };
 
-      let filePath: string ;
+      let filePath: string;
       if (file) {
         // บันทึกไฟล์ในตำแหน่งที่ต้องการ
         filePath = `/uploads/project/history/${file.filename}`;
@@ -196,19 +199,19 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
         ai_model: model,
 
         // filePath: file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, '/uploads/'), // แปลง backslash เป็น forward slash และตัดส่วนเกิน
-        filePath:filePath,
+        filePath: filePath,
         response_keys: predictionResult.response_keys,
         prediction: predictionResult.prediction, // เก็บผลลัพธ์การทำนาย
-        user:userProfile
+        user: userProfile
       });
       await this.projectHistoryRepository.save(history);
 
       // ส่งผลลัพธ์ของการทำนายและประวัติที่บันทึกกลับไป
-      return  history ;
+      return history;
 
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      console.error('Error during prediction:', errorMessage,file);
+      console.error('Error during prediction:', errorMessage, file);
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
@@ -229,7 +232,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     }));
   }
 
-  async getHistory(historyId:string):Promise<ProjectHistory> {
+  async getHistory(historyId: string): Promise<ProjectHistory> {
     const history = await this.projectHistoryRepository.findOne({
       where: { historyId: historyId },
       relations: ['ai_model'],
@@ -246,4 +249,40 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
         : null,
     };
   }
+
+  async getUploadRanking(projectId: string) {
+    const history = await this.projectHistoryRepository.find({
+      where: {
+        project: {
+          projectId: projectId  // หรือใช้ project_id ถ้าตั้งชื่อคอลัมน์นี้ใน Project
+        }
+      },
+      relations: ['project', 'user'] // ดึงข้อมูล project และ user มาด้วย
+    });
+
+
+
+    const ranking = history.reduce((acc, item) => {
+      const userId = item.user.userId;  // เข้าถึง userId ผ่าน item.user.id
+      if (!acc[userId]) {
+        acc[userId] = {
+          userId: userId,
+          submitNumber: 0,
+          name: item.user.name,  // ดึงชื่อจาก user
+          picture: item.user.picture  // ดึงรูปจาก user
+        };
+      }
+      acc[userId].submitNumber += 1;  // นับจำนวนอัปโหลด
+      return acc;
+    }, {});
+
+    // แปลง object เป็น array และจัดเรียงตาม submitNumber
+    const sortedRanking = Object.values(ranking) as RankingData[];  // ใช้ Type Assertion ตรงนี้
+    sortedRanking.sort((a, b) => b.submitNumber - a.submitNumber);
+  
+    return sortedRanking;
+
+  }
+
+
 }

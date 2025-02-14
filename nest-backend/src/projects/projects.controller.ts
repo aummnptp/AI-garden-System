@@ -9,12 +9,12 @@ import * as multer from 'multer';
 import { CreateProjectHistoryDto } from './dto/predict-project.dto';
 import { ProjectHistory } from './entities/project-history.entity';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
-
+import { RankingData } from './interfaces/ranking-data.interface';
 
 @Controller('workspaces/:workspaceId/projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
-  @UseGuards(JwtGuard) 
+  constructor(private readonly projectsService: ProjectsService) { }
+  @UseGuards(JwtGuard)
   @Post('create')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
@@ -28,23 +28,23 @@ export class ProjectsController {
   create(
     @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
-    @Body() createProjectDto: CreateProjectDto):Promise<Project> {
-      return this.projectsService.create(workspaceId, createProjectDto,file);
+    @Body() createProjectDto: CreateProjectDto): Promise<Project> {
+    return this.projectsService.create(workspaceId, createProjectDto, file);
   }
 
-  @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard)
   @Get()
   findAll(
-    @Param('workspaceId') workspaceId: string):Promise<Project[]> {
+    @Param('workspaceId') workspaceId: string): Promise<Project[]> {
     return this.projectsService.findAll(workspaceId);
   }
 
-  @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard)
   @Get('detail/:projectId')
   findOne(
     @Param('workspaceId') workspaceId: string,
-    @Param('projectId') projectId: string):Promise<Project> {
-    return this.projectsService.findOne(workspaceId,projectId);
+    @Param('projectId') projectId: string): Promise<Project> {
+    return this.projectsService.findOne(workspaceId, projectId);
   }
 
   @UseGuards(JwtGuard)
@@ -64,10 +64,10 @@ export class ProjectsController {
     @Param('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ): Promise<Project> {
-    return this.projectsService.update(workspaceId, projectId, updateProjectDto,file);
+    return this.projectsService.update(workspaceId, projectId, updateProjectDto, file);
   }
 
-  @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard)
   @Delete('delete/:projectId')
   remove(
     @Param('workspaceId') workspaceId: string,
@@ -111,4 +111,8 @@ export class ProjectsController {
     return this.projectsService.getHistory(historyId);
   }
 
+  @Get(':projectId/ranking')
+  async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
+    return this.projectsService.getUploadRanking(projectId);
+  }
 }
