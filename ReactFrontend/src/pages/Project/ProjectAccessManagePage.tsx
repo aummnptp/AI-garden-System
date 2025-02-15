@@ -3,8 +3,9 @@ import Sidebar from "../../components/Sidebar";
 import { Button, Checkbox, } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import { changeProjectPermissionService, grantProjectPermission, revokeProjectPermission } from "../../api/services/ProjectService";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useProjecteData } from "../../hook/projects/useProjectdata";
 
 const ProjectAccessManagePage = () => {
   const { workspaceId, projectId } = useParams<{
@@ -12,39 +13,25 @@ const ProjectAccessManagePage = () => {
     projectId: string;
   }>();
 
+  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace ,
+    memberDatas,
+    isLoadingMembers,
+    isErrorMembers,
+    refetchMemberDatas,
+   } =
+    useWorkspaceData();
 
-  const {
-    data: projectDetail,
+  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail ,refetchProject ,
+    projectPermissions,
+    isLoadingPermissions,
+    isErrorPermissions,
+    refetchPermissions,
+  } =
+    useProjecteData();
 
-    refetch: refetchProject,
-  } = useFetchQuery(
-    ["project-detail", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/detail/${projectId}`
-  );
 
-  const {
-    data: workspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
 
-  const {
-    data: workspaceMembers,
-
-  } = useFetchQuery(
-    ["workspace-members", workspaceId ?? ""],
-    `/workspaces/members-profiles/${workspaceId}`
-  );
-
-  const {
-    data: projectPermissions,
-refetch:refetchPermissions,
-  } = useFetchQuery(
-    ["project-permissions", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/permissions/${projectId}`
-  );
-
+  
   const selectedMembers = new Set(
     projectPermissions?.map((perm) => perm.user.userId) ?? []
   );
@@ -77,7 +64,7 @@ refetch:refetchPermissions,
       // 🔄 รีเฟรชข้อมูลสิทธิ์
       await refetchPermissions();
     } catch (error) {
-      console.error("❌ Error updating member permissions:", error);
+      console.error(" Error updating member permissions:", error);
       alert("Failed to update member permissions.");
     }
   };
@@ -149,7 +136,7 @@ refetch:refetchPermissions,
               </h1>
               <>
                 <div className="w-full h-[0px] border border-trueGray-300 mx-auto" />
-                {workspaceMembers.map((member, index) => (
+                {memberDatas.map((member, index) => (
                   <div key={member.user.userId}>
                     <div className="px-10 py-2 flex items-center justify-between w-full">
                       {/* 🔹 Avatar + User Info */}

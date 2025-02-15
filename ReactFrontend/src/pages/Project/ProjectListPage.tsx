@@ -5,23 +5,27 @@ import ProjectCard from "../../components/card/ProjectCard";
 // import ProjectData from "../../data/ProjectData";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
-import { useFetchQuery } from "../../hook/useFetchQuery";
+
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useProjecteData } from "../../hook/projects/useProjectdata";
 
 const ProjectListPage = () => {
   const { workspaceId } = useParams();
 
-  const { data: projectData, isLoading: isLoadingProjects, error: errorProjects } = useFetchQuery(
-    ["projects", workspaceId ?? ""],
-    `/workspaces/${workspaceId}/projects`
-  );
 
-  const { data: workspaceDetail, isLoading: isLoadingWorkspace, error: errorWorkspace } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
 
-  if (isLoadingProjects || isLoadingWorkspace) return <div>Loading...</div>;
-  if (errorProjects || errorWorkspace) return <div>Error: {errorProjects?.message || errorWorkspace?.message}</div>;
+  const {  projectData,
+    isLoadingProjects,
+    errorProjects,
+    refetchProjects, } =
+  useProjecteData();
+
+  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+    useWorkspaceData();
+
+  if (isLoadingProjects || isLoadingWorkspace) return <LoadingSpinner />;
+  if (errorProjects || isErrorWorkspace) return <div>Error: {errorProjects?.message || isErrorWorkspace?.message}</div>;
 
   
 
@@ -40,32 +44,7 @@ const ProjectListPage = () => {
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"/>
             <div className="m-6 flex justify-between">
               <div>
-              <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
-              }}
-       
-              >
-                  ชื่อsort
-                </Button>
-                <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
-              }}
-       
-              >
-                  ประเภท filter
-                </Button>
+   
               </div>
               <Link to={`/workspaces/${workspaceId}/create`}>
               <Button
@@ -79,7 +58,7 @@ const ProjectListPage = () => {
               }}
        
               >
-                  + สร้าง Project
+                  + Create Project
                 </Button>
               </Link>
             </div>
@@ -91,6 +70,19 @@ const ProjectListPage = () => {
                 placeholder="ค้นหาชื่อโปรเจค"
                 required
               />
+               <Button
+              variant="contained"
+              size="large"
+              sx={{
+                backgroundColor: "#4f46e5",
+                "&:hover": {
+                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                },
+              }}
+       
+              >
+                type filter
+              </Button>
              <Button
               variant="contained"
               size="large"
@@ -104,6 +96,7 @@ const ProjectListPage = () => {
               >
                   + add tag filter
                 </Button>
+                
             </div>
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">

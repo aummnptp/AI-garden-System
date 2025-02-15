@@ -16,9 +16,9 @@ import {
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
 import { memberData } from "../../types/Invitation";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
 
 interface userData {
@@ -128,48 +128,23 @@ const handleChangeRole = async(memberId: string ,newRole: string) => {
 
 
 
-const { 
-  data: inviteLink,
-  refetch: refetchInviteLink
-} = useFetchQuery(
-  ["invite-link", workspaceId ?? ""],
-  `/workspaces/generate-invite/${workspaceId}`
-);
-
 const {
-  data: workspaceDetail,
-  // refetch: refetchProjectDetail
-} = useFetchQuery(
-  ["project-detail", workspaceId ?? ""],
-  `/workspaces/detail/${workspaceId}`
-);
+  inviteLink,
+  isLoadingInviteLink,
+  workspaceDetail,
+  userDatas,
+  pendingUserDatas,
+  memberDatas,
+  refetchInviteLink,
+  refetchUserDatas,
+  refetchPendingUser,
+  refetchMemberDatas,
+} = useWorkspaceData();
 
-//   // ดึงข้อมูล workspace detail
-const {
-  data: userDatas,
+if (isLoadingInviteLink) {
+  return <p>Loading invite link...</p>;
+}
 
-  refetch: refetchUserDatas
-} = useFetchQuery(
-  ["available-user", workspaceId ?? ""],
-  `/workspaces/available-users/${workspaceId}`
-);
-
-const {
-  data: pendingUserDatas,
-
-  refetch: refetchPendingUser
-} = useFetchQuery(
-  ["pending-user", workspaceId ?? ""],
-  `/workspaces/pending-users/${workspaceId}`
-);
-const {
-  data: memberDatas,
-
-  refetch: refetchMemberDatas
-} = useFetchQuery(
-  ["member-user", workspaceId ?? ""],
-  `/workspaces/members-profiles/${workspaceId}`
-);
 
   return (
     <>

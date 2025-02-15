@@ -1,20 +1,23 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { DocsService } from './docs.service';
 import { CreateDocsDto, CreateSubDocsDto } from './dto/create-document.dto';
+import { Document } from './entities/docs.entity';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
 import { UpdateDocumentDto, UpdateSubDocumentDto } from './dto/update-document.dto';
+import { config } from 'dotenv';
 
 
 
 @Controller('docs')
 export class DocsController {
   constructor(private readonly docsService: DocsService) { }
-
+  @UseGuards(JwtGuard)
   @Get('/')
-  async getDocsTitle() {
-    return this.docsService.findAll();
+  async getDocsTitle(@Request() req,): Promise<Document[]> {
+    const userRole = req.user.role; // ดึง role ของผู้ใช้จาก token
+    return this.docsService.findAllTitles(userRole);
   }
 
   @Role("admin")

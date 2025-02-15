@@ -3,6 +3,7 @@ import UnauthorizedPage from "../../pages/UnauthorizedPage";
 
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface WorkspaceRoleGuardProps{
     requiredRole: string;
@@ -30,7 +31,7 @@ const WorkspaceRoleGuard: React.FC<WorkspaceRoleGuardProps> = ({ requiredRole, c
     }, [workspaceId, getWorkspaceRole]);
   
     if (loading || checking) {
-      return <p>Loading...</p>; // แสดง Loading ระหว่างตรวจสอบ
+      return <LoadingSpinner />; // แสดง Loading ระหว่างตรวจสอบ
     }
   
     if (!workspaceRole || workspaceRole !== requiredRole && workspaceRole !== "owner") {

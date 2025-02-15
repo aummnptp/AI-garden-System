@@ -9,6 +9,7 @@ import axios from 'axios';
 import AddNoteDialog from '../../components/NoteDialog';
 import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
 import ChartResultDisplay from '../../components/aiDisplay/ChartResultDisplay';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface PredictResult {
   ai_type: string;
@@ -195,48 +196,6 @@ const PredictAiModelPage: React.FC = () => {
     }
   };
   
-
-
-
-
-  //   event.preventDefault();
-  //   if (file) {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  //     console.log(file.size);
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/predict/${projectId}`, {
-  //         method: 'POST',
-  //         body: formData,
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-
-  //       const contentType = response.headers.get('content-type');
-  //       if (contentType && contentType.includes('application/json')) {
-  //         const data = await response.json();
-
-  //         // ดึงค่า prediction, regression_params และ ai_type จาก data
-  //         // const { prediction, regression_params, ai_type, response_keys } = data;
-
-  //         navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
-  //           state: {
-  //             // prediction: prediction,   // ผลลัพธ์การพยากรณ์
-  //             // regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
-  //             // ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
-  //             // file: customedImageUrl,            // ไฟล์ที่อัปโหลด
-  //             file: file,
-  //             // response_keys: response_keys         // ชื่อไฟล์ที่อัปโหลด
-  //           }
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   }
-  // };
   const startTimer = () => {
     setTimeout(() => {
       setOpenAlert(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -283,7 +242,7 @@ const PredictAiModelPage: React.FC = () => {
 
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />
   }
 
   if (!projectDetail) {

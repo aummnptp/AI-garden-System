@@ -7,7 +7,7 @@ import HomePage from '../pages/HomePage.tsx'
 import ProjectListPage from '../pages/Project/ProjectListPage.tsx'
 import CreateProjectPage from '../pages/Project/CreateProjectPage.tsx'
 import ProjectDetailPage from '../pages/Project/ProjectDetailPage.tsx'
-import WorkspaceHistoryPage from '../pages/Workspace/WorkspaceHistoryPage.tsx'
+import WorkspaceHistoryPage from '../pages/History/WorkspaceHistoryPage.tsx'
 import WorkspaceSettingPage from '../pages/Workspace/WorkspaceSettingPage.tsx'
 import AdminDashboardPage from '../pages/Admin/AdminDashboardPage.tsx'
 import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
@@ -31,6 +31,7 @@ import RoleGuard from '../components/auth/RoleGurad.tsx'
 import WorkspaceRoleGuard from '../components/auth/WorkspaceRoleGuard.tsx'
 import HistoryDetailPage from '../pages/History/HistoryDetailPage.tsx'
 import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
+import ProjectPermissionGuard from "../components/auth/ProjectPermissionGuard.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -78,7 +79,7 @@ export const router = createBrowserRouter([
     },
     {
       path: "/workspaces/:workspaceId/project/:projectId/detail",
-    element: <RoleGuard requiredRole="user"> <ProjectDetailPage/></RoleGuard>,
+    element: <ProjectPermissionGuard><RoleGuard requiredRole="user"> <ProjectDetailPage/></RoleGuard></ProjectPermissionGuard>,
     },
     {
       path: "/workspaces/:workspaceId/history",

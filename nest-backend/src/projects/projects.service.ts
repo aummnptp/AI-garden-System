@@ -13,6 +13,8 @@ import { AIModelService } from 'src/ai/ai-model.service';
 import { ProjectHistory } from './entities/project-history.entity';
 import * as fs from 'fs';
 import { User } from 'src/user/entities/user.entity';
+import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
+import { ProjectPermission } from './entities/project-permission.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -31,6 +33,11 @@ constructor(
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(WorkspaceMember)
+    private workspaceMemberRepository: Repository<WorkspaceMember>,
+    @InjectRepository(ProjectPermission)
+    private projectPermissionRepository: Repository<ProjectPermission>,
 
     private readonly aiModelService: AIModelService, 
 ) {}
@@ -88,21 +95,41 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
 
 
 
-  async findAll(@Param('workspaceId') workspaceId: string) {
+  async findAll(workspaceId: string, userId: string): Promise<Project[]> {
     await this.validateWorkspace(workspaceId);
-    const projects = await this.projectRepository.find({
-      where:{workspace: {workspaceId}},
-      relations: ['ai_model'], 
+  
+    // ✅ ดึงข้อมูลของ User ว่าเป็น owner หรือ admin ใน workspace หรือไม่
+    const workspaceMember = await this.workspaceMemberRepository.findOne({
+      where: { user: { userId }, workspace: { workspaceId } },
     });
-     
-
-   return projects.map((project) => ({
-    ...project,  // ใช้ project ไม่ใช่ projects
-    imagePath: project.imagePath
-      ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
-      : null,
-  }));
-
+  
+    const isOwnerOrAdmin = workspaceMember?.role === "owner" || workspaceMember?.role === "admin";
+  
+    // ✅ ดึงโปรเจกต์ทั้งหมดใน workspace และรวม relation project_permissions
+    const projects = await this.projectRepository.find({
+      where: { workspace: { workspaceId } },
+      relations: ['ai_model', 'project_permissions'],
+    });
+  
+    // ✅ กรองโปรเจกต์ตามเงื่อนไข:
+    //    1. ถ้าเป็น owner หรือ admin → ดูได้ทั้งหมด
+    //    2. ถ้า project.permission_only = false → ดูได้
+    //    3. ถ้า project.permission_only = true → เช็คว่าผู้ใช้มีสิทธิ์ใน project_permissions หรือไม่
+    const filteredProjects = await Promise.all(
+      projects.map(async (project) => {
+        if (isOwnerOrAdmin) return project;
+        if (!project.permission_only) return project;
+  
+        // ✅ ตรวจสอบสิทธิ์ของ user ใน ProjectPermission
+        const hasPermission = await this.projectPermissionRepository.findOne({
+          where: { project: { projectId: project.projectId }, user: { userId } },
+        });
+  
+        return hasPermission ? project : null;
+      })
+    );
+  
+    return filteredProjects.filter((p) => p !== null);
   }
 
   async findOne(workspaceId:string,projectId: string):Promise<Project> {
@@ -243,5 +270,31 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
         : null,
         
     };
+  }
+
+
+
+  async deleteHistory(workspaceId: string, projectId: string, historyId: string): Promise<{ message: string }> {
+   
+    const history = await this.projectHistoryRepository.findOne({
+      where: { historyId, project: { projectId } },
+      relations: ['project'],
+    });
+
+    if (!history) {
+      throw new NotFoundException(`History ID: ${historyId} not found`);
+    }
+
+    if (history.filePath) {
+      const filePath = `./uploads/project/history/${history.filePath.split('/').pop()}`;
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // ลบไฟล์
+      }
+    }
+
+
+    await this.projectHistoryRepository.remove(history);
+
+    return { message: 'History deleted successfully' };
   }
 }

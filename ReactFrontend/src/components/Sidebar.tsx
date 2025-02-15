@@ -7,10 +7,11 @@ import {
   ProjectOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Workspace } from "../types/Workspace";
 import { Project } from "../types/Project";
+import { useAuth } from "../context/AuthContext";
 
 interface SidebarProps {
   workspace: Workspace;
@@ -18,11 +19,17 @@ interface SidebarProps {
 }
 const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
   let { workspaceId, projectId } = useParams();
+  const { isAdmin, isOwner } = useAuth();
   const location = useLocation();
   const isProjectPage = location.pathname.includes("/project/");
-
   const isActive = (path: string) => location.pathname === path;
 
+  const [isWorkspaceOwner, setIsWorkspaceOwner] =  useState<boolean | null>(null);
+  useEffect(() => {
+    if (workspaceId) {
+      isOwner(workspaceId).then(setIsWorkspaceOwner);
+    }
+  }, [workspaceId, isOwner]);
   const ProjectMenu = useMemo(
     () =>
       isProjectPage &&
@@ -96,6 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
                 </div>
               </Link>
             </li>
+            {(isAdmin ||isWorkspaceOwner) && (
             <li>
               <Link
                 to={`/workspaces/${workspaceId}/project/${projectId}/setting`}
@@ -116,10 +124,11 @@ const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
                 </div>
               </Link>
             </li>
+            )}
           </ul>
         </>
       ),
-    [workspaceId, projectId, location.pathname, project]
+      [workspaceId, projectId, location.pathname, project, isWorkspaceOwner]
   );
 
   return (
@@ -137,12 +146,10 @@ const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
           </h1>
         </div>
       </div>
-      <div className="ml-[7.5%] w-fit ">
-        <span className=" text-neutral-400 text-base font-medium">
-          you are{" "}
-        </span>
-        <span className="text-indigo-600 text-lg font-semibold ">
-          Project Owner
+      <div className="ml-[7.5%] w-fit">
+        <span className="text-neutral-400 text-base font-medium">You are </span>
+        <span className="text-indigo-600 text-lg font-semibold">
+        {isAdmin ? "Administrator" :isWorkspaceOwner ? "Owner" : "Member"}
         </span>
       </div>
       <div className="mt-6 w-full border border-zinc-300" />
@@ -184,6 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
             </div>
           </Link>
         </li>
+        {(isAdmin ||isWorkspaceOwner) && (
         <li>
           <Link to={`/workspaces/${workspaceId}/setting/edit`}>
             <div
@@ -200,6 +208,7 @@ const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
             </div>
           </Link>
         </li>
+        )}
       </ul>
       <div className="my-3 w-full border border-zinc-300" />
       {/* project section */}

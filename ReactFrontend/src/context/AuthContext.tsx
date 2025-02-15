@@ -1,20 +1,25 @@
 import axios from "axios";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {  getSessionService, logoutService } from "../api/services/AuthService";
 
 
 type User = {
+  name: string;
   email: string;
-  role: string; // Global role เช่น 'admin', 'user'
-  workspaceRoles?: { workspaceId: string; role: string }[]; // Workspace-specific roles
+  picture: string;
+  role: string;
 };
+
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  isOwner: (workspaceId: string) => Promise<boolean>;
   loading: boolean;
   login: () => Promise<void>;
   logout: () => void;
-  getWorkspaceRole: (workspaceId: string) => Promise<string | null>; // ฟังก์ชันสำหรับดึง workspaceRole
+  getWorkspaceRole: (workspaceId: string) => Promise<string | null>; 
+  getProjectPermission: (workspaceId: string, projectId: string) => Promise<boolean>; 
 };
 
 export const AuthContext =createContext<AuthContextType | undefined>(
@@ -26,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [workspaceRoles, setWorkspaceRoles] = useState<{ [key: string]: string }>({});
 
   const getSession = async () => {
     try {
@@ -40,14 +46,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   
   const getUserSession = useCallback(() => {
-    setLoading(true); // ตั้งค่า loading เป็น true ก่อนเริ่มดึงข้อมูล
+    setLoading(true);
     getSession()
       .catch((error) => {
         console.error("Error fetching session:", error);
-        setUser(null); // หากมีข้อผิดพลาด ให้ตั้งค่า user เป็น null
+        setUser(null); 
       })
       .finally(() => {
-        setLoading(false); // กำหนด loading เป็น false หลังจากที่การดึงข้อมูลเสร็จ
+        setLoading(false);
       });
   }, []);
   
@@ -62,40 +68,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await logoutService();
       setUser(null);
-      // window.location.href = "/"; // กลับไปหน้าแรก
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
-  // ฟังก์ชันสำหรับดึง role ใน workspace ที่กำหนด
-  const getWorkspaceRole = async (
-    workspaceId: string
-  ): Promise<string | null> => {
+  const getWorkspaceRole = useCallback(async (workspaceId: string): Promise<string | null> => {
+    if (workspaceRoles[workspaceId]) {
+      return workspaceRoles[workspaceId]; 
+    }
+
     try {
-      // เรียก API เพื่อดึง role จาก workspaceId ที่ระบุ
       const { data } = await axios.get(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/workspaces/${workspaceId}/my-role`,
-        {
-          withCredentials: true,
-        }
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/my-role`,
+        { withCredentials: true }
       );
-      console.log(data.role);
-      return data.role; // คาดว่า Backend จะส่ง { role: 'member' } หรือ { role: 'owner' }
+
+      setWorkspaceRoles((prevRoles) => ({ ...prevRoles, [workspaceId]: data.role })); // ✅ บันทึกค่า Cache
+      return data.role;
     } catch (error) {
       console.error(`Error fetching role for workspace ${workspaceId}:`, error);
       return null;
     }
+  }, [workspaceRoles]);
+
+  const isOwner = async (workspaceId: string): Promise<boolean> => {
+    if (!workspaceId) return false;
+    const role = await getWorkspaceRole(workspaceId);
+    return role === "owner";
+  };
+  
+  const getProjectPermission = async (workspaceId: string, projectId: string): Promise<boolean> => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
+        { withCredentials: true }
+      );
+      return !!data; 
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        console.warn(`Permission denied for project ${projectId}`);
+        return false;
+      }
+      console.error(`Error fetching project ${projectId}:`, error);
+      return false;
+    }
   };
 
   useEffect(() => {
-    getUserSession(); // เรียกใช้ getUserSession เมื่อ component โหลด
+    getUserSession(); 
   }, [getUserSession]); 
   
-  
 
+
+  const isAdmin = useMemo(() => user?.role === "admin", [user]);
+  
   return (
     <AuthContext.Provider
       value={{
@@ -105,6 +132,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         login,
         logout,
         getWorkspaceRole,
+        getProjectPermission,
+        isAdmin,
+        isOwner, 
       }}
     >
       {children}

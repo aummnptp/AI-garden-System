@@ -13,8 +13,9 @@ import {
 import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
 import { Close, Delete } from "@mui/icons-material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
+
 import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
 const WorkspaceSettingPage = () => {
   // let { workspaceId } = useParams();
@@ -25,12 +26,12 @@ const WorkspaceSettingPage = () => {
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
 
   // ดึงข้อมูล workspace detail
+
   const {
-    data: workspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
+    workspaceDetail,
+
+  } = useWorkspaceData();
+  
 
   useEffect(() => {
     if (workspaceDetail) {
@@ -39,7 +40,7 @@ const WorkspaceSettingPage = () => {
     }
   }, [workspaceDetail]);
 
-
+ 
 
 
   const handleSave = async () => {

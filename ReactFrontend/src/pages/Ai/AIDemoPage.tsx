@@ -16,6 +16,7 @@ import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
 // import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 
 interface PredictResult {
@@ -52,7 +53,7 @@ const AIDemo = () => {
   }, [ai_id]);
 
   if (!aiData) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   const startTimer = () => {

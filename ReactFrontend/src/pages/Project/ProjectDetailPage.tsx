@@ -11,8 +11,11 @@ import SummaryCard from "../../components/chart/sumaryCard";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Snackbar, } from "@mui/material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
+
 import { formatDate } from "../../function/util";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useProjecteData } from "../../hook/projects/useProjectdata";
 
 
 
@@ -29,35 +32,22 @@ const ProjectDetailPage = () => {
 
 
 
-    const {
-      data: projectDetail,
-      isLoading: isLoadingProjectDetail,
-      error: errorProjectDetail,
-    } = useFetchQuery(
-      ["project-detail", workspaceId ?? "",projectId ?? ""],
-      `/workspaces/${workspaceId}/projects/detail/${projectId}`
-    );
-  
-  //   // ดึงข้อมูล workspace detail
-    const {
-      data: workspaceDetail,
-      isLoading: isLoadingWorkspaceDetail,
-      error: errorWorkspaceDetail,
-    } = useFetchQuery(
-      ["workspace-detail", workspaceId ?? ""],
-      `/workspaces/detail/${workspaceId}`
-    );
+      const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+        useWorkspaceData();
+      const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+        useProjecteData();
+    
   
     // ตรวจสอบสถานะการโหลด
-    if (isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
+    if (isLoadingProjectDetail || isLoadingWorkspace) return <LoadingSpinner />;
     // ตรวจสอบข้อผิดพลาด
-    if (errorProjectDetail || errorWorkspaceDetail) return <div>Error: {errorProjectDetail?.message || errorWorkspaceDetail?.message}</div>;
+    if (isErrorProjectDetail || isErrorWorkspace) return <div>Error: {isErrorProjectDetail?.message || isErrorWorkspace?.message}</div>;
 
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
   
 
-  if (isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
+
   return (
     <>
     <Snackbar open={openAlert} autoHideDuration={6000}>
@@ -136,7 +126,7 @@ const ProjectDetailPage = () => {
                 {projectDetail.description}
                 </p>
                 <div className="mb-2 mt-4">
-                {projectDetail.ai_model.ai_tag.map((tag) => (
+                {projectDetail.ai_model.ai_tag.map((tag: string) => (
                   <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
                     {tag}
                   </span>

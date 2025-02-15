@@ -1,6 +1,6 @@
 import axios from "axios";
 import PROJECT_ROUTES from "../routes/ProjectRoutes";
-
+const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
 axios.defaults.withCredentials = true;
 
@@ -44,3 +44,24 @@ export const revokeProjectPermission = async (workspaceId: string,projectId: str
 };
 
 
+
+
+export const fetchProjectDetailService = async (workspaceId: string, projectId: string) => {
+  const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`);
+  return data;
+};
+
+
+
+
+export const fetchProjectsService = async (workspaceId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects`);
+    return data;
+  };
+  
+
+  
+export const fetchProjectPermissionsService = async (workspaceId: string, projectId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/permissions/${projectId}`);
+    return data;
+  };

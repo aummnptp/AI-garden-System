@@ -1,11 +1,13 @@
-import{  useState } from "react";
-import {  useParams } from "react-router-dom";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import { NoteAltOutlined, UploadFile } from "@mui/icons-material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import HistoryUploadSection from "../../components/HistoryUploadSection";
 import NoteSection from "../../components/NoteSection";
+import { useProjecteData } from "../../hook/projects/useProjectdata";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useHistoryData } from "../../hook/history/useHistoryData";
 
 const ProjectHistoryPage = () => {
   const [historyTab, setHistoryTab] = useState<string>("Upload");
@@ -13,26 +15,26 @@ const ProjectHistoryPage = () => {
     workspaceId: string;
     projectId: string;
   }>();
-  const {
-    data: historyData,
-  } = useFetchQuery(
-    ["project-history", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/all-history/${projectId}`
-  );
 
   const {
-    data: projectNotes = [], // ✅ กำหนดค่าเริ่มต้นเป็น []
-    isLoading: isLoadingNotes,
-    error: errorNotes,
-} = useFetchQuery(
-    ["project-notes", projectId ?? ""], // ✅ queryKey ให้กระชับขึ้น
-    `/projects/${projectId}/notes`
-);
+    projectHistory,
+    isLoadingHistory,
+    isErrorHistory,
+    projectNotes,
+    isLoadingNotes,
+    isErrorNotes,
+  } = useHistoryData();
+
+  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+    useWorkspaceData();
+  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+    useProjecteData();
+
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={""}></Sidebar>
+        <Sidebar workspace={workspaceDetail} project={projectDetail}></Sidebar>
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
@@ -68,7 +70,7 @@ const ProjectHistoryPage = () => {
           <div className="py-10  mt-4 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative pt-10 px-10 ">
             {historyTab === "Upload" ? (
               <HistoryUploadSection
-                historyData={historyData} // ใส่ข้อมูลที่ดึงมาจาก API
+                historyData={projectHistory} // ใส่ข้อมูลที่ดึงมาจาก API
                 workspaceId={workspaceId ?? ""}
                 projectId={projectId ?? ""}
               />

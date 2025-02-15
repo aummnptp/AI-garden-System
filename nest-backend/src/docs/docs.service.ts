@@ -55,19 +55,34 @@ export class DocsService {
     await this.subDocumentRepository.remove(subDocument);
   }
 
-  async findAll(): Promise<Document[]> {
+  async findAllTitles(userRole: string): Promise<Document[]> {
     try {
-      return await this.documentRepository
+      const query = this.documentRepository
         .createQueryBuilder('document')
         .leftJoinAndSelect('document.subDocuments', 'subDocument')
-        .orderBy('document.order', 'ASC') // เรียงลำดับ Document
-        .addOrderBy('subDocument.order', 'ASC') // เรียงลำดับ subDocuments
-        .getMany();
+        .select([
+          'document.docsId',
+          'document.title',
+          'document.order',
+          'document.hidden',
+          'subDocument.subDocsId',
+          'subDocument.title',
+          'subDocument.order',
+          'subDocument.hidden',
+        ])
+        .orderBy('document.order', 'ASC')
+        .addOrderBy('subDocument.order', 'ASC');
+  
+      if (userRole !== 'admin') {
+        // ถ้าไม่ใช่ Admin ซ่อนหัวข้อที่ hidden
+        query.where('document.hidden = false').andWhere('subDocument.hidden = false');
+      }
+  
+      return await query.getMany();
     } catch (error) {
-      throw new Error(`Failed to fetch documents: ${error.message}`);
+      throw new Error(`Failed to fetch document titles: ${error.message}`);
     }
   }
-
   async getDocs(docsId: string): Promise<Document> {
     return this.documentRepository.findOneBy({ docsId: docsId });
   }

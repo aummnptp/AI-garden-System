@@ -18,10 +18,10 @@ const InvitePage = () => {
       }
 
       try {
-        console.log("🔍 Checking authentication status...");
+        console.log("Checking authentication status...");
 
         const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/status`, { withCredentials: true });
-        console.log("🔍 Auth status response:", response.data);
+        console.log("Auth status response:", response.data);
 
         if (response.data.isAuthenticated) {
           console.log("User is authenticated, joining workspace...");

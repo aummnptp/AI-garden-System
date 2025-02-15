@@ -9,19 +9,15 @@ import AdminAiCard from "../../components/card/AdminAiCard";
 import { Button } from "@mui/material";
 import AISettingsComponent from "../../components/ai/AISettingsComponent";
 import { AIDataType } from "../../types/Ai";
-import { useFetchQuery } from "../../hook/useFetchQuery";
+import { useAiData } from "../../hook/ai/useAiData";
 
 
 function AdminAi() {
 
 
-  const {
-      data: AIData,
-    } = useFetchQuery(
-      ["ai-models", ],
-      `/ai-models/`
-    );
- 
+  const { AIData, isLoadingAI, isErrorAI, refetchAIModels } = useAiData();
+
+
 
 
 

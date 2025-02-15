@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  {  useState } from "react";
 import WorkspaceCard from "../../components/card/WorkspaceCard";
 import InvitedCard from "../../components/card/InvitedCard";
 import CreateWorkspace from "../../components/popup/CreateWorkspace";
@@ -6,7 +6,8 @@ import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import { Button } from "@mui/material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function WorkspacePage() {
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
@@ -19,16 +20,18 @@ function WorkspacePage() {
     setShowInvitedRow(!showInvitedRow);
   };
 
-  const { data: myWorkspace, refetch: refetchMyWorkspace } = useFetchQuery(
-    ["my-workspace"],
-    `/workspaces/my-workspaces`
-  );
-
   const {
-    data: invitedWorkspace,
-    refetch: refetchInvitedWorkspace, // <-- ดึง refetch ออกมา
-  } = useFetchQuery(["invited-workspace"], `/workspaces/invite-workspaces`);
-
+    myWorkspace,
+    isLoadingMyWorkspace,
+    invitedWorkspace,
+    isLoadingInvitedWorkspace,
+    refetchMyWorkspace,
+    refetchInvitedWorkspace,
+  } = useWorkspaceData();
+  
+  if (isLoadingMyWorkspace || isLoadingInvitedWorkspace) {
+    return <LoadingSpinner/>;
+  }
   return (
     <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">

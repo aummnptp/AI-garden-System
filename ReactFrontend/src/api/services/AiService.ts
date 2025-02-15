@@ -1,4 +1,5 @@
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
 axios.defaults.withCredentials = true;
 
@@ -59,7 +60,6 @@ export const updateAiModelService = async (
         formData,
         {
           headers: {
-            // ไม่ต้องตั้ง Content-Type เพราะ axios จะตั้งให้โดยอัตโนมัติเมื่อใช้ FormData
           },
         }
       );
@@ -70,3 +70,13 @@ export const updateAiModelService = async (
     }
   };
 
+
+  export const fetchAiModelsService = async () => {
+    const { data } = await axios.get(`${BASE_URL}/ai-models/`);
+    return data;
+  };
+  export const fetchAiLimitSettingService = async () => {
+    const { data } = await axios.get(`${BASE_URL}/ai-usage-limit-setting`);
+    return data;
+  };
+  

@@ -2,13 +2,16 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@ant-design/icons";
+import { useAuth } from "../../context/AuthContext";
 
 type ContentViewerProps = {
   currentPageData: string;
   onEdit: () => void;
+
 };
 
 const ContentViewer: React.FC<ContentViewerProps> = ({ currentPageData, onEdit }) => {
+  const { isAdmin } = useAuth();
   return (
     
     <div className="w-full h-full flex flex-col justify-between bg-white pt-4">
@@ -17,6 +20,7 @@ const ContentViewer: React.FC<ContentViewerProps> = ({ currentPageData, onEdit }
     <div dangerouslySetInnerHTML={{ __html: currentPageData }} />
     </div>
     {/* Edit Button Section */}
+    {isAdmin &&(
     <div className="pr-12  w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex justify-end items-center">
       <Button
         variant="contained"
@@ -32,6 +36,7 @@ const ContentViewer: React.FC<ContentViewerProps> = ({ currentPageData, onEdit }
         <EditOutlined /> Edit Document Content
       </Button>
     </div>
+    )}
   </div>
   );
 };

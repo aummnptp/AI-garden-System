@@ -132,3 +132,40 @@ export const saveSubDocsOrderService = async (subDocsToSave: { docsId: string; s
     throw error;
   }
 };
+
+
+export const updateContentDocumentService = async (docsId: string, content: string) => {
+  try {
+    const response = await axios.patch(`${DOCS_ROUTES.updateDocument}${docsId}`, { content });
+    return response.data;
+  } catch (error) {
+    console.error(` Error updating document ${docsId}:`, error);
+    throw error;
+  }
+};
+
+export const updateContentSubDocumentService = async (subDocsId: string, content: string) => {
+  try {
+    const response = await axios.patch(`${DOCS_ROUTES.updateSubDocument}${subDocsId}`, { content });
+    return response.data;
+  } catch (error) {
+    console.error(` Error updating sub-document ${subDocsId}:`, error);
+    throw error;
+  }
+};
+
+const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
+
+
+export const fetchDocsHeading = async () => {
+  const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/docs`);
+  return data;
+};
+
+export const fetchContentData = async (docsId?: string, subDocsId?: string) => {
+  const url = subDocsId
+    ? `/docs/content-subdocs/${subDocsId}`
+    : `/docs/content-docs/${docsId}`;
+  const { data } = await axios.get(`${BASE_URL}${url}`);
+  return data;
+};

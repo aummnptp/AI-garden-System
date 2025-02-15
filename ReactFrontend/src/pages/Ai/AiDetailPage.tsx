@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import MiniFooter from '../../components/MiniFooter';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const AiDetail = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();
@@ -37,7 +38,7 @@ const AiDetail = () => {
   }, [ai_id]);
 
   if (!aiData) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   return (

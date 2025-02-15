@@ -35,11 +35,14 @@ export class ProjectsController {
       return this.projectsService.create(workspaceId, createProjectDto,file);
   }
 
-  @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard)
   @Get()
-  findAll(
-    @Param('workspaceId') workspaceId: string):Promise<Project[]> {
-    return this.projectsService.findAll(workspaceId);
+  async findAll(
+    @Param('workspaceId') workspaceId: string,
+    @Request() req
+  ): Promise<Project[]> {
+    const userId = req.user.userId;
+    return this.projectsService.findAll(workspaceId, userId);
   }
 
   @WorkspaceRole('member')
@@ -109,12 +112,22 @@ export class ProjectsController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('history/:historyId')
+  @Get(':projectId/history/:historyId')
   getHistory(
+    @Param("projectId") projectId: string,
     @Param('historyId') historyId: string,): Promise<ProjectHistory> {
     return this.projectsService.getHistory(historyId);
   }
 
   
-
+  // @WorkspaceRole('owner') 
+  @UseGuards(JwtGuard, ProjectPermissionGuard)
+  @Delete(':projectId/history/:historyId')
+  async deleteHistory(
+    @Param('workspaceId') workspaceId: string,
+    @Param('projectId') projectId: string,
+    @Param('historyId') historyId: string
+  ): Promise<{ message: string }> {
+    return this.projectsService.deleteHistory(workspaceId, projectId, historyId);
+  }
 }

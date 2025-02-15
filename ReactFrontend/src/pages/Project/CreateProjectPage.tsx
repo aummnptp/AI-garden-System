@@ -8,6 +8,7 @@ import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Ra
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
 import { AIDataType } from '../../types/Ai';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const { TextArea } = Input;
 
@@ -153,7 +154,7 @@ function CreateProjectPage() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
   return (
     <>

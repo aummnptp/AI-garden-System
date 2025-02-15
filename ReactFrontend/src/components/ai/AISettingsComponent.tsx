@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import AISettingDialog from './AISettingDialog';
-import { useFetchQuery } from '../../hook/useFetchQuery';
 import { updateAISettingService } from '../../api/services/AiSettingService';
 import { SettingFilled } from '@ant-design/icons';
+import { useAiData } from '../../hook/ai/useAiData';
 
 const AISettingsComponent: React.FC = () => {
-  // เรียก API เพื่อดึงข้อมูลการตั้งค่า AI Usage Limit
-  const { data: aiSettingData, isLoading, error, refetch } = useFetchQuery(
-    ["ai-usage-limit-setting"],
-    "/ai-usage-limit-setting"
-  );
+  const {
+    aiSettingData,
+    isLoadingAiSetting,
+    isErrorAiSetting,
+    refetchAiSetting,
+  } = useAiData();
 
-  // กำหนดค่าเริ่มต้น ถ้าไม่มีข้อมูล (หรือ error) ให้ใช้ default 10
   const initialLimit = aiSettingData ? aiSettingData.maxUsagePerDay : 10;
-  // ใช้ค่า actual จาก aiSettingData.isLimitEnabled (หรือ false หากไม่มีข้อมูล)
   const isLimitEnabled = aiSettingData ? aiSettingData.isLimitEnabled : false;
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -27,7 +26,7 @@ const AISettingsComponent: React.FC = () => {
     try {
       const updatedSettings = await updateAISettingService(newLimit, newIsLimitEnabled);
       console.log('Settings updated:', updatedSettings);
-      refetch();
+      refetchAiSetting();
     } catch (error) {
       console.error('Error updating settings:', error);
       alert("Error updating settings");
@@ -36,13 +35,13 @@ const AISettingsComponent: React.FC = () => {
     }
   };
 
-  if (isLoading) return <div>Loading settings...</div>;
-  if (error) return <div>Error loading settings: {error.message}</div>;
+  // if (isLoadingAiSetting) return <div>Loading settings...</div>;
+  // if (isErrorAiSetting) return <div>Error loading settings: {isErrorAiSetting.message}</div>;
 
   return (
-<>
+    <>
       <Button variant="outlined" color="info" onClick={handleOpenDialog}>
-       <SettingFilled/> AI Demo Settings
+        <SettingFilled /> AI Demo Settings
       </Button>
       <AISettingDialog
         open={dialogOpen}
