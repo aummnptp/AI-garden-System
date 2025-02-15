@@ -11,6 +11,7 @@ import {
   Patch,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AIModelService } from './ai-model.service';
@@ -76,9 +77,11 @@ export class AIModelController {
   }
 
 
-  @Get()
-  findAll() {
-    return this.aiModelService.findAll();
+  @Get("/")
+  findAll(@Query("search") search?: string,
+    @Query("type") type?: string,
+    @Query("tag") tag?: string) {
+    return this.aiModelService.findAll({ search, type, tag });
   }
 
   @Get('with_permission')
@@ -126,15 +129,15 @@ export class AIModelController {
     return models;
   }
 
-
-
-
-
   @Get('approved/:userId')
   async getApprovedAiModels(@Param('userId') userId: string) {
     return this.aiModelService.getApprovedAiModelsByUserId(userId);
   }
 
+  @Get('/tags/tag-in-system') 
+  async getAITags(): Promise<string[]> {
+    return this.aiModelService.getUniqueAITags();
+  }
 }
 
 

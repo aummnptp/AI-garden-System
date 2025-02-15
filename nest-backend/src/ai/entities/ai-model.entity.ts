@@ -20,7 +20,7 @@ export class AIModel {
   @Column()
   ai_type: string;
 
-  @Column("simple-array",{nullable:true})
+  @Column("simple-array", { nullable: true })  
   ai_tag: string[];
 
   @Column("simple-array",{default:"#00ff00",name:"color_set"})

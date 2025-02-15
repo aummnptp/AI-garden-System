@@ -78,10 +78,25 @@ export class AIModelService {
     return 'Model updated successfully!';
   }
   
-  async findAll(): Promise<AIModel[]> {
-    const aiModels = await this.aiModelRepository.find();
+  async findAll(filters?:{search:string;type?:string;tag?:string}): Promise<AIModel[]> {
+    const queryBuilder  =  this.aiModelRepository.createQueryBuilder("aiModel");
+    if (filters?.search) {
+      queryBuilder.andWhere(
+        "(aiModel.name LIKE :search OR aiModel.description LIKE :search)",
+        { search: `%${filters.search}%` }
+      );
+    }
 
-    return aiModels.map((aiModel) => ({ 
+    if (filters?.type) {
+      queryBuilder.andWhere("aiModel.ai_type = :type", { type: filters.type });
+    }
+
+    if (filters?.tag) {
+      queryBuilder.andWhere("aiModel.ai_tag LIKE :tag", { tag: `%${filters.tag}%` });
+    }
+
+    const aiModels = await queryBuilder.getMany();
+    return aiModels.map((aiModel) => ({
       ...aiModel,
       imagePath: aiModel.imagePath
         ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
@@ -89,7 +104,6 @@ export class AIModelService {
     }));
   }
 
-  // อ่าน AIModel ตาม id
   async findOne(aiId: string): Promise<AIModel> {
     const aiModel = await this.aiModelRepository.findOneBy({ aiId:aiId  });
   
@@ -198,4 +212,10 @@ export class AIModelService {
       .andWhere('permission.approve = :approve', { approve: true })
       .getMany();
   }
+
+ async getUniqueAITags(): Promise<string[]> {
+  const aiModels = await this.aiModelRepository.find({ select: ["ai_tag"] });
+  const allTags = aiModels.flatMap(model => model.ai_tag || []);
+  return [...new Set(allTags)];
+}
 }

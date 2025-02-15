@@ -1,27 +1,23 @@
 
 import  { useEffect, useState } from "react";
-import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
+import { ControlOutlined, SearchOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
-import axios from "axios";
-import { AIDataType } from "../../types/Ai";
+
+import { useAiData } from "../../hook/ai/useAiData";
+
+import { useSearchFilters } from "../../hook/useSearchFilter";
+import { Autocomplete, InputAdornment, Skeleton, TextField } from "@mui/material";
+
+
 
 function AIlist() {
-  const [AIData, setAIData] = useState<AIDataType[]>([]);
-  const fetchAIData = () => {
+  const AI_TYPES = ["Classification", "Object Detection", "Segmentation"];
 
-    axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/`)
-      .then(response => {
-        setAIData(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the workspace data!", error);
-      });
-  };
+  const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
+  const { AIData, isLoadingAI, isErrorAI, aiTags, isLoadingaiTags, isErroaiTags, } = useAiData();
 
-  useEffect(() => {
-    fetchAIData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  }, []);
+
 
   return (
     <>
@@ -66,46 +62,65 @@ function AIlist() {
             </ul>
           </div>
           <div className="m-6 flex justify-start gap-4">
-            <input
-              type="text"
-              id="first_name"
-              className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
+          <TextField
+              fullWidth
+              variant="outlined"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder="ค้นหา AI"
-              required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchOutlined className="text-gray-500" />
+                  </InputAdornment>
+                ),
+              }}
+              className="w-1/2"
             />
-            <button
-              type="button"
-              className=" rounded-[15px] bg-white border-2  border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  text-black text-lg font-normal px-5 py-1.5 mb-2  focus:outline-none "
-            >
-              ประเภท <SortAscendingOutlined />
-            </button>
-            <button
-              type="button"
-              className="   h-fit rounded-[15px] bg-white border-2 border-gray-200 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200  t ext-black text-lg font-normal  px-5 py-1.5 mb-2 focus:outline-none "
-            >
-              tag <ControlOutlined />
-            </button>
+               
+               <Autocomplete
+          options={AI_TYPES}
+          value={typeFilter}
+          onChange={(_, newValue) => setTypeFilter(newValue)}
+        renderInput={(params) => <TextField {...params} label="ประเภท AI" variant="outlined" />}
+              className="w-1/4"
+          />
+           <Autocomplete
+              multiple
+              options={aiTags || []} 
+              value={tagFilter}
+              onChange={(_, newValue) => setTagFilter(newValue)}
+              renderInput={(params) => <TextField {...params} label="Tag AI" variant="outlined" />}
+              className="w-1/4"
+            />
           </div>
         </div>
 
 
       {/* card container */}
-      <div className="mt-4 h-fit w-11/12 grid grid-cols-3 pb-20 bg-white rounded-[15px] justify-self-center relative ">
-        {/* card */}
-        {AIData.map((data) => (
-    
-          <AiCard
-            id={data.aiId}
-            name={data.name}
-            aiDesc={data.description}
-            tags={data.ai_tag}
-            // img={"/images/ai/healthAi.webp"}
-            img={data.imagePath}
-            type={data.ai_type}
-            ></AiCard>
-
+      <div className="px-10 p-8 mt-4 h-fit w-11/12 
+    grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6
+    bg-white rounded-[15px] justify-self-center relative">
+      {isLoadingAI
+        ? Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="p-4">
+              <Skeleton height={200} />
+              <Skeleton width={`80%`} />
+              <Skeleton width={`60%`} />
+            </div>
+          ))
+        : AIData.map((data) => (
+            <AiCard
+              key={data.aiId}
+              id={data.aiId}
+              name={data.name}
+              aiDesc={data.description}
+              tags={data.ai_tag}
+              img={data.imagePath}
+              type={data.ai_type}
+            />
           ))}
-        </div>
+</div>
       </div>
       <MiniFooter></MiniFooter>
     </>

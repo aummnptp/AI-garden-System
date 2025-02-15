@@ -69,14 +69,25 @@ export const updateAiModelService = async (
       throw error;
     }
   };
+ 
+  export const fetchAiModelsService = async (filters: Record<string, string | null> = {}) => {
 
-
-  export const fetchAiModelsService = async () => {
-    const { data } = await axios.get(`${BASE_URL}/ai-models/`);
+    const cleanFilters: Record<string, string> = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== null) // กรองค่า null
+        .map(([key, value]) => [key, value as string]) // แปลงให้เป็น string
+    );
+  
+    const queryString = new URLSearchParams(cleanFilters).toString();
+    const { data } = await axios.get(`${BASE_URL}/ai-models/?${queryString}`);
     return data;
   };
+  
   export const fetchAiLimitSettingService = async () => {
     const { data } = await axios.get(`${BASE_URL}/ai-usage-limit-setting`);
     return data;
   };
-  
+    
+  export const fetchAllAiTag = async () => {
+    const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/tags/tag-in-system`);
+    return data;
+  };

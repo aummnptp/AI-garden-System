@@ -1,19 +1,28 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import { fetchAiLimitSettingService, fetchAiModelsService } from "../../api/services/AiService";
+import { useParams, useSearchParams } from "react-router-dom";
+import { fetchAiLimitSettingService, fetchAiModelsService, fetchAllAiTag } from "../../api/services/AiService";
 
 
 export const useAiData = () => {
   // const { workspaceId, projectId,historyId } = useParams<{ workspaceId: string; projectId: string; historyId:string}>();
+  const [searchParams] = useSearchParams();
+
+
+  const filters: Record<string, string> = {
+    search: searchParams.get("search") || "", 
+    type: searchParams.get("type") || "",
+    tag: searchParams.get("tag") || "",
+  };
+
   const {
-    data: AIData,
+    data: AIData = [],
     isLoading: isLoadingAI,
     isError: isErrorAI,
     refetch: refetchAIModels,
   } = useQuery({
-    queryKey: ["ai-models"],
-    queryFn: () => fetchAiModelsService(), // เรียก API ดึงข้อมูล
+    queryKey: ["ai-models", filters], 
+    queryFn: () => fetchAiModelsService(filters),
   });
 
 
@@ -28,7 +37,16 @@ export const useAiData = () => {
   });
 
 
+  const {
+    data: aiTags,
+    isLoading: isLoadingaiTags,
+    isError: isErroaiTags,
+  } = useQuery({
+    queryKey: ["ai-tags"],
+    queryFn: () => fetchAllAiTag(),
+  });
 
+  
 
   return {
     AIData,
@@ -40,6 +58,8 @@ export const useAiData = () => {
     isLoadingAiSetting,
     isErrorAiSetting,
     refetchAiSetting,
+
+    aiTags, isLoadingaiTags, isErroaiTags,
 
   };
 };
