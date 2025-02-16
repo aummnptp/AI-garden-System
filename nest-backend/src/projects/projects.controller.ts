@@ -115,4 +115,10 @@ export class ProjectsController {
   async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
     return this.projectsService.getUploadRanking(projectId);
   }
+
+  @Get('/count-media/:projectId')
+  async getMediaCount(@Param('projectId') projectId: string) {
+    return await this.projectsService.countMedia(projectId);
+  }
+
 }

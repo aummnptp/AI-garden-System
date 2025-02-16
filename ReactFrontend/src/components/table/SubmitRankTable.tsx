@@ -111,6 +111,7 @@ export default function SubmitRankTable() {
   const { projectId } = useParams<{ projectId: string }>();  // ดึง projectId จาก URL
   const [rankingData, setRankingData] = useState<RankingData[]>([]);
   const [uploadHistory, setUploadHistory] = useState<UploadHistory[]>([]);
+  const [inputType, setInputType] = useState<string>('');
 
   useEffect(() => {
     const fetchRankingData = async () => {
@@ -162,6 +163,30 @@ export default function SubmitRankTable() {
     fetchUploadHistory();
   }, [workspaceId, projectId]);
 
+  useEffect(() => {
+    const fetchProjectDetail = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        if (response.ok) {
+          const detail = await response.json();
+          setInputType(detail.input_type); // เก็บค่า input_type
+        } else {
+          console.error('Failed to fetch detail');
+        }
+      } catch (error) {
+        console.error("Error fetching detail:", error);
+      }
+    };
+
+    fetchProjectDetail();
+  }, [workspaceId, projectId]);
+
 
   return (
     <div className="w-full mx-auto flex">
@@ -173,7 +198,7 @@ export default function SubmitRankTable() {
                 <StyledTableCell>อันดับ</StyledTableCell>
                 <StyledTableCell>ชื่อ</StyledTableCell>
                 <StyledTableCell align="center">
-                  จำนวนการประมวลผล (ภาพ)
+                  จำนวนการประมวลผล ({inputType === "วิดีโอ" ? "วิดีโอ" : "ภาพ"})
                 </StyledTableCell>
               </TableRow>
             </TableHead>
@@ -195,7 +220,7 @@ export default function SubmitRankTable() {
                   </StyledTableCell>
                   <StyledTableCell>
                     <div className="flex items-center w-fit">
-                      <img className="w-10 h-10 rounded-full border-2" src={row.avatar} alt="Avatar" />
+                      <img className="w-10 h-10 rounded-full border-2" src={row.picture} alt="Avatar" />
                       <div className="ml-2">
                         <p className="text-indigo-900 text-lg font-medium">{row.name}</p>
                       </div>
@@ -231,15 +256,24 @@ export default function SubmitRankTable() {
                 <p className="text-gray-600 text-sm">{formatDate(new Date(data.createdAt))} เวลา: {formatTime(new Date(data.createdAt))} น.</p>
               </div>
             </div>
-            <img
-              className="w-28 h-28 mr-6 border-2 object-cover"
-              src={`${data.filePath}`}
-              alt={data.userName}
-              loading="lazy"
-            />
+            {inputType === "วิดีโอ" ? (
+              <video
+                className="w-28 h-28 mr-6 border-2 object-cover"
+                src={data.filePath}
+                controls  // เพิ่ม controls เพื่อให้กด Play ได้
+              />
+            ) : (
+              <img
+                className="w-28 h-28 mr-6 border-2 object-cover"
+                src={data.filePath}
+                alt={data.userName}
+                loading="lazy"
+              />
+            )}
           </div>
         ))}
       </div>
+
     </div>
   );
 }
