@@ -71,7 +71,7 @@ const SubDocList: React.FC<SubDocListProps> = ({
                       onChange={(e) => onChangeSubTitle(e, docsId, subDoc.subDocsId)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          onChangeSubTitle(e, docsId, subDoc.subDocsId, true);
+                          onChangeSubTitle(e as unknown as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, docsId, subDoc.subDocsId, true);
                           setRenameSubDocId(null);
                         }
                       }}

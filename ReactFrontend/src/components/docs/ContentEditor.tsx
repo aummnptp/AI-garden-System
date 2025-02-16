@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@mui/material";
 import { SaveOutlined } from "@ant-design/icons";
 import { Editor } from "@tinymce/tinymce-react";
-import SaveContentModal from "./modal/SaveContentModal";
 import { DeleteOutlined } from "@mui/icons-material";
 
 type ContentEditorProps = {
@@ -21,6 +20,8 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
   onEditorChange,
   setText,
 }) => {
+
+  
   return (
     <div className="w-full justify-self-center relative  ">
       <div className=" pr-12 w-[80%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 z-50 flex justify-between items-center pl-2">

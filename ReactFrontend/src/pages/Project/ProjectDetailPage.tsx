@@ -20,8 +20,7 @@ import { useProjecteData } from "../../hook/projects/useProjectData";
 
 
 import { useFetchQuery } from "../../hook/useFetchQuery";
-// import formatDate from '../../function/formatDate';
-import formatTime from '../../function/formatTime';
+import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 
 
@@ -32,7 +31,6 @@ const ProjectDetailPage = () => {
   // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   // const [loading, setLoading] = useState(true);
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const navigate = useNavigate(); 
   const [openAlert, setOpenAlert] = useState(false); 
 
   // const {
@@ -56,24 +54,22 @@ const ProjectDetailPage = () => {
   const {
     data: mediaCount = { imageCount: 0, videoCount: 0 },
     isLoading: isLoadingMediaCount,
-    error: errorMediaCount,
+
   } = useFetchQuery(
     ["media-count", workspaceId ?? "", projectId ?? ""],
     `/workspaces/${workspaceId}/projects/count-media/${projectId}`
   );
 
 
-      const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+      const { workspaceDetail, isLoadingWorkspace, } =
         useWorkspaceData();
-      const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+      const { projectDetail, isLoadingProjectDetail,  } =
         useProjecteData();
     
   
 
-    if (isLoadingProjectDetail || isLoadingWorkspace) return <LoadingSpinner />;
+    if (isLoadingProjectDetail || isLoadingWorkspace||isLoadingMediaCount) return <SkeletonLayout />;
     // ตรวจสอบข้อผิดพลาด
-    if (isErrorProjectDetail || isErrorWorkspace) return <div>Error: {isErrorProjectDetail?.message || isErrorWorkspace?.message}</div>;
-
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
   
   

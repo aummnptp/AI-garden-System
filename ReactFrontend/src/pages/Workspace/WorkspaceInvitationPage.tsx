@@ -19,6 +19,7 @@ import { Link, useParams } from "react-router-dom";
 import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
 import { memberData } from "../../types/Invitation";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { Member, PendingUserData } from "../../types/User";
 
 
 interface userData {
@@ -131,19 +132,25 @@ const handleChangeRole = async(memberId: string ,newRole: string) => {
 const {
   inviteLink,
   isLoadingInviteLink,
+
   workspaceDetail,
+  isLoadingWorkspace,
+  
   userDatas,
+  isLoadingAvailableUsers,
   pendingUserDatas,
+  isLoadingPendingUsers,
+
   memberDatas,
+  isLoadingMembers,
+
   refetchInviteLink,
   refetchUserDatas,
   refetchPendingUser,
   refetchMemberDatas,
 } = useWorkspaceData();
 
-if (isLoadingInviteLink) {
-  return <p>Loading invite link...</p>;
-}
+if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoadingPendingUsers||isLoadingMembers) return <SkeletonLayout />;
 
 
   return (
@@ -198,7 +205,7 @@ if (isLoadingInviteLink) {
                       return 1;
                     return 0;
                   })
-                  .map((member, index) => (
+                  .map((member:Member, index) => (
                     <>
                       <div className="w-full h-[0px] border border-trueGray-300 mx-auto bg-red" />
                       <div
@@ -288,7 +295,7 @@ if (isLoadingInviteLink) {
                 <h1 className="text-black text-3xl px-10 pb-4">
                   Pending invitation ({pendingUserDatas.length})
                 </h1>
-                {pendingUserDatas.map((member, index) => (
+                {pendingUserDatas.map((pending:PendingUserData, index) => (
                   <div>
                     <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
                     <div
@@ -298,7 +305,7 @@ if (isLoadingInviteLink) {
                       <div className="flex items-center ">
                         <img
                           className="w-10 h-10 rounded-full  border-2"
-                          src={member.user.picture|| "/images/homeImage/profile.webp"}
+                          src={pending.user.picture|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
                             e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -307,16 +314,16 @@ if (isLoadingInviteLink) {
                         />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-xl font-medium">
-                            {member.user.name}
+                            {pending.user.name}
                           </p>
                           <p className="text-gray-400 text-lg ">
-                            Email: {member.user.email}
+                            Email: {pending.user.email}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center">
                         <i
-                          onClick={() => handleCancelPending(member.inviteId)}
+                          onClick={() => handleCancelPending(pending.inviteId)}
                           className="bi bi-x-circle-fill text-2xl text-gray-500 hover:text-red-400 cursor-pointer"
                         ></i>
                       </div>

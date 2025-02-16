@@ -19,8 +19,9 @@ import axios from "axios";
 import ProjectImageInput from "../../components/input/ProjectImageInput";
 import { Close } from "@mui/icons-material";
 
-import { useProjecteData } from "../../hook/projects/useProjectdata";
+import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
@@ -32,11 +33,10 @@ const ProjectSetting = () => {
   const [image, setImage] = useState<File | null>(null);
 
   const isDeleteDisabled = confirmText !== name;
-  // สำหรับ demo รูป *****
 
-  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+  const { workspaceDetail, isLoadingWorkspace, } =
     useWorkspaceData();
-  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+  const { projectDetail, isLoadingProjectDetail, } =
     useProjecteData();
 
   useEffect(() => {
@@ -138,6 +138,7 @@ const ProjectSetting = () => {
     setOpen(false);
   };
 
+  if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* confirm modal delete */}

@@ -6,26 +6,23 @@ import ProjectCard from "../../components/card/ProjectCard";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 
-import LoadingSpinner from "../../components/LoadingSpinner";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
 import { ProjectDataType } from "../../types/Project";
 import { useProjecteData } from "../../hook/projects/useProjectData";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const ProjectListPage = () => {
   const { workspaceId } = useParams();
 
-  const { projectData, isLoadingProjects, errorProjects, refetchProjects } =
+  const { projectData, isLoadingProjects, } =
     useProjecteData();
 
-  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+  const { workspaceDetail, isLoadingWorkspace,  } =
     useWorkspaceData();
 
-  if (isLoadingProjects || isLoadingWorkspace) return <LoadingSpinner />;
-  if (errorProjects || isErrorWorkspace)
-    return (
-      <div>Error: {errorProjects?.message || isErrorWorkspace?.message}</div>
-    );
+  if (isLoadingProjects || isLoadingWorkspace) return <SkeletonLayout />;
+
 
   return (
     <>

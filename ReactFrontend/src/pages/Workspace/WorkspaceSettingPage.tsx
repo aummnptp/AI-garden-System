@@ -16,6 +16,7 @@ import { Close, Delete } from "@mui/icons-material";
 
 import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const WorkspaceSettingPage = () => {
   // let { workspaceId } = useParams();
@@ -29,6 +30,7 @@ const WorkspaceSettingPage = () => {
 
   const {
     workspaceDetail,
+    isLoadingWorkspace
 
   } = useWorkspaceData();
   
@@ -69,6 +71,7 @@ const WorkspaceSettingPage = () => {
   };
   const isDeleteDisabled = confirmText !== name;
 
+  if (isLoadingWorkspace) return <SkeletonLayout />;
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">

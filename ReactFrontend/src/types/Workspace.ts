@@ -5,6 +5,5 @@ export type Workspace= {
     members:[];
     createdAt:string;
     updatedAt:string;
-    // createById: string;
   }
   

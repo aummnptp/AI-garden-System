@@ -73,7 +73,7 @@ function Nav() {
                 src="/images/logo/IMG_3713.png"
               />
               <span className="self-center text-indigo-900 text-2xl font-semibold whitespace-nowrap">
-                AI Garden
+                AI Garden System
               </span>
             </div>
           </Link>

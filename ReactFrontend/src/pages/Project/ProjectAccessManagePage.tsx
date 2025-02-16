@@ -5,7 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
 import { changeProjectPermissionService, grantProjectPermission, revokeProjectPermission } from "../../api/services/ProjectService";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
-import { useProjecteData } from "../../hook/projects/useProjectdata";
+import { useProjecteData } from "../../hook/projects/useProjectData";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
+import { Member, ProjectPermission } from "../../types/User";
+
 
 const ProjectAccessManagePage = () => {
   const { workspaceId, projectId } = useParams<{
@@ -13,27 +16,28 @@ const ProjectAccessManagePage = () => {
     projectId: string;
   }>();
 
-  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace ,
+  const {
+    workspaceDetail,
+    isLoadingWorkspace,
     memberDatas,
     isLoadingMembers,
-    isErrorMembers,
     refetchMemberDatas,
-   } =
-    useWorkspaceData();
+  } = useWorkspaceData();
 
-  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail ,refetchProject ,
+  const {
+    projectDetail,
+    isLoadingProjectDetail,
+    refetchProject,
     projectPermissions,
     isLoadingPermissions,
-    isErrorPermissions,
     refetchPermissions,
-  } =
-    useProjecteData();
+  } = useProjecteData();
 
 
 
   
   const selectedMembers = new Set(
-    projectPermissions?.map((perm) => perm.user.userId) ?? []
+    projectPermissions?.map((perm:ProjectPermission) => perm.user.userId) ?? []
   );
 
   
@@ -54,20 +58,19 @@ const ProjectAccessManagePage = () => {
   
     try {
       if (selectedMembers.has(userId)) {
-        // 🔻 ติ๊กออก -> ลบสิทธิ์
         await revokeProjectPermission(workspaceId!, projectId!, userId);
       } else {
-        // ✅ ติ๊กเข้า -> เพิ่มสิทธิ์
         await grantProjectPermission(workspaceId!, projectId!, userId);
       }
-  
-      // 🔄 รีเฟรชข้อมูลสิทธิ์
       await refetchPermissions();
     } catch (error) {
       console.error(" Error updating member permissions:", error);
       alert("Failed to update member permissions.");
     }
   };
+
+  if (isLoadingProjectDetail || isLoadingWorkspace ||isLoadingPermissions||isLoadingMembers) return <SkeletonLayout />;
+
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Sidebar */}
@@ -136,7 +139,7 @@ const ProjectAccessManagePage = () => {
               </h1>
               <>
                 <div className="w-full h-[0px] border border-trueGray-300 mx-auto" />
-                {memberDatas.map((member, index) => (
+                {memberDatas.map((member:Member) => (
                   <div key={member.user.userId}>
                     <div className="px-10 py-2 flex items-center justify-between w-full">
                       {/* 🔹 Avatar + User Info */}

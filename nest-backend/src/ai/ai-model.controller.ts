@@ -76,12 +76,16 @@ export class AIModelController {
     return message;
   }
 
-
+  @UseGuards(JwtGuard )
   @Get("/")
-  findAll(@Query("search") search?: string,
+  findAll(
+    @Request() req,
+    @Query("search") search?: string,
     @Query("type") type?: string,
-    @Query("tag") tag?: string) {
-    return this.aiModelService.findAll({ search, type, tag });
+    @Query("tag") tag?: string,
+    ) {
+    const isAdmin = req.user?.role === "admin"
+    return this.aiModelService.findAll({ search, type, tag }, isAdmin);
   }
 
   @Get('with_permission')

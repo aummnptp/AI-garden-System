@@ -26,6 +26,7 @@ import DeleteDocModal from "../components/docs/modal/DeleteDocModal";
 import SaveReorderModal from "../components/docs/modal/SaveReorderModal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useDocsData } from "../hook/docs/useDocsData";
+import WelcomeDocs from "../components/docs/WelcomeDocs";
 
 const DocsPage: React.FC = () => {
   const { docsId, subDocsId } = useParams<Record<string, string | undefined>>();
@@ -379,32 +380,31 @@ const DocsPage: React.FC = () => {
 
       {/* Content Container */}
       <div className="w-[80%] ml-auto px-2 flex flex-col items-center pb-32 h-full min-h-screen bg-white">
-        {showTextEditor ? (
-          <div className="w-full h-full flex flex-col items-center bg-white">
-            <DiscardContentModal
-              open={discardContentModal}
-              onClose={onCloseDiscardModal}
-              onDiscard={handleDiscard}
-            />
-            <SaveContentModal
-              open={saveContentModal}
-              onClose={onCloseSaveModal}
-              onSave={handleSave}
-            />
-            <ContentEditor
-              value={editorValue}
-              onSave={onOpenSaveModal}
-              onDiscard={onOpenDiscardModal}
-              onEditorChange={setEditorValue}
-              setText={setEditorValue}
-            />
-          </div>
-        ) : (
-          <ContentViewer
-            currentPageData={currentPageData}
-            onEdit={handleEdit}
-          />
-        )}
+      {showTextEditor ? (
+    <div className="w-full h-full flex flex-col items-center bg-white">
+      <DiscardContentModal
+        open={discardContentModal}
+        onClose={onCloseDiscardModal}
+        onDiscard={handleDiscard}
+      />
+      <SaveContentModal
+        open={saveContentModal}
+        onClose={onCloseSaveModal}
+        onSave={handleSave}
+      />
+      <ContentEditor
+        value={editorValue}
+        onSave={onOpenSaveModal}
+        onDiscard={onOpenDiscardModal}
+        onEditorChange={setEditorValue}
+        setText={setEditorValue}
+      />
+    </div>
+  ) : !docsId && !subDocsId ? (
+    <WelcomeDocs />
+  ) : (
+    <ContentViewer currentPageData={currentPageData} onEdit={handleEdit} />
+  )}
       </div>
     </div>
   );

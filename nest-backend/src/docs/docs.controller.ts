@@ -88,7 +88,6 @@ export class DocsController {
   @Role("admin")
   @Patch('/save-subdocs-order')
   async saveSubDocsOrder(@Request() req,@Body() body: { subDocuments: UpdateSubDocumentDto[] }) {
-
     return this.docsService.saveSubDocsOrder(body.subDocuments);
   }
 

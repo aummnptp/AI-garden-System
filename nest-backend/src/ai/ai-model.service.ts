@@ -78,7 +78,7 @@ export class AIModelService {
     return 'Model updated successfully!';
   }
   
-  async findAll(filters?:{search:string;type?:string;tag?:string}): Promise<AIModel[]> {
+  async findAll(filters?:{search:string;type?:string;tag?:string},isAdmin: boolean = false): Promise<AIModel[]> {
     const queryBuilder  =  this.aiModelRepository.createQueryBuilder("aiModel");
     if (filters?.search) {
       queryBuilder.andWhere(
@@ -94,7 +94,11 @@ export class AIModelService {
     if (filters?.tag) {
       queryBuilder.andWhere("aiModel.ai_tag LIKE :tag", { tag: `%${filters.tag}%` });
     }
-
+    if (!isAdmin) {
+      queryBuilder.andWhere("aiModel.enable = :enable", { enable: true });
+      queryBuilder.andWhere("aiModel.visible = :visible", { visible: true });
+    }
+  
     const aiModels = await queryBuilder.getMany();
     return aiModels.map((aiModel) => ({
       ...aiModel,

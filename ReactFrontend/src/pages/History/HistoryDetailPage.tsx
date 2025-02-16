@@ -4,14 +4,13 @@ import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResult
 import Sidebar from "../../components/Sidebar";
 import { useParams } from "react-router-dom";
 import AddNoteDialog from "../../components/NoteDialog";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
-import { useState } from "react";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
+import { Note } from "../../types/History";
 
 const HistoryDetailPage = () => {
-  const [name, setName] = useState<string>("");
   const { workspaceId, projectId, historyId } = useParams<{
     workspaceId: string;
     projectId: string;
@@ -21,22 +20,19 @@ const HistoryDetailPage = () => {
   const { 
     historyDetail, 
     isLoadingHistoryDetail,
-    isErrorHistoryDetail,
     historyNoteData,
     isLoadingHistoryNoteData,
-    isErrorHistoryNoteData,
     refetchHistoryNoteData,
   
   } =
   useHistoryData();
 
-  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+  const { workspaceDetail, isLoadingWorkspace,  } =
     useWorkspaceData();
-  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+  const { projectDetail, isLoadingProjectDetail,  } =
     useProjecteData();
 
-  if (isLoadingHistoryDetail) return <LoadingSpinner />;
-  if (isErrorHistoryDetail) return <div>Error: {isErrorHistoryDetail?.message}</div>;
+  if (isLoadingWorkspace||isLoadingProjectDetail||isLoadingHistoryDetail||isLoadingHistoryNoteData) return <SkeletonLayout />;
 
   return (
     <>
@@ -71,7 +67,7 @@ const HistoryDetailPage = () => {
                   บันทึกทั้งหมด
                 </h2>
                 {historyNoteData && historyNoteData.length > 0 ? (
-                  historyNoteData.map((note) => (
+                  historyNoteData.map((note:Note) => (
                     <div
                       key={note.note_id}
                       className="border rounded p-3 my-2 bg-gray-50"

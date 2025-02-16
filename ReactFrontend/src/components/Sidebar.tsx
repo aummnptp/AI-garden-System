@@ -10,12 +10,13 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Workspace } from "../types/Workspace";
-import { Project } from "../types/Project";
+
 import { useAuth } from "../context/AuthContext";
+import { ProjectDataType } from "../types/Project";
 
 interface SidebarProps {
   workspace: Workspace;
-  project?: Project;
+  project?: ProjectDataType;
 }
 const Sidebar: React.FC<SidebarProps> = ({ workspace, project }) => {
   let { workspaceId, projectId } = useParams();
