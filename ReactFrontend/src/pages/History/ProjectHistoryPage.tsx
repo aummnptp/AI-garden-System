@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
@@ -13,6 +13,16 @@ const ProjectHistoryPage = () => {
     workspaceId: string;
     projectId: string;
   }>();
+
+  const {
+      data: workspaceDetail = {},
+      isLoading: isLoadingWorkspaceDetail,
+      error: errorWorkspaceDetail,
+    } = useFetchQuery(
+      ["workspace-detail", workspaceId ?? ""],
+      `/workspaces/detail/${workspaceId}`
+    );
+  // ดึงข้อมูล history
   const {
     data: historyData,
     isLoading,
@@ -21,14 +31,36 @@ const ProjectHistoryPage = () => {
     ["project-history", workspaceId ?? "", projectId ?? ""],
     `/workspaces/${workspaceId}/projects/all-history/${projectId}`
   );
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+
+  // ดึง input_type ของ project
+  const {
+    data: projectDetail,
+    isLoading: isLoadingProjectDetail,
+    error: errorProjectDetail,
+  } = useFetchQuery(
+    ["project-detail", workspaceId ?? "", projectId ?? ""],
+    `/workspaces/${workspaceId}/projects/detail/${projectId}`
+  );
+
+  // Loading และ Error State
+  if (isLoading || isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
+  if (error || errorProjectDetail || errorWorkspaceDetail)
+    return (
+      <div>
+        Error: {error?.message || errorProjectDetail?.message || errorWorkspaceDetail?.message}
+      </div>
+    );
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={""}></Sidebar>
+        <Sidebar workspaceName={workspaceDetail.name}
+          projectName={projectDetail.name}
+          aiName={projectDetail.ai_model.name}
+          aiType={projectDetail.ai_model.ai_type}
+        />
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
@@ -36,40 +68,42 @@ const ProjectHistoryPage = () => {
               Project History
             </h1>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
+
             <div className="mt-6 flex justify-start px-6 ">
               <a
                 onClick={() => setHistoryTab("Upload")}
-                className={`w-[50%]  border-b-2   inline-block  rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium  ${
-                  historyTab === "Upload"
-                    ? "text-indigo-600 border-indigo-600  "
-                    : " border-transparent text-gray-600 hover:border-gray-300"
-                }`}
+                className={`w-[50%] border-b-2 inline-block rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium  
+                  ${historyTab === "Upload"
+                    ? "text-indigo-600 border-indigo-600"
+                    : "border-transparent text-gray-600 hover:border-gray-300"
+                  }`}
               >
-                <UploadFile /> ประวัติ Upload
+                <UploadFile /> ประวัติอัปโหลด (
+                {projectDetail?.input_type === "วิดีโอ" ? "วิดีโอ" : "ภาพ"})
               </a>
 
               <a
                 onClick={() => setHistoryTab("Note")}
-                className={`w-[50%]  border-b-2   inline-block  rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium ${
-                  historyTab === "Note"
+                className={`w-[50%]  border-b-2 inline-block rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium 
+                  ${historyTab === "Note"
                     ? "text-indigo-600 border-indigo-600"
-                    : "  border-transparent text-gray-600  hover:border-gray-300"
-                }`}
+                    : "border-transparent text-gray-600 hover:border-gray-300"
+                  }`}
               >
                 <NoteAltOutlined /> ประวัติ Note
               </a>
             </div>
           </div>
 
-          <div className="py-10  mt-4 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative pt-10 px-10 ">
+          <div className="py-10 mt-4 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative pt-10 px-10 ">
             {historyTab === "Upload" ? (
               <HistoryUploadSection
-                historyData={historyData} // ใส่ข้อมูลที่ดึงมาจาก API
+                historyData={historyData}
                 workspaceId={workspaceId ?? ""}
                 projectId={projectId ?? ""}
+                inputType={projectDetail?.input_type} // ส่ง inputType ไปด้วย
               />
-            ) : // <div></div>
-            historyTab === "Note" ? (
+            ) : historyTab === "Note" ? (
               <NoteSection projectNoteData={[]} />
             ) : null}
           </div>

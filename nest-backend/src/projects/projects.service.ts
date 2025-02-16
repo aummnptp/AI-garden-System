@@ -284,5 +284,29 @@ export class ProjectsService {
 
   }
 
+  async countMedia(projectId: string) {
+    const projectHistory = await this.projectHistoryRepository.find({
+      where: { project: { projectId } }
+    });
+  
+    // นับจำนวนรูปภาพ
+    const imageExtensions = ['.jpg', '.jpeg', '.png'];
+    const imageCount = projectHistory.filter((item) => 
+      imageExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
+    ).length;
+  
+    // นับจำนวนวิดีโอ
+    const videoExtensions = ['.mp4', '.mov', '.avi'];
+    const videoCount = projectHistory.filter((item) => 
+      videoExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
+    ).length;
+  
+    return {
+      imageCount,
+      videoCount
+    };
+  }
+  
+
 
 }

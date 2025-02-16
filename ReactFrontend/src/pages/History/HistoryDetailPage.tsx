@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 
 
 const HistoryDetailPage = () => {
+  const [name, setName] = useState<string>("");
   const { workspaceId, projectId, historyId } = useParams<{
     workspaceId: string;
     projectId: string;
@@ -32,6 +33,12 @@ const HistoryDetailPage = () => {
     `/workspaces/${workspaceId}/workspaces/detail/${workspaceId}`
   );
 
+  useEffect(() => {
+      if (workspaceDetail) {
+        setName(workspaceDetail.name);
+      }
+    }, [workspaceDetail]);
+
   // ตรวจสอบสถานะการโหลด
   if (isLoadingHistory || isLoadingWorkspace) return <div>Loading...</div>;
 
@@ -42,12 +49,7 @@ const HistoryDetailPage = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-        <Sidebar
-          workspaceName={workspaceDetail}
-          // projectName={projectDetail.project_name}
-          // aiName={projectDetail.ai_model.name}
-          // aiType={projectDetail.ai_model.ai_type}
-        />
+      <Sidebar workspaceName={name} />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
