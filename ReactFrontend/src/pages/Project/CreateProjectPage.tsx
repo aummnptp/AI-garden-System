@@ -8,30 +8,30 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
-
+import { useAuth } from "../../context/AuthContext"; // นำเข้า useAuth
 const { TextArea } = Input;
 
 
 function CreateProjectPage() {
-  let {workspaceId} = useParams()
- const navigate = useNavigate();
+  let { workspaceId } = useParams()
+  const navigate = useNavigate();
   const [projectName, setProjectName] = useState('');
-  const [projectDescription, setProjectDescription ] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
   // const [projectImage, setProjecImage] = useState('');
-
-  const [workspaceDetail, setWorkspaceDetail] = useState([]); 
+  const { user } = useAuth(); // ดึง user จาก AuthContext
+  const [workspaceDetail, setWorkspaceDetail] = useState([]);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [inputType, setInputType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [uploadStep, setUploadStep] = useState(1);
   const [selectedAI, setSelectedAI] = useState();
-  const [AIData, setAIData] = useState([]); 
+  const [AIData, setAIData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [alertText, setAlertText] = useState("");
 
-  
+
   // const fetchData = async () => {
   //   setLoading(true);
   //   setError(null);
@@ -40,7 +40,7 @@ function CreateProjectPage() {
   //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
   //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
   //   ])
-   
+
   //     setWorkspaceDetail(workspaceResponse.data);
   //     setAIData(aiModelsResponse.data);
 
@@ -79,7 +79,7 @@ function CreateProjectPage() {
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
-  
+
   const startTimer = () => {
     setTimeout(() => {
       setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
@@ -94,12 +94,12 @@ function CreateProjectPage() {
   }
 
   const handleToNextStep = () => {
-    if(uploadStep===1 &&( projectName === '' || projectDescription === '') ){
-        setOpen(true);
-        setAlertText('กรุณากรอกข้อมูลให้ครบถ้วน')
-        
+    if (uploadStep === 1 && (projectName === '' || projectDescription === '')) {
+      setOpen(true);
+      setAlertText('กรุณากรอกข้อมูลให้ครบถ้วน')
+
     }
-    else if(uploadStep===2 && selectedAI === undefined){
+    else if (uploadStep === 2 && selectedAI === undefined) {
       setOpen(true);
       setAlertText('กรุณาเลือก AI ที่ต้องการใช้งาน')
     }
@@ -107,75 +107,80 @@ function CreateProjectPage() {
       setUploadStep((prevStep) => Math.min(prevStep + 1, 5));
 
     }
-  
+
   };
 
-   
 
- const handleSubmit = async () => {
 
-  const projectData = {
-    name: projectName,
-    description: projectDescription,
-    input_type: inputType,
-    ai_id:selectedCardId,
-    image_path: image,
-  };
+  const handleSubmit = async () => {
 
-  try {
-    const formData = new FormData();
-    formData.append("name", projectData.name);
-    formData.append("description", projectData.description);
-    formData.append("input_type", projectData.input_type);
-    formData.append("ai_id", projectData.ai_id);
-    if (projectData.image_path) {
-      formData.append("file", projectData.image_path);
-    }
-    
-    // formData.append("image_path", image);
-    await axios.post(
-      `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData, 
-       {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    });
-    navigate(`/workspaces/${workspaceId}/project-list`);
-    // console.log("Project created successfully!");
-    // ทำการ reset หรือเปลี่ยนหน้า
-  } catch (error) {
-    console.error("Error creating project:", error);
-  }
-};
+    const projectData = {
+      name: projectName,
+      description: projectDescription,
+      input_type: inputType,
+      ai_id: selectedCardId,
+      image_path: image,
+    };
 
-  const fetchData = async () => {
     try {
-      const [workspaceResponse, aiModelsResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`
-          ,
-          {
-            withCredentials: true,
-          }
-        ),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/my_approved`  ,
-          {
-            withCredentials: true,
-          }
-        ),
-      ]);
-  
-      setWorkspaceDetail(workspaceResponse.data);
-      setAIData(aiModelsResponse.data);
+      const formData = new FormData();
+      formData.append("name", projectData.name);
+      formData.append("description", projectData.description);
+      formData.append("input_type", projectData.input_type);
+      formData.append("ai_id", projectData.ai_id);
+      if (projectData.image_path) {
+        formData.append("file", projectData.image_path);
+      }
+
+      // formData.append("image_path", image);
+      await axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        });
+      navigate(`/workspaces/${workspaceId}/project-list`);
+      // console.log("Project created successfully!");
+      // ทำการ reset หรือเปลี่ยนหน้า
     } catch (error) {
-      console.error("There was an error fetching the data!", error);
-    } finally {
-      setLoading(false);
+      console.error("Error creating project:", error);
     }
   };
+
   useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
-  }, []);
+    const fetchData = async () => {
+      try {
+        if (!user) return; // ถ้า user ยังไม่มีค่า ไม่ต้องโหลด
+
+        // ตรวจสอบ role ของ user
+        const isAdmin = user.role === "admin";
+
+        // เลือก API AI Models ตาม role
+        const aiModelsUrl = isAdmin
+          ? `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`
+          : `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/my_approved`;
+
+        // เรียก API ทั้งสองอย่างพร้อมกัน
+        const [workspaceResponse, aiModelsResponse] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
+            { withCredentials: true }),
+          axios.get(aiModelsUrl, { withCredentials: true })
+        ]);
+
+        // ตั้งค่า State
+        setWorkspaceDetail(workspaceResponse.data);
+        setAIData(aiModelsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user, workspaceId]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -193,7 +198,7 @@ function CreateProjectPage() {
         )}
         <Sidebar workspaceName={workspaceDetail.name} />
 
-        <div 
+        <div
           onSubmit={handleSubmit}
           className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen "
         >
@@ -210,13 +215,12 @@ function CreateProjectPage() {
               <div className="flex items-center space-x-2">
                 <div
                   className={`rounded-full h-8 w-8 flex items-center justify-center 
-                  ${
-                    uploadStep > 1
+                  ${uploadStep > 1
                       ? "bg-green-500"
                       : uploadStep === 1
-                      ? "bg-blue-500"
-                      : "bg-gray-400"
-                  } text-white`}
+                        ? "bg-blue-500"
+                        : "bg-gray-400"
+                    } text-white`}
                 >
                   {uploadStep > 1 ? <i className="bi bi-check"></i> : 1}
                 </div>
@@ -231,10 +235,9 @@ function CreateProjectPage() {
               <div className="flex items-center space-x-2">
                 <div
                   className={`rounded-full h-8 w-8 flex items-center justify-center 
-                    ${
-                      uploadStep > 2
-                        ? "bg-green-500"
-                        : uploadStep === 2
+                    ${uploadStep > 2
+                      ? "bg-green-500"
+                      : uploadStep === 2
                         ? "bg-blue-500"
                         : "bg-gray-400"
                     } text-white`}
@@ -253,10 +256,9 @@ function CreateProjectPage() {
               <div className="flex items-center space-x-2">
                 <div
                   className={`rounded-full h-8 w-8 flex items-center justify-center 
-                    ${
-                      uploadStep > 3
-                        ? "bg-green-500"
-                        : uploadStep === 3
+                    ${uploadStep > 3
+                      ? "bg-green-500"
+                      : uploadStep === 3
                         ? "bg-blue-500"
                         : "bg-gray-400"
                     } text-white`}
@@ -403,13 +405,12 @@ function CreateProjectPage() {
           </div>
           {/* bottom ba  */}
           <div
-            className={`pr-12 w-[100%] pl-[20%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex ${
-              uploadStep > 1 ? "justify-between" : "justify-end"
-            } items-center`}
+            className={`pr-12 w-[100%] pl-[20%] h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex ${uploadStep > 1 ? "justify-between" : "justify-end"
+              } items-center`}
           >
             {uploadStep > 1 ? (
               <Button
-            
+
                 size="large"
                 variant="contained"
                 sx={{
@@ -427,7 +428,7 @@ function CreateProjectPage() {
             {uploadStep == 3 ? (
               <Button
                 onClick={handleSubmit}
-               
+
                 size="large"
                 variant="contained"
                 sx={{
@@ -441,7 +442,7 @@ function CreateProjectPage() {
               </Button>
             ) : (
               <Button
-              
+
                 size="large"
                 variant="contained"
                 sx={{
