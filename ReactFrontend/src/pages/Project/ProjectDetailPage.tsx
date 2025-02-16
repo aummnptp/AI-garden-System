@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 
 
-import {  ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import Barchart from "../../components/chart/BarChart";
 import DoughnutChart from "../../components/chart/doughnutChart";
@@ -15,8 +15,13 @@ import { Alert, Button, Snackbar, } from "@mui/material";
 import { formatDate } from "../../function/util";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
-import { useProjecteData } from "../../hook/projects/useProjectdata";
+import { useProjecteData } from "../../hook/projects/useProjectData";
 
+
+
+import { useFetchQuery } from "../../hook/useFetchQuery";
+// import formatDate from '../../function/formatDate';
+import formatTime from '../../function/formatTime';
 
 
 
@@ -30,6 +35,32 @@ const ProjectDetailPage = () => {
   const navigate = useNavigate(); 
   const [openAlert, setOpenAlert] = useState(false); 
 
+  const {
+    data: projectDetail = {},
+    isLoading: isLoadingProjectDetail,
+    error: errorProjectDetail,
+  } = useFetchQuery(
+    ["project-detail", workspaceId ?? "", projectId ?? ""],
+    `/workspaces/${workspaceId}/projects/detail/${projectId}`
+  );
+
+  const {
+    data: workspaceDetail = {},
+    isLoading: isLoadingWorkspaceDetail,
+    error: errorWorkspaceDetail,
+  } = useFetchQuery(
+    ["workspace-detail", workspaceId ?? ""],
+    `/workspaces/detail/${workspaceId}`
+  );
+
+  const {
+    data: mediaCount = { imageCount: 0, videoCount: 0 },
+    isLoading: isLoadingMediaCount,
+    error: errorMediaCount,
+  } = useFetchQuery(
+    ["media-count", workspaceId ?? "", projectId ?? ""],
+    `/workspaces/${workspaceId}/projects/count-media/${projectId}`
+  );
 
 
       const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
@@ -81,7 +112,6 @@ const ProjectDetailPage = () => {
              src={projectDetail.imagePath}
              />
             ) : (
-           
               <ProjectImage
               projectName={projectDetail.name}
               className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
@@ -99,7 +129,7 @@ const ProjectDetailPage = () => {
                     </h1>
 
                     <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                      Object Detection
+                    {projectDetail.ai_model.ai_type}
                     </span>
                   </div>
                   <div className=" w-full border border-zinc-300" />
@@ -123,7 +153,7 @@ const ProjectDetailPage = () => {
                   รายละเอียด
                 </p>
                 <p>
-                {projectDetail.description}
+                  {projectDetail.description}
                 </p>
                 <div className="mb-2 mt-4">
                 {projectDetail.ai_model.ai_tag.map((tag: string) => (
@@ -151,35 +181,35 @@ const ProjectDetailPage = () => {
 
             {/* เริ่มต้นใช้งาน */}
             <div className="flex flex-col my-10">
-  <div className="flex items-center">
-    <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center">
-      <UploadOutlined style={{ color: "#fff", fontSize: "2em" }} />
-    </div>
-    <div className="ml-3 flex-1">
-      <h1 className="text-indigo-900 text-2xl font-medium">
-        เริ่มต้นใช้งาน
-      </h1>
-      <div className="mt-2 w-full border border-zinc-300" />
-    </div>
-  </div>
-      <Link to={`/workspaces/${workspaceId}/project/${projectId}/predict`} className="ml-16 mt-2">
-      <Button
-              variant="contained"
-              size="large"
-              startIcon={uploadIcon}
-              sx={{
-                backgroundColor: "#4f46e5",
-                "&:hover": {
-                  backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                },
-              }}
-              >
-         {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
-      </Button>
-      </Link>
-    </div>
+              <div className="flex items-center">
+                <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center">
+                  <UploadOutlined style={{ color: "#fff", fontSize: "2em" }} />
+                </div>
+                <div className="ml-3 flex-1">
+                  <h1 className="text-indigo-900 text-2xl font-medium">
+                    เริ่มต้นใช้งาน
+                  </h1>
+                  <div className="mt-2 w-full border border-zinc-300" />
+                </div>
+              </div>
+              <Link to={`/workspaces/${workspaceId}/project/${projectId}/predict`} className="ml-16 mt-2">
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={uploadIcon}
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    },
+                  }}
+                >
+                  {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
+                </Button>
+              </Link>
+            </div>
 
-            
+
           </div>
 
           <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
@@ -198,9 +228,9 @@ const ProjectDetailPage = () => {
 
             <div className="">
 
-             
 
-         
+
+
 
               {/* Sumary Content Row1 */}
               <div className="grid grid-cols-3 px-10">
@@ -214,80 +244,76 @@ const ProjectDetailPage = () => {
                   disable={false}
                 />
                 {/* รูป summary */}
-                {projectDetail.input_type === "รูปภาพ"  ? (
-               
-                <SummaryCard
-                  icon={
-                    <PictureOutlined
-                      style={{ color: "#fff", fontSize: "2em" }}
-                    />
-                  }
-                  label="ประมวลผลด้วยภาพ"
-                  value="5.32k"
-                  valueType="ภาพ"
-                  disable={false}
-                />
-              ) : (
-                <SummaryCard
-                  icon={
-                    <VideoCameraOutlined
-                      style={{ color: "#fff", fontSize: "2em" }}
-                    />
-                  }
-                  label="ประมวลผลด้วยภาพ"
-                  value=""
-                 valueType="ภาพ"
-                  disable={true}
-                />
-              )}
+                {projectDetail.input_type === "รูปภาพ" ? (
+
+                  <SummaryCard
+                    icon={
+                      <PictureOutlined style={{ color: "#fff", fontSize: "2em" }} />
+                    }
+                    label="ประมวลผลด้วยภาพ"
+                    value={mediaCount.imageCount.toLocaleString()}  // แสดงจำนวนรูปภาพ
+                    valueType="ภาพ"
+                    disable={mediaCount.imageCount === 0}
+                  />
+                ) : (
+                  <SummaryCard
+                    icon={
+                      <VideoCameraOutlined
+                        style={{ color: "#fff", fontSize: "2em" }}
+                      />
+                    }
+                    label="ประมวลผลด้วยภาพ"
+                    value=""
+                    valueType="ภาพ"
+                    disable={true}
+                  />
+                )}
                 {/* วิดีโอ summary */}
-                {projectDetail.input_type === "วิดีโอ"  ? (
-                <SummaryCard
-                icon={
-                  <PictureOutlined
-                    style={{ color: "#fff", fontSize: "2em" }}
+                {projectDetail.input_type === "วิดีโอ" ? (
+                  <SummaryCard
+                    icon={
+                      <VideoCameraOutlined style={{ color: "#fff", fontSize: "2em" }} />
+                    }
+                    label="ประมวลผลด้วยวิดีโอ"
+                    value={mediaCount.videoCount.toLocaleString()}  // แสดงจำนวนวิดีโอ
+                    valueType="วิดีโอ"
+                    disable={mediaCount.videoCount === 0}
                   />
-                }
-                label="ประมวลผลด้วยวิดีโอ"
-                value="5.32k"
-               valueType="วิดีโอ"
-                disable={false}
-              />
-                ):(
-              <SummaryCard
-                icon={
-                  <VideoCameraOutlined
-                    style={{ color: "#fff", fontSize: "2em" }}
+                ) : (
+                  <SummaryCard
+                    icon={
+                      <VideoCameraOutlined
+                        style={{ color: "#fff", fontSize: "2em" }}
+                      />
+                    }
+                    label="ประมวลผลด้วยวิดีโอ"
+                    value=""
+                    valueType="วิดีโอ"
+                    disable={true}
                   />
-                }
-                label="ประมวลผลด้วยวิดีโอ"
-                value=""
-                valueType="วิดีโอ"
-                disable={true}
-              />
-              )}
+                )}
               </div>
 
-       {/* usage  */}
-       <div className="flex  my-10 ">
-                  <div className=" w-full   mx-auto flex">
-                    {/* <UsageBarChart /> */}
-                    <SubmitRankTable></SubmitRankTable>
-
-                 
+              {/* usage  */}
+              <div className="flex  my-10 ">
+                <div className=" w-full   mx-auto flex">
+                  {/* <UsageBarChart /> */}
+                  <SubmitRankTable></SubmitRankTable>
 
 
-                  </div>
+
+
                 </div>
+              </div>
 
               {/* Sumary Content Row/ */}
               <div className="grid grid-cols-2 px-10 my-4">
                 {/* create date card */}
                 <div className="flex h-full items-center  bg-white shadow rounded-md m-2">
-                <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
-                {/* <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center"> */}
+                  <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
+                  {/* <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center"> */}
                   {/* icon */}
-                {/* </div> */}
+                  {/* </div> */}
                   <div className="ml-4">
                     <div className="py-4">
                     <p className="text-gray-600">วันที่สร้าง</p>
@@ -297,8 +323,8 @@ const ProjectDetailPage = () => {
                     </div>
                   </div>
                 </div>
-                  {/* update date card */}
-                  <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
+                {/* update date card */}
+                <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
                   <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
                   <div className="ml-4">
                   <div className="py-4">
@@ -316,9 +342,9 @@ const ProjectDetailPage = () => {
                   <div className="w-[70%] mx-auto">
                     <Barchart />
                   </div>
-                  <div className="w-[30%] mx-auto">
+                  {/* <div className="w-[30%] mx-auto">
                     <DoughnutChart />
-                  </div>
+                  </div> */}
                 </div>
 
               </div>

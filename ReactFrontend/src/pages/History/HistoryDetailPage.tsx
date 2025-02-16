@@ -5,11 +5,12 @@ import Sidebar from "../../components/Sidebar";
 import { useParams } from "react-router-dom";
 import AddNoteDialog from "../../components/NoteDialog";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { useProjecteData } from "../../hook/projects/useProjectdata";
+import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
 
 const HistoryDetailPage = () => {
+  const [name, setName] = useState<string>("");
   const { workspaceId, projectId, historyId } = useParams<{
     workspaceId: string;
     projectId: string;

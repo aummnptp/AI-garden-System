@@ -663,8 +663,8 @@ const PredictAiModelPage: React.FC = () => {
                 {uploadStep == 3 && predictResult ? (
 
                   <>
-                  <ChartResultDisplay
-                        
+                  <AIDisPlayResultComponent
+                        resultImage={''}
                         predictResult={predictResult}
                       />
                       {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}

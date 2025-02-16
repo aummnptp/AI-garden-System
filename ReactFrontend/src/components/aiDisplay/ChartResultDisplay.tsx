@@ -1,7 +1,7 @@
 import React from "react";
 
 import TextResultDisplay from "./TextResultDisplay";
-import RegressionChart from "../chart/RegressionChart";
+import RegressionChart from "./RegressionResultDraw";
 
 interface PredictResult {
   ai_type: string;

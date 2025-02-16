@@ -36,14 +36,14 @@ const CustomDialogTitle = styled(DialogTitle)({
 
 interface Permission {
   id: string;
-  user_id: number;
+  user_id: string;
   ai_id: string;
   approve: boolean;
   updatedAt: string;
 }
 
 interface AIModel {
-  id: string;
+  aiId: string;
   name: string;
   description: string;
   ai_type: string;
@@ -60,10 +60,10 @@ interface AIModel {
 export default function AddAIDialog() {
   const [open, setOpen] = useState(false);
   const [aiListData, setAiListData] = useState<any[]>([]);
-  const [showAll, setShowAll] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedToAdd, setSelectedToAdd] = useState<number[]>([]);
-  const [selectedToRemove, setSelectedToRemove] = useState<number[]>([]);
+  const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
+  const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false); // Dialog ยืนยันการลบ
   const [saveDialogOpen, setSaveDialogOpen] = useState(false); // Dialog ยืนยันการบันทึก
@@ -99,13 +99,21 @@ export default function AddAIDialog() {
   };
 
   const handleRemoveRequest = (ai: AIModel) => {
-    setAiToRemove(ai);
-    setConfirmDialogOpen(true); // เปิด Dialog ยืนยันการลบ
+    if (selectedToRemove.includes(ai.aiId)) {
+      // ยกเลิกถอนสิทธิ์ทันที (ไม่เปิด Dialog)
+      setSelectedToRemove((prev) => prev.filter((id) => id !== ai.aiId));
+    } else {
+      // เปิด Dialog ยืนยันการถอนสิทธิ์
+      setAiToRemove(ai);
+      setConfirmDialogOpen(true);
+    }
   };
+
+
 
   const handleConfirmRemove = () => {
     if (aiToRemove) {
-      setSelectedToRemove((prev) => [...prev, aiToRemove.id]);
+      setSelectedToRemove((prev) => [...prev, aiToRemove.aiId]);
     }
     setConfirmDialogOpen(false); // ปิด Dialog
   };
@@ -121,13 +129,13 @@ export default function AddAIDialog() {
 
   const handleConfirmSave = () => {
     const idsToRemove = selectedToRemove.flatMap((aiId) => {
-      const ai = aiListData.find((item) => item.id === aiId);
+      const ai = aiListData.find((item) => item.aiId === aiId);
       return ai?.permissions.map((perm: Permission) => perm.id) || [];
     });
 
     const idsToAdd = selectedToAdd.map((aiId) => ({
       ai_id: aiId,
-      user_id: parseInt(userId || "0"),
+      user_id: userId,
     }));
 
     if (idsToRemove.length === 0 && idsToAdd.length === 0) {
@@ -144,6 +152,7 @@ export default function AddAIDialog() {
           withCredentials: true,
         })
         .catch((error) => console.error("Error removing permissions:", error));
+
     }
 
     // ส่งข้อมูลการเพิ่ม
@@ -153,18 +162,21 @@ export default function AddAIDialog() {
           withCredentials: true,
         })
         .catch((error) => console.error("Error adding permissions:", error));
+      console.log("🔍 userId:", userId);
+      console.log("🔍 selectedToAdd:", selectedToAdd);
+      console.log("🔍 idsToAdd:", idsToAdd);
     }
 
     // 
     setAiListData((prevList) =>
       prevList.map((ai) => {
-        if (selectedToRemove.includes(ai.id)) {
-          return { ...ai, permissions: [] }; // ลบสิทธิ์
+        if (selectedToRemove.includes(ai.aiId)) {
+          return { ...ai, permissions: [] };
         }
-        if (selectedToAdd.some((item) => item.ai_id === ai.id)) {
+        if (selectedToAdd.includes(ai.aiId)) { // ✅ ใช้ `includes(ai.id)` แทน `some()`
           return {
             ...ai,
-            permissions: [{ id: Date.now(), user_id: parseInt(userId || "0"), approve: false }],
+            permissions: [{ id: Date.now(), ai_id: ai.aiId, user_id: userId, approve: false }], // ✅ เพิ่ม ai_id
           };
         }
         return ai;
@@ -174,7 +186,7 @@ export default function AddAIDialog() {
     setSelectedToAdd([]);
     setOpen(false);
     setSaveDialogOpen(false); // ปิด Dialog หลังการบันทึก
-    window.location.reload(); // รีเฟรชหน้า
+    window.location.reload();
   };
 
   const handleCancelSave = () => {
@@ -182,18 +194,18 @@ export default function AddAIDialog() {
   };
 
   const filteredAiData = aiListData
-  .filter((ai) => {
-    if (showAll) {
-      return ai.permissions.some((p: any) => p.approve);
-    }
-    return true;
-  })
-  .filter((ai) => ai.name.toLowerCase().includes(searchQuery))
-  .map((ai) => ({
-    ...ai,
-    // นับจำนวน permission ที่ได้รับการอนุมัติ
-    approvedPermissionsCount: ai.permissions.filter((p: any) => p.approve).length,
-  }));
+    .filter((ai) => {
+      if (showAll) {
+        return ai.permissions.some((p: any) => p.approve);
+      }
+      return true;
+    })
+    .filter((ai) => ai.name.toLowerCase().includes(searchQuery))
+    .map((ai) => ({
+      ...ai,
+      // นับจำนวน permission ที่ได้รับการอนุมัติ
+      approvedPermissionsCount: ai.permissions.filter((p: any) => p.approve).length,
+    }));
 
 
   return (
@@ -235,7 +247,7 @@ export default function AddAIDialog() {
 
               <Grid container spacing={2} mt={2}>
                 {filteredAiData.map((ai) => (
-                  <Grid item xs={6} sm={4} md={3} key={ai.id}>
+                  <Grid item xs={6} sm={4} md={3} key={ai.aiId}>
                     <div className="relative bg-gray-100 rounded-lg p-4 text-center shadow-md">
                       <img
                         src={ai.imagePath || "placeholder.png"}
@@ -251,28 +263,29 @@ export default function AddAIDialog() {
                       <p className="text-sm text-gray-500">{ai.ai_type}</p>
                       {!ai.permissions.some((p: any) => p.approve) ? (
                         <Button
-                          variant={selectedToAdd.includes(ai.id) ? "contained" : "outlined"}
+                          variant={selectedToAdd.includes(ai.aiId) ? "contained" : "outlined"}
                           color="primary"
                           size="small"
                           fullWidth
                           onClick={() =>
                             setSelectedToAdd((prev) =>
-                              prev.includes(ai.id) ? prev.filter((item) => item !== ai.id) : [...prev, ai.id]
+                              prev.includes(ai.aiId) ? prev.filter((item) => item !== ai.aiId) : [...prev, ai.aiId]
                             )
                           }
                         >
-                          {selectedToAdd.includes(ai.id) ? "ยกเลิกเพิ่มสิทธิ์" : "เพิ่มสิทธิ์"}
+                          {selectedToAdd.includes(ai.aiId) ? "ยกเลิกเพิ่มสิทธิ์" : "เพิ่มสิทธิ์"}
                         </Button>
                       ) : (
                         <Button
-                          variant="contained"
+                          variant={selectedToRemove.includes(ai.aiId) ? "outlined" : "contained"}
                           color="error"
                           size="small"
                           fullWidth
                           onClick={() => handleRemoveRequest(ai)}
                         >
-                          {selectedToRemove.includes(ai.id) ? "ยกเลิกถอนสิทธิ์" : "ถอนสิทธิ์"}
+                          {selectedToRemove.includes(ai.aiId) ? "ยกเลิกถอนสิทธิ์" : "ถอนสิทธิ์"}
                         </Button>
+
                       )}
                     </div>
                   </Grid>

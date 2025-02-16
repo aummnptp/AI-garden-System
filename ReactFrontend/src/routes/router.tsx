@@ -13,8 +13,9 @@ import AdminDashboardPage from '../pages/Admin/AdminDashboardPage.tsx'
 import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
 import UpdateAiPage from '../pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from '../pages/Admin/AdminAiPage.tsx'
-import PredictAiModelPage from '../pages/Project/ProjectPredictAiModelPage.tsx'
-import PredictionResultPage from '../pages/PredictionResultPage.tsx';
+import WorkspaceListPage from '../pages/Admin/WorkspaceListPage.tsx'
+
+
 import DocsPage from '../pages/DocsPage.tsx'
 import AiDetailPage from '../pages/Ai/AiDetailPage.tsx'
 import WorkspaceInvitationPage from '../pages/Workspace/WorkspaceInvitationPage.tsx'
@@ -32,6 +33,7 @@ import WorkspaceRoleGuard from '../components/auth/WorkspaceRoleGuard.tsx'
 import HistoryDetailPage from '../pages/History/HistoryDetailPage.tsx'
 import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
 import ProjectPermissionGuard from "../components/auth/ProjectPermissionGuard.tsx";
+import PredictAiModelPage from "../pages/Project/ProjectPredictAiModelPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -110,10 +112,7 @@ export const router = createBrowserRouter([
       path: "/workspaces/:workspaceId/project/:projectId/predict",
       element: <PredictAiModelPage/>,
     },
-    {
-      path: "/workspaces/:workspaceId/project/:projectId/detail/test/:modelId/result",
-      element: <PredictionResultPage />,
-    },
+    
     {
       path: "/ai-list",
       element: <RoleGuard requiredRole="user"><AIlistPage/></RoleGuard>,
@@ -138,6 +137,10 @@ export const router = createBrowserRouter([
     {
       path: "/admin/createai",
       element: <RoleGuard requiredRole="admin"><CreateAiPage/></RoleGuard>,
+    },
+    {
+      path: "/admin/workspace",
+      element: <RoleGuard requiredRole="admin"><WorkspaceListPage/></RoleGuard>,
     },
   
     {

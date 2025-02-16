@@ -34,7 +34,7 @@ function AdminDashboard() {
                 </div>
               </Link>
 
-              <Link to={`#`} className="w-[30%] mx-auto">
+              <Link to={`/admin/workspace`} className="w-[30%] mx-auto">
                 <div className="h-[184px] w-full flex flex-col justify-center items-center bg-white rounded-[5px] border border-zinc-400 hover:bg-gray-50 relative">
                   <div className="w-2.5 h-full bg-indigo-600 absolute left-0 top-0 rounded-tl-[5px] rounded-bl-[5px]" />
                   <Desk className="text-indigo-800 text-7xl mb-4"  fontSize="large"/>

@@ -2,6 +2,7 @@ import React from "react";
 import ImageDetectionResultDraw from "./ImageDetectionResultDraw";
 import TextResultDisplay from "./TextResultDisplay";
 
+
 interface PredictResult {
   ai_type: string;
   prediction: { [key: string]: any };
@@ -12,6 +13,7 @@ interface AIDisPlayResultComponentProps {
   predictResult: PredictResult;
   resultImage: string;
 }
+
 
 const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
   predictResult,
@@ -25,7 +27,8 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
   const searchDrawKey = predictResult.response_keys?.find(
     (responseKey) =>
       responseKey.displayFormat === "objectdetection" || 
-      responseKey.displayFormat === "segmentation"
+      responseKey.displayFormat === "segmentation" || 
+      responseKey.displayFormat === "chart"
   );
   
   if (searchDrawKey) {
@@ -74,6 +77,7 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
 
   return (
     <div className="w-full">
+      {searchDrawKey && (searchDrawKey.displayFormat === "chart") ? (
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
         <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} 
@@ -86,6 +90,15 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>
+      ) : (
+        <div className="flex w-full flex-wrap">
+        {/* Render each response key */}
+        <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
+        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        
+        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
+        </div>
+      )}
     </div>
   );
 };

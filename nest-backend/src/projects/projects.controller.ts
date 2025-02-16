@@ -12,12 +12,12 @@ import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 import { ProjectPermissionGuard } from './guards/project-permission.guard';
 import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
-
+import { RankingData } from './interfaces/ranking-data.interface';
 
 @Controller('workspaces/:workspaceId/projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
-  @UseGuards(JwtGuard) 
+  constructor(private readonly projectsService: ProjectsService) { }
+  @UseGuards(JwtGuard)
   @Post('create')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
@@ -31,8 +31,8 @@ export class ProjectsController {
   create(
     @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
-    @Body() createProjectDto: CreateProjectDto):Promise<Project> {
-      return this.projectsService.create(workspaceId, createProjectDto,file);
+    @Body() createProjectDto: CreateProjectDto): Promise<Project> {
+    return this.projectsService.create(workspaceId, createProjectDto, file);
   }
 
   @UseGuards(JwtGuard)
@@ -50,10 +50,14 @@ export class ProjectsController {
   @Get('detail/:projectId')
   findOne(
     @Param('workspaceId') workspaceId: string,
-    @Param('projectId') projectId: string):Promise<Project> {
-    return this.projectsService.findOne(workspaceId,projectId);
+    @Param('projectId') projectId: string): Promise<Project> {
+    return this.projectsService.findOne(workspaceId, projectId);
   }
 
+  @Get('all-history-in-project')
+  async getAllHistoryFromAllProject() {
+    return this.projectsService.getAllHistoryFromAllProject();
+  }
   @UseGuards(JwtGuard)
   @Patch('update/:projectId')
   @UseInterceptors(FileInterceptor('file', {
@@ -71,10 +75,10 @@ export class ProjectsController {
     @Body() updateProjectDto: UpdateProjectDto,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Project> {
-    return this.projectsService.update(workspaceId, projectId, updateProjectDto,file);
+    return this.projectsService.update(workspaceId, projectId, updateProjectDto, file);
   }
 
-  @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard)
   @Delete('delete/:projectId')
   remove(
     @Param('workspaceId') workspaceId: string,
@@ -130,4 +134,16 @@ export class ProjectsController {
   ): Promise<{ message: string }> {
     return this.projectsService.deleteHistory(workspaceId, projectId, historyId);
   }
+  @Get(':projectId/ranking')
+  async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
+    return this.projectsService.getUploadRanking(projectId);
+  }
+
+  @Get('/count-media/:projectId')
+  async getMediaCount(@Param('projectId') projectId: string) {
+    return await this.projectsService.countMedia(projectId);
+  }
+
+  
+
 }
