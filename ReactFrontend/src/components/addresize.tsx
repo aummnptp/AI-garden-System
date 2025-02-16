@@ -38,9 +38,9 @@ const ImageUploaderRetest: React.FC<ImageUploaderProps> = ({ image }) => {
     if (image) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedImage(reader.result as string); // แปลงไฟล์เป็น base64 string
+        setSelectedImage(reader.result as string);
       };
-      reader.readAsDataURL(image); // อ่านไฟล์ภาพจาก props
+      reader.readAsDataURL(image); 
     }
   }, [image]);
 

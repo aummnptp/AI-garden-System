@@ -2,9 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import { fetchAiLimitSettingService, fetchAiModelsService, fetchAllAiTag } from "../../api/services/AiService";
+import { useDebounce } from "../useDebounce";
 
 
-export const useAiData = () => {
+export const  useAiData = () => {
   // const { workspaceId, projectId,historyId } = useParams<{ workspaceId: string; projectId: string; historyId:string}>();
   const [searchParams] = useSearchParams();
 
@@ -15,13 +16,17 @@ export const useAiData = () => {
     tag: searchParams.get("tag") || "",
   };
 
+  const debouncedFilters = {
+    ...filters,
+    search: useDebounce(filters.search, 500), 
+  };
   const {
     data: AIData = [],
     isLoading: isLoadingAI,
     isError: isErrorAI,
     refetch: refetchAIModels,
   } = useQuery({
-    queryKey: ["ai-models", filters], 
+    queryKey: ["ai-models", debouncedFilters], 
     queryFn: () => fetchAiModelsService(filters),
   });
 

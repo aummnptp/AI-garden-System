@@ -35,15 +35,15 @@ const CustomDialogTitle = styled(DialogTitle)({
 });
 
 interface Permission {
-  id: number;
+  id: string;
   user_id: number;
-  ai_id: number;
+  ai_id: string;
   approve: boolean;
   updatedAt: string;
 }
 
 interface AIModel {
-  id: number;
+  id: string;
   name: string;
   description: string;
   ai_type: string;
@@ -155,7 +155,7 @@ export default function AddAIDialog() {
         .catch((error) => console.error("Error adding permissions:", error));
     }
 
-    // รีเฟรชหน้า
+    // 
     setAiListData((prevList) =>
       prevList.map((ai) => {
         if (selectedToRemove.includes(ai.id)) {

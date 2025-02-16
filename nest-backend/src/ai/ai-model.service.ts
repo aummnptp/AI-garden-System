@@ -82,7 +82,7 @@ export class AIModelService {
     const queryBuilder  =  this.aiModelRepository.createQueryBuilder("aiModel");
     if (filters?.search) {
       queryBuilder.andWhere(
-        "(aiModel.name LIKE :search OR aiModel.description LIKE :search)",
+        "(aiModel.name ILIKE :search OR aiModel.description ILIKE :search)",
         { search: `%${filters.search}%` }
       );
     }

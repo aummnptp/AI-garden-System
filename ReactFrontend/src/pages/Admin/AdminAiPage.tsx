@@ -1,17 +1,15 @@
 import { Link } from "react-router-dom";
-import { ControlOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import AdminAiCard from "../../components/card/AdminAiCard";
 import { Autocomplete, Button, InputAdornment, Skeleton, TextField } from "@mui/material";
-import AISettingsComponent from "../../components/ai/AISettingsComponent";
 import { useAiData } from "../../hook/ai/useAiData";
 import { useSearchFilters } from "../../hook/useSearchFilter";
 import { SearchOutlined } from "@mui/icons-material";
+import { AIDataType } from "../../types/Ai";
 
 function AdminAi() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
-const AI_TAGS = ["Medical", "Skin", "SolarCell", "MM Detection"];
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
   const { AIData, isLoadingAI, isErrorAI, aiTags, isLoadingaiTags, isErroaiTags, } = useAiData();
 
@@ -83,7 +81,7 @@ const AI_TAGS = ["Medical", "Skin", "SolarCell", "MM Detection"];
 
           {/* Card container */}
           <div
-            className="px-10 p-8 mt-4 h-fit w-11/12 
+            className="px-10 p-8 mt-4 h-fit w-[95%] 
     grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12
     bg-white rounded-[15px] justify-self-center relative"
           >
@@ -96,7 +94,7 @@ const AI_TAGS = ["Medical", "Skin", "SolarCell", "MM Detection"];
                     <Skeleton width="60%" />
                   </div>
                 ))
-              : AIData.map((data) => (
+              : AIData.map((data:AIDataType) => (
                   <AdminAiCard
                     key={data.aiId}
                     id={data.aiId}

@@ -1,5 +1,6 @@
 import React from 'react'
 import ProjectImage from './ProjectLetterImage';
+import { Card } from '@mui/material';
 interface ProjectCardProps {
 
     name:string;
@@ -7,12 +8,12 @@ interface ProjectCardProps {
     projectImage?:string;
     ai_type:string;
     ai_tags:string[];
-    
+    enable: boolean;
   }
   
 const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
   return (
-    <div className="mx-auto my-4 w-11/12 h-fit bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2 ">
+    <Card className="mx-auto my-4 w-11/12 h-fit bg-white rounded-[10px] hover:bg-gray-100 border border-zinc-400 items-center flex p-2 ">
            {props.projectImage ? (
            <div className='mx-2 w-fit h-fit  flex items-center  '>
              <img
@@ -39,7 +40,7 @@ const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
             ))}
             </div>
           </div>
-        </div>
+        </Card>
   )
 }
 

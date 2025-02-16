@@ -8,6 +8,7 @@ import { useAiData } from "../../hook/ai/useAiData";
 
 import { useSearchFilters } from "../../hook/useSearchFilter";
 import { Autocomplete, InputAdornment, Skeleton, TextField } from "@mui/material";
+import { AIDataType } from "../../types/Ai";
 
 
 
@@ -109,7 +110,7 @@ function AIlist() {
               <Skeleton width={`60%`} />
             </div>
           ))
-        : AIData.map((data) => (
+        : AIData.map((data:AIDataType) => (
             <AiCard
               key={data.aiId}
               id={data.aiId}

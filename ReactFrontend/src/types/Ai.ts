@@ -5,20 +5,11 @@ export type AIDataType ={
     ai_tag: string[];
     imagePath: string;
     ai_type: string;
+    enable:boolean;
+    visible:boolean;
   }
 
 
-  // id: number;
-  // name: string;
-  // description: string;
-  // ai_type: string;
-  // ai_tag: string[];
-  // input_desc: string;
-  // api_uri: string;
-  // response_keys: ResponseKey[];
-  // createdAt: string;
-  // updatedAt: string;
-  // imagePath: string | null;
   export type AiModelData ={
     name: string;
     description: string;

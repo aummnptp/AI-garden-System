@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { useDebounce } from "./useDebounce";
 
 
 
@@ -8,6 +9,10 @@ export const useSearchFilters = () => {
   const searchInput = searchParams.get("search") || "";
   const typeFilter = searchParams.get("type") || "";
   const tagFilter = searchParams.getAll("tag") || [];
+
+
+
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   const setSearchInput = (value: string) => {
     setSearchParams((prev) => {

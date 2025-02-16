@@ -1,10 +1,10 @@
+import { AIDataType } from "./Ai";
 
-export type Project = {
+export type ProjectDataType = {
   projectId: string;
   name: string;
-  ai_model: {
-    name: string;
-    ai_type: string;
-  };
+  description: string;
+  imagePath: string;
+  ai_model:AIDataType
 }
 
