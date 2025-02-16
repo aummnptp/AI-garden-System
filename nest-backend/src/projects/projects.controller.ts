@@ -39,6 +39,11 @@ export class ProjectsController {
     return this.projectsService.findAll(workspaceId);
   }
 
+  @Get('all-history-in-project')
+  async getAllHistoryFromAllProject() {
+    return this.projectsService.getAllHistoryFromAllProject();
+  }
+
   @UseGuards(JwtGuard)
   @Get('detail/:projectId')
   findOne(
@@ -120,5 +125,7 @@ export class ProjectsController {
   async getMediaCount(@Param('projectId') projectId: string) {
     return await this.projectsService.countMedia(projectId);
   }
+
+  
 
 }

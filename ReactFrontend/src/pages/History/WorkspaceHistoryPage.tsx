@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import MiniFooter from '../../components/MiniFooter'
 import CustomizedTables from '../../components/table/Table'
-import EnhancedTable from '../../components/table/WorkspaceTable'
+import Workspacetable from '../../components/table/WorkspaceTable'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 
@@ -50,7 +50,7 @@ const WorkspaceHistoryPage = () => {
         {/* <CustomizedTables/> */}
         </div>
         <div className='px-6'>
-        <EnhancedTable></EnhancedTable>
+        <Workspacetable></Workspacetable>
         </div>
        
       </div>
