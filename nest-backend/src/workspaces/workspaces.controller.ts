@@ -232,14 +232,20 @@ async joinWorkspace(@Body() { token }: { token: string }, @Req() req) {
   return this.workspacesService.joinWorkspaceWithToken(token, userId);
 }
 
-  @Get('invite')
-  async redirectToFrontend(@Query("token") token: string, @Res() res: Response) {
-    if (!token) {
-      throw new BadRequestException("Token is required");
-    }
-    // Redirect ผู้ใช้ไปยัง Frontend
-    const frontendUrl = `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
-    return res.redirect(frontendUrl);
+@Get('invite')
+async redirectToFrontend(@Query("token") token: string, @Res() res: Response) {
+  if (!token) {
+    throw new BadRequestException("Token is required");
   }
+  // Redirect ผู้ใช้ไปยัง Frontend
+  const frontendUrl = `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
+  return res.redirect(frontendUrl);
+}
 
+@Role("admin")
+@UseGuards(JwtGuard, RolesGuard)
+@Get('personal/:userId')
+findWithUserId(@Param('userId') userId: string) {
+  return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
+}
 }

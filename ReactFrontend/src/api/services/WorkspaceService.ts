@@ -27,11 +27,11 @@ export const deleteWorkspaceService = async (workspaceId: string) => {
   }
 };
 
+
 export const fetchWorkspaceDetailService = async (workspaceId: string) => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/detail/${workspaceId}`);
   return data;
 };
-
 
 export const fetchMyWorkspaces = async () => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/my-workspaces`);
@@ -58,7 +58,6 @@ export const fetchPendingUsersService = async (workspaceId: string) => {
   return data;
 };
 
-// ✅ Fetch Workspace Members
 export const fetchMembersService = async (workspaceId: string) => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/members-profiles/${workspaceId}`);
   return data;

@@ -35,23 +35,23 @@ const ProjectDetailPage = () => {
   const navigate = useNavigate(); 
   const [openAlert, setOpenAlert] = useState(false); 
 
-  const {
-    data: projectDetail = {},
-    isLoading: isLoadingProjectDetail,
-    error: errorProjectDetail,
-  } = useFetchQuery(
-    ["project-detail", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/detail/${projectId}`
-  );
+  // const {
+  //   data: projectDetail = {},
+  //   isLoading: isLoadingProjectDetail,
+  //   error: errorProjectDetail,
+  // } = useFetchQuery(
+  //   ["project-detail", workspaceId ?? "", projectId ?? ""],
+  //   `/workspaces/${workspaceId}/projects/detail/${projectId}`
+  // );
 
-  const {
-    data: workspaceDetail = {},
-    isLoading: isLoadingWorkspaceDetail,
-    error: errorWorkspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
+  // const {
+  //   data: workspaceDetail = {},
+  //   isLoading: isLoadingWorkspaceDetail,
+  //   error: errorWorkspaceDetail,
+  // } = useFetchQuery(
+  //   ["workspace-detail", workspaceId ?? ""],
+  //   `/workspaces/detail/${workspaceId}`
+  // );
 
   const {
     data: mediaCount = { imageCount: 0, videoCount: 0 },
@@ -69,7 +69,7 @@ const ProjectDetailPage = () => {
         useProjecteData();
     
   
-    // ตรวจสอบสถานะการโหลด
+
     if (isLoadingProjectDetail || isLoadingWorkspace) return <LoadingSpinner />;
     // ตรวจสอบข้อผิดพลาด
     if (isErrorProjectDetail || isErrorWorkspace) return <div>Error: {isErrorProjectDetail?.message || isErrorWorkspace?.message}</div>;

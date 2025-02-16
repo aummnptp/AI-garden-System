@@ -83,7 +83,7 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
               disabled={!enable} 
             />
           }
-          label="Visibility"
+          label="Visible"
         />
       </div>
     </div>

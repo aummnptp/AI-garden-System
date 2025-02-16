@@ -269,7 +269,7 @@ export class WorkspacesService {
       where: {
         createdById: Not(userId), // ผู้ใช้งานไม่ใช่คนสร้าง
       },
-      relations: ['members', 'members.user'], // Join ตารางที่ต้องการ
+      relations: ['members', 'members.user'], 
     });
     const workspacesUserIsMember =
       workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId));
@@ -338,12 +338,9 @@ export class WorkspacesService {
 
   async generateInviteLink(workspaceId: string, inviterId: string): Promise<string> {
     const secret = process.env.INVITE_SECRET 
-  
     const token = jwt.sign({ workspaceId, inviterId }, secret, { expiresIn: '7d' });
-  
     return `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
   }
-
   async validateInviteToken(token: string): Promise<{ workspaceId: string }> {
     const secret = process.env.INVITE_SECRET
     try {
@@ -368,13 +365,11 @@ export class WorkspacesService {
       if (existingMember) {
         return { message: 'You are already a member of this workspace.' };
       }
-  
       await this.workspaceMemberRepository.save({
         workspace,
         user: await this.userRepository.findOne({ where: { userId } }),
         role: 'member',
       });
-  
       return { message: 'Successfully joined the workspace' };
     } catch (error) {
       console.error("Join workspace failed:", error);

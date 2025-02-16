@@ -26,10 +26,10 @@ const ProjectHistoryPage = () => {
     isErrorNotes,
   } = useHistoryData();
 
-  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
-    useWorkspaceData();
-  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
-    useProjecteData();
+  // const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+  //   useWorkspaceData();
+  // const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+  //   useProjecteData();
   const {
       data: workspaceDetail = {},
       isLoading: isLoadingWorkspaceDetail,

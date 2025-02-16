@@ -1,7 +1,8 @@
 import React from "react";
 import ImageDetectionResultDraw from "./ImageDetectionResultDraw";
+import { ClassNames } from "@emotion/react";
 import TextResultDisplay from "./TextResultDisplay";
-
+import RegressionChart from "./RegressionResultDraw";
 
 interface PredictResult {
   ai_type: string;
@@ -80,6 +81,14 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
       {searchDrawKey && (searchDrawKey.displayFormat === "chart") ? (
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
+        <RegressionChart detections={PredictDrawData} aiDisplayType={ai_text_type || ''}/>
+        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+        
+        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
+        </div>
+      ) : (
+        <div className="flex w-full flex-wrap">
+        {/* Render each response key */}
         <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} 
         aiDisplayType={ai_text_type || ''} colorSet={predictResult.ai_model.colorSet}/>
         
@@ -87,14 +96,6 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
         aiName={predictResult.ai_model.name}ai_type={predictResult.ai_model.ai_type} 
         colorSet={predictResult.ai_model.colorSet} 
         />
-        
-        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
-        </div>
-      ) : (
-        <div className="flex w-full flex-wrap">
-        {/* Render each response key */}
-        <ImageDetectionResultDraw detections={PredictDrawData} InputImage={resultImage} aiDisplayType={ai_text_type || ''}/>
-        <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>

@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import WorkspaceCard from '../../components/card/WorkspaceCard';
 import AddAIDialog from '../../components/AddAIDialog';
+import { Workspace } from '../../types/Workspace';
 
 const UserDetailPage = () => {
 
@@ -58,7 +59,7 @@ const UserDetailPage = () => {
   useEffect(() => {
 
     axios
-      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${userId}`, {
+      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/personal/${userId}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -150,11 +151,11 @@ const UserDetailPage = () => {
                   {/* My workspace Card group */}
                   {myWorkspace.length > 0 ? (
                     <div className={`grid grid-cols-3 pb-8 pt-2`}>
-                      {myWorkspace.map((data, index) => (
+                      {myWorkspace.map((data: Workspace, index) => (
                         <div key={index} className={`mb-4`}>
                           <Link to={`/workspaces/${data.workspaceId}/project-list`}>
                             <WorkspaceCard
-                              id={data.workspaceId}
+                              workspaceId={data.workspaceId}
                               name={data.name}
                               description={data.description}
                               members={data.members}

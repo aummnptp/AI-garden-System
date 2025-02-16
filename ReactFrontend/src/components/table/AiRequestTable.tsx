@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
+import { formatDate } from '../../function/util';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -237,7 +238,7 @@ const SortableTable: React.FC = () => {
                 {/* Date Updated */}
                 <StyledTableCell>
                     <p className="text-black text-lg font-medium">
-                        {row.updatedAt.toLocaleDateString()} {row.updatedAt.toLocaleTimeString()}
+                        {formatDate((row.updatedAt).toLocaleDateString())} {row.updatedAt.toLocaleTimeString()}
                     </p>
                 </StyledTableCell>
 

@@ -20,29 +20,29 @@ function AIlist() {
   const { AIData, isLoadingAI, isErrorAI, aiTags, isLoadingaiTags, isErroaiTags, } = useAiData();
 
 
-  const [AIData, setAIData] = useState<AIDataType[]>([]);
+  // const [AIData, setAIData] = useState<AIDataType[]>([]);
   const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); // 🟢 State บันทึก tab ที่เลือก
 
-  const fetchAIData = () => {
-    const baseURL = import.meta.env.VITE_NEST_BACKEND_API_URL;
-    const url =
-      selectedTab === "approved"
-        ? `${baseURL}/ai-models/my_approved`
-        : `${baseURL}/ai-models/`;
+  // const fetchAIData = () => {
+  //   const baseURL = import.meta.env.VITE_NEST_BACKEND_API_URL;
+  //   const url =
+  //     selectedTab === "approved"
+  //       ? `${baseURL}/ai-models/my_approved`
+  //       : `${baseURL}/ai-models/`;
 
-    axios
-      .get(url, selectedTab === "approved" ? { withCredentials: true } : {})
-      .then((response) => {
-        setAIData(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the AI data!", error);
-      });
-  };
+  //   axios
+  //     .get(url, selectedTab === "approved" ? { withCredentials: true } : {})
+  //     .then((response) => {
+  //       setAIData(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("There was an error fetching the AI data!", error);
+  //     });
+  // };
 
-  useEffect(() => {
-    fetchAIData(); // 🟢 ดึงข้อมูลใหม่เมื่อเปลี่ยน tab
-  }, [selectedTab]);
+  // useEffect(() => {
+  //   fetchAIData(); // 🟢 ดึงข้อมูลใหม่เมื่อเปลี่ยน tab
+  // }, [selectedTab]);
 
   return (
     <>

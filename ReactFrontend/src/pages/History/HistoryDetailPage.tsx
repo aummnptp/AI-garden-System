@@ -8,6 +8,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
+import { useState } from "react";
 
 const HistoryDetailPage = () => {
   const [name, setName] = useState<string>("");
@@ -38,7 +39,7 @@ const HistoryDetailPage = () => {
   if (isErrorHistoryDetail) return <div>Error: {isErrorHistoryDetail?.message}</div>;
 
   return (
-    <>ProjectAccessManagePage
+    <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         <Sidebar workspace={workspaceDetail} project={projectDetail} />
 

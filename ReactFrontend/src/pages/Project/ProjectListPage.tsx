@@ -56,39 +56,6 @@ const ProjectListPage = () => {
                 </Button>
               </Link>
             </div>
-            {/* <div className="m-6 flex justify-start gap-4">
-              <input
-                type="text"
-                id="first_name"
-                className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5  "
-                placeholder="ค้นหาชื่อโปรเจค"
-                required
-              />
-              <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#4f46e5",
-                  "&:hover": {
-                    backgroundColor: "#3730a3",
-                  },
-                }}
-              >
-                type filter
-              </Button>
-              <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#4f46e5",
-                  "&:hover": {
-                    backgroundColor: "#3730a3",
-                  },
-                }}
-              >
-                + add tag filter
-              </Button>
-            </div> */}
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">
             {projectData.map((data: ProjectDataType) => (

@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         { withCredentials: true }
       );
 
-      setWorkspaceRoles((prevRoles) => ({ ...prevRoles, [workspaceId]: data.role })); // ✅ บันทึกค่า Cache
+      setWorkspaceRoles((prevRoles) => ({ ...prevRoles, [workspaceId]: data.role }));
       return data.role;
     } catch (error) {
       console.error(`Error fetching role for workspace ${workspaceId}:`, error);
