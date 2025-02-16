@@ -12,14 +12,13 @@ import NotificationMenu from "./NotificationTab";
 
 function Nav() {
   const navigate = useNavigate();
-  const { logout,login,user, isAuthenticated, loading } = useAuth(); // ดึง logout จาก context
+  const { logout, login, user, isAuthenticated, loading } = useAuth(); // ดึง logout จาก context
   const [showNotifications, setShowNotifications] = useState(false);
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   const {
-    data: notiData=[],
+    data: notiData = [],
     refetch: refetchInvitedNotification, // <-- ดึง refetch ออกมา
   } = useFetchQuery(["invited-notification"], `/workspaces/get-my-invitation`);
 
@@ -60,7 +59,7 @@ function Nav() {
   };
 
   useEffect(() => {
- 
+
     if (!isAuthenticated) {
 
     }
@@ -84,16 +83,16 @@ function Nav() {
         <div className="flex md:order-3 space-x2 md:space-x-0 rtl:space-x-reverse">
           {isAuthenticated ? (
             <div className="flex relative">
-         <NotificationMenu
-        notiData={notiData}
-        open={open}
-        anchorEl={anchorEl}
-        toggleNotifications={toggleNotifications}
-        handleCloseNoti={handleCloseNoti}
-        handleAccept={handleAccept}
-        handleReject={handleReject}
-      />
-             
+              <NotificationMenu
+                notiData={notiData}
+                open={open}
+                anchorEl={anchorEl}
+                toggleNotifications={toggleNotifications}
+                handleCloseNoti={handleCloseNoti}
+                handleAccept={handleAccept}
+                handleReject={handleReject}
+              />
+
               {user && <ProfileMenu user={user} onlogout={handleLogout} />}
             </div>
           ) : (
@@ -142,11 +141,13 @@ function Nav() {
               </Link>
             </li>
             <li>
-              <Link to={`/admin/dashboard`} className="">
-                <a className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ">
-                  Admin Console
-                </a>
-              </Link>
+              {user?.role === "admin" && ( // แสดงปุ่มเฉพาะผู้ใช้ที่เป็น admin
+                <Link to={`/admin/dashboard`} className="">
+                  <a className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ">
+                    Admin Console
+                  </a>
+                </Link>
+              )}
             </li>
           </ul>
         </div>
