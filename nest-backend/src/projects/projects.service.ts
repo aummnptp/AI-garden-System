@@ -306,7 +306,25 @@ export class ProjectsService {
       videoCount
     };
   }
-  
 
+  async getAllHistoryFromAllProject(): Promise<ProjectHistory[]> {
+    try {
+      // ดึงประวัติทั้งหมดจากทุกโปรเจค
+      const allHistory = await this.projectHistoryRepository.find({
+        relations: ['ai_model', 'user', 'project'], // ดึงข้อมูลที่เกี่ยวข้องทั้งหมด
+        order: { createdAt: 'DESC' },
+      });
+  
+      return allHistory.map((history) => ({
+        ...history,
+        filePath: history.filePath
+          ? `${process.env.NEST_APP_API_URL}${history.filePath}`
+          : null,
+      }));
+    } catch (error) {
+      console.error('Error fetching all history:', error);
+      throw new InternalServerErrorException('Failed to fetch all project history');
+    }
+  }
 
 }
