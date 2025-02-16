@@ -21,7 +21,7 @@ export class ProjectsController {
   @Post('create')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: './uploads/project', // กำหนดโฟลเดอร์เก็บไฟล์
+      destination: './uploads/project', 
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
@@ -29,10 +29,13 @@ export class ProjectsController {
     }),
   }))
   create(
+    @Request() req, 
     @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
-    @Body() createProjectDto: CreateProjectDto): Promise<Project> {
-    return this.projectsService.create(workspaceId, createProjectDto, file);
+    @Body() createProjectDto: CreateProjectDto
+  ): Promise<Project> {
+    const userId = req.user.userId;
+    return this.projectsService.create(workspaceId, createProjectDto, file, userId);
   }
 
   @UseGuards(JwtGuard)

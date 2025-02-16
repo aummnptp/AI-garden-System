@@ -37,7 +37,7 @@ export const useHistoryData = () => {
       projectId ,
       historyId ],
     queryFn: () => fetchProjectHistoryDetailService(workspaceId!,projectId!,historyId!),
-    enabled: !!projectId,
+    enabled: !!projectId && !!historyId,
   });
 
   const {

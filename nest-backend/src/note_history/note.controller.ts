@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get, UseGuards } from "@nestjs/common";
+import { Controller, Post, Body, Param, Get, UseGuards, Request } from "@nestjs/common";
 import { JwtGuard } from "src/auth/guards/jwt-auth.guard";
 import { NoteService } from "./note.service";
 
@@ -9,22 +9,23 @@ export class NoteController {
   @UseGuards(JwtGuard)
   @Post("add-note/:historyId")
   async createNote(
+    @Request() req, 
     @Param("historyId") historyId: string,
     @Param("projectId") projectId: string,
     @Body("title") title: string,
     @Body("content") content: string
   ) {
-
-    return this.noteService.createHistoryNote(historyId, projectId, title, content);  }
+    const userId = req.user.userId;
+    return this.noteService.createHistoryNote(historyId, projectId, title, content,userId);  }
 
   @UseGuards(JwtGuard)
-  @Get(":historyId") //  เปลี่ยนให้ path กระชับ
+  @Get(":historyId/history-detail") 
   async getNotes(@Param("historyId") historyId: string) {
     return this.noteService.getNotesByHistory(historyId);
   }
 
   @UseGuards(JwtGuard)
-  @Get() 
+  @Get("all-project-note") 
   async getProjectNotes(@Param("projectId") projectId: string) {
   
     return this.noteService.getNotesByProject(projectId);

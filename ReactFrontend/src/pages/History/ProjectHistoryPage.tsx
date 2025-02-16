@@ -9,6 +9,7 @@ import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
 import { useFetchQuery } from "../../hook/useFetchQuery";
+import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const ProjectHistoryPage = () => {
   const [historyTab, setHistoryTab] = useState<string>("Upload");
@@ -20,52 +21,20 @@ const ProjectHistoryPage = () => {
   const {
     projectHistory,
     isLoadingHistory,
-    isErrorHistory,
+
     projectNotes,
     isLoadingNotes,
-    isErrorNotes,
   } = useHistoryData();
 
-  // const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
-  //   useWorkspaceData();
-  // const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
-  //   useProjecteData();
-  const {
-      data: workspaceDetail = {},
-      isLoading: isLoadingWorkspaceDetail,
-      error: errorWorkspaceDetail,
-    } = useFetchQuery(
-      ["workspace-detail", workspaceId ?? ""],
-      `/workspaces/detail/${workspaceId}`
-    );
-  // ดึงข้อมูล history
-  const {
-    data: historyData,
-    isLoading,
-    error,
-  } = useFetchQuery(
-    ["project-history", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/all-history/${projectId}`
-  );
-
-  // ดึง input_type ของ project
-  const {
-    data: projectDetail,
-    isLoading: isLoadingProjectDetail,
-    error: errorProjectDetail,
-  } = useFetchQuery(
-    ["project-detail", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/detail/${projectId}`
-  );
+  const { workspaceDetail, isLoadingWorkspace } =
+    useWorkspaceData();
+  const { projectDetail, isLoadingProjectDetail } =
+    useProjecteData();
+ 
 
   // Loading และ Error State
-  if (isLoading || isLoadingProjectDetail || isLoadingWorkspaceDetail) return <div>Loading...</div>;
-  if (error || errorProjectDetail || errorWorkspaceDetail)
-    return (
-      <div>
-        Error: {error?.message || errorProjectDetail?.message || errorWorkspaceDetail?.message}
-      </div>
-    );
+  if ( isLoadingProjectDetail || isLoadingWorkspace||isLoadingNotes||isLoadingHistory) return <SkeletonLayout/>;
+ 
 
   return (
     <>

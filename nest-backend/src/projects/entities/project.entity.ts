@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { ProjectHistory } from "./project-history.entity";
 import { ProjectPermission } from "./project-permission.entity";
 import { Note } from "src/note_history/entites/note.entity";
+import { User } from "src/user/entities/user.entity";
 
 @Entity()
 export class Project {
@@ -30,6 +31,10 @@ updated_at: Date;
 
 @Column({default: false})
 permission_only: boolean;
+
+@ManyToOne(() => User, (user) => user.projects, { onDelete: 'SET NULL' })
+@JoinColumn({ name: 'created_by' }) // ตั้งชื่อ column ใน database
+createdBy: User;
 
 
   @ManyToOne(() => Workspace, (workspace) => workspace.projects, { onDelete: 'CASCADE' })

@@ -1,8 +1,9 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {  DotChartOutlined, PieChartOutlined, RadarChartOutlined, SearchOutlined } from '@ant-design/icons';
 import Footer from '../components/Footer';
 import { Button } from '@mui/material';
+import { useAuth } from "../context/AuthContext";
 
 
 function HomePage() {
@@ -58,6 +59,16 @@ const renderIcon = (iconName: any) => {
       return <DotChartOutlined style={{ fontSize: "48px" }} />; 
   }
 };
+const { isAuthenticated, login } = useAuth();
+const navigate = useNavigate();
+
+const handleRedirect = (path: string) => {
+  if (isAuthenticated) {
+    navigate(path);
+  } else {
+    login(); 
+  }
+};
   return (
     <div className="">
       {/* hero section */}
@@ -76,8 +87,9 @@ const renderIcon = (iconName: any) => {
             <p className="my-4 text-black text-xl leading-loose  ">
               เว็บไซต์สำหรับทำงานประมวลผลภาพและวิดีโอด้วย AI computer vision
             </p>
-            <Link to={`/workspaces`}>
+  
               <Button
+              onClick={() => handleRedirect("/workspaces")}
                 variant="contained"
                 size='large'
                 sx={{
@@ -89,9 +101,10 @@ const renderIcon = (iconName: any) => {
               >
               เริ่มใช้งาน
               </Button>
-            </Link>
-            <Link to={`/docs`}>
+
+    
             <Button
+             onClick={() => handleRedirect("/docs")}
                 variant="contained"
                     size='large'
                 sx={{
@@ -103,7 +116,7 @@ const renderIcon = (iconName: any) => {
               >
               เรียนรู้เพิ่มเติม
               </Button>
-            </Link>
+    
           </div>
         </div>
         <div className=" right-item  p-11 col-span-3 mr-10  ">

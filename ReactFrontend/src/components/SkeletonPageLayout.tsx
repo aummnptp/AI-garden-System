@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Skeleton, Box } from "@mui/material";
 
 const SkeletonLayout = () => {

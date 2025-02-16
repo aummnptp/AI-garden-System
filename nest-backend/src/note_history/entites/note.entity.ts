@@ -1,5 +1,6 @@
 import { ProjectHistory } from "src/projects/entities/project-history.entity";
 import { Project } from "src/projects/entities/project.entity";
+import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity(`note_history`)
@@ -22,4 +23,9 @@ history: ProjectHistory;
 @ManyToOne(() => Project, (project) => project.notes, { onDelete: "CASCADE" })
 @JoinColumn({ name: "project_id" })
 project: Project;
+
+
+@ManyToOne(() => User, { nullable: false }) 
+@JoinColumn({ name: "created_by" })
+createdBy: User;
 }

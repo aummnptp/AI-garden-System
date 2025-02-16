@@ -45,7 +45,7 @@ export const addNoteService = async (projectId: string, historyId: string, title
   };
   
   export const fetchProjectNotesService = async (projectId: string) => {
-    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes`);
+    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes/all-project-note`);
     return data;
   };
 
@@ -57,6 +57,6 @@ export const addNoteService = async (projectId: string, historyId: string, title
 
 
   export const fetchHistoryNoteDataService = async (projectId: string, historyId: string,) => {
-    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes/${historyId}`);
+    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes/${historyId}/history-detail`);
     return data;
   };

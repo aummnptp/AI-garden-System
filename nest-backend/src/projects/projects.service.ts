@@ -56,9 +56,15 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   }
 
 
-  async create(workspaceId: string, createProjectDto: CreateProjectDto, file?: Express.Multer.File): Promise<Project> {
+  async create(workspaceId: string, createProjectDto: CreateProjectDto, file?: Express.Multer.File,   userId?: string ,): Promise<Project> {
     await this.validateWorkspace(workspaceId)
     // const aiModel = await this.aiModelService.findOne({ where: { id: createProjectDto.ai_id } });
+
+    const user = await this.userRepository.findOne({ where: { userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
     const aiModel = await this.aiModelService.findOne(createProjectDto.ai_id);
     if (!aiModel) {
       throw new NotFoundException('AI Model not found');
@@ -72,7 +78,8 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       ...createProjectDto,
       workspace: { workspaceId },
       ai_model: aiModel,
-      imagePath: filePath, // เพิ่มไฟล์พาธลงในโปรเจค
+      imagePath: filePath, 
+      createdBy: user,
     });
     return this.projectRepository.save(project);
   }
@@ -125,7 +132,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     await this.validateWorkspace(workspaceId);
     const project = await this.projectRepository.findOne({
       where: { projectId: projectId, workspace: { workspaceId } },
-      relations: ['ai_model'],
+      relations: ['ai_model', 'createdBy'],
     });
     if (!project) throw new NotFoundException('Project not found');
     return {

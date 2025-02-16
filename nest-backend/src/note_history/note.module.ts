@@ -6,9 +6,10 @@ import { Note } from "./entites/note.entity";
 import { NoteController } from "./note.controller";
 import { NoteService } from "./note.service";
 import { Project } from "src/projects/entities/project.entity";
+import { User } from "src/user/entities/user.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Note, ProjectHistory,Project])],
+  imports: [TypeOrmModule.forFeature([Note, ProjectHistory,Project,User])],
   controllers: [NoteController],
   providers: [NoteService],
   exports: [NoteService],

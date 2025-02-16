@@ -134,14 +134,15 @@ const ProjectDetailPage = () => {
                 <div className="flex items-center my-4">
                   <img
                     className="w-10 h-10 rounded-full border-2 bg-red-200 "
-                    src="/images/homeImage/puttipong.jpg"
+                    src={projectDetail.createdBy.picture}
+
                   />
                   <div className="ml-2">
                     <p className="text-black text-lg font-normal">
-                      putthipong Chobngam
+                    {projectDetail.createdBy.name}
                     </p>
                     <p className="text-indigo-900 text-base font-medium">
-                      ผู้สร้าง
+                      ผู้สร้างโปรเจกต์
                     </p>
                   </div>
                 </div>
@@ -188,21 +189,25 @@ const ProjectDetailPage = () => {
                   <div className="mt-2 w-full border border-zinc-300" />
                 </div>
               </div>
-              <Link to={`/workspaces/${workspaceId}/project/${projectId}/predict`} className="ml-16 mt-2">
-                <Button
-                  variant="contained"
-                  size="large"
-                  startIcon={uploadIcon}
-                  sx={{
-                    backgroundColor: "#4f46e5",
-                    "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                    },
-                  }}
-                >
-                  {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
-                </Button>
-              </Link>
+              <Link
+  to={projectDetail.ai_model.enable ? `/workspaces/${workspaceId}/project/${projectId}/predict` : "#"}
+  className={`ml-16 mt-2 ${!projectDetail.ai_model.enable ? "pointer-events-none opacity-50" : ""}`}>
+  <Button
+    variant="contained"
+    size="large"
+    startIcon={uploadIcon}
+    sx={{
+      backgroundColor: "#4f46e5",
+      "&:hover": {
+        backgroundColor: "#3730a3",
+      },
+    }}
+    disabled={!projectDetail.ai_model.enable} // ปิดปุ่มถ้า AI Model ไม่ Enable
+  >
+    {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
+  </Button>
+</Link>
+
             </div>
 
 

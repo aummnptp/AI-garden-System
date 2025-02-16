@@ -6,11 +6,14 @@ import ProjectCard from "../../components/card/ProjectCard";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 
+
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
 import { ProjectDataType } from "../../types/Project";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 const ProjectListPage = () => {
   const { workspaceId } = useParams();
@@ -20,7 +23,14 @@ const ProjectListPage = () => {
 
   const { workspaceDetail, isLoadingWorkspace,  } =
     useWorkspaceData();
+    const { isAdmin, isOwner } = useAuth();
 
+    const [isWorkspaceOwner, setIsWorkspaceOwner] = useState<boolean>(false);
+    useEffect(() => {
+      if (workspaceId) {
+        isOwner(workspaceId).then(setIsWorkspaceOwner); 
+      }
+    }, [workspaceId, isOwner]);
   if (isLoadingProjects || isLoadingWorkspace) return <SkeletonLayout />;
 
 
@@ -36,8 +46,8 @@ const ProjectListPage = () => {
               {workspaceDetail.name}
             </h1>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
-            <div className="m-6 flex justify-between">
-              <div></div>
+            <div className="m-6 flex justify-end">
+            {(isAdmin || isWorkspaceOwner) && (
               <Link to={`/workspaces/${workspaceId}/create`}>
                 <Button
                   variant="contained"
@@ -52,6 +62,7 @@ const ProjectListPage = () => {
                   + Create Project
                 </Button>
               </Link>
+              )}
             </div>
           </div>
           <div className="py-10  mt-4 h-fit w-[95%] grid grid-cols-2 bg-white rounded-[15px] justify-self-center relative ">

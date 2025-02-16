@@ -38,7 +38,7 @@ function Nav() {
       await acceptInvitation(inviteId);
       refetchInvitedNotification();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -47,7 +47,7 @@ function Nav() {
       await rejectInvitation(inviteId);
       refetchInvitedNotification();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -124,7 +124,6 @@ function Nav() {
         {/* เมนูผู้ใช้ / Sign In */}
         <div className="flex md:order-3">
           {loading ? (
-            // แสดง Loading Spinner ขณะกำลังโหลดสถานะผู้ใช้
             <CircularProgress size={24} />
           ) : isAuthenticated ? (
             <div className="flex relative">

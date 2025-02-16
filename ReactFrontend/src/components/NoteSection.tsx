@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDate, formatTime } from "../function/util";
+
 import { SpeakerNotesOutlined } from "@mui/icons-material";
 
 interface NoteSectionProps {
@@ -12,24 +12,21 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
     {projectNoteData.length > 0 ? (
       projectNoteData.map((note, index) => (
         <div key={index} className="px-4 border-2 rounded-lg w-[75%] my-4 bg-white shadow-md">
-          {/* 🔹 Header ส่วนบน (ชื่อผู้ใช้ + เวลา) */}
           <div className="flex justify-between w-full items-center px-4 py-3 border-b border-gray-200">
             <div className="flex items-center">
               <img
                 className="w-10 h-10 rounded-full border-2"
-                src={note.user?.picture || "/images/homeImage/profile.webp"}
+                src={note.createdBy?.picture || "/images/homeImage/profile.webp"}
                 alt="User Profile"
               />
               <div className="ml-2">
-                <p className="text-black text-lg font-medium">{note.user?.name || "Unknown User"}</p>
+                <p className="text-black text-lg font-medium">{note.createdBy?.name || "Unknown User"}</p>
               </div>
             </div>
             <p className="text-gray-500 text-sm">{new Date(note.created_at).toLocaleTimeString()}</p>
           </div>
 
-          {/* 🔹 Note Content */}
           <div className="flex w-full px-4 py-3">
-            {/* 🔹 ภาพประกอบ (ใช้รูปจาก History ถ้ามี) */}
             {note.history?.filePath ? (
               <div className="w-[20%]">
                 <img
@@ -37,7 +34,7 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
                   src={note.history.filePath}
                   alt="Note Image"
                 />
-                <p className="text-sm text-gray-600">{note.history.image_name || "image_name"}</p>
+                <p className="text-sm text-gray-600">{note.history.image_name || " "}</p>
               </div>
             ) : null}
 
