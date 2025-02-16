@@ -1,15 +1,12 @@
 import React from 'react'
 
-import {MoreOutlined}  from '@ant-design/icons';
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
-import { AvatarGroup } from '@mui/material';
 
 interface WorkspaceCardProps {
-  id: number;
+  workspaceId: string;
   name: string;
   description: string;
-  createById: number;
-  // projects: any; // ใช้ any เพราะ projects อาจเป็น null หรือข้อมูลอื่น ๆ
+  // createById: string;
   createdAt: string;
   updatedAt: string;
   members: {

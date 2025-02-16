@@ -3,7 +3,7 @@ import MEMBER_ROUTES from "../routes/MemberRoutes";
 
 axios.defaults.withCredentials = true;
 
-const pendingInviteMember = async (workspaceId: string,selectedUsers:{email:string}[]) => {
+export const pendingInviteMember = async (workspaceId: string,selectedUsers:{email:string}[]) => {
     if (selectedUsers.length === 0){
         throw new Error("Please select at least one user to invite.")
     }
@@ -23,7 +23,7 @@ const pendingInviteMember = async (workspaceId: string,selectedUsers:{email:stri
       }
 };
 
-const cancelPendingInvite = async (workspaceId: string, inviteId: string) => {
+export const cancelPendingInvite = async (workspaceId: string, inviteId: string) => {
     const requestBody = {
         inviteId: inviteId,
     };
@@ -40,7 +40,7 @@ const cancelPendingInvite = async (workspaceId: string, inviteId: string) => {
     }
 };
 
-const removeMember = async (workspaceId: string, userId: string) => {
+export const removeMember = async (workspaceId: string, userId: string) => {
     const requestBody = {
         userId: userId,
     };
@@ -57,25 +57,26 @@ const removeMember = async (workspaceId: string, userId: string) => {
     }
 };
 
-const changeMemberRole = async (workspaceId: string, userId: string, newRole:string) => {
+export const changeMemberRole = async (workspaceId: string, memberId: string, newRole:string) => {
+    
     const requestBody = {
-        userId:userId,
+        memberId:memberId,
         role: newRole, 
     };
     try {
         const response = await axios.patch(
             `${MEMBER_ROUTES.changeRole}${workspaceId}`,
-            { data: requestBody }
+            requestBody 
         );
         
         return response.data;
     } catch (error) {
-        console.error("Error change role:", error);
+        console.error("Error change role:", error.response.data.message);
         throw error;
     }
 };
 
-const acceptInvitation = async (inviteId:string) => {
+export const acceptInvitation = async (inviteId:string) => {
     try {
         const response = await axios.post(
             `${MEMBER_ROUTES.acceptInvite}${inviteId}`,
@@ -88,7 +89,7 @@ const acceptInvitation = async (inviteId:string) => {
     }
 };
 
-const rejectInvitation = async (inviteId:string) => {
+export const rejectInvitation = async (inviteId:string) => {
     try {
         const response = await axios.post(
             `${MEMBER_ROUTES.RejectInvite}${inviteId}`,
@@ -102,5 +103,4 @@ const rejectInvitation = async (inviteId:string) => {
 };
 
 
-export { pendingInviteMember,cancelPendingInvite,removeMember,changeMemberRole,acceptInvitation,rejectInvitation};
 

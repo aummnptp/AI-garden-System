@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {  useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 
@@ -9,10 +9,18 @@ import Barchart from "../../components/chart/BarChart";
 import DoughnutChart from "../../components/chart/doughnutChart";
 import SummaryCard from "../../components/chart/sumaryCard";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
-import { Link, useParams } from "react-router-dom";
-import { Button, } from "@mui/material";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Alert, Button, Snackbar, } from "@mui/material";
+
+import { formatDate } from "../../function/util";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useProjecteData } from "../../hook/projects/useProjectData";
+
+
+
 import { useFetchQuery } from "../../hook/useFetchQuery";
-import formatDate from '../../function/formatDate';
+// import formatDate from '../../function/formatDate';
 import formatTime from '../../function/formatTime';
 
 
@@ -24,24 +32,26 @@ const ProjectDetailPage = () => {
   // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   // const [loading, setLoading] = useState(true);
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
+  const navigate = useNavigate(); 
+  const [openAlert, setOpenAlert] = useState(false); 
 
-  const {
-    data: projectDetail = {},
-    isLoading: isLoadingProjectDetail,
-    error: errorProjectDetail,
-  } = useFetchQuery(
-    ["project-detail", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/detail/${projectId}`
-  );
+  // const {
+  //   data: projectDetail = {},
+  //   isLoading: isLoadingProjectDetail,
+  //   error: errorProjectDetail,
+  // } = useFetchQuery(
+  //   ["project-detail", workspaceId ?? "", projectId ?? ""],
+  //   `/workspaces/${workspaceId}/projects/detail/${projectId}`
+  // );
 
-  const {
-    data: workspaceDetail = {},
-    isLoading: isLoadingWorkspaceDetail,
-    error: errorWorkspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
+  // const {
+  //   data: workspaceDetail = {},
+  //   isLoading: isLoadingWorkspaceDetail,
+  //   error: errorWorkspaceDetail,
+  // } = useFetchQuery(
+  //   ["workspace-detail", workspaceId ?? ""],
+  //   `/workspaces/detail/${workspaceId}`
+  // );
 
   const {
     data: mediaCount = { imageCount: 0, videoCount: 0 },
@@ -53,24 +63,33 @@ const ProjectDetailPage = () => {
   );
 
 
+      const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+        useWorkspaceData();
+      const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+        useProjecteData();
+    
+  
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingProjectDetail || isLoadingWorkspaceDetail || isLoadingMediaCount) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorProjectDetail || errorWorkspaceDetail || errorMediaCount) return <div>Error: {errorProjectDetail?.message || errorWorkspaceDetail?.message || errorMediaCount?.message}</div>;
+    if (isLoadingProjectDetail || isLoadingWorkspace) return <LoadingSpinner />;
+    // ตรวจสอบข้อผิดพลาด
+    if (isErrorProjectDetail || isErrorWorkspace) return <div>Error: {isErrorProjectDetail?.message || isErrorWorkspace?.message}</div>;
 
   const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
+  
+  
 
 
   return (
     <>
+    <Snackbar open={openAlert} autoHideDuration={6000}>
+        <Alert severity="error" sx={{ width: "100%" }}>
+          this project not allowed
+        </Alert>
+      </Snackbar>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name}
-          projectName={projectDetail.name}
-          aiName={projectDetail.ai_model.name}
-          aiType={projectDetail.ai_model.ai_type}
-        />
+        <Sidebar workspace={workspaceDetail} project={projectDetail}/>
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* top card (create sort workspace name) */}
@@ -87,20 +106,18 @@ const ProjectDetailPage = () => {
           {/* detail */}
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
-              {projectDetail.imagePath ? (
-                <img
-                  className=" col-span-2 w-full h-[100%] object-cover"
-                  src={projectDetail.imagePath}
-                //  alt={`${projectDetail.name} project`}
-                />
-              ) : (
-
-                <ProjectImage
-                  projectName={projectDetail.name}
-                  className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
-                />
-              )}
-
+            {projectDetail.imagePath ? (
+             <img
+               className=" col-span-2 w-full h-[100%] object-cover"
+             src={projectDetail.imagePath}
+             />
+            ) : (
+              <ProjectImage
+              projectName={projectDetail.name}
+              className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
+              /> 
+           )}
+            
               <div className="col-span-4 p-6">
                 <div>
                   <div className="flex items-center">
@@ -139,12 +156,12 @@ const ProjectDetailPage = () => {
                   {projectDetail.description}
                 </p>
                 <div className="mb-2 mt-4">
-                  {projectDetail.ai_model.ai_tag.map((tag) => (
-                    <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                      {tag}
-                    </span>
-                  ))}
-
+                {projectDetail.ai_model.ai_tag.map((tag: string) => (
+                  <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
+                    {tag}
+                  </span>
+                ))}
+                
                 </div>
               </div>
             </div>
@@ -299,10 +316,10 @@ const ProjectDetailPage = () => {
                   {/* </div> */}
                   <div className="ml-4">
                     <div className="py-4">
-                      <p className="text-gray-600">วันที่สร้าง</p>
-                      <span className="text-indigo-900 text-2xl font-bold">
-                        {formatDate(new Date(projectDetail.created_at))}
-                      </span>
+                    <p className="text-gray-600">วันที่สร้าง</p>
+                    <span className="text-indigo-900 text-2xl font-bold">
+                      {formatDate(projectDetail.created_at)}
+                    </span>
                     </div>
                   </div>
                 </div>
@@ -310,11 +327,11 @@ const ProjectDetailPage = () => {
                 <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
                   <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
                   <div className="ml-4">
-                    <div className="py-4">
-                      <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
-                      <span className="text-indigo-900 text-2xl font-bold">
-                        {formatDate(new Date(projectDetail.updated_at))}
-                      </span>
+                  <div className="py-4">
+                    <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
+                    <span className="text-indigo-900 text-2xl font-bold">
+                    {formatDate(projectDetail.updated_at)}
+                    </span>
                     </div>
                   </div>
                 </div>

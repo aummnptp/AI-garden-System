@@ -1,77 +1,86 @@
-import React, { useEffect, useState } from "react";
-import MiniFooter from "../../components/MiniFooter";
-import Sidebar from "../../components/Sidebar";
-import { Button, Checkbox, TextField } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { ManageAccounts } from "@mui/icons-material";
-import memberMockupData from "../../data/MemberData";
 
-interface memberData {
-  id: number;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-}
+import Sidebar from "../../components/Sidebar";
+import { Button, Checkbox, } from "@mui/material";
+import { Link, useParams } from "react-router-dom";
+import { ManageAccounts } from "@mui/icons-material";
+import { changeProjectPermissionService, grantProjectPermission, revokeProjectPermission } from "../../api/services/ProjectService";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useProjecteData } from "../../hook/projects/useProjectdata";
 
 const ProjectAccessManagePage = () => {
-  let { workspaceId, projectId } = useParams();
-  const [name, setName] = useState<string>("");
-  const [memberDatas, setMemberData] = useState<memberData[]>(memberMockupData);
-  const [accessProjectType, setAccessProjectType] =useState<string>("access_all");
-  const [projectDetail, setProjectDetail] = useState<any | null>(null);
-  const [workspaceDetail, setWorkspaceDetail] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-   
-  const fetchData = async () => {
-    try {
-      const [workspaceResponse, projectResponse,memberResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,{
-          withCredentials: true,}),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`,
-          {
-            withCredentials: true,}
-        ),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`,{
-          withCredentials: true,}),
-      ]);
+  const { workspaceId, projectId } = useParams<{
+    workspaceId: string;
+    projectId: string;
+  }>();
+
+  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace ,
+    memberDatas,
+    isLoadingMembers,
+    isErrorMembers,
+    refetchMemberDatas,
+   } =
+    useWorkspaceData();
+
+  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail ,refetchProject ,
+    projectPermissions,
+    isLoadingPermissions,
+    isErrorPermissions,
+    refetchPermissions,
+  } =
+    useProjecteData();
+
+
+
   
-      setWorkspaceDetail(workspaceResponse.data);
-      setProjectDetail(projectResponse.data)
-      setMemberData(memberResponse.data)
+  const selectedMembers = new Set(
+    projectPermissions?.map((perm) => perm.user.userId) ?? []
+  );
+
+  
+  const handlePermissionChange = async (permission: boolean) => {
+
+    try {
+      await changeProjectPermissionService(workspaceId!, projectId!, permission);
+      await refetchProject();
     } catch (error) {
-      console.error("There was an error fetching the data!", error);
-    } finally {
-      setLoading(false);
+      console.error(" Error updating project permission:", error);
+      alert("Failed to update access settings.");
     }
   };
-     useEffect(() => {
-        fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
-      }, []);
+
+
+  const handleMemberCheckboxChange = async (userId: string) => {
+    if (!projectDetail?.permission_only) return;
   
-
-if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!projectDetail) {
-    return <div>Error: Project details could not be loaded.</div>;
-  }
+    try {
+      if (selectedMembers.has(userId)) {
+        // 🔻 ติ๊กออก -> ลบสิทธิ์
+        await revokeProjectPermission(workspaceId!, projectId!, userId);
+      } else {
+        // ✅ ติ๊กเข้า -> เพิ่มสิทธิ์
+        await grantProjectPermission(workspaceId!, projectId!, userId);
+      }
+  
+      // 🔄 รีเฟรชข้อมูลสิทธิ์
+      await refetchPermissions();
+    } catch (error) {
+      console.error(" Error updating member permissions:", error);
+      alert("Failed to update member permissions.");
+    }
+  };
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* Sidebar */}
-      <Sidebar workspaceName={workspaceDetail.name} 
-        projectName={projectDetail.project_name}
-        aiName={projectDetail.ai_model.name}
-        aiType={projectDetail.ai_model.ai_type}
-         />
+      <Sidebar
+      workspace={workspaceDetail}
+      project={projectDetail}
+      />
 
       {/* Content Container */}
       <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
         <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
           <h1 className="p-5 text-3xl font-medium tracking-tight text-indigo-900">
-          <i className="bi bi-pencil-fill"></i>   Project Setting
+            <i className="bi bi-pencil-fill"></i> Project Setting
           </h1>
           <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
 
@@ -107,39 +116,13 @@ if (loading) {
               </h1>
               <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
               <div className="px-10 py-6 flex items-center  justify-between w-full ">
-                <div className="flex items-center space-x-4 text-xl   mx-auto">
-                  <label
-                    className={`w-fit h-fit bg-white rounded-[15px] border px-4 py-2  ${
-                      accessProjectType === "access_all"
-                        ? "border-blue-600 border-2"
-                        : "border-zinc-300"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="access"
-                      value="access_all"
-                      className="w-4 h-4  "
-                      checked={accessProjectType === "access_all"}
-                      onChange={() => setAccessProjectType("access_all")}
-                    />
+              <div className="flex items-center space-x-4 text-xl mx-auto">
+                  <label className={`w-fit h-fit bg-white rounded-[15px] border px-4 py-2 ${!projectDetail?.permission_only ? "border-blue-600 border-2" : "border-zinc-300"}`}>
+                    <input type="radio" name="access" value="access_all" className="w-4 h-4"   checked={!projectDetail?.permission_only}  onChange={() => handlePermissionChange(false)} />
                     <span> อนุญาตทุกคนใน workspace</span>
                   </label>
-                  <label
-                    className={`w-fit h-fit bg-white rounded-[15px] border px-4 py-2 ${
-                      accessProjectType === "only_allowed"
-                        ? "border-blue-600 border-2"
-                        : "border-zinc-300"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="access"
-                      value="only_allowed"
-                        className="w-4 h-4"
-                      checked={accessProjectType === "only_allowed"}
-                      onChange={() => setAccessProjectType("only_allowed")}
-                    />
+                  <label className={`w-fit h-fit bg-white rounded-[15px] border px-4 py-2 ${projectDetail?.permission_only  ? "border-blue-600 border-2" : "border-zinc-300"}`}>
+                    <input type="radio" name="access" value="only_allowed" className="w-4 h-4"  checked={projectDetail?.permission_only}  onChange={() => handlePermissionChange(true)} />
                     <span> เฉพาะ project owner และสมาชิกที่อนุญาต</span>
                   </label>
                 </div>
@@ -151,54 +134,51 @@ if (loading) {
                 <ManageAccounts fontSize="large" />
                 รายชื่อ Member
               </h1>
-
               <>
-                <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
-                {memberDatas
-                  .sort((a, b) => {
-                    if (a.role === "owner" && b.role === "member") return -1;
-                    if (a.role === "member" && b.role === " owner") return 1;
-                    return 0;
-                  })
-                  .map((member, index) => (
-                    <div>
-                      <div className="px-10 py-2 flex items-center  justify-between w-full">
-                        <div className="flex items-center "  key={index}>
-                          <img
-                            className="w-10 h-10 rounded-full  border-2"
-                            src={member.user.picture}
-
-                            // src="/images/homeImage/profile.webp"
-                          />
-                          <div className="ml-2">
-                            <p className="text-indigo-900 text-xl font-medium">
-                              {member.user.name}
-                            </p>
-                            <p className="text-gray-400 text-lg ">
-                              Email: {member.user.email}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center ">
-                          {member.role == "owner" ? (
-                            <span className="">Project Owner</span>
-                          ) : (
-                            <Checkbox
-                              disabled={accessProjectType === "access_all"}
-                            />
-                          )}
+                <div className="w-full h-[0px] border border-trueGray-300 mx-auto" />
+                {memberDatas.map((member, index) => (
+                  <div key={member.user.userId}>
+                    <div className="px-10 py-2 flex items-center justify-between w-full">
+                      {/* 🔹 Avatar + User Info */}
+                      <div className="flex items-center">
+                        <img
+                          className="w-10 h-10 rounded-full border-2"
+                          src={member.user.picture}
+                          alt={member.user.name}
+                        />
+                        <div className="ml-2">
+                          <p className="text-indigo-900 text-xl font-medium">
+                            {member.user.name}
+                          </p>
+                          <p className="text-gray-400 text-lg">
+                            Email: {member.user.email}
+                          </p>
                         </div>
                       </div>
-                      <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
+
+                      <div className="flex items-center">
+                        {member.role === "owner" ? (
+                          <span className="text-blue-600 font-bold">
+                            Project Owner
+                          </span>
+                        ) : (
+                          <Checkbox
+                            disabled={!projectDetail?.permission_only}
+                            checked={selectedMembers.has(member.user.userId)}
+                            onChange={()=> handleMemberCheckboxChange(member.user.userId)}
+                          />
+                        )}
+                      </div>
                     </div>
-                  ))}
+                    <div className="w-full h-[0px] border border-trueGray-300 mx-auto" />
+                  </div>
+                ))}
               </>
             </div>
           </div>
         </div>
       </div>
       <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
-
         <Button
           size="large"
           variant="contained"

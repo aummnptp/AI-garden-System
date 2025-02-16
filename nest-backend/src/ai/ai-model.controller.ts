@@ -10,6 +10,8 @@ import {
   Delete,
   Patch,
   UseGuards,
+  BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AIModelService } from './ai-model.service';
@@ -21,6 +23,8 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
 import { AIUsageLimitGuard } from 'src/ai-setting/guards/ai-usage-limit.guard';
+import { AIVisibleGuard } from 'src/ai-setting/guards/ai-visible.guard';
+import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 
 
 
@@ -73,9 +77,11 @@ export class AIModelController {
   }
 
 
-  @Get()
-  findAll() {
-    return this.aiModelService.findAll();
+  @Get("/")
+  findAll(@Query("search") search?: string,
+    @Query("type") type?: string,
+    @Query("tag") tag?: string) {
+    return this.aiModelService.findAll({ search, type, tag });
   }
 
   @Get('with_permission')
@@ -96,15 +102,16 @@ export class AIModelController {
 
   
   @UseGuards(JwtGuard,
-    AIUsageLimitGuard
+   AIEnableGuard,AIVisibleGuard, AIUsageLimitGuard
   )
   @Post('predict/:aiId')
   @UseInterceptors(FileInterceptor('file'))
-
-  async predict(@Param('aiId') aiId: string, @UploadedFile() file: Express.Multer.File,): Promise<any> {
+  async predict(@Request() req,@Param('aiId') aiId: string, @UploadedFile() file: Express.Multer.File): Promise<any> {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
     return this.aiModelService.predict(aiId, file);
   }
-
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
@@ -122,15 +129,15 @@ export class AIModelController {
     return models;
   }
 
-
-
-
-
   @Get('approved/:userId')
   async getApprovedAiModels(@Param('userId') userId: string) {
     return this.aiModelService.getApprovedAiModelsByUserId(userId);
   }
 
+  @Get('/tags/tag-in-system') 
+  async getAITags(): Promise<string[]> {
+    return this.aiModelService.getUniqueAITags();
+  }
 }
 
 

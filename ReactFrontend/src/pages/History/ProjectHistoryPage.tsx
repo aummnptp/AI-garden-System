@@ -3,9 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
 import { NoteAltOutlined, UploadFile } from "@mui/icons-material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import HistoryUploadSection from "../../components/HistoryUploadSection";
 import NoteSection from "../../components/NoteSection";
+import { useProjecteData } from "../../hook/projects/useProjectData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useHistoryData } from "../../hook/history/useHistoryData";
+import { useFetchQuery } from "../../hook/useFetchQuery";
 
 const ProjectHistoryPage = () => {
   const [historyTab, setHistoryTab] = useState<string>("Upload");
@@ -14,6 +17,19 @@ const ProjectHistoryPage = () => {
     projectId: string;
   }>();
 
+  const {
+    projectHistory,
+    isLoadingHistory,
+    isErrorHistory,
+    projectNotes,
+    isLoadingNotes,
+    isErrorNotes,
+  } = useHistoryData();
+
+  // const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+  //   useWorkspaceData();
+  // const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+  //   useProjecteData();
   const {
       data: workspaceDetail = {},
       isLoading: isLoadingWorkspaceDetail,
@@ -55,12 +71,7 @@ const ProjectHistoryPage = () => {
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name}
-          projectName={projectDetail.name}
-          aiName={projectDetail.ai_model.name}
-          aiType={projectDetail.ai_model.ai_type}
-        />
-
+        <Sidebar workspace={workspaceDetail} project={projectDetail}></Sidebar>
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
@@ -98,13 +109,14 @@ const ProjectHistoryPage = () => {
           <div className="py-10 mt-4 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative pt-10 px-10 ">
             {historyTab === "Upload" ? (
               <HistoryUploadSection
-                historyData={historyData}
+                historyData={projectHistory} // ใส่ข้อมูลที่ดึงมาจาก API
                 workspaceId={workspaceId ?? ""}
                 projectId={projectId ?? ""}
                 inputType={projectDetail?.input_type} // ส่ง inputType ไปด้วย
               />
-            ) : historyTab === "Note" ? (
-              <NoteSection projectNoteData={[]} />
+            ) : // <div></div>
+            historyTab === "Note" ? (
+              <NoteSection projectNoteData={projectNotes} />
             ) : null}
           </div>
         </div>

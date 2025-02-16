@@ -1,36 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 
+import DialogTitle from "@mui/material/DialogTitle";
+import { QRCodeCanvas } from "qrcode.react";
+import { saveAs } from "file-saver"; 
 import {
   Autocomplete,
   Button,
   Chip,
   FormControl,
-  FormHelperText,
-  List,
-  ListItem,
-  ListItemText,
   MenuItem,
   TextField,
 } from "@mui/material";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
+import { memberData } from "../../types/Invitation";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
-interface memberData {
-  id: number;
-  name: string;
-  email: string;
-  picture:string;
-  role: string;
-}
 
 interface userData {
   id: number;
@@ -41,41 +30,35 @@ interface userData {
 }
 
 const WorkspaceInvitationPage = () => {
-  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const [selectedMemberIndex, setSelectedMemberIndex] = useState<number | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const { workspaceId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
-  // const [userDatas, setUserData] = useState<memberData[]>([]);
-  // const [pendingUserDatas, setPendingData] = useState<memberData[]>([]); // ข้อมูลuserที่ส่งคำเชิญไป
-  // const [memberDatas, setMemberData] = useState<memberData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-
-  // const [workspaceDetail, setWorkspaceDetail] = useState([]);
-
-  
-  
   const [removeMembeIndex, setRemoveMembeIndex] = useState<number | null>(null);
+  
   const handleOpenRemoveMemberDialog = (index: number) => {
-    setRemoveMembeIndex(index);  // เก็บค่า index ของสมาชิกที่ต้องการให้เปิด dialog
+    setRemoveMembeIndex(index); 
   };
   
   const handleCloseRemoveMemberDialog= () => {
-    setRemoveMembeIndex(null);  // ปิด dialog โดยการรีเซ็ต index
+    setRemoveMembeIndex(null);  
   };
 
-  
-  // const handleChange = (event: SelectChangeEvent, index: number) => {
-  //   const UpdatedMember = [...memberDatas];
-  //   UpdatedMember[index].role = event.target.value;
-  //   setMemberData(UpdatedMember);
-  // };
+ 
+  const qrRef = useRef<HTMLCanvasElement | null>(null);
+  const handleDownloadQRCode = () => {
+    if (qrRef.current) {
+      const canvas = qrRef.current as HTMLCanvasElement;
+      canvas.toBlob((blob) => {
+        if (blob) {
+          saveAs(blob, "workspace-invite.png");
+        }
+      });
+    }
+  };
 
-  const link = "https://www.invite_example.com";
   const [copied, setCopied] = useState(false);
   const handleCopyClick = () => {
     navigator.clipboard
-      .writeText(link)
+      .writeText(inviteLink)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
@@ -84,7 +67,6 @@ const WorkspaceInvitationPage = () => {
         console.error("Failed to copy: ", err);
       });
   };
-
 
   const handleInviteButton = async () => {
     try {
@@ -98,7 +80,6 @@ const WorkspaceInvitationPage = () => {
       setSelectedUsers([]);
     } catch (error) {
       console.log(error)
-      // alert("An error occurred while sending invitations.");
     }
   };
 
@@ -115,8 +96,6 @@ const handleRemoveMember = async (userId: string) => {
   console.log(error)
 }
 };
-
-
  
   const handleCancelPending = async(inviteId: string) => {
     try {
@@ -132,15 +111,11 @@ const handleRemoveMember = async (userId: string) => {
   }
 }
 
-
-
-
-const handleChangeRole = async(userId: string ,newRole: string) => {
-  
+const handleChangeRole = async(memberId: string ,newRole: string) => {
+  console.log(memberId, workspaceId)
   try {
     if (workspaceId) {
-      await changeMemberRole(workspaceId,userId,newRole);
-      alert("sucess")
+      await changeMemberRole(workspaceId, memberId, newRole);
       refetchMemberDatas()
     } else {
             console.error("Workspace ID is undefined.");
@@ -153,103 +128,30 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
 
 
 
+const {
+  inviteLink,
+  isLoadingInviteLink,
+  workspaceDetail,
+  userDatas,
+  pendingUserDatas,
+  memberDatas,
+  refetchInviteLink,
+  refetchUserDatas,
+  refetchPendingUser,
+  refetchMemberDatas,
+} = useWorkspaceData();
 
+if (isLoadingInviteLink) {
+  return <p>Loading invite link...</p>;
+}
 
-
-    const {
-      data: workspaceDetail,
-      isLoading: isLoadingProjectDetail,
-      error: errorProjectDetail,
-      // refetch: refetchProjectDetail
-    } = useFetchQuery(
-      ["project-detail", workspaceId ?? ""],
-      `/workspaces/detail/${workspaceId}`
-    );
-  
-  //   // ดึงข้อมูล workspace detail
-    const {
-      data: userDatas,
-      isLoading: isLoadingUserData,
-      error: errorUserData,
-      refetch: refetchUserDatas
-    } = useFetchQuery(
-      ["available-user", workspaceId ?? ""],
-      `/workspaces/available-users/${workspaceId}`
-    );
-  
-    const {
-      data: pendingUserDatas,
-      // isLoading: isLoadingPendingData,
-      // error: errorPendingData,
-      refetch: refetchPendingUser
-    } = useFetchQuery(
-      ["pending-user", workspaceId ?? ""],
-      `/workspaces/pending-users/${workspaceId}`
-    );
-    const {
-      data: memberDatas,
-      // isLoading: isLoadingMemberData,
-      // error: errorMemberData,
-      refetch: refetchMemberDatas
-    } = useFetchQuery(
-      ["member-user", workspaceId ?? ""],
-      `/workspaces/members-profiles/${workspaceId}`
-    );
-    // ตรวจสอบสถานะการโหลด
-    if (isLoadingProjectDetail || isLoadingUserData) return <div>Loading...</div>;
-    // ตรวจสอบข้อผิดพลาด
-    if (errorProjectDetail || errorUserData) return <div>Error: {errorProjectDetail?.message || errorUserData?.message}</div>;
-
-// const fetchData = async () => {
-//   try {
-//     // เรียก API หลายตัวพร้อมกัน
-//     const [
-//       workspaceResponse,allUserResponse,pendingListResponse,memberDataResponse,
-//     ] = await Promise.all([
-//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`, {
-//         withCredentials: true,
-//       }),
-//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/available-users/${workspaceId}`, {
-//         withCredentials: true,
-//       }),
-//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/pending-users/${workspaceId}`, {
-//         withCredentials: true,
-//       }),
-//       axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/members-profiles/${workspaceId}`, {
-//         withCredentials: true,
-//       }),
-//     ]);
-
-//     // อัปเดตสถานะของข้อมูลหลังจากที่ได้ผลลัพธ์
-//     setWorkspaceDetail(workspaceResponse.data);
-//     setUserData(allUserResponse.data);
-//     setPendingData(pendingListResponse.data);
-//     setMemberData(memberDataResponse.data);
-//   } catch (error) {
-//     console.error("Error fetching data!", error);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-// useEffect(() => {
-//   fetchData();
-// }, []);
-// if (loading) {
-//   return <div>Loading...</div>;
-// }
-
-
-
-
-
-  
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspaceName={workspaceDetail.name} />
+        <Sidebar workspace={workspaceDetail} />
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">
@@ -282,14 +184,12 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                 </li>
               </ul>
             </div>
-
             {/* <div className="w-full h-[0px] border border-zinc-300 mx-auto" /> */}
             <div className=" w-[90%] mx-auto items-center mt-2">
               <div className=" w-full h-fit mt-4 bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4">
                 <h1 className="text-black text-3xl px-10 pb-4">
                   <i className="bi bi-people-fill"></i> Member
-                </h1>
-                
+                </h1>      
                 {memberDatas
                   .sort((a, b) => {
                     if (a.role === "owner" && b.role === "member")
@@ -328,7 +228,7 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                           <FormControl sx={{ m: 1, minWidth: 160 }}>
                             <Select
                               value={member.role}
-                              onChange={(event) => handleChangeRole(member.user.userId, event.target.value)} 
+                              onChange={(event) => handleChangeRole(member.memberId, event.target.value)} 
                               // onChange={(event) => handleChange(event, index)}
                               displayEmpty
                               inputProps={{ "aria-label": "Without label" }}
@@ -354,11 +254,8 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                             ></i>
                           )}
                         </div>
-                      
                       </div>
-
                     <Dialog
-                    
                             // open={open}
                             open={removeMembeIndex === index}
                             onClose={handleCloseRemoveMemberDialog}
@@ -387,7 +284,6 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                     </>         
                   ))}
               </div>
-
               <div className=" w-full h-fit bg-white rounded-[15px] border border-zinc-300 mx-auto pt-4  my-5">
                 <h1 className="text-black text-3xl px-10 pb-4">
                   Pending invitation ({pendingUserDatas.length})
@@ -449,7 +345,6 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                             e.currentTarget.onerror = null; // ป้องกัน loop error
                             e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
                           }}
-                          alt="profile"
                           style={{
                             width: 30,
                             height: 30,
@@ -481,7 +376,6 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                     }
                     sx={{ width: "85%", marginRight: "5px" }}
                   />
-
                   <Button
                     variant="contained"
                     sx={{
@@ -496,7 +390,6 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                     Send Invites
                   </Button>
                 </div>
-
                 <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
                 <div className=" w-full h-fit bg-gray-100 mx-auto p-10 my-10 flex  ">
                   <div className="w-[60%] ">
@@ -509,7 +402,8 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                     <div className="flex items-center">
                       <TextField
                         id="standard-number"
-                        defaultValue={link}
+                        defaultValue={inviteLink}
+                        value={inviteLink}
                         InputProps={{
                           readOnly: true,
                         }}
@@ -535,22 +429,19 @@ const handleChangeRole = async(userId: string ,newRole: string) => {
                     </div>
                   </div>
                   <div className="w-[30%]  flex flex-col items-center ml-5">
-                    <img
-                      className="bg-white"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png"
-                    />
-                    <Button
-                      variant="contained"
-                      sx={{
-                        my: "5px",
-                        backgroundColor: "#4f46e5",
-                        "&:hover": {
-                          backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
-                        },
-                      }}
-                    >
-                      download
-                    </Button>
+                  <QRCodeCanvas value={inviteLink} size={180} ref={qrRef} />
+                  <Button
+                    variant="contained"
+                    sx={{
+                      my: "5px",
+                      backgroundColor: "#4f46e5",
+                      "&:hover": { backgroundColor: "#3730a3" },
+                    }}
+                    onClick={handleDownloadQRCode}
+                  >
+                    Download QR Code
+                  </Button>
+
                   </div>
                 </div>
               </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import MiniFooter from '../../components/MiniFooter'
-import CustomizedTables from '../../components/table/Table'
 import Workspacetable from '../../components/table/WorkspaceTable'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -25,11 +24,17 @@ const WorkspaceHistoryPage = () => {
   useEffect(() => {
     fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
   }, []);
+
+
+//   const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+//   useWorkspaceData();
+// const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+//   useProjecteData();
   return (
     <>
     <div className="flex h-full min-h-screen bg-neutral-100">
       {/* side bar */}
-      <Sidebar workspaceName={workspaceDetail.name} />
+      <Sidebar workspace={workspaceDetail} />
       {/* content container */}
       <div className=" w-10/12 ml-auto  flex flex-col items-center pb-32  h-full min-h-screen">
       <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative ">

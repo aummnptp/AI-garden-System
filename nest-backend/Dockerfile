@@ -1,13 +1,32 @@
-FROM node:16
+# base image
+FROM node:18 AS builder
+
+# set working directory
+WORKDIR /app
+
+# copy package.json และไฟล์ lock
+COPY package*.json ./
+
+# install dependencies
+RUN npm install --legacy-peer-deps
+
+# copy source code
+COPY . .
+
+# build the app
+RUN npm run build
+
+# production stage
+FROM node:18-alpine AS production
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
 
-RUN npm install
+# install only production dependencies
+RUN npm install --omit=dev
 
-COPY . .
+EXPOSE 3000
 
-RUN npm run build
-
-CMD ["npm", "run", "start:dev"]
+CMD ["node", "dist/main.js"]

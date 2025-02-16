@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
 import MiniFooter from "../../components/MiniFooter";
-import { Button } from "@mui/material";
+
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
 import Sidebar from "../../components/Sidebar";
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import { useParams } from "react-router-dom";
-
+import AddNoteDialog from "../../components/NoteDialog";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useProjecteData } from "../../hook/projects/useProjectData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useHistoryData } from "../../hook/history/useHistoryData";
+import { useState } from "react";
 
 const HistoryDetailPage = () => {
   const [name, setName] = useState<string>("");
@@ -14,78 +17,83 @@ const HistoryDetailPage = () => {
     projectId: string;
     historyId: string;
   }>();
-  const {
-    data: historyData,
-    isLoading: isLoadingHistory,
-    error: errorHistory,
-  } = useFetchQuery(
-    ["project-history", workspaceId ?? "", projectId ?? "", historyId ?? ""],
-    `/workspaces/${workspaceId}/projects/history/${historyId}`
-  );
 
-  // ดึงข้อมูล workspace detail
-  const {
-    data: workspaceDetail,
-    isLoading: isLoadingWorkspace,
-    error: errorWorkspace,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/${workspaceId}/workspaces/detail/${workspaceId}`
-  );
+  const { 
+    historyDetail, 
+    isLoadingHistoryDetail,
+    isErrorHistoryDetail,
+    historyNoteData,
+    isLoadingHistoryNoteData,
+    isErrorHistoryNoteData,
+    refetchHistoryNoteData,
+  
+  } =
+  useHistoryData();
 
-  useEffect(() => {
-      if (workspaceDetail) {
-        setName(workspaceDetail.name);
-      }
-    }, [workspaceDetail]);
+  const { workspaceDetail, isLoadingWorkspace, isErrorWorkspace } =
+    useWorkspaceData();
+  const { projectDetail, isLoadingProjectDetail, isErrorProjectDetail } =
+    useProjecteData();
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingHistory || isLoadingWorkspace) return <div>Loading...</div>;
-
-  // ตรวจสอบข้อผิดพลาด
-  if (errorHistory || errorWorkspace)
-    return <div>Error: {errorHistory?.message || errorWorkspace?.message}</div>;
+  if (isLoadingHistoryDetail) return <LoadingSpinner />;
+  if (isErrorHistoryDetail) return <div>Error: {isErrorHistoryDetail?.message}</div>;
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-      <Sidebar workspaceName={name} />
+        <Sidebar workspace={workspaceDetail} project={projectDetail} />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
-            <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
+          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] shadow-lg">
+            <div className="flex justify-between items-center p-5 border-b border-zinc-300">
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
                 {/* {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'} */}
               </h1>
             </div>
-            <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
 
-            {/* upload step */}
-            <>
+            <div className="p-5">
               <AIDisPlayResultComponent
-                resultImage={historyData.filePath}
-                predictResult={historyData}
+                resultImage={historyDetail.filePath}
+                predictResult={historyDetail}
               />
-            </>
-            <div className="flex justify-end">
-              <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: "#3b82f6",
-                  "&:hover": {
-                    backgroundColor: "#2563eb", // สีที่ต้องการเมื่อ hover
-                  },
-                }}
-                // onClick={handleToCustomStep}
-              >
-                {" "}
-                ถัดไป
-              </Button>
+            </div>
+
+            <div className="flex flex-col p-5">
+              <div className="flex justify-end">
+                <AddNoteDialog
+                  projectId={projectId ?? ""}
+                  historyId={historyId ?? ""}
+                  onNoteAdded={refetchHistoryNoteData}
+                />
+              </div>
+              <div className="mt-5">
+                <h2 className="text-2xl font-medium text-indigo-900">
+                  บันทึกทั้งหมด
+                </h2>
+                {historyNoteData && historyNoteData.length > 0 ? (
+                  historyNoteData.map((note) => (
+                    <div
+                      key={note.note_id}
+                      className="border rounded p-3 my-2 bg-gray-50"
+                    >
+                      <h3 className="font-semibold text-indigo-800">
+                        {note.title}
+                      </h3>
+                      <p className="text-gray-700">{note.content}</p>
+                      <small className="text-gray-500">
+                        เพิ่มเมื่อ: {new Date(note.created_at).toLocaleString()}
+                      </small>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">ยังไม่มีบันทึก</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <MiniFooter />
     </>
   );

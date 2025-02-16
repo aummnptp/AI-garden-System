@@ -1,21 +1,62 @@
-// import axios from "axios";
-// // import DOCS_ROUTES from "../routes/DocsRoutes";
+import axios from "axios";
+import { BACKEND_API_URL } from "../../env";
+const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
-// axios.defaults.withCredentials = true;
+export const addNoteService = async (projectId: string, historyId: string, title: string, content: string) => {
+    try {
+      console.log("Sending request to add note:", { projectId, historyId, title, content });
+  
+      const response = await axios.post(
+        `${BACKEND_API_URL}/projects/${projectId}/notes/add-note/${historyId}`,
+        { title, content },
+        { withCredentials: true }
+      );
+  
+      console.log("Note added successfully:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(" Error adding note:", error.response?.data || error.message);
+      throw error;
+    }
+  };
 
-// const updateDocsTitle = async (docsId: string, newTitle: string) => {
-//   try {
-//     const response = await axios.patch(
-//       `${DOCS_ROUTES.updateDocument}${docsId}`,
-//       { title: newTitle }
-//     );
-//     return response.data; // ส่งข้อมูลกลับไปยัง caller
-//   } catch (error) {
-//     console.error("Error renaming document:", error);
-//     throw error; // ส่ง error กลับไปยัง caller
-//   }
-// };
+
+  export const deleteHistoryService = async (
+    workspaceId: string,
+    projectId: string,
+    historyId: string
+  ) => {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/${projectId}/history/${historyId}`,
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting history:", error);
+      throw error;
+    }
+  };
 
 
+  export const fetchProjectHistoryService = async (workspaceId: string, projectId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/all-history/${projectId}`);
+    return data;
+  };
+  
+  export const fetchProjectNotesService = async (projectId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes`);
+    return data;
+  };
 
-// export { updateDocsTitle,};
+
+  export const fetchProjectHistoryDetailService = async (workspaceId: string, projectId: string,historyId:string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/${projectId}/history/${historyId}`);
+    return data;
+  };
+
+
+  export const fetchHistoryNoteDataService = async (projectId: string, historyId: string,) => {
+    const { data } = await axios.get(`${BASE_URL}/projects/${projectId}/notes/${historyId}`);
+    return data;
+  };

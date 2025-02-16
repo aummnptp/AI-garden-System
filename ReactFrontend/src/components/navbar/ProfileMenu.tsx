@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Menu, MenuItem, Typography, Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useAuth } from "../../context/AuthContext";
+
 
 interface ProfileMenuProps {
   user: {

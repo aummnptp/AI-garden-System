@@ -2,12 +2,14 @@ import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react'
 
 import Sidebar from '../../components/Sidebar'
 import { Input } from "antd";
-// import AiData from '../../data/AiData';
 import CreateProjectCard from '../../components/card/CreateProjectCard';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
+import { AIDataType } from '../../types/Ai';
+import LoadingSpinner from '../../components/LoadingSpinner';
+
 import { useAuth } from "../../context/AuthContext"; // นำเข้า useAuth
 const { TextArea } = Input;
 
@@ -27,36 +29,13 @@ function CreateProjectPage() {
   const [selectedAI, setSelectedAI] = useState();
   const [AIData, setAIData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [alertText, setAlertText] = useState("");
 
-
-  // const fetchData = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const [workspaceResponse, aiModelsResponse] = await axios.all([
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-  //     axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models`),
-  //   ])
-
-  //     setWorkspaceDetail(workspaceResponse.data);
-  //     setAIData(aiModelsResponse.data);
-
-  //   } catch (err) {
-  //     setError("There was an error fetching the data!");
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchData(); // ดึงข้อมูล workspace เมื่อ component โหลดครั้งแรก
-  // }, []);
+  
 
   // ฟังก์ชันที่ใช้เลือกการ์ด
-  const handleSelectCard = (id: number) => {
+  const handleSelectCard = (id: string) => {
     const selectedCard = AIData.find(data => data.aiId === id);
     setSelectedAI(selectedCard);  // เก็บข้อมูล AI ที่ถูกเลือก
     setSelectedCardId(id);  // เก็บแค่ id ถ้าจำเป็น
@@ -82,8 +61,8 @@ function CreateProjectPage() {
 
   const startTimer = () => {
     setTimeout(() => {
-      setOpen(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
-    }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
+      setOpen(false); 
+    }, 5000); 
   };
 
   const handleClose = () => {
@@ -183,7 +162,7 @@ function CreateProjectPage() {
   }, [user, workspaceId]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
   return (
     <>
@@ -196,7 +175,7 @@ function CreateProjectPage() {
             </Alert>
           </div>
         )}
-        <Sidebar workspaceName={workspaceDetail.name} />
+        <Sidebar workspace={workspaceDetail} />
 
         <div
           onSubmit={handleSubmit}
@@ -327,7 +306,7 @@ function CreateProjectPage() {
                 </div>
 
                 <div className=" h-fit  grid grid-cols-3 justify-self-center relative">
-                  {AIData.map((data) => (
+                  {AIData.map((data:AIDataType) => (
                     <CreateProjectCard
                       id={data.aiId}
                       name={data.name}

@@ -17,41 +17,40 @@ export class AuthService{
 
   ) {}
   
-  async login(user: any) {
-
-    //const payload = { email: user.email, sub: user.userId , id: user.id};
-
-    
-    const payload = { email: user.email, userId: user.userId, role: user.role };
-
-
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+  // async login(user: any) {
+  //   const payload = { email: user.email, userId: user.userId, role: user.role };
+  //   return {
+  //     access_token: this.jwtService.sign(payload),
+  //   };
+  // }
 
   async googleLogin(req): Promise<any> {
     if (!req.user) {
       throw new BadRequestException('Google login failed: No user information received.');
     }
+  
     const { email, name, picture, googleId } = req.user;
-    let user = await this.userRepository.findOneBy({ email });
+    let user = await this.userRepository.findOne({ where: { email } });
+  
     if (!user) {
-      const newUser = this.userRepository.create({
+      user = this.userRepository.create({
         email,
         name,
         picture,
         googleId,
-        role:"user",
+        role: "user",
       });
-      user = await this.userRepository.save(newUser);
+    } else {
+      user.name = name;
+      user.picture = picture;
+      user.googleId = googleId;
     }
+  
 
-    //const payload = { email: user.email,id: user.id};
-
-    const payload = { email: user.email, userId: user.userId, role: user.role};
-
-
+    user = await this.userRepository.save(user);
+  
+ 
+    const payload = { email: user.email, userId: user.userId, role: user.role };
     return {
       accessToken: this.jwtService.sign(payload),
     };

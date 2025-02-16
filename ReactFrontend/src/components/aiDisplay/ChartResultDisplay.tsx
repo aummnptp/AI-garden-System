@@ -1,6 +1,5 @@
 import React from "react";
-import ObjectDetectionDraw from "./ImageDetectionResultDraw";
-import { ClassNames } from "@emotion/react";
+
 import TextResultDisplay from "./TextResultDisplay";
 import RegressionChart from "./RegressionResultDraw";
 

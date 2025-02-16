@@ -4,6 +4,7 @@ import { AISettingService } from "./ai-setting.service";
 import { RolesGuard } from "src/auth/guards/role.guard";
 import { JwtGuard } from "src/auth/guards/jwt-auth.guard";
 import { Role } from "src/auth/decorator/roles-decoraters";
+import { AISetting } from "./entities/ai-setting.entity";
 
 @Controller("ai-usage-limit-setting")
 export class AISettingController {
@@ -21,7 +22,7 @@ export class AISettingController {
   @Role("admin")
   @UseGuards(JwtGuard,RolesGuard)
   @Put()
-  async updateLimitSetting(@Body() updateDto: UpdateAISettingDto) {
+  async updateLimitSetting(@Body() updateDto: UpdateAISettingDto):Promise<AISetting> {
     return this.aiSettingService.updateLimitSetting(updateDto);
   }
 }

@@ -1,16 +1,15 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import MiniFooter from '../components/MiniFooter';
-import Sidebar from "../components/Sidebar";
-import ProjectData from "../data/ProjectData";
-import { Button, Skeleton } from '@mui/material';
-import ImageUploader from '../components/ImageUploader';
+import MiniFooter from '../../components/MiniFooter';
+import Sidebar from "../../components/Sidebar";
+import ProjectData from "../../data/ProjectData";
+import { Alert, AlertTitle, Button, Skeleton } from '@mui/material';
+import ImageUploader from '../../components/ImageUploader';
 import axios from 'axios';
-import DemoPredictResult from '../components/aiDisplay/DemoPredictResult';
-import { CloseOutlined, EditOutlined, SaveOutlined } from '@mui/icons-material';
-import AddNoteDialog from '../components/NoteDialog';
-import AIDisPlayResultComponent from '../components/aiDisplay/AIDisPlayResultComponent';
-import ChartResultDisplay from '../components/aiDisplay/ChartResultDisplay';
+import AddNoteDialog from '../../components/NoteDialog';
+import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
+import ChartResultDisplay from '../../components/aiDisplay/ChartResultDisplay';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface PredictResult {
   ai_type: string;
@@ -53,7 +52,6 @@ interface ResponseKey {
 
 const PredictAiModelPage: React.FC = () => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const { modelId } = useParams<{ modelId: string }>();
   const [uploadStep, setUploadStep] = useState(1);
   const [file, setFile] = useState<File | null>(null);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
@@ -64,22 +62,16 @@ const PredictAiModelPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false); // State for editing mode
   const [savedNote, setSavedNote] = useState(''); // State for saved note
 
-
+  const [alertText, setAlertText] = useState<string | null>(null);
+  const [openAlert, setOpenAlert] = useState(false);
   const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const [projectData, setProjectData] = useState([]);
   const [projectDetail, setProjectDetail] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
 
-  if (typeof workspaceId === 'undefined' || typeof projectId === 'undefined') {
-    return <div>ไม่มี ID ของพื้นที่ทำงานหรือ ID ของโครงการ</div>;
-  }
 
-  const workspaceIdNum = parseInt(workspaceId, 10);
-  const projectIdNum = parseInt(projectId, 10);
 
-  const workspace = ProjectData.find(ws => ws.workspaceId === workspaceIdNum);
+
 
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -163,8 +155,13 @@ const PredictAiModelPage: React.FC = () => {
       // เปลี่ยน uploadStep เป็น 4 หลังจากอัปโหลดเสร็จสมบูรณ์
       setUploadStep(4);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file', error);
+      if (error.response && error.response.status === 400) {
+        setAlertText(error.response.data.message); // ตั้งค่า alertText จาก response
+        setOpenAlert(true); // เปิด Alert
+        setUploadStep(2);
+      }
     }
   };
   const handleUploadVideo = async () => {
@@ -199,48 +196,18 @@ const PredictAiModelPage: React.FC = () => {
     }
   };
   
+  const startTimer = () => {
+    setTimeout(() => {
+      setOpenAlert(false); // ปิด Alert หลังจากเวลาที่กำหนด (เช่น 5 วินาที)
+    }, 5000); // ตั้งค่าเป็น 5000 มิลลิวินาที = 5 วินาที
+  };
 
 
 
-
-  //   event.preventDefault();
-  //   if (file) {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  //     console.log(file.size);
-  //     try {
-  //       const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/predict/${projectId}`, {
-  //         method: 'POST',
-  //         body: formData,
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-
-  //       const contentType = response.headers.get('content-type');
-  //       if (contentType && contentType.includes('application/json')) {
-  //         const data = await response.json();
-
-  //         // ดึงค่า prediction, regression_params และ ai_type จาก data
-  //         // const { prediction, regression_params, ai_type, response_keys } = data;
-
-  //         navigate(`/workspaces/${workspaceId}/project/${projectId}/detail/test/${modelId}/result`, {
-  //           state: {
-  //             // prediction: prediction,   // ผลลัพธ์การพยากรณ์
-  //             // regression_params: regression_params,  // ค่า regression_params สำหรับพล็อตกราฟ
-  //             // ai_type: ai_type,         // ประเภท AI เพื่อใช้แสดงผล
-  //             // file: customedImageUrl,            // ไฟล์ที่อัปโหลด
-  //             file: file,
-  //             // response_keys: response_keys         // ชื่อไฟล์ที่อัปโหลด
-  //           }
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   }
-  // };
+  // เริ่มทำงาน timer เมื่อ Alert ถูกแสดง
+  if (openAlert) {
+    startTimer();
+  }
 
   const handleSaveNote = () => {
     setSavedNote(note);
@@ -270,12 +237,12 @@ const PredictAiModelPage: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลดครั้งแรก
+    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลด ครั้งแรก
   }, []);
 
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />
   }
 
   if (!projectDetail) {
@@ -285,10 +252,16 @@ const PredictAiModelPage: React.FC = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-        <Sidebar workspaceName={workspaceDetail.name}
-          projectName={projectDetail.project_name}
-          aiName={projectDetail.ai_model.name}
-          aiType={projectDetail.ai_model.ai_type}
+        {openAlert && (
+                <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
+                  <Alert severity="error" onClose={() => setOpenAlert(false)}>
+                    <AlertTitle>Error</AlertTitle>
+                    {alertText}
+                  </Alert>
+                </div>
+              )}
+        <Sidebar workspace={workspaceDetail}
+          project={projectDetail}
         />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
@@ -482,7 +455,6 @@ const PredictAiModelPage: React.FC = () => {
                         resultImage={customedImageUrl}
                         predictResult={predictResult}
                       />
-                      {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}
                       <AddNoteDialog />
 
 
@@ -575,7 +547,6 @@ const PredictAiModelPage: React.FC = () => {
                 <div className="flex-1 h-0.5 bg-gray-300 mx-2" />
                 {/* Step 2 */}
 
-
                 {/* Step 3 */}
                 <div className="flex items-center space-x-2">
                   <div
@@ -616,21 +587,16 @@ const PredictAiModelPage: React.FC = () => {
                 </div>
               </div>
 
-
-
-
               <form onSubmit={handleUpload} className="m-6 space-y-4">
                 {uploadStep == 1 ? (
                   <div className="form-group">
-
-                    {/* <label>{detail.input_type === 'รูปภาพ' ? 'อัปโหลดไฟล์ภาพที่นี่' : 'อัปโหลดไฟล์วิดีโอที่นี่'}</label> */}
 
                     {file ? (
                       <div className="relative text-center  flex flex-col items-center justify-center py-8 ">
                         <div
                           onClick={() => {
                             setFile(null);
-                          }} // ฟังก์ชันสำหรับจัดการการคลิกเพื่อปิดรูปภาพ
+                          }} 
                           className="absolute top-[1rem] right-[5rem] bg-gray-800 text-white rounded-full h-8 w-8 flex items-center justify-center p-1 hover:bg-red-500 cursor-pointer"
                         >
                           <i className="bi bi-x-lg"></i>
@@ -674,18 +640,9 @@ const PredictAiModelPage: React.FC = () => {
                           className="hidden"
                         />
                       </label>
-                      
                     )}
-                    
-                    {/* <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
-                /> */}
                   </div>
                 ) : null}
-
                 {uploadStep == 2 && (
 
                   <div className="w-full">

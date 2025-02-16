@@ -8,6 +8,9 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import * as multer from 'multer';
 import { CreateProjectHistoryDto } from './dto/predict-project.dto';
 import { ProjectHistory } from './entities/project-history.entity';
+import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
+import { ProjectPermissionGuard } from './guards/project-permission.guard';
+import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
 // import { Roles } from 'src/auth/guards/roles-decoraters';
 import { RankingData } from './interfaces/ranking-data.interface';
 
@@ -34,17 +37,16 @@ export class ProjectsController {
 
   @UseGuards(JwtGuard)
   @Get()
-  findAll(
-    @Param('workspaceId') workspaceId: string): Promise<Project[]> {
-    return this.projectsService.findAll(workspaceId);
+  async findAll(
+    @Param('workspaceId') workspaceId: string,
+    @Request() req
+  ): Promise<Project[]> {
+    const userId = req.user.userId;
+    return this.projectsService.findAll(workspaceId, userId);
   }
 
-  @Get('all-history-in-project')
-  async getAllHistoryFromAllProject() {
-    return this.projectsService.getAllHistoryFromAllProject();
-  }
-
-  @UseGuards(JwtGuard)
+  @WorkspaceRole('member')
+  @UseGuards(JwtGuard,ProjectPermissionGuard) 
   @Get('detail/:projectId')
   findOne(
     @Param('workspaceId') workspaceId: string,
@@ -52,6 +54,10 @@ export class ProjectsController {
     return this.projectsService.findOne(workspaceId, projectId);
   }
 
+  @Get('all-history-in-project')
+  async getAllHistoryFromAllProject() {
+    return this.projectsService.getAllHistoryFromAllProject();
+  }
   @UseGuards(JwtGuard)
   @Patch('update/:projectId')
   @UseInterceptors(FileInterceptor('file', {
@@ -64,10 +70,10 @@ export class ProjectsController {
     }),
   }))
   async update(
-    @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
     @Param('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Project> {
     return this.projectsService.update(workspaceId, projectId, updateProjectDto, file);
   }
@@ -81,7 +87,7 @@ export class ProjectsController {
     return this.projectsService.remove(workspaceId, projectId);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard,AIEnableGuard)
   @Post('predict/:projectId')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
@@ -110,12 +116,24 @@ export class ProjectsController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('history/:historyId')
+  @Get(':projectId/history/:historyId')
   getHistory(
+    @Param("projectId") projectId: string,
     @Param('historyId') historyId: string,): Promise<ProjectHistory> {
     return this.projectsService.getHistory(historyId);
   }
 
+  
+  // @WorkspaceRole('owner') 
+  @UseGuards(JwtGuard, ProjectPermissionGuard)
+  @Delete(':projectId/history/:historyId')
+  async deleteHistory(
+    @Param('workspaceId') workspaceId: string,
+    @Param('projectId') projectId: string,
+    @Param('historyId') historyId: string
+  ): Promise<{ message: string }> {
+    return this.projectsService.deleteHistory(workspaceId, projectId, historyId);
+  }
   @Get(':projectId/ranking')
   async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
     return this.projectsService.getUploadRanking(projectId);

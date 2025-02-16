@@ -3,6 +3,7 @@ import React from 'react';
 
 import { useAuth } from '../../context/AuthContext';
 import UnauthorizedPage from '../../pages/UnauthorizedPage';
+import LoadingSpinner from '../LoadingSpinner';
 
 type RoleGuardProps = {
   requiredRole: string;
@@ -14,7 +15,7 @@ const RoleGuard: React.FC<RoleGuardProps> = ({ requiredRole, children }) => {
 
   
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!user || (user.role !== requiredRole && user.role !== "admin")) {

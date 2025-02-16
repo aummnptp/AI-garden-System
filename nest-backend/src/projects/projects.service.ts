@@ -13,6 +13,8 @@ import { AIModelService } from 'src/ai/ai-model.service';
 import { ProjectHistory } from './entities/project-history.entity';
 import * as fs from 'fs';
 import { User } from 'src/user/entities/user.entity';
+import { WorkspaceMember } from 'src/workspaces/entities/workspace-member.entity';
+import { ProjectPermission } from './entities/project-permission.entity';
 import { RankingData } from './interfaces/ranking-data.interface';
 
 
@@ -34,9 +36,14 @@ export class ProjectsService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
-    private readonly aiModelService: AIModelService,
-  ) { }
-  async validateWorkspace(workspaceId: string): Promise<Workspace> {
+    @InjectRepository(WorkspaceMember)
+    private workspaceMemberRepository: Repository<WorkspaceMember>,
+    @InjectRepository(ProjectPermission)
+    private projectPermissionRepository: Repository<ProjectPermission>,
+
+    private readonly aiModelService: AIModelService, 
+) {}
+async validateWorkspace(workspaceId: string): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
     });
@@ -91,21 +98,27 @@ export class ProjectsService {
 
 
 
-  async findAll(@Param('workspaceId') workspaceId: string) {
+  async findAll(workspaceId: string, userId: string): Promise<Project[]> {
     await this.validateWorkspace(workspaceId);
+    const workspaceMember = await this.workspaceMemberRepository.findOne({
+      where: { user: { userId }, workspace: { workspaceId } },
+    });
+    const isOwnerOrAdmin = workspaceMember?.role === "owner" || workspaceMember?.role === "admin";
     const projects = await this.projectRepository.find({
       where: { workspace: { workspaceId } },
-      relations: ['ai_model'],
+      relations: ['ai_model', 'project_permissions'],
     });
-
-
-    return projects.map((project) => ({
-      ...project,  // ใช้ project ไม่ใช่ projects
-      imagePath: project.imagePath
-        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
-        : null,
-    }));
-
+    const filteredProjects = await Promise.all(
+      projects.map(async (project) => {
+        if (isOwnerOrAdmin) return project;
+        if (!project.permission_only) return project;
+        const hasPermission = await this.projectPermissionRepository.findOne({
+          where: { project: { projectId: project.projectId }, user: { userId } },
+        });
+        return hasPermission ? project : null;
+      })
+    );
+    return filteredProjects.filter((p) => p !== null);
   }
 
   async findOne(workspaceId: string, projectId: string): Promise<Project> {
@@ -114,25 +127,19 @@ export class ProjectsService {
       where: { projectId: projectId, workspace: { workspaceId } },
       relations: ['ai_model'],
     });
-
-
     if (!project) throw new NotFoundException('Project not found');
-    // เพิ่มการตรวจสอบและสร้าง imagePath URL
     return {
-      ...project,  // รวมข้อมูล project ทั้งหมด
+      ...project, 
       imagePath: project.imagePath
-        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`  // หรือ URL ที่เหมาะสมกับโปรเจค
+        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`
         : null,
     };
   }
 
-
-
-  // Delete a project from a specific workspace
   async remove(workspaceId: string, projectId: string): Promise<void> {
-    await this.validateWorkspace(workspaceId); // ตรวจสอบว่า workspace มีอยู่
+    await this.validateWorkspace(workspaceId);
 
-    const project = await this.findOne(workspaceId, projectId); // ตรวจสอบว่าโปรเจคมีอยู่
+    const project = await this.findOne(workspaceId, projectId);
     await this.projectRepository.remove(project);
   }
 
@@ -143,35 +150,28 @@ export class ProjectsService {
     if (!userProfile) {
       throw new NotFoundException('User not found');
     }
-
     const project = await this.projectRepository.findOne({
       where: { projectId },
       relations: ['ai_model'],
     });
-
     if (!project) {
       throw new NotFoundException('Project not found');
     }
-
     // ดึงข้อมูลโมเดลที่เกี่ยวข้องกับโปรเจกต์นี้
     const model = await this.aiModelRepository.findOne({
       where: { aiId: project.ai_model.aiId },
     });
-
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-
     // ตรวจสอบว่า file หรือ file.originalname เป็น undefined หรือไม่
     if (!file || !file.originalname) {
-
       throw new BadRequestException('File is required and must have a valid name');
     }
 
     // สร้าง FormData เพื่อส่งไฟล์ไปยัง API
     const formData = new FormData();
     formData.append('file', fs.createReadStream(file.path), file.originalname);
-
     try {
       // ส่งคำขอไปยัง API ของโมเดลเพื่อทำการทำนาย
       const response = await axios.post(model.api_uri, formData, {
@@ -181,32 +181,24 @@ export class ProjectsService {
       if (!response.data) {
         throw new BadRequestException('No response from external API');
       }
-
-      // ผลลัพธ์ของการทำนาย
       const predictionResult = {
         response_keys: model.response_keys,
         prediction: response.data,
       };
-
       let filePath: string;
       if (file) {
-        // บันทึกไฟล์ในตำแหน่งที่ต้องการ
         filePath = `/uploads/project/history/${file.filename}`;
       }
-      // บันทึกประวัติลงในฐานข้อมูล
       const history = this.projectHistoryRepository.create({
         project: project,
         ai_model: model,
-
-        // filePath: file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, '/uploads/'), // แปลง backslash เป็น forward slash และตัดส่วนเกิน
-        filePath: filePath,
+        filePath:filePath,
         response_keys: predictionResult.response_keys,
-        prediction: predictionResult.prediction, // เก็บผลลัพธ์การทำนาย
+        prediction: predictionResult.prediction, 
         user: userProfile
       });
       await this.projectHistoryRepository.save(history);
 
-      // ส่งผลลัพธ์ของการทำนายและประวัติที่บันทึกกลับไป
       return history;
 
     } catch (error) {
@@ -215,7 +207,6 @@ export class ProjectsService {
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
-
 
   async getAllHistory(projectId: string): Promise<ProjectHistory[]> {
     const allHistory = await this.projectHistoryRepository.find({
@@ -241,15 +232,32 @@ export class ProjectsService {
     if (!history) {
       throw new NotFoundException('History not found');
     }
-
     return {
       ...history,
       filePath: history.filePath
         ? `${process.env.NEST_APP_API_URL}${history.filePath}`
         : null,
+        
     };
   }
 
+  async deleteHistory(workspaceId: string, projectId: string, historyId: string): Promise<{ message: string }> {
+    const history = await this.projectHistoryRepository.findOne({
+      where: { historyId, project: { projectId } },
+      relations: ['project'],
+    });
+    if (!history) {
+      throw new NotFoundException(`History ID: ${historyId} not found`);
+    }
+    if (history.filePath) {
+      const filePath = `./uploads/project/history/${history.filePath.split('/').pop()}`;
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+    await this.projectHistoryRepository.remove(history);
+    return { message: 'History deleted successfully' };
+  }
   async getUploadRanking(projectId: string) {
     const history = await this.projectHistoryRepository.find({
       where: {
@@ -314,7 +322,6 @@ export class ProjectsService {
         relations: ['ai_model', 'user', 'project'], // ดึงข้อมูลที่เกี่ยวข้องทั้งหมด
         order: { createdAt: 'DESC' },
       });
-  
       return allHistory.map((history) => ({
         ...history,
         filePath: history.filePath

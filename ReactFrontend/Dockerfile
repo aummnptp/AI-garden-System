@@ -1,12 +1,20 @@
-FROM node:16
+# ---- Base Image ----
+    FROM node:18 AS base
 
-WORKDIR /app
-
-COPY package*.json ./
-
-# RUN npm install
-RUN npm install --legacy-peer-deps
-
-COPY . .
-
-CMD ["npm", "start"]
+    WORKDIR /app
+    
+    # คัดลอก package.json และ package-lock.json เพื่อติดตั้ง dependencies
+    COPY package.json package-lock.json ./
+    
+    # ติดตั้ง dependencies
+    RUN npm install
+    
+    # คัดลอกโค้ดทั้งหมด
+    COPY . .
+    
+    # เปิดพอร์ตที่ใช้ใน Vite (ปกติคือ 5173)
+    EXPOSE 5173
+    
+    # รันแบบ Development Mode
+    CMD ["npm", "run", "dev", "--", "--host"]
+    

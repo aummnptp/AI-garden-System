@@ -71,7 +71,7 @@ export class AiPermissionController {
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('remove-bulk')
   async removeBulk(@Req() req, @Body() data: { ids: string[] }) {
-    console.log('IDs to remove:', data.ids);  // ตรวจสอบค่าที่ส่งมา
+    console.log('IDs to remove:', data.ids);  
     if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
     }

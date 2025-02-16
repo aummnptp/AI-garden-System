@@ -58,18 +58,18 @@ export class AIModelService {
   }  
 
   async update(aiId: string, updateAIModelDto: UpdateAIModelDto, file?: Express.Multer.File): Promise<string> {
-    const existingModel = await this.aiModelRepository.findOne({ where: { aiId:aiId } });
+    const existingModel = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
     if (!existingModel) {
       throw new NotFoundException(`AI Model with Id ${aiId} not found`);
     }
   
-    // อัปเดตข้อมูลจาก DTO ที่ได้รับ
+
     const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
   
-    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์
+    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์และอัปเดต imagePath
     if (file) {
-      const fileName = file.filename;  // เก็บชื่อไฟล์ที่ถูกอัปโหลด
-      updatedModelData.imagePath = `/uploads/${fileName}`;  // เก็บเส้นทางไฟล์ใน imagePath
+      const fileName = file.filename;
+      updatedModelData.imagePath = `/uploads/${fileName}`;
     }
   
     // อัปเดตข้อมูลในฐานข้อมูล
@@ -78,11 +78,25 @@ export class AIModelService {
     return 'Model updated successfully!';
   }
   
-  
-  async findAll(): Promise<AIModel[]> {
-    const aiModels = await this.aiModelRepository.find();
+  async findAll(filters?:{search:string;type?:string;tag?:string}): Promise<AIModel[]> {
+    const queryBuilder  =  this.aiModelRepository.createQueryBuilder("aiModel");
+    if (filters?.search) {
+      queryBuilder.andWhere(
+        "(aiModel.name ILIKE :search OR aiModel.description ILIKE :search)",
+        { search: `%${filters.search}%` }
+      );
+    }
 
-    return aiModels.map((aiModel) => ({ 
+    if (filters?.type) {
+      queryBuilder.andWhere("aiModel.ai_type = :type", { type: filters.type });
+    }
+
+    if (filters?.tag) {
+      queryBuilder.andWhere("aiModel.ai_tag LIKE :tag", { tag: `%${filters.tag}%` });
+    }
+
+    const aiModels = await queryBuilder.getMany();
+    return aiModels.map((aiModel) => ({
       ...aiModel,
       imagePath: aiModel.imagePath
         ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
@@ -90,7 +104,6 @@ export class AIModelService {
     }));
   }
 
-  // อ่าน AIModel ตาม id
   async findOne(aiId: string): Promise<AIModel> {
     const aiModel = await this.aiModelRepository.findOneBy({ aiId:aiId  });
   
@@ -116,30 +129,33 @@ export class AIModelService {
   
   
   async predict(aiId: string, file: Express.Multer.File): Promise<any> {
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
     const model = await this.aiModelRepository.findOne({ where: { aiId: aiId } });
     if (!model) {
       throw new NotFoundException('Model not found!');
     }
-
+    
     const formData = new FormData();
+    // เมื่อ file มีค่าแล้ว เราจะเข้าถึง file.buffer
     formData.append('file', file.buffer, file.originalname);
-
+    
     try {
       const response = await axios.post(model.api_uri, formData, {
         headers: { ...formData.getHeaders() },
-        
       });
-
+    
       if (!response.data) {
         throw new BadRequestException('No response from external API');
       }
-
+    
       return {
         response_keys: model.response_keys,
         prediction: response.data,
-        // ai_type: model.ai_type,
+        ai_model: model,
       };
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'ECONNRESET') {
         console.error('Connection Reset Error: The connection was forcibly closed by the remote host');
         throw new InternalServerErrorException('Connection reset by the remote server');
@@ -165,23 +181,6 @@ export class AIModelService {
     });
   }
 
-  // async findAllWithApprovalStatus(userId: number): Promise<any[]> {
-  //   const models = await this.aiModelRepository.find({
-  //     relations: ['permissions'], // Include permissions relation
-  //   });
-
-  //   // Map models to include approval status for the user
-  //   return models.map((model) => {
-  //     const userPermission = model.permissions.find(
-  //       (permission) => permission.user_id === userId,
-  //     );
-
-  //     return {
-  //       ...model,
-  //       approvalStatus: userPermission ? userPermission.approve : false, // Add approval status
-  //     };
-  //   });
-  // }
   async findAllWithApprovalStatus(userId: string): Promise<any[]> {
     const models = await this.aiModelRepository
       .createQueryBuilder('aiModel')
@@ -213,4 +212,10 @@ export class AIModelService {
       .andWhere('permission.approve = :approve', { approve: true })
       .getMany();
   }
+
+ async getUniqueAITags(): Promise<string[]> {
+  const aiModels = await this.aiModelRepository.find({ select: ["ai_tag"] });
+  const allTags = aiModels.flatMap(model => model.ai_tag || []);
+  return [...new Set(allTags)];
+}
 }

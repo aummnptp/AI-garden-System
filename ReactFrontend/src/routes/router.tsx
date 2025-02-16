@@ -14,7 +14,7 @@ import CreateAiPage from '../pages/Admin/CreateAiPage.tsx'
 import UpdateAiPage from '../pages/Admin/UpdateAiPage.tsx'
 import AdminAiPage from '../pages/Admin/AdminAiPage.tsx'
 import WorkspaceListPage from '../pages/Admin/WorkspaceListPage.tsx'
-import PredictAiModelPage from '../pages/PredictAiModelPage.tsx'
+
 
 import DocsPage from '../pages/DocsPage.tsx'
 import AiDetailPage from '../pages/Ai/AiDetailPage.tsx'
@@ -25,16 +25,15 @@ import AIDemoPage from '../pages/Ai/AIDemoPage.tsx'
 import UserListPage from '../pages/Admin/UserListPage.tsx'
 
 import Layout from '../Layout.tsx'
-import { createTheme, ThemeProvider } from '@mui/material'
 import ProjectSetting from '../pages/Project/ProjectSettingPage.tsx'
 import ProjectAccessManagePage from '../pages/Project/ProjectAccessManagePage.tsx'
 import UserDetailPage from '../pages/Admin/UserDetailPage.tsx'
-import Videotest from '../pages/Videotest.tsx'
 import RoleGuard from '../components/auth/RoleGurad.tsx'
-import { AuthProvider } from '../context/AuthContext.tsx'
 import WorkspaceRoleGuard from '../components/auth/WorkspaceRoleGuard.tsx'
 import HistoryDetailPage from '../pages/History/HistoryDetailPage.tsx'
-import AiDemoResultPage from "../pages/Ai/AiDemoResultPage";
+import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
+import ProjectPermissionGuard from "../components/auth/ProjectPermissionGuard.tsx";
+import PredictAiModelPage from "../pages/Project/ProjectPredictAiModelPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -60,6 +59,10 @@ export const router = createBrowserRouter([
     },
     
     {
+      path:"/invite",
+      element: <InvitedPage/>,
+    },
+    {
       path: "/workspaces",
       element: <RoleGuard requiredRole="user"><WorkspacePage/></RoleGuard>,
       children:[]
@@ -78,7 +81,7 @@ export const router = createBrowserRouter([
     },
     {
       path: "/workspaces/:workspaceId/project/:projectId/detail",
-    element: <RoleGuard requiredRole="user"> <ProjectDetailPage/></RoleGuard>,
+    element: <ProjectPermissionGuard><RoleGuard requiredRole="user"> <ProjectDetailPage/></RoleGuard></ProjectPermissionGuard>,
     },
     {
       path: "/workspaces/:workspaceId/history",
@@ -92,8 +95,7 @@ export const router = createBrowserRouter([
       path: "/workspaces/:workspaceId/setting/invitation",
     element:  <WorkspaceRoleGuard requiredRole="owner"><WorkspaceInvitationPage/></WorkspaceRoleGuard>,
     },
-  
-  
+
     {
       path: "/workspaces/:workspaceId/create",
       element:  <CreateProjectPage/>,

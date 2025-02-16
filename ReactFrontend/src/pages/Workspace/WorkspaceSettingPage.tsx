@@ -7,23 +7,15 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  FormControl,
-  FormHelperText,
-  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
 import { Link, redirect, useParams } from "react-router-dom";
 import axios from "axios";
 import { Close, Delete } from "@mui/icons-material";
-import { useFetchQuery } from "../../hook/useFetchQuery";
-interface memberData {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-}
+
+import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
+import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 
 const WorkspaceSettingPage = () => {
   // let { workspaceId } = useParams();
@@ -34,14 +26,12 @@ const WorkspaceSettingPage = () => {
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
 
   // ดึงข้อมูล workspace detail
+
   const {
-    data: workspaceDetail,
-    isLoading: isLoadingWorkspaceDetail,
-    error: errorWorkspaceDetail,
-  } = useFetchQuery(
-    ["workspace-detail", workspaceId ?? ""],
-    `/workspaces/detail/${workspaceId}`
-  );
+    workspaceDetail,
+
+  } = useWorkspaceData();
+  
 
   useEffect(() => {
     if (workspaceDetail) {
@@ -50,35 +40,14 @@ const WorkspaceSettingPage = () => {
     }
   }, [workspaceDetail]);
 
-  // ตรวจสอบสถานะการโหลด
-  if (isLoadingWorkspaceDetail) return <div>Loading...</div>;
-  // ตรวจสอบข้อผิดพลาด
-  if (errorWorkspaceDetail) return <div>Error: {errorWorkspaceDetail?.message}</div>;
+ 
 
 
-  // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
   const handleSave = async () => {
     try {
-      const payload = {
-        name,
-        description,
-      };
-
-      // ส่งคำขอ PATCH เพื่ออัปเดต Workspace
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/update/${workspaceId}`,
-        payload
-      ,{
-        withCredentials: true,}
-      );
+      await updateWorkspaceService(workspaceId ?? "", name, description);
       window.location.href = "/workspaces";
-      // จัดการเมื่ออัปเดตสำเร็จ
-      console.log("อัปเดต Workspace สำเร็จ:", response.data);
-      // คุณอาจต้องการนำทางไปยังหน้าต่างๆ หรือแสดงข้อความสำเร็จ
-      // navigate(`/workspaces/${workspaceId}`);
     } catch (error) {
-      // จัดการข้อผิดพลาด
-      console.error("เกิดข้อผิดพลาดในการอัปเดต Workspace:", error);
       alert("เกิดข้อผิดพลาดในการอัปเดต Workspace");
     }
   };
@@ -92,14 +61,9 @@ const WorkspaceSettingPage = () => {
   };
   const handleDelte = async () => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/delete/${workspaceId}`,
-        {
-          withCredentials: true,}
-      );
+      await deleteWorkspaceService(workspaceId ?? "");
       window.location.href = "/workspaces";
-      console.log("ลบ Workspace สำเร็จ:", response.data);
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการลบ Workspace:", error);
       alert("เกิดข้อผิดพลาดในการลบ Workspace");
     }
   };
@@ -165,7 +129,8 @@ const WorkspaceSettingPage = () => {
           </DialogActions>
         </Dialog>
         {/* side bar */}
-      <Sidebar workspaceName={name} />
+        <Sidebar workspace={workspaceDetail} />
+
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative px-5 pt-2">

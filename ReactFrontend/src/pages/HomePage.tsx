@@ -1,9 +1,9 @@
-import React from 'react'
+
 import { Link } from "react-router-dom";
 import {  DotChartOutlined, PieChartOutlined, RadarChartOutlined, SearchOutlined } from '@ant-design/icons';
 import Footer from '../components/Footer';
 import { Button } from '@mui/material';
-import Buttons from '../components/Button';
+
 
 function HomePage() {
 

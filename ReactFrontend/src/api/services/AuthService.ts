@@ -4,7 +4,7 @@ import AUTH_ROUTES from "../routes/AuthRoutes";
 
 axios.defaults.withCredentials = true;
 
-const logoutService = async () => {
+export const logoutService = async () => {
   try {
     const response = await axios.get(
       `${AUTH_ROUTES.logout}`,
@@ -17,7 +17,7 @@ const logoutService = async () => {
   }
 };
 
-const getSessionService = async () => {
+export const getSessionService = async () => {
     try {
       const response = await axios.get(
         `${AUTH_ROUTES.getSession}`,
@@ -29,4 +29,3 @@ const getSessionService = async () => {
       throw error;
     }
   };
-export {logoutService,getSessionService};

@@ -1,4 +1,4 @@
-import React from 'react'
+
 import MiniFooter from '../../components/MiniFooter'
 import UserListTable from '../../components/table/UserListTable'
 import AdminSidebar from '../../components/AdminSidebar'

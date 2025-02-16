@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react'; import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react'; import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -8,13 +8,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TrophyFilled } from '@ant-design/icons';
-import { ImageList, ImageListItem, ImageListItemBar, ListSubheader } from '@mui/material';
-import UploadedImage from '../../data/UploadedImage';
 import formatDate from '../../function/formatDate';
 import formatTime from '../../function/formatTime';
 import { useParams } from 'react-router-dom';
-import HistoryUploadSection from '../../components/HistoryUploadSection';
-import { useFetchQuery } from "../../hook/useFetchQuery";
+
 
 interface UploadPicture {
   img: string;

@@ -2,6 +2,8 @@ import { AIModel } from "src/ai/entities/ai-model.entity";
 import { Workspace } from "src/workspaces/entities/workspace.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ProjectHistory } from "./project-history.entity";
+import { ProjectPermission } from "./project-permission.entity";
+import { Note } from "src/note_history/entites/note.entity";
 
 @Entity()
 export class Project {
@@ -42,5 +44,11 @@ permission_only: boolean;
 
   @OneToMany(() => ProjectHistory,(project_history) => project_history.project,)
   project_historys: ProjectHistory[];
+
+  @OneToMany (()=>ProjectPermission,(projectPermission)=>projectPermission.project)
+  project_permissions: ProjectPermission[];
+
+  @OneToMany(() => Note, (note) => note.project)
+  notes: Note[];
 
 }

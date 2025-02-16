@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import { InviteWorkspaceDto } from './dto/InviteWorkspaceDto';
 import { WorkspaceInvitation } from './entities/workspace-invitation.entity';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class WorkspacesService {
@@ -20,14 +21,13 @@ export class WorkspacesService {
     private workspaceMemberRepository: Repository<WorkspaceMember>,
     @InjectRepository(WorkspaceInvitation)
     private workspaceInvitationsRepository: Repository<WorkspaceInvitation>,
-  ) { }
+  ){}
 
   async create(createWorkspaceDto: CreateWorkspaceDto, userId: string): Promise<Workspace> {
     const userProfile = await this.userRepository.findOne({ where: { userId: userId } });
     if (!userProfile) {
       throw new NotFoundException('User not found');
     }
-
     const newWorkspace = this.workspaceRepository.create({
       ...createWorkspaceDto,
       createdById: userId,
@@ -38,15 +38,13 @@ export class WorkspacesService {
         },
       ],
     });
-
     return this.workspaceRepository.save(newWorkspace);
   }
-  // อ่าน workspace ทั้งหมด
+
   findAll(): Promise<Workspace[]> {
     return this.workspaceRepository.find();
   }
 
-  // อ่าน workspace ตาม id
   findOne(workspaceId: string): Promise<Workspace | null> {
     return this.workspaceRepository.findOneBy({ workspaceId: workspaceId });
   }
@@ -55,59 +53,50 @@ export class WorkspacesService {
     return this.workspaceRepository.find({ where: { createdById: userId } });
   }
 
-  // ลบ workspace
   remove(workspaceId: string): Promise<void> {
     return this.workspaceRepository.delete(workspaceId).then(() => undefined);
   }
 
-  // อัปเดต workspace
   update(workspaceId: string, updateWorkspaceDto: UpdateWorkspaceDto) {
     return this.workspaceRepository.update(workspaceId, updateWorkspaceDto);
   }
 
-
-  async addMember(workspaceId: string, email: string, role: string): Promise<WorkspaceMember> {
+  async addMember(workspaceId: string, userId: string, role: string): Promise<WorkspaceMember> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
       relations: ['members'],
     });
+  
     if (!workspace) throw new NotFoundException('Workspace not found');
-
-    const user = await this.userRepository.findOne({ where: { email } });
+  
+    const user = await this.userRepository.findOne({ where: { userId } });
     if (!user) throw new NotFoundException('User not found');
-
-    if (!workspace.members) {
-      workspace.members = [];
+  
+    if (workspace.members?.some((member) => member.user?.userId === user.userId)) {
+      throw new ConflictException('User is already a member');
     }
-
-    const isAlreadyMember = workspace.members.some((member) => member.user && member.user.userId === user.userId);
-    if (isAlreadyMember) throw new ConflictException('User is already a member');
-
+  
     const newMember = this.workspaceMemberRepository.create({
       workspace,
-      user, // เชื่อมกับ User entity
+      user,
       role,
     });
-
+  
     return this.workspaceMemberRepository.save(newMember);
   }
-
-  
 
   async removeMember(workspaceId: string, userId: string): Promise<void> {
     // ตรวจสอบว่ามี Workspace หรือไม่
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId },
     });
-
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
-  
-      // ตรวจสอบว่าผู้ใช้ที่พยายามลบเป็นผู้สร้างหรือไม่
-      if (workspace.createdById === userId) {
-    throw new BadRequestException('Cannot remove the creator of the workspace');
-  }
+    // ตรวจสอบว่าผู้ใช้ที่พยายามลบเป็นผู้สร้างหรือไม่
+    if (workspace.createdById === userId) {
+      throw new BadRequestException('Cannot remove the creator of the workspace');
+    }
     // ตรวจสอบว่าสมาชิกอยู่ใน Workspace หรือไม่
     const member = await this.workspaceMemberRepository.findOne({
       where: {
@@ -120,59 +109,45 @@ export class WorkspacesService {
     if (!member) {
       throw new NotFoundException('User is not a member of this workspace');
     }
-
-    // ลบสมาชิก
     await this.workspaceMemberRepository.remove(member);
   }
-
-
-
 
   async getMembersProfiles(workspaceId: string): Promise<WorkspaceMember[]> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
       relations: ['members'], // โหลดสมาชิกด้วย
     });
-
     if (!workspace) throw new NotFoundException('Workspace not found');
     const creator = workspace.members.find(member => member.user.userId === workspace.createdById);
-
-  if (creator) {
-    // ลบ creator ออกจากสมาชิกแล้วเพิ่มเขากลับไปที่ตำแหน่งแรก
-    const membersWithoutCreator = workspace.members.filter(member => member.user.userId !== workspace.createdById);
-    return [creator, ...membersWithoutCreator];
-  }
+    if (creator) {
+      // ลบ creator ออกจากสมาชิกแล้วเพิ่มเขากลับไปที่ตำแหน่งแรก
+      const membersWithoutCreator = workspace.members.filter(member => member.user.userId !== workspace.createdById);
+      return [creator, ...membersWithoutCreator];
+    }
     return workspace.members;
   }
 
-
-
   async getNonMembersProfiles(workspaceId: string): Promise<User[]> {
-    // ดึงข้อมูลผู้ใช้ทั้งหมด
     const allUsers = await this.userRepository.find();
     const members = await this.workspaceMemberRepository.find({
       where: { workspace: { workspaceId: workspaceId } },
       relations: ['user'],
     });
     const memberIds = members.map(member => member.user.userId);
-
-      // ดึงข้อมูลคำเชิญที่ค้างอยู่ใน workspace
-  const pendingInvitations = await this.workspaceInvitationsRepository.find({
-    where: {
-      workspace: { workspaceId },
-      status: In(['pending', 'rejected']),
-    },
-    relations: ['user'],
-  });
-  const pendingUserIds = pendingInvitations.map(invitation => invitation.user.userId);
-
-    // คัดกรองผู้ใช้ที่ไม่ได้อยู่ใน workspace ที่ระบุ
+    const pendingInvitations = await this.workspaceInvitationsRepository.find({
+      where: {
+        workspace: { workspaceId },
+        status: In(['pending', 'rejected']),
+      },
+      relations: ['user'],
+    });
+    const pendingUserIds = pendingInvitations.map(invitation => invitation.user.userId);
     const nonMembers = allUsers.filter(user =>
       !memberIds.includes(user.userId) && !pendingUserIds.includes(user.userId)
     );
-
     return nonMembers;
   }
+
   async getPendingUserList(workspaceId: string): Promise<WorkspaceInvitation[]> {
     const invitations = await this.workspaceInvitationsRepository.find({
       where: {
@@ -181,42 +156,27 @@ export class WorkspacesService {
       },
       relations: ['workspace', 'user', 'invitedBy'], // โหลดข้อมูล workspace, user และ invitedBy
     });
-
-    // if (invitations.length === 0) {
-    //   throw new NotFoundException('No invitations found for this workspace');
-    // }
-
     return invitations;
   }
 
-  async pendingInvite(workspaceId: string,userId: string,email: string,)
+  async pendingInvite(workspaceId: string, userId: string, email: string,)
     : Promise<WorkspaceInvitation | { error: string }> {
     const userProfile = await this.userRepository.findOne({ where: { userId: userId } });
-
     const workspace = await this.workspaceRepository.findOne({ where: { workspaceId } });
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
-
-
-    // ตรวจสอบว่า User ที่ถูกเชิญมีอยู่
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
-
-    // ตรวจสอบว่า User ที่ส่งคำเชิญมีอยู่
     const invitedBy = await this.userRepository.findOne({ where: { userId: userId } });
     if (!invitedBy) {
       throw new NotFoundException('Inviter not found');
     }
-
-    // **เพิ่มการตรวจสอบว่า ผู้เชิญและผู้ถูกเชิญต้องไม่เป็นคนเดียวกัน**
     if (user.userId === userId) {
       throw new BadRequestException('Inviter and invitee cannot be the same user');
     }
-
-    // **เพิ่มการตรวจสอบว่า ห้ามเชิญซ้ำ**
     const existingInvitation = await this.workspaceInvitationsRepository.findOne({
       where: {
         workspace: { workspaceId },
@@ -224,19 +184,15 @@ export class WorkspacesService {
         status: 'pending', // ตรวจสอบเฉพาะสถานะคำเชิญที่ยังค้างอยู่
       },
     });
-
     if (existingInvitation) {
       throw new ConflictException('This user has already been invited to this workspace');
     }
-
-    // สร้างคำเชิญ
     const invitation = this.workspaceInvitationsRepository.create({
       workspace,
       user,
       invitedBy,
       status: 'pending',
     });
-
     return this.workspaceInvitationsRepository.save(invitation);
   }
 
@@ -245,34 +201,25 @@ export class WorkspacesService {
       where: { inviteId },
       relations: ['workspace'],
     });
-
     if (!invitation) {
       throw new NotFoundException(`Invitation with id ${inviteId} not found`);
     }
-  
-    
-
-  
     await this.workspaceInvitationsRepository.remove(invitation);
   }
 
   async acceptInvitation(invitationId: string, userId: string): Promise<WorkspaceMember> {
-    // ตรวจสอบคำเชิญ
     const invitation = await this.workspaceInvitationsRepository.findOne({
       where: { inviteId: invitationId },
       relations: ['workspace', 'user'],
     });
-
     if (invitation.user.userId !== userId) {
       throw new BadRequestException('User is not authorized to accept this invitation');
     }
-    // เพิ่มสมาชิกเข้า Workspace
     const newMember = this.workspaceMemberRepository.create({
       workspace: { workspaceId: invitation.workspace.workspaceId } as Workspace, // ใช้ id เท่านั้น
       user: { userId: invitation.user.userId } as User, // ใช้ id เท่านั้น
       role: 'member',
     });
-    
     await this.workspaceMemberRepository.save(newMember);
     await this.workspaceInvitationsRepository.remove(invitation);
     return newMember
@@ -280,19 +227,14 @@ export class WorkspacesService {
 
 
   async rejectInvitation(invitationId: string, userId: string): Promise<void> {
-    // ตรวจสอบคำเชิญ
     const invitation = await this.workspaceInvitationsRepository.findOne({
       where: { inviteId: invitationId },
       relations: ['workspace', 'user'],
     });
-
     if (invitation.user.userId !== userId) {
       throw new BadRequestException('User is not authorized to reject this invitation');
     }
-  
-    
     await this.workspaceInvitationsRepository.remove(invitation);
-    
   }
 
 
@@ -303,10 +245,6 @@ export class WorkspacesService {
     });
   }
 
-
-  // workspaceที่สร้างโดย user นั้นๆ
-
-
   async getAllMembersInWorkspace(workspaceId: string) {
     return this.workspaceMemberRepository.find({
       where: { workspace: { workspaceId: workspaceId } },
@@ -315,7 +253,6 @@ export class WorkspacesService {
   }
 
   async getAllWorkspaceWithMembers(userId: string): Promise<Workspace[]> {
-
     const workspaces = await this.workspaceRepository.find(
       {
         where: { createdById: userId },
@@ -325,30 +262,21 @@ export class WorkspacesService {
       throw new NotFoundException('Workspace not found');
     }
     return workspaces;
-    // return this.workspaceRepository.find();
   }
 
   async getWorkspacesWhereUserIsMember(userId: string): Promise<Workspace[]> {
     const workspaces = await this.workspaceRepository.find({
       where: {
-
         createdById: Not(userId), // ผู้ใช้งานไม่ใช่คนสร้าง
       },
-
-      relations: ['members', 'members.user'], // Join ตารางที่ต้องการ
+      relations: ['members', 'members.user'], 
     });
     const workspacesUserIsMember =
       workspaces.filter(workspace => workspace.members.some(member => member.user.userId === userId));
-
-    // if (!workspaces || workspaces.length === 0) {
-    //   throw new NotFoundException('No workspaces found where user is a member but not the creator');
-    // }
-
     return workspacesUserIsMember;
   }
 
   async getWorkspaceWithMembersByUserId(userId: string): Promise<Workspace[]> {
-
     const workspaces = await this.workspaceRepository.find(
       {
         where: { createdById: userId },
@@ -358,43 +286,37 @@ export class WorkspacesService {
       throw new NotFoundException('Workspace not found');
     }
     return workspaces;
-    // return this.workspaceRepository.find();
   }
 
   async changeUserRole(
     workspaceId: string,
-    requesterId: string,
     memberId: string,
     role: 'owner' | 'member'
   ): Promise<WorkspaceMember> {
-    // ตรวจสอบว่า currentUser มีสิทธิ์เปลี่ยน role
-    const workspace = await this.workspaceRepository.findOne({ where: { workspaceId: workspaceId } });
-  
+    const workspace = await this.workspaceRepository.findOne({ where: { workspaceId } });
     if (!workspace) {
       throw new NotFoundException('Workspace not found');
     }
-
-    const requestingMember = await this.workspaceMemberRepository.findOne({
-      where: { workspace: { workspaceId }, user: { userId: requesterId } }
-    });
-  
-    if (!requestingMember || requestingMember.role !== 'owner') {
-      throw new ForbiddenException('You do not have permission to change roles');
-    }
-  
-    // ตรวจสอบว่าผู้ที่ส่งคำขอเป็น Owner ของ Workspace
     const member = await this.workspaceMemberRepository.findOne({
-      where: { workspace: { workspaceId }, user: { userId: memberId }}
+      where: { memberId, workspace: { workspaceId } },
+      relations: ['user'],
     });
-  
     if (!member) {
       throw new NotFoundException('Member not found in workspace');
     }
+    if (member.role === 'owner' && role === 'member') {
+      const ownersCount = await this.workspaceMemberRepository.count({
+        where: { workspace: { workspaceId }, role: 'owner' }
+      });
+      if (ownersCount <= 1) {
+        throw new ForbiddenException('Cannot remove the last owner.');
+      }
+    }
     member.role = role;
-  return this.workspaceMemberRepository.save(member);
-}
+    return this.workspaceMemberRepository.save(member);
+  }
 
-async getMyInvitation(userId:string){
+  async getMyInvitation(userId: string) {
     return this.workspaceInvitationsRepository.find({
       where: {
         user: { userId: userId },
@@ -403,7 +325,6 @@ async getMyInvitation(userId:string){
       relations: ['workspace', 'invitedBy'],
     });
   }
-
 
   async getWorkspaceMember(workspaceId: string, userId: string): Promise<WorkspaceMember | null> {
     return await this.workspaceMemberRepository.findOne({
@@ -415,4 +336,44 @@ async getMyInvitation(userId:string){
     });
   }
 
+  async generateInviteLink(workspaceId: string, inviterId: string): Promise<string> {
+    const secret = process.env.INVITE_SECRET 
+    const token = jwt.sign({ workspaceId, inviterId }, secret, { expiresIn: '7d' });
+    return `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
+  }
+  async validateInviteToken(token: string): Promise<{ workspaceId: string }> {
+    const secret = process.env.INVITE_SECRET
+    try {
+      const payload = jwt.verify(token, secret) as { workspaceId: string };
+      return { workspaceId: payload.workspaceId };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired invite link');
+    }
+  }
+
+  async joinWorkspaceWithToken(token: string, userId: string): Promise<{ message: string }> {
+    const secret = process.env.INVITE_SECRET 
+    try {
+      console.log("Joining workspace with token:", token);
+      const { workspaceId } = jwt.verify(token, secret) as { workspaceId: string };
+      const workspace = await this.workspaceRepository.findOne({ where: { workspaceId } });
+      if (!workspace) throw new NotFoundException('Workspace not found');
+      const existingMember = await this.workspaceMemberRepository.findOne({
+        where: { workspace: { workspaceId }, user: { userId } }
+      });
+  
+      if (existingMember) {
+        return { message: 'You are already a member of this workspace.' };
+      }
+      await this.workspaceMemberRepository.save({
+        workspace,
+        user: await this.userRepository.findOne({ where: { userId } }),
+        role: 'member',
+      });
+      return { message: 'Successfully joined the workspace' };
+    } catch (error) {
+      console.error("Join workspace failed:", error);
+      throw new UnauthorizedException('Invalid or expired invite link');
+    }
+  }
 }

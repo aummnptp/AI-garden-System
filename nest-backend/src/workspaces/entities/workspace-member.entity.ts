@@ -15,7 +15,6 @@ export class WorkspaceMember {
   @PrimaryGeneratedColumn('uuid',{ name: 'member_id' })
   memberId: string;
 
-  
   @ManyToOne(() => Workspace, (workspace) => workspace.members, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace; // ความสัมพันธ์กับ Workspace
@@ -24,9 +23,8 @@ export class WorkspaceMember {
   @JoinColumn({ name: 'user_id' })
   user: User; // ความสัมพันธ์กับ User entity
   
-
   @Column({ default: 'member' })
-  role: string; // บทบาท เช่น 'owner', 'admin', 'member'
+  role: string; // บทบาท เช่น 'owner', 'member'
 
   // @CreateDateColumn()
   // createdAt: Date; // วันที่เข้าร่วม

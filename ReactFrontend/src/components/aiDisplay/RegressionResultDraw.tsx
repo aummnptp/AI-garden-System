@@ -21,13 +21,13 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
         datasets: [
           {
             label: 'Regression Data',
-            data: detections, // ข้อมูลที่ใช้ในแกน y
+            data: detections, 
             borderColor: 'rgba(75,192,192,1)',
             borderWidth: 2,
-            fill: false, // ปิดการเติมสีด้านล่างกราฟ
-            tension: 0.4, // เพิ่มความโค้งให้เส้น
-            pointRadius: 0, // ซ่อนจุดโดยค่าเริ่มต้น
-            pointHoverRadius: 6, // แสดงจุดเมื่อ cursor ชี้
+            fill: false,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 6, 
           },
         ],
       };

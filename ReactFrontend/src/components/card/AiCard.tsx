@@ -1,11 +1,9 @@
 import { SendOutlined } from '@ant-design/icons';
 import React from 'react'
-import { Button, Card, CardContent } from '@mui/material';
+import { Button, Card, CardContent,} from '@mui/material';
 import { Link } from 'react-router-dom';
 
-import axios from 'axios';
 
-import ProjectImage from './ProjectLetterImage';
 
 
 interface AiCardProps {
@@ -19,72 +17,67 @@ interface AiCardProps {
 
   
   const AiCard: React.FC<AiCardProps> = (props) => {
-
-  return (
-    <Link to={`/ai/${props.id}/detail`}>
-    {/* <Card sx={{ minWidth: 275 }}>
-    <CardContent> */}
-    <div className="mx-auto mt-10 pb-5 w-9/12 h-fit bg-white shadow border items-center  hover:bg-gray-100 b">
-    {/* {props.img ? (
-          //  <div className='mx-2 w-fit h-fit  flex items-center  '>
-          //    <img
-          //    className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
-          //    src={props.img}
-          //    alt={`${props.name} project`}
-          //    />
-          //     </div>
-            ) : ( */}
-              
-              {/* <ProjectImage
-              projectName={props.name}
-              className="  w-full h-[186px] rounded-[10px]  border-2 flex items-center justify-center text-white font-medium text-3xl"
-              /> */}
-            {/* )} */}
-          <img
-            className=" w-full h-48 
-            object-cover"
-            src={props.img}
+    return (
+      <Link to={`/ai/${props.id}/detail`} className="w-full">
+        <Card className="w-full h-full flex flex-col shadow-md rounded-lg">
+          {/* Image */}
+          <div className="w-full h-48">
+            <img
+              className="w-full h-full object-cover rounded-t-lg"
+              src={props.img}
+              alt={props.name}
             />
-        <div className='px-4'>
-
-
-          <h1 className="p-2 text-indigo-900  text-2xl font-medium">
-            {props.name}
-          </h1>
-       
-          <span className=" mx-2 mb-2 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-xs font-normal">
-          {props.type}
-          </span>
-          <div className="text-gray-600 text-sm line-clamp-4">
-          {props.aiDesc}
           </div>
-          
-          <div className=' p-2 mb-2'>
-          {props.tags.map((tag) => (
-              <span  className="w-fit bg-sky-500 rounded-[10px] me-2 px-2.5 py-0.5    text-white text-xs font-normal">{tag}</span>
-            ))}
+  
+          {/* Card Content */}
+          <CardContent className="flex flex-col justify-between flex-grow p-4">
+            <div className="w-full text-left">
+              {/* ชื่อ AI */}
+              <h1 className="text-indigo-900 text-lg font-semibold mb-1">
+                {props.name}
+              </h1>
+  
+              {/* ประเภท AI */}
+              <span className="bg-indigo-600 text-white text-xs font-medium px-2.5 py-0.5 rounded-lg">
+                {props.type}
+              </span>
+  
+              {/* คำอธิบาย AI */}
+              <p className="text-gray-600 text-sm mt-2 line-clamp-2">
+                {props.aiDesc}
+              </p>
+  
+              {/* แท็ก AI */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {props.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-sky-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-lg"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="flex justify-center"> 
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: '#4f46e5',
-                '&:hover': { backgroundColor: '#3730a3' },
-              }}
-
-            >
-
-              <SendOutlined  style={{color:"#fff",marginRight:"4px"}}/>ดูรายละเอียด
+  
+            {/* ปุ่มดูรายละเอียด */}
+            <div className="flex justify-center mt-4">
+              <Button
+                variant="contained"
+                size="small"
+                sx={{
+                  backgroundColor: "#4f46e5",
+                  "&:hover": { backgroundColor: "#3730a3" },
+                }}
+              >
+                <SendOutlined style={{ color: "#fff", marginRight: "4px" }} />
+                ดูรายละเอียด
               </Button>
-
-          </div>
-          </div>
-        </div>
-        {/* </CardContent>
-        </Card> */}
-        </Link>
-  )
-}
-
-export default AiCard
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    );
+  };
+  
+  export default AiCard;

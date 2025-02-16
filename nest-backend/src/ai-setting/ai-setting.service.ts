@@ -21,7 +21,6 @@ export class AISettingService {
   }
 
   async updateLimitSetting(updateDto: UpdateAISettingDto): Promise<AISetting> {
-  
     let setting = await this.aiUsageLimitSettingRepository.findOne({ where: {} });
     if (!setting) {
       setting = this.aiUsageLimitSettingRepository.create({
@@ -30,6 +29,7 @@ export class AISettingService {
       });
     } else {
       setting.maxUsagePerDay = updateDto.maxUsagePerDay;
+      setting.isLimitEnabled = updateDto.isLimitEnabled; 
     }
     return this.aiUsageLimitSettingRepository.save(setting);
   }

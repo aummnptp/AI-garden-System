@@ -1,4 +1,4 @@
-// src/components/ai/AiFileUpload.tsx
+
 import React from 'react';
 import { Button } from '@mui/material';
 
@@ -8,7 +8,7 @@ interface AiFileUploadProps {
   onUriTest: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   fileInputRef: React.RefObject<HTMLInputElement>;
   customedImageUrl: string | null;
-  predictResult: { response_keys: string[]; prediction: any } | undefined;
+  predictResult: { response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined;
   onShowPreview: () => void;
 }
 

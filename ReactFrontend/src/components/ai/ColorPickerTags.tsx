@@ -1,25 +1,29 @@
 import { Button, Chip } from "@mui/material";
 import React, { useState } from "react";
 
-const ColorPickerTags: React.FC = () => {
-  const [tags, setTags] = useState<string[]>([]);
-  const [newColor, setNewColor] = useState<string>("#000000");
+interface ColorPickerTagsProps {
+  colors: string[]; // ค่าสีที่ถูกเลือก
+  onChange: (colors: string[]) => void; // Callback เมื่อมีการเปลี่ยนแปลงค่า
+}
+
+const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange}) => {
+  const [newColor, setNewColor] = useState<string>("#00ff00");
 
   const handleTagAdd = () => {
-    if (newColor && !tags.includes(newColor)) {
-      setTags([...tags, newColor]);
+    if (newColor && !colors.includes(newColor)) {
+      onChange([...colors, newColor]);
     }
   };
 
   const handleTagRemove = (color: string) => {
-    setTags(tags.filter((tag) => tag !== color));
+    onChange(colors.filter((tag) => tag !== color));
   };
 
   return (
     <div className="form-group">
       <label className="">AI Color (สำหรับการกำหนดสีกรอบผลลัพธ์AI ประเภท ObjectDetection Segmentation)</label>
       <div className="flex flex-wrap gap-2 mt-2">
-        {tags.map((color, index) => (
+      {colors.map((color, index) => (
           <Chip
             key={index}
             label={
@@ -27,7 +31,7 @@ const ColorPickerTags: React.FC = () => {
                 <span
                   className="w-4 h-4 inline-block rounded-full border border-gray-300"
                   style={{ backgroundColor: color }}
-                ></span>
+                />
                 <span>Color {index + 1}</span>
               </div>
             }
@@ -44,13 +48,13 @@ const ColorPickerTags: React.FC = () => {
 
       {/* Color Picker & Button */}
       <div className="flex items-center space-x-2 mt-3">
-        <input
+      <input
           type="color"
           value={newColor}
           onChange={(e) => setNewColor(e.target.value)}
           className="w-10 h-10 border border-gray-300 rounded-lg cursor-pointer"
         />
-        <Button
+          <Button
           variant="contained"
           sx={{
             backgroundColor: "#4f46e5",

@@ -25,6 +25,7 @@ import { DocsController } from './docs/docs.controller';
 import { DocsService } from './docs/docs.service';
 import { DocsModule } from './docs/docs.module';
 import { AISettingModule } from './ai-setting/ai-setting.module';
+import {  NoteModule } from './note_history/note.module';
 
 
 //@Module({
@@ -63,6 +64,7 @@ import { AISettingModule } from './ai-setting/ai-setting.module';
     DocsModule,
     AISettingModule,
     AiPermissionModule,
+    NoteModule,
   ],
   controllers: [AppController],
   providers: [AppService
