@@ -376,4 +376,19 @@ export class WorkspacesService {
       throw new UnauthorizedException('Invalid or expired invite link');
     }
   }
+
+  async countUserWorkspaces(userId: string): Promise<number> {
+    const count = await this.workspaceRepository.count({
+      where: { createdById: userId },
+    });
+    return count;
+  }
+
+  async getAllWorkspacesInSystem(): Promise<Workspace[]> {
+    return this.workspaceRepository.find({
+        relations: ['members', 'members.user'], // ✅ โหลดข้อมูลสมาชิกและผู้ใช้ใน workspace
+    });
+}
+
+  
 }

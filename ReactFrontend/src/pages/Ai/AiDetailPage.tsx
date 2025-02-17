@@ -1,38 +1,66 @@
-import  { useEffect, useState } from 'react';
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
-import { Link, useParams } from 'react-router-dom';
-import { Button } from '@mui/material';
-import axios from 'axios';
-import MiniFooter from '../../components/MiniFooter';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { useEffect, useState } from "react";
+import { ExclamationCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import { Link, useParams } from "react-router-dom";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from "@mui/material";
+import axios from "axios";
+import MiniFooter from "../../components/MiniFooter";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const AiDetail = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();
   const [aiData, setAiData] = useState<any>(null);
 
+  // 🔹 State สำหรับ Dialog
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // ✅ Dialog ยืนยัน
+  const [openResultDialog, setOpenResultDialog] = useState(false);  // ✅ Dialog แจ้งผล
+  const [dialogMessage, setDialogMessage] = useState("");
+
+  // 🔹 ฟังก์ชันเปิด Dialog ยืนยัน
+  const handleOpenConfirmDialog = () => {
+    setOpenConfirmDialog(true);
+  };
+
+  // 🔹 ฟังก์ชันปิด Dialog ยืนยัน
+  const handleCloseConfirmDialog = () => {
+    setOpenConfirmDialog(false);
+  };
+
+  // 🔹 ฟังก์ชันเปิด Dialog แจ้งผล
+  const handleOpenResultDialog = (message: string) => {
+    setDialogMessage(message);
+    setOpenResultDialog(true);
+  };
+
+  // 🔹 ฟังก์ชันปิด Dialog แจ้งผล
+  const handleCloseResultDialog = () => {
+    setOpenResultDialog(false);
+  };
+
   const handleSendRequest = async () => {
-        console.log("AI ID (ai_id):", ai_id); // Debug
-        try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add`,
-            { ai_id: ai_id }, // ต้องส่ง aiId ไป
-            { withCredentials: true }
-          );
-          alert(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || 'สำเร็จ'}`);
-        } catch (error) {
-          console.error('เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:', error);
-          alert('ไม่สามารถส่งคำขอใช้งานได้');
-        }
-      };
+    handleCloseConfirmDialog(); // ✅ ปิด Dialog ยืนยันก่อนส่งคำขอ
+    console.log("AI ID (ai_id):", ai_id);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add`,
+        { ai_id: ai_id },
+        { withCredentials: true }
+      );
+      handleOpenResultDialog(`✅ คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || "สำเร็จ"}`);
+    } catch (error) {
+      console.error("❌ เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:", error);
+      handleOpenResultDialog("❌ ไม่สามารถส่งคำขอใช้งานได้");
+    }
+  };
 
   useEffect(() => {
     if (ai_id) {
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
-        .then(response => {
+      axios
+        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`)
+        .then((response) => {
           setAiData(response.data);
         })
-        .catch(error => {
-          console.error('There was an error fetching the AI data!', error);
+        .catch((error) => {
+          console.error("There was an error fetching the AI data!", error);
         });
     }
   }, [ai_id]);
@@ -54,35 +82,16 @@ const AiDetail = () => {
 
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="grid grid-cols-6">
-              <img
-                className="col-span-2 h-[100%] object-cover"
-                // src="/images/ai/healthAi.webp"
-                src={aiData.imagePath}
-                alt="AI"
-              />
+              <img className="col-span-2 h-[100%] object-cover" src={aiData.imagePath} alt="AI" />
               <div className="col-span-4 p-6">
                 <div>
                   <div className="flex items-center">
-                    <h1 className="mb-2 text-3xl font-medium tracking-tight text-indigo-900">
-                      {aiData.name}
-                    </h1>
+                    <h1 className="mb-2 text-3xl font-medium tracking-tight text-indigo-900">{aiData.name}</h1>
                     <span className="ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5 text-white text-lg font-normal">
                       {aiData.ai_type}
                     </span>
                   </div>
                   <div className="w-full border border-zinc-300" />
-                </div>
-
-                <div className="flex items-center my-4">
-                  {/* <img
-                    className="w-10 h-10 rounded-full border-2 bg-red-200"
-                    src="/images/homeImage/puttipong.jpg"
-                    alt="Creator"
-                  />
-                  <div className="ml-2">
-                    <p className="text-black text-lg font-normal">putthipong Chobngam</p>
-                    <p className="text-indigo-900 text-base font-medium">ผู้สร้าง</p>
-                  </div> */}
                 </div>
 
                 <p className="text-neutral-700 text-lg font-normal">รายละเอียด</p>
@@ -104,12 +113,7 @@ const AiDetail = () => {
                 เกี่ยวกับรูปภาพและวิดีโอที่จะนำไปประมวลผล
               </span>
             </div>
-            <p className="ml-3">
-            {aiData.input_desc}
-            </p>
-            {/* <p className="ml-3">
-              ต้องเป็นรูปภาพเกี่ยวกับโรค ที่จัดอยู่ในกลุ่มคลอบคลุมดังนี้ ตัวอย่างชื่อโรค , ตัวอย่างชื่อโรค
-            </p> */}
+            <p className="ml-3">{aiData.input_desc}</p>
 
             <div className="flex items-center mt-10 mb-5">
               <div className="mx-1 w-12 h-12 bg-indigo-900 rounded-[5px] flex items-center justify-center">
@@ -123,38 +127,44 @@ const AiDetail = () => {
 
             <div className="w-full px-10">
               <Link to={`/ai/${ai_id}/demo`}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    my: "5px",
-                    mr: "10px",
-                    backgroundColor: "#4f46e5",
-                    "&:hover": { backgroundColor: "#3730a3" }
-                  }}
-                >
+                <Button variant="contained" size="large" sx={{ my: "5px", mr: "10px", backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}>
                   ทดลองใช้งาน
                 </Button>
               </Link>
-              <Button
-                onClick={handleSendRequest}
-                variant="contained"
-                size="large"
-                sx={{
-                  my: "5px",
-                  backgroundColor: "#4f46e5",
-                  "&:hover": { backgroundColor: "#3730a3" }
-                }}
-              >
+              <Button onClick={handleOpenConfirmDialog} variant="contained" size="large" sx={{ my: "5px", backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}>
                 ส่งคำขอใช้งาน
               </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* 🔹 Dialog ยืนยันการส่งคำขอ */}
+      <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog}>
+        <DialogTitle>ยืนยันการส่งคำขอ</DialogTitle>
+        <DialogContent>
+          <Typography>คุณต้องการส่งคำขอใช้งาน AI นี้ใช่หรือไม่?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDialog} color="secondary">ยกเลิก</Button>
+          <Button onClick={handleSendRequest} color="primary" variant="contained">ยืนยัน</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 🔹 Dialog แจ้งผล */}
+      <Dialog open={openResultDialog} onClose={handleCloseResultDialog}>
+        <DialogTitle>แจ้งเตือน</DialogTitle>
+        <DialogContent>
+          <Typography>{dialogMessage}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseResultDialog} color="primary" variant="contained">ปิด</Button>
+        </DialogActions>
+      </Dialog>
+
       <MiniFooter />
     </>
   );
-}
+};
 
 export default AiDetail;

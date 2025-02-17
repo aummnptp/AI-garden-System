@@ -8,8 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TrophyFilled } from '@ant-design/icons';
-import formatDate from '../../function/formatDate';
-import formatTime from '../../function/formatTime';
+import { formatDate } from '../../function/util';
+import { formatTime } from '../../function/util';
 import { useParams } from 'react-router-dom';
 
 
@@ -113,7 +113,13 @@ export default function SubmitRankTable() {
   useEffect(() => {
     const fetchRankingData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`);
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (response.ok) {
           const data: RankingData[] = await response.json();
           setRankingData(data);
@@ -183,15 +189,27 @@ export default function SubmitRankTable() {
 
     fetchProjectDetail();
   }, [workspaceId, projectId]);
-
+  useEffect(() => {
+    console.log("🔍 Upload History:", uploadHistory);
+  }, [uploadHistory]);
 
   return (
     <div className="w-full mx-auto flex">
-      <div className='mx-4 px-4 w-[60%]'>
-        <TableContainer component={Paper}>
-          <Table sx={{ width: '100%' }} aria-label="customized table">
+      
+      {/* 🏆 ตาราง Ranking */}
+      <div className="mx-4 px-4 w-[60%]">
+        <TableContainer
+          component={Paper}
+          sx={{ 
+            width: "100%", 
+            maxHeight: "500px", // ✅ กำหนดความสูงคงที่
+            minHeight: "500px", 
+            overflowY: "auto" // ✅ ให้เลื่อนแนวตั้งได้เมื่อข้อมูลเกิน
+          }}
+        >
+          <Table stickyHeader sx={{ width: "100%" }} aria-label="customized table">
             <TableHead>
-              <TableRow >
+              <TableRow>
                 <StyledTableCell>อันดับ</StyledTableCell>
                 <StyledTableCell>ชื่อ</StyledTableCell>
                 <StyledTableCell align="center">
@@ -232,14 +250,18 @@ export default function SubmitRankTable() {
           </Table>
         </TableContainer>
       </div>
-
-      {/* ประวัติการอัปโหลดเรียงลงมาเรื่อย ๆ */}
+  
+      {/* ⏳ ประวัติการอัปโหลด */}
       <div
-        className='px-4 border rounded-[5px] w-[40%] overflow-y-auto'
-        style={{ maxHeight: '600px' }}
+        className="px-4 border rounded-[5px] w-[40%] overflow-y-auto"
+        style={{ 
+          maxHeight: "500px", // ✅ กำหนดความสูงคงที่
+          minHeight: "500px", 
+          overflowY: "auto" // ✅ ให้เลื่อนแนวตั้งได้เมื่อข้อมูลเกิน
+        }}
       >
         <h2 className="text-indigo-900 text-2xl font-semibold mb-4">ประวัติการอัปโหลด</h2>
-
+  
         {uploadHistory.map((data) => (
           <div key={data.createdAt} className="mb-4 border-b pb-4">
             <div className="flex items-center mb-2">
@@ -250,14 +272,18 @@ export default function SubmitRankTable() {
               />
               <div className="ml-3">
                 <p className="text-indigo-900 text-lg font-medium">{data.userName}</p>
-                <p className="text-gray-600 text-sm">{formatDate(new Date(data.createdAt))} เวลา: {formatTime(new Date(data.createdAt))} น.</p>
+                
+                <p className="text-gray-600 text-sm">
+                  
+                  {formatDate(data.createdAt)} เวลา: {formatTime(data.createdAt)} น.
+                  </p>
               </div>
             </div>
             {inputType === "วิดีโอ" ? (
               <video
                 className="w-28 h-28 mr-6 border-2 object-cover"
                 src={data.filePath}
-                controls  // เพิ่ม controls เพื่อให้กด Play ได้
+                controls
               />
             ) : (
               <img
@@ -270,7 +296,8 @@ export default function SubmitRankTable() {
           </div>
         ))}
       </div>
-
+  
     </div>
   );
+  
 }

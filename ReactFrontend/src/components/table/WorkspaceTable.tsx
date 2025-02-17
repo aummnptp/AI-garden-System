@@ -6,6 +6,9 @@ import {
   InputLabel, Select, MenuItem, SelectChangeEvent
 } from "@mui/material";
 import { CameraOutlined, PlaySquareOutlined } from "@ant-design/icons";
+import { formatDate } from '../../function/util';
+import { formatTime } from '../../function/util';
+import ProjectImage from '../../components/card/ProjectLetterImage';
 
 interface Data {
   historyId: string;
@@ -29,7 +32,13 @@ const Workspacetable: React.FC = () => {
     const fetchData = async () => {
       if (!workspaceId) return;
       try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/all-history-in-project`);
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/all-history-in-project`,{
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         const data = await response.json();
 
         const formattedData: Data[] = data.map((item: any) => ({
@@ -192,14 +201,23 @@ const Workspacetable: React.FC = () => {
                 return (
                   <TableRow key={row.historyId}>
                     <TableCell>
-                      {imagePath ? (
-                        <Avatar variant="square" src={imagePath} sx={{ width: 100, height: 100, borderRadius: "10px" }} />
+                      {row.project.imagePath && row.project.imagePath.trim() !== "" ? (
+                        <Avatar
+                          variant="square"
+                          src={row.project.imagePath}
+                          sx={{ width: 100, height: 100, borderRadius: "10px" }}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/default-image.png"; // ✅ ถ้ารูปโหลดไม่สำเร็จ ใช้ default-image
+                          }}
+                        />
                       ) : (
-                        <Avatar sx={{ width: 100, height: 100, fontSize: 24, bgcolor: "brown" }}>
-                          {row.project.name.charAt(0).toUpperCase()}
-                        </Avatar>
+                        <ProjectImage
+                          projectName={row.project.name}
+                          className="w-[100px] h-[100px] rounded-[10px] text-white font-bold text-2xl"
+                        />
                       )}
                     </TableCell>
+
 
                     <TableCell>
                       <Typography variant="h6" sx={{ color: "indigo", fontWeight: "bold" }}>
@@ -212,10 +230,10 @@ const Workspacetable: React.FC = () => {
 
                     <TableCell>
                       <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        {new Date(row.createdAt).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น.
+                        {formatDate(row.createdAt)}
                       </Typography>
                       <Typography variant="body2">
-                        {new Date(row.createdAt).toLocaleDateString("th-TH")}
+                        {formatTime(row.createdAt)}
                       </Typography>
                     </TableCell>
 

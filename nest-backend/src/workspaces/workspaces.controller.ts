@@ -21,7 +21,7 @@ import { WorkspaceRoleGuard } from 'src/auth/guards/workspace-role.guard';
 export class WorkspacesController {
   constructor(
     private readonly workspacesService: WorkspacesService
-  ){}
+  ) { }
 
 
   @Role("user")
@@ -205,7 +205,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard)
   @Get(':workspaceId/my-role')
   async getWorkspaceRole(@Param('workspaceId') workspaceId: string, @Req() req): Promise<{ role: string }> {
-    const userId = req.user.userId; 
+    const userId = req.user.userId;
     const member = await this.workspacesService.getWorkspaceMember(workspaceId, userId);
     if (!member) {
       throw new NotFoundException('User is not a member of this workspace');
@@ -226,26 +226,42 @@ export class WorkspacesController {
   }
 
   @UseGuards(JwtGuard)
-@Post('/join-workspace')
-async joinWorkspace(@Body() { token }: { token: string }, @Req() req) {
-  const userId = req.user.userId;
-  return this.workspacesService.joinWorkspaceWithToken(token, userId);
-}
-
-@Get('invite')
-async redirectToFrontend(@Query("token") token: string, @Res() res: Response) {
-  if (!token) {
-    throw new BadRequestException("Token is required");
+  @Post('/join-workspace')
+  async joinWorkspace(@Body() { token }: { token: string }, @Req() req) {
+    const userId = req.user.userId;
+    return this.workspacesService.joinWorkspaceWithToken(token, userId);
   }
-  // Redirect ผู้ใช้ไปยัง Frontend
-  const frontendUrl = `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
-  return res.redirect(frontendUrl);
+
+  @Get('invite')
+  async redirectToFrontend(@Query("token") token: string, @Res() res: Response) {
+    if (!token) {
+      throw new BadRequestException("Token is required");
+    }
+    // Redirect ผู้ใช้ไปยัง Frontend
+    const frontendUrl = `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
+    return res.redirect(frontendUrl);
+  }
+
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get('personal/:userId')
+  findWithUserId(@Param('userId') userId: string) {
+    return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
+  }
+
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get('count/:userId')
+  async getUserWorkspaceCount(@Param('userId') userId: string) {
+    const count = await this.workspacesService.countUserWorkspaces(userId);
+    return { userId, workspaceCount: count };
+  }
+
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
+  @Get('/all')
+async getAllWorkspaces(): Promise<Workspace[]> {
+    return this.workspacesService.getAllWorkspacesInSystem();
 }
 
-@Role("admin")
-@UseGuards(JwtGuard, RolesGuard)
-@Get('personal/:userId')
-findWithUserId(@Param('userId') userId: string) {
-  return this.workspacesService.getWorkspaceWithMembersByUserId(userId);
-}
 }

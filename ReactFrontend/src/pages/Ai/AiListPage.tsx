@@ -1,5 +1,5 @@
 
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ControlOutlined, SearchOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
@@ -10,6 +10,7 @@ import { useSearchFilters } from "../../hook/useSearchFilter";
 import { Autocomplete, InputAdornment, Skeleton, TextField } from "@mui/material";
 import { AIDataType } from "../../types/Ai";
 import axios from "axios";
+import { useApprovedAiData } from "../../hook/ai/useApprovedAiData";
 
 
 
@@ -17,11 +18,17 @@ function AIlist() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation"];
 
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
-  const { AIData, isLoadingAI, isErrorAI, aiTags, isLoadingaiTags, isErroaiTags, } = useAiData();
+  const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); // 🟢 State บันทึก tab ที่เลือก
+  const approvedAiData = useApprovedAiData();
+  const allAiData = useAiData();
+
+  // ✅ เลือกค่าตาม `selectedTab`
+  const { AIData = [], isLoadingAI, isErrorAI, aiTags = [] } =
+    selectedTab === "approved" ? approvedAiData : allAiData;
 
 
   // const [AIData, setAIData] = useState<AIDataType[]>([]);
-  const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); // 🟢 State บันทึก tab ที่เลือก
+
 
   // const fetchAIData = () => {
   //   const baseURL = import.meta.env.VITE_NEST_BACKEND_API_URL;
@@ -58,11 +65,10 @@ function AIlist() {
               <li className="me-2">
                 <button
                   onClick={() => setSelectedTab("all")} // 🟢 เปลี่ยน state
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    selectedTab === "all"
-                      ? "text-blue-600 border-blue-600"
-                      : "hover:text-gray-600 hover:border-gray-300"
-                  }`}
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "all"
+                    ? "text-blue-600 border-blue-600"
+                    : "hover:text-gray-600 hover:border-gray-300"
+                    }`}
                 >
                   AI ทั้งหมด
                 </button>
@@ -70,11 +76,10 @@ function AIlist() {
               <li className="me-2">
                 <button
                   onClick={() => setSelectedTab("approved")} // 🟢 เปลี่ยน state
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    selectedTab === "approved"
-                      ? "text-blue-600 border-blue-600"
-                      : "hover:text-gray-600 hover:border-gray-300"
-                  }`}
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "approved"
+                    ? "text-blue-600 border-blue-600"
+                    : "hover:text-gray-600 hover:border-gray-300"
+                    }`}
                 >
                   AI ที่ได้รับสิทธิ
                 </button>
@@ -84,7 +89,7 @@ function AIlist() {
 
           {/* Search & Filter */}
           <div className="m-6 flex justify-start gap-4">
-          <TextField
+            <TextField
               fullWidth
               variant="outlined"
               value={searchInput}
@@ -99,17 +104,17 @@ function AIlist() {
               }}
               className="w-1/2"
             />
-               
-               <Autocomplete
-          options={AI_TYPES}
-          value={typeFilter}
-          onChange={(_, newValue) => setTypeFilter(newValue)}
-        renderInput={(params) => <TextField {...params} label="ประเภท AI" variant="outlined" />}
+
+            <Autocomplete
+              options={AI_TYPES}
+              value={typeFilter}
+              onChange={(_, newValue) => setTypeFilter(newValue)}
+              renderInput={(params) => <TextField {...params} label="ประเภท AI" variant="outlined" />}
               className="w-1/4"
-          />
-           <Autocomplete
+            />
+            <Autocomplete
               multiple
-              options={aiTags || []} 
+              options={aiTags || []}
               value={tagFilter}
               onChange={(_, newValue) => setTagFilter(newValue)}
               renderInput={(params) => <TextField {...params} label="Tag AI" variant="outlined" />}
@@ -119,30 +124,27 @@ function AIlist() {
         </div>
 
 
-      {/* card container */}
-      <div className="px-10 p-8 mt-4 h-fit w-11/12 
+        {/* card container */}
+        <div className="px-10 p-8 mt-4 h-fit w-11/12 
     grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6
     bg-white rounded-[15px] justify-self-center relative">
-      {isLoadingAI
-        ? Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="p-4">
-              <Skeleton height={200} />
-              <Skeleton width={`80%`} />
-              <Skeleton width={`60%`} />
-            </div>
-          ))
-        : AIData.map((data:AIDataType) => (
-            <AiCard
-              key={data.aiId}
-              id={data.aiId}
-              name={data.name}
-              aiDesc={data.description}
-              tags={data.ai_tag}
-              img={data.imagePath}
-              type={data.ai_type}
-            />
-          ))}
-</div>
+          {!isLoadingAI && AIData.length === 0 ? (
+            <p className="text-center text-gray-500">ไม่พบข้อมูล AI</p>
+          ) : (
+            AIData.map((data: AIDataType) => (
+              <AiCard
+                key={data.aiId}
+                id={data.aiId}
+                name={data.name}
+                aiDesc={data.description}
+                tags={data.ai_tag}
+                img={data.imagePath}
+                type={data.ai_type}
+              />
+            ))
+          )}
+
+        </div>
       </div>
       <MiniFooter />
     </>

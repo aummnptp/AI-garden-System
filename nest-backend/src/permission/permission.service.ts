@@ -108,4 +108,26 @@ export class AiPermissionService {
   
     return { deletedCount: deleteResult.affected };  // ส่งกลับจำนวนข้อมูลที่ถูกลบ
   }
+
+  async countApprovedPermissionsByUserId(userId: string): Promise<number> {
+    // นับจำนวน AI ที่ user มีสิทธิ์ใช้งาน (approve = true)
+    const count = await this.aiPermissionRepository.count({
+      where: { user_id: userId, approve: true },
+    });
+    return count;
+  }
+
+  async deleteByUserAndAiId(userId: string, aiId: string): Promise<void> {
+    const permission = await this.aiPermissionRepository.findOne({
+        where: { user_id: userId, ai_id: aiId },
+    });
+
+    if (!permission) {
+        throw new NotFoundException("Permission not found");
+    }
+
+    await this.aiPermissionRepository.remove(permission);
+}
+
+  
 }

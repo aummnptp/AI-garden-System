@@ -73,7 +73,9 @@ export default function AddAIDialog() {
   useEffect(() => {
     // Fetch AI data
     axios
-      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${userId}/models`)
+      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${userId}/models`, {
+        withCredentials: true,
+      })
       .then((response) => {
         setAiListData(response.data);
         setLoading(false);

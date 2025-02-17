@@ -91,3 +91,17 @@ export const updateAiModelService = async (
     const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/tags/tag-in-system`);
     return data;
   };
+
+  export const fetchApprovedAiService = async () => {
+    console.log("📡 เรียก API: GET /ai-models/my_approved");
+  
+    try {
+      const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
+      console.log("✅ API Response:", response.data); // ดูค่าที่ API ส่งกลับมา
+      return response.data ?? []; // ป้องกัน undefined
+    } catch (error) {
+      console.error("❌ Error fetching approved AI models:", error);
+      return [];
+    }
+  };
+  

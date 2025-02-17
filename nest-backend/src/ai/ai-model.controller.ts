@@ -88,6 +88,8 @@ export class AIModelController {
     return this.aiModelService.findAll({ search, type, tag }, isAdmin);
   }
 
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Get('with_permission')
   findAllWithDetails() {
     return this.aiModelService.findAllWithDetails();
@@ -99,6 +101,8 @@ export class AIModelController {
     const userId = req.user.userId;
     return this.aiModelService.getMyApproved(userId);
   }
+
+  @UseGuards(JwtGuard)
   @Get(':aiId')
   findOne(@Param('aiId') aiId: string): Promise<AIModel> {
     return this.aiModelService.findOne(aiId);
@@ -127,12 +131,16 @@ export class AIModelController {
 
 
   // แสดงในหน้า user detail จัดการสิทธิ์
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Get(':userId/models')
   async getAllAiModelsWithStatus(@Param('userId') userId: string) {
     const models = await this.aiModelService.findAllWithApprovalStatus(userId);
     return models;
   }
 
+  @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Get('approved/:userId')
   async getApprovedAiModels(@Param('userId') userId: string) {
     return this.aiModelService.getApprovedAiModelsByUserId(userId);

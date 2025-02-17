@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { RegisterDTO } from './dto/register.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -34,5 +34,19 @@ export class UserService {
     return this.userRepository.findOneBy({ email });
   } 
 
+  async promoteToAdmin(userId: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === 'admin') {
+      throw new ForbiddenException('User is already an admin');
+    }
+
+    user.role = 'admin';
+    return this.userRepository.save(user);
+  }
   
 }

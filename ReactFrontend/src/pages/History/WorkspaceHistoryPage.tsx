@@ -5,12 +5,13 @@ import Workspacetable from '../../components/table/WorkspaceTable'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 
+
 const WorkspaceHistoryPage = () => {
   let {workspaceId} = useParams()
   const [workspaceDetail, setWorkspaceDetail] = useState([]); 
   const fetchData = () => {
     axios.all([
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`),
+      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}`,{ withCredentials: true }),
   
     ])
     .then(axios.spread((workspaceResponse) => {

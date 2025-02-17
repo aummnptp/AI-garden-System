@@ -14,6 +14,7 @@ import {
 
 import { styled } from '@mui/material/styles';
 import { formatDate } from '../../function/util';
+import { formatTime } from '../../function/util';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -67,20 +68,17 @@ const SortableTable: React.FC = () => {
     } | null>(null);
 
     useEffect(() => {
-        axios
-            .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/detail`, {
-                withCredentials: true,
-            })
-            .then((response) => {
-                const formattedData = response.data.map((item: any) => ({
-                    ...item,
-                    updatedAt: new Date(item.updatedAt),
-                }));
-                setRows(formattedData);
-            })
-            .catch((error) => {
-                console.error("There was an error fetching the AI data!", error);
-            });
+        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/detail`, {
+            withCredentials: true,
+        }).then((response) => {
+            console.log("🟢 API Response:", response.data); // ✅ ดูค่า updatedAt ที่ API ส่งมา
+            const formattedData = response.data.map((item: any) => ({
+                ...item,
+                updatedAt: new Date(item.updatedAt),
+            }));
+            setRows(formattedData);
+        });
+
     }, []);
 
     const handleRequestSort = (property: keyof Data) => {
@@ -190,85 +188,89 @@ const SortableTable: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-    {rows.length === 0 ? (
-        // กรณีไม่มี request
-        <TableRow>
-            <StyledTableCell colSpan={4} align="center">
-                <Typography variant="h6" color="textSecondary">
-                    ยังไม่มี request ในตอนนี้
-                </Typography>
-            </StyledTableCell>
-        </TableRow>
-    ) : (
-        // แสดงรายการ request ตามปกติ
-        stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
-            <TableRow key={row.id}>
-                {/* AI Model Information */}
-                <StyledTableCell>
-                    <div className="flex items-center my-2 w-fit">
-                        <img
-                            className="w-14 h-14 rounded-[10px] border-2"
-                            src={row.aiModel.imagePath || "/images/default-ai.png"}
-                            alt={row.aiModel.name || "AI Model"}
-                        />
-                        <div className="ml-2">
-                            <p className="text-black text-lg font-medium">{row.aiModel.name}</p>
-                            <p className="text-[#8D9BAE] text-sm font-normal">
-                                {row.aiModel.description || "No description"}
-                            </p>
-                        </div>
-                    </div>
-                </StyledTableCell>
+                        {rows.length === 0 ? (
+                            // กรณีไม่มี request
+                            <TableRow>
+                                <StyledTableCell colSpan={4} align="center">
+                                    <Typography variant="h6" color="textSecondary">
+                                        ยังไม่มี request ในตอนนี้
+                                    </Typography>
+                                </StyledTableCell>
+                            </TableRow>
+                        ) : (
+                            // แสดงรายการ request ตามปกติ
+                            stableSort(rows, getComparator(order, orderBy)).map((row, index) => (
+                                <TableRow key={row.id}>
+                                    {/* AI Model Information */}
+                                    <StyledTableCell>
+                                        <div className="flex items-center my-2 w-fit">
+                                            <img
+                                                className="w-14 h-14 rounded-[10px] border-2"
+                                                src={row.aiModel.imagePath || "/images/default-ai.png"}
+                                                alt={row.aiModel.name || "AI Model"}
+                                            />
+                                            <div className="ml-2">
+                                                <p className="text-black text-lg font-medium">{row.aiModel.name}</p>
+                                                <p className="text-[#8D9BAE] text-sm font-normal">
+                                                    {row.aiModel.description || "No description"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </StyledTableCell>
 
-                {/* User Information */}
-                <StyledTableCell>
-                    <div className="flex items-center my-2 w-fit">
-                        <img
-                            className="w-10 h-10 rounded-full border-2"
-                            src={row.user.picture}
-                            alt={row.user.name}
-                        />
-                        <div className="ml-2">
-                            <p className="text-black text-lg font-medium">{row.user.name}</p>
-                            <p className="text-[#8D9BAE] text-sm font-normal">{row.user.email}</p>
-                        </div>
-                    </div>
-                </StyledTableCell>
+                                    {/* User Information */}
+                                    <StyledTableCell>
+                                        <div className="flex items-center my-2 w-fit">
+                                            <img
+                                                className="w-10 h-10 rounded-full border-2"
+                                                src={row.user.picture}
+                                                alt={row.user.name}
+                                            />
+                                            <div className="ml-2">
+                                                <p className="text-black text-lg font-medium">{row.user.name}</p>
+                                                <p className="text-[#8D9BAE] text-sm font-normal">{row.user.email}</p>
+                                            </div>
+                                        </div>
+                                    </StyledTableCell>
 
-                {/* Date Updated */}
-                <StyledTableCell>
-                    <p className="text-black text-lg font-medium">
-                        {formatDate((row.updatedAt).toLocaleDateString())} {row.updatedAt.toLocaleTimeString()}
-                    </p>
-                </StyledTableCell>
+                                    {/* Date Updated */}
+                                    <StyledTableCell>
 
-                {/* Actions */}
-                <StyledTableCell>
-                    <div className="mx-auto flex justify-center">
-                        {/* Approve Button */}
-                        <Button
-                            onClick={() => handleOpenDialog(row.id, index, 'accept')}
-                            variant="contained"
-                            color="success"
-                            style={{ marginRight: "8px" }}
-                        >
-                            ยอมรับ
-                        </Button>
+                                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                                            {formatDate(row.updatedAt)}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: "gray" }}>
+                                            {formatTime(row.updatedAt)}
+                                        </Typography>
+                                    </StyledTableCell>
 
-                        {/* Reject Button */}
-                        <Button
-                            onClick={() => handleOpenDialog(row.id, index, 'reject')}
-                            variant="outlined"
-                            color="error"
-                        >
-                            ปฏิเสธ
-                        </Button>
-                    </div>
-                </StyledTableCell>
-            </TableRow>
-        ))
-    )}
-</TableBody>
+                                    {/* Actions */}
+                                    <StyledTableCell>
+                                        <div className="mx-auto flex justify-center">
+                                            {/* Approve Button */}
+                                            <Button
+                                                onClick={() => handleOpenDialog(row.id, index, 'accept')}
+                                                variant="contained"
+                                                color="success"
+                                                style={{ marginRight: "8px" }}
+                                            >
+                                                ยอมรับ
+                                            </Button>
+
+                                            {/* Reject Button */}
+                                            <Button
+                                                onClick={() => handleOpenDialog(row.id, index, 'reject')}
+                                                variant="outlined"
+                                                color="error"
+                                            >
+                                                ปฏิเสธ
+                                            </Button>
+                                        </div>
+                                    </StyledTableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
                 </Table>
             </TableContainer>
 

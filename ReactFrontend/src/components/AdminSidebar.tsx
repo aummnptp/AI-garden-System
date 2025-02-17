@@ -67,9 +67,9 @@ const AdminSidebar = () => {
 
         
         <li>
-          <Link to={`/admin/workspaces`}>
+          <Link to={`/admin/workspace`}>
             <div   className={`flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group focus:ring-4 focus:bg-blue-300 ${
-                isActive(`/admin/workspaces`) ? 'bg-blue-100' : ''
+                isActive(`/admin/workspace`) ? 'bg-blue-100' : ''
               }`}>
           <Desk />
               <span className="flex-1 ms-3 whitespace-nowrap">

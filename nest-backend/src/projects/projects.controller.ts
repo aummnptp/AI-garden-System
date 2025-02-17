@@ -57,10 +57,12 @@ export class ProjectsController {
     return this.projectsService.findOne(workspaceId, projectId);
   }
 
+  @UseGuards(JwtGuard)
   @Get('all-history-in-project')
   async getAllHistoryFromAllProject() {
     return this.projectsService.getAllHistoryFromAllProject();
   }
+
   @UseGuards(JwtGuard)
   @Patch('update/:projectId')
   @UseInterceptors(FileInterceptor('file', {
@@ -137,11 +139,14 @@ export class ProjectsController {
   ): Promise<{ message: string }> {
     return this.projectsService.deleteHistory(workspaceId, projectId, historyId);
   }
+
+  @UseGuards(JwtGuard)
   @Get(':projectId/ranking')
   async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
     return this.projectsService.getUploadRanking(projectId);
   }
 
+  @UseGuards(JwtGuard)
   @Get('/count-media/:projectId')
   async getMediaCount(@Param('projectId') projectId: string) {
     return await this.projectsService.countMedia(projectId);

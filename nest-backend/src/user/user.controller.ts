@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request }
 import { UserService } from './user.service';
 import { RegisterDTO } from './dto/register.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
+import { Role } from 'src/auth/decorator/roles-decoraters';
 
 
 @Controller('users')
@@ -38,8 +40,16 @@ export class UserController {
     // return this.userService.findAll();
   }
 
+  @Role("admin")
+    @UseGuards(JwtGuard, RolesGuard)
+  @Patch('promote/:userId') // ✅ เปลี่ยนเส้นทางเป็น 'promote/:userId'
+  promoteToAdmin(@Param('userId') userId: string) {
+    return this.userService.promoteToAdmin(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
+  
 }
