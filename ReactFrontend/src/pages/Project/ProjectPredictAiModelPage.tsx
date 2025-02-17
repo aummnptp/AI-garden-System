@@ -1,52 +1,20 @@
 import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
-import ProjectData from "../../data/ProjectData";
 import { Alert, AlertTitle, Button, Skeleton } from '@mui/material';
 import ImageUploader from '../../components/ImageUploader';
 import axios from 'axios';
-import AddNoteDialog from '../../components/NoteDialog';
+
 import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
-import ChartResultDisplay from '../../components/aiDisplay/ChartResultDisplay';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import SkeletonLayout from '../../components/SkeletonPageLayout';
+import { useProjecteData } from '../../hook/projects/useProjectData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
 
 interface PredictResult {
   ai_type: string;
   prediction: any;
   regression_params?: any | null;
-}
-
-interface Project {
-  project_id: number;
-  project_name: string;
-  project_desc: string;
-  input_type: string;
-  image_path: string | null;
-  create_at: string;
-  update_at: string;
-  permission_only: boolean;
-  ai_model: AIModel;
-}
-
-interface AIModel {
-  id: number;
-  name: string;
-  description: string;
-  ai_type: string;
-  ai_tag: string[];
-  input_desc: string;
-  api_uri: string;
-  response_keys: ResponseKey[];
-  createdAt: string;
-  updatedAt: string;
-  imagePath: string | null;
-}
-
-interface ResponseKey {
-  key: string;
-  meaning: string;
-  displayFormat: string;
 }
 
 
@@ -57,22 +25,9 @@ const PredictAiModelPage: React.FC = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(file);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
-  
-  const [note, setNote] = useState(''); // State for note
-  const [isEditing, setIsEditing] = useState(false); // State for editing mode
-  const [savedNote, setSavedNote] = useState(''); // State for saved note
 
   const [alertText, setAlertText] = useState<string | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
-  const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const [projectDetail, setProjectDetail] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
-
-
-
-
-
-
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -170,7 +125,7 @@ const PredictAiModelPage: React.FC = () => {
       return;
     }
   
-    setUploadStep(2); // ตั้งค่าให้เป็นขั้นตอน "ประมวลผล"
+    setUploadStep(2); 
   
     try {
       const formData = new FormData();
@@ -188,11 +143,11 @@ const PredictAiModelPage: React.FC = () => {
   
       console.log("Upload successful", response.data);
       setPredictResult(response.data);
-      setUploadStep(3); // ไปขั้นตอน "เสร็จสิ้น"
+      setUploadStep(3); 
   
     } catch (error) {
       console.error("Error uploading file", error);
-      setUploadStep(1); // ถ้ามีปัญหาให้กลับไปขั้นตอนแรก
+      setUploadStep(1);
     }
   };
   
@@ -204,50 +159,22 @@ const PredictAiModelPage: React.FC = () => {
 
 
 
-  // เริ่มทำงาน timer เมื่อ Alert ถูกแสดง
   if (openAlert) {
     startTimer();
   }
 
-  const handleSaveNote = () => {
-    setSavedNote(note);
-    setIsEditing(false);
-  };
-
-  // Handle cancel editing
-  const handleCancel = () => {
-    setNote(savedNote); // Revert to saved note
-    setIsEditing(false);
-  };
 
 
-  const fetchData = async () => {
-    try {
-      const [workspaceResponse, projectResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`),
-        axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`),
-      ]);
+  
 
-      setWorkspaceDetail(workspaceResponse.data);
-      setProjectDetail(projectResponse.data);
-    } catch (error) {
-      console.error("There was an error fetching the data!", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData(); // ดึงข้อมูล workspace และ project เมื่อ component โหลด ครั้งแรก
-  }, []);
+      const { workspaceDetail, isLoadingWorkspace, } =
+        useWorkspaceData();
+      const { projectDetail, isLoadingProjectDetail,  } =
+        useProjecteData();
 
+   
+  if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
 
-  if (loading) {
-    return <LoadingSpinner />
-  }
-
-  if (!projectDetail) {
-    return <div>Error: Project details could not be loaded.</div>;
-  }
 
   return (
     <>
@@ -415,12 +342,6 @@ const PredictAiModelPage: React.FC = () => {
                         />
                       </label>
                     )}
-                    {/* <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  accept={detail.input_type === 'รูปภาพ' ? 'image/*' : 'video/*'}
-                /> */}
                   </div>
                 ) : null}
                 <div>
@@ -455,27 +376,12 @@ const PredictAiModelPage: React.FC = () => {
                         resultImage={customedImageUrl}
                         predictResult={predictResult}
                       />
-                      <AddNoteDialog />
+                      {/* <AddNoteDialog /> */}
 
 
                     </>
                   ) : (null)
                 ) : (null)}
-
-                {/* {customedImageUrl && (
-                <div className="w-1/2 mx-auto mt-4">
-                  {detail.input_type === 'รูปภาพ' ? (
-                    <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
-                  ) : (
-                    <video controls className="w-full">
-                      <source src={customedImageUrl} type="video/mp4" />
-                      <source src={customedImageUrl} type="video/webm" />
-
-                      <p>เบราว์เซอร์ของคุณไม่รองรับการแสดงวิดีโอ <a href={customedImageUrl}>ดาวน์โหลดวิดีโอที่นี่</a>.</p>
-                    </video>
-                  )}
-                </div>
-              )} */}
 
                 <div className="flex justify-end">
                   {uploadStep == 1 ? (
@@ -668,25 +574,12 @@ const PredictAiModelPage: React.FC = () => {
                         predictResult={predictResult}
                       />
                       {/* <DemoPredictResult   predictResult={predictResult} resultImage={customedImageUrl} aiDataProp={predictResult.ai_model}/> */}
-                      <AddNoteDialog />
+                      {/* <AddNoteDialog /> */}
                   </>
 
                 ) : (null)}
 
-                {/* {customedImageUrl && (
-                <div className="w-1/2 mx-auto mt-4">
-                  {detail.input_type === 'รูปภาพ' ? (
-                    <img src={customedImageUrl} alt="Preview" className="w-full h-auto" />
-                  ) : (
-                    <video controls className="w-full">
-                      <source src={customedImageUrl} type="video/mp4" />
-                      <source src={customedImageUrl} type="video/webm" />
 
-                      <p>เบราว์เซอร์ของคุณไม่รองรับการแสดงวิดีโอ <a href={customedImageUrl}>ดาวน์โหลดวิดีโอที่นี่</a>.</p>
-                    </video>
-                  )}
-                </div>
-              )} */}
 
 
               </form>

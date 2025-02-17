@@ -39,7 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface Data {
     id: number;
-    updatedAt: Date;
+    updatedAt: string;
     user: {
         email: string;
         name: string;

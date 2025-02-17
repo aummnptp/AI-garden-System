@@ -11,7 +11,7 @@ import { AIDataType } from "../../types/Ai";
 function AdminAi() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
-  const { AIData, isLoadingAI, isErrorAI, aiTags, isLoadingaiTags, isErroaiTags, } = useAiData();
+  const { AIData, isLoadingAI,  aiTags, isLoadingaiTags, } = useAiData();
 
   
   return (
@@ -86,7 +86,7 @@ function AdminAi() {
     bg-white rounded-[15px] justify-self-center relative"
           >
             {" "}
-            {isLoadingAI
+            {isLoadingAI||isLoadingaiTags
               ? Array.from({ length: 6 }).map((_, index) => (
                   <div key={index} className="w-full h-full flex">
                     <Skeleton variant="rectangular" height={200} />

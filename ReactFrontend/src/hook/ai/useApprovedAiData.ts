@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAiLimitSettingService, fetchAllAiTag, fetchApprovedAiService } from "../../api/services/AiService";
 
 export const useApprovedAiData = () => {
-  console.log("🔍 useApprovedAiData ถูกเรียก!"); // ✅ ตรวจสอบว่า Hook ถูกเรียกจริงไหม
+  console.log("🔍 useApprovedAiData ถูกเรียก!"); 
 
   const {
     data: AIData = [],
@@ -12,11 +12,9 @@ export const useApprovedAiData = () => {
   } = useQuery({
     queryKey: ["ai-approved-models"],
     queryFn: async () => {
-      console.log("📡 เรียก API fetchApprovedAiService...");
       const response = await fetchApprovedAiService();
-      console.log("✅ API Response:", response); // ✅ ตรวจสอบว่า API ส่งค่ากลับมาไหม
 
-      return Array.isArray(response) ? response : []; // ✅ ป้องกัน `undefined`
+      return Array.isArray(response) ? response : []; 
     },
     placeholderData: [],
   });

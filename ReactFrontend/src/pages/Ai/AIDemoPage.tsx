@@ -10,11 +10,9 @@ import {
   AlertTitle,
   Button,
   Skeleton,
-
 } from "@mui/material";
 import ImageCustomer from "../../components/ImageUploader";
 import axios from "axios";
-// import DemoPredictResult from "../../components/aiDisplay/DemoPredictResult";
 import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
 import LoadingSpinner from "../../components/LoadingSpinner";
 

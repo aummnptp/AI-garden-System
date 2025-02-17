@@ -1,15 +1,15 @@
 
-import { useEffect, useState } from "react";
-import { ControlOutlined, SearchOutlined, SortAscendingOutlined } from "@ant-design/icons";
+import {  useState } from "react";
+import { SearchOutlined,  } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
 
 import { useAiData } from "../../hook/ai/useAiData";
 
 import { useSearchFilters } from "../../hook/useSearchFilter";
-import { Autocomplete, InputAdornment, Skeleton, TextField } from "@mui/material";
+import { Autocomplete, InputAdornment,  TextField } from "@mui/material";
 import { AIDataType } from "../../types/Ai";
-import axios from "axios";
+
 import { useApprovedAiData } from "../../hook/ai/useApprovedAiData";
 
 
@@ -18,12 +18,12 @@ function AIlist() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation"];
 
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
-  const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); // 🟢 State บันทึก tab ที่เลือก
+  const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); 
   const approvedAiData = useApprovedAiData();
   const allAiData = useAiData();
 
-  // ✅ เลือกค่าตาม `selectedTab`
-  const { AIData = [], isLoadingAI, isErrorAI, aiTags = [] } =
+  
+  const { AIData = [], isLoadingAI,  aiTags = [] } =
     selectedTab === "approved" ? approvedAiData : allAiData;
 
 

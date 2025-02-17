@@ -199,14 +199,14 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                   <i className="bi bi-people-fill"></i> Member
                 </h1>      
                 {memberDatas
-                  .sort((a, b) => {
+                  .sort((a:any, b:any) => {
                     if (a.role === "owner" && b.role === "member")
                       return -1;
                     if (a.role === "member" && b.role === "owner")
                       return 1;
                     return 0;
                   })
-                  .map((member:Member, index) => (
+                  .map((member:Member, index:any) => (
                     <>
                       <div className="w-full h-[0px] border border-trueGray-300 mx-auto bg-red" />
                       <div
@@ -296,7 +296,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                 <h1 className="text-black text-3xl px-10 pb-4">
                   Pending invitation ({pendingUserDatas.length})
                 </h1>
-                {pendingUserDatas.map((pending:PendingUserData, index) => (
+                {pendingUserDatas.map((pending:PendingUserData, index:any) => (
                   <div>
                     <div className="w-full h-[0px] border border-trueGray-300 mx-auto " />
                     <div

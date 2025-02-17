@@ -13,24 +13,9 @@ import { formatTime } from '../../function/util';
 import { useParams } from 'react-router-dom';
 
 
-interface UploadPicture {
-  img: string;
-  title: string;
-  author: string;
-  RankingMemberData?: number;
-  cols?: number;
-  featured?: boolean;
-}
 
-interface UploadData {
-  createdAt: string;
-  uploadPicture: UploadPicture[];
-}
 
-interface UserUpload {
-  UserRank: number;
-  UploadData: UploadData[];
-}
+
 
 export interface RankingData {
   userId: string;
@@ -78,32 +63,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-function createData(
-  rank: number,
-  name: string,
-  avartar: string,
-  submitNumber: number,
 
-) {
-  return { rank, name, avartar, submitNumber, };
-}
-
-const RankingMemberData = [
-  createData(1, 'Frozen yoghurt', "/images/homeImage/puttipong.jpg", 85,),
-  createData(2, 'Ice cream sandwich', "/images/homeImage/kittnan.jpeg", 70,),
-  createData(3, 'Eclair', "/images/homeImage/profile.webp", 14,),
-  createData(4, 'Cupcake', "/images/homeImage/profile.webp", 14,),
-  createData(5, 'Gingerbread', "/images/homeImage/profile.webp", 12,),
-];
 
 
 export default function SubmitRankTable() {
-
-
-  // const [showSubmit,setShowSubmit] = useState(false);
-
-  const [filteredUser, setFilteredUser] = useState<UserUpload | null>(null); // ค่าเริ่มต้นเป็น null
-  const [selectedRow, setSelectedRow] = useState<number>(1); // ค่าเริ่มต้นเป็นแถวแรก (row 1)
   const { workspaceId } = useParams<{ workspaceId: string }>();  // ดึง projectId จาก URL
   const { projectId } = useParams<{ projectId: string }>();  // ดึง projectId จาก URL
   const [rankingData, setRankingData] = useState<RankingData[]>([]);

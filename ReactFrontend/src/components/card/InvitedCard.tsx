@@ -2,12 +2,25 @@ import React from 'react'
 import {MoreOutlined}  from '@ant-design/icons';
 
 interface WorkspaceCardProps {
-  id: number;
-  name:string;
-  desc: string;
-  members: { name: string; avatar: string }[];
-  createAt:string;
-  updateAt:string;
+  workspaceId: string;
+  name: string;
+  description: string;
+  createById?: string;
+  createdAt: string;
+  updatedAt: string;
+  members: {
+    id: number;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: number;
+      googleId: string;
+      email: string;
+      name: string;
+      picture: string;
+    };
+  }[];
 }
 
 const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
@@ -24,7 +37,7 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
               {props.name}
               </h1>
               <p className='text-indigo-600  font-medium'>Project Owner</p>
-              <p className='text-black/opacity-75 text-sm font-normal pr-4'>{props.desc}</p>
+              <p className='text-black/opacity-75 text-sm font-normal pr-4'>{props.description}</p>
               <div
               className=" absolute top-0 right-0 m-3 hover:bg-gray-100 rounded-md w-5 text-center"><MoreOutlined style={{color:'#999'}}/></div>
             </div>

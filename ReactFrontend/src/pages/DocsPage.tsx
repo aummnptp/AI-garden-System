@@ -24,9 +24,9 @@ import { Docs, SubDocs } from "../types/Docs";
 import DeleteSubDocModal from "../components/docs/modal/DeleteSubDocModal";
 import DeleteDocModal from "../components/docs/modal/DeleteDocModal";
 import SaveReorderModal from "../components/docs/modal/SaveReorderModal";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { useDocsData } from "../hook/docs/useDocsData";
 import WelcomeDocs from "../components/docs/WelcomeDocs";
+import SkeletonLayout from "../components/SkeletonPageLayout";
 
 const DocsPage: React.FC = () => {
   const { docsId, subDocsId } = useParams<Record<string, string | undefined>>();
@@ -58,12 +58,10 @@ const DocsPage: React.FC = () => {
   const {
     contentData,
     contentLoading,
-    contentError,
     refetchContent,
 
     docsData,
     docsLoading,
-    docsError,
     refetchDocs,
   } = useDocsData();
 
@@ -101,6 +99,7 @@ const DocsPage: React.FC = () => {
       }
       setCurrentPageData(editorValue);
       setShowTextEditor(false);
+      refetchContent()
     } catch (error) {
       console.error("Error saving content", error);
     } finally {
@@ -306,8 +305,8 @@ const DocsPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
+  if (loading||docsLoading||contentLoading) {
+    return <SkeletonLayout />;
   }
 
   return (

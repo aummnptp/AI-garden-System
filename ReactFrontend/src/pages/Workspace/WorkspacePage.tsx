@@ -8,6 +8,7 @@ import MiniFooter from "../../components/MiniFooter";
 import { Button } from "@mui/material";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { Workspace } from "../../types/Workspace";
 
 function WorkspacePage() {
   const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
@@ -110,7 +111,7 @@ function WorkspacePage() {
 
                 {/* My Workspace Card Group */}
                 <div className={`grid grid-cols-3 pb-8 pt-2`}>
-                  {myWorkspace.map((data, index) => (
+                  {myWorkspace.map((data:Workspace, index:any) => (
                     <div
                       key={index}
                       className={`mb-4 ${
@@ -119,13 +120,13 @@ function WorkspacePage() {
                     >
                       <Link to={`/workspaces/${data.workspaceId}/project-list`}>
                         <WorkspaceCard
-                          id={data.workspaceId}
+                          workspaceId={data.workspaceId}
                           name={data.name}
                           description={data.description}
                           members={data.members}
                           updatedAt={data.updatedAt}
                           createdAt={data.createdAt}
-                          createById={data.createById}
+                          // createById={data.createById}
                         />
                       </Link>
                     </div>
@@ -182,7 +183,7 @@ function WorkspacePage() {
 
                 {/* invited workspace Card */}
                 <div className={`grid grid-cols-3 pb-8 pt-2`}>
-                  {invitedWorkspace.map((data, index) => (
+                  {invitedWorkspace.map((data:Workspace, index:any) => (
                     <div
                       key={index}
                       className={`mb-4 ${
@@ -191,12 +192,12 @@ function WorkspacePage() {
                     >
                       <Link to={`/workspaces/${data.workspaceId}/project-list`}>
                         <InvitedCard
-                          id={data.id}
+                          workspaceId={data.workspaceId}
                           name={data.name}
-                          desc={data.description}
+                          description={data.description}
                           members={data.members}
-                          createAt={data.createAt}
-                          updateAt={data.updateAt}
+                          createdAt={data.createdAt}
+                          updatedAt={data.updatedAt}
                         />
                       </Link>
                     </div>

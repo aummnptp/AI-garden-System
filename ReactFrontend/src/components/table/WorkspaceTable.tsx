@@ -49,7 +49,7 @@ const Workspacetable: React.FC = () => {
             input_type: item.project?.input_type || "รูปภาพ",
           },
           ai_model: { ai_type: item.ai_model?.ai_type || "Unknown" },
-          createdAt: item.createdAt ? new Date(item.createdAt.replace(" ", "T")) : null, // ✅ แปลงเป็น Date
+          createdAt: item.createdAt ? new Date(item.createdAt.replace(" ", "T")) : null,
           user: { name: item.user?.name || "Unknown", picture: item.user?.picture || "" },
           inputNumber: 1,
         }));
@@ -106,12 +106,12 @@ const Workspacetable: React.FC = () => {
         return isAsc ? valueA - valueB : valueB - valueA;
       }
 
-      if (property === "project.name") {
+      if (property === "project") {
         valueA = a.project.name;
         valueB = b.project.name;
       }
 
-      if (property === "user.name") {
+      if (property === "user") {
         valueA = a.user.name;
         valueB = b.user.name;
       }
@@ -134,7 +134,7 @@ const Workspacetable: React.FC = () => {
               <TextField
                 sx={{ width: "80%" }}
                 id="outlined-basic"
-                label="ค้นหาด้วยชื่อโปรเจค หรือชื่อผู้อัปโหลด" // ✅ อัปเดต label
+                label="ค้นหาด้วยชื่อโปรเจค หรือชื่อผู้อัปโหลด" 
                 variant="outlined"
                 value={searchItem}
                 onChange={(e) => setSearchItem(e.target.value)}
@@ -173,7 +173,7 @@ const Workspacetable: React.FC = () => {
               <TableRow>
                 <TableCell>รูป</TableCell>
                 <TableCell>
-                  <TableSortLabel active={orderBy === "project.name"} direction={order} onClick={() => handleRequestSort("project.name")}>
+                  <TableSortLabel active={orderBy === "project"} direction={order} onClick={() => handleRequestSort("project")}>
                     ชื่อ Project
                   </TableSortLabel>
                 </TableCell>
@@ -184,7 +184,7 @@ const Workspacetable: React.FC = () => {
                 </TableCell>
                 <TableCell>จำนวน</TableCell>
                 <TableCell>
-                  <TableSortLabel active={orderBy === "user.name"} direction={order} onClick={() => handleRequestSort("user.name")}>
+                  <TableSortLabel active={orderBy === "user"} direction={order} onClick={() => handleRequestSort("user")}>
                     ผู้อัปโหลด
                   </TableSortLabel>
                 </TableCell>

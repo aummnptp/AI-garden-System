@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 import ProfileMenu from "./ProfileMenu";
 import NotificationMenu from "./NotificationTab";
 import { useUserData } from "../../hook/user/useUserData";
+import LoadingSpinner from "../LoadingSpinner";
 
 function Nav() {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ function Nav() {
   const {
     notiData,
     isLoadingInvitedNotification,
-    isErrorInvitedNotification,
     refetchInvitedNotification,
   } = useUserData();
 
@@ -60,6 +60,9 @@ function Nav() {
     if (!isAuthenticated) {
     }
   }, [isAuthenticated]);
+
+  if (isLoadingInvitedNotification) return <LoadingSpinner />;
+
 
   return (
     <nav className="bg-white w-full sticky z-20 top-0 start-0 border-b border-gray-200">

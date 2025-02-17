@@ -14,8 +14,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
-  Switch,
 } from "@mui/material";
 import { ResponseKey } from "../../types/Ai";
 import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
@@ -341,6 +339,7 @@ const AddAiPage: React.FC = () => {
                       detections={predictResult?.prediction?.detections || []}
                       InputImage={customedImageUrl!}
                       aiDisplayType={ai_text_type || ""}
+                      colorSet ={colorSet}
                     />
                     {predictResult && (
                       <TextResultDisplay
@@ -348,6 +347,7 @@ const AddAiPage: React.FC = () => {
                         tags={tags}
                         aiName={aiName}
                         ai_type={aiType}
+                        colorSet ={colorSet}
                       />
                     )}
                   </DialogContent>

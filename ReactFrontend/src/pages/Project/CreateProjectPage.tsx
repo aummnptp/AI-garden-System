@@ -8,9 +8,9 @@ import { Alert, AlertTitle, Button, FormControl, FormControlLabel, FormLabel, Ra
 import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
 import { AIDataType } from '../../types/Ai';
-import LoadingSpinner from '../../components/LoadingSpinner';
-
 import { useAuth } from "../../context/AuthContext"; // นำเข้า useAuth
+import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
+import SkeletonLayout from '../../components/SkeletonPageLayout';
 const { TextArea } = Input;
 
 
@@ -21,13 +21,12 @@ function CreateProjectPage() {
   const [projectDescription, setProjectDescription] = useState('');
   // const [projectImage, setProjecImage] = useState('');
   const { user } = useAuth(); // ดึง user จาก AuthContext
-  const [workspaceDetail, setWorkspaceDetail] = useState([]);
-  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [inputType, setInputType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [uploadStep, setUploadStep] = useState(1);
-  const [selectedAI, setSelectedAI] = useState();
-  const [AIData, setAIData] = useState([]);
+  const [selectedAI, setSelectedAI] = useState<AIDataType | undefined>(undefined);
+  const [AIData, setAIData] = useState<AIDataType[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = React.useState(false);
   const [alertText, setAlertText] = useState("");
@@ -92,7 +91,6 @@ function CreateProjectPage() {
 
 
   const handleSubmit = async () => {
-
     const projectData = {
       name: projectName,
       description: projectDescription,
@@ -100,17 +98,17 @@ function CreateProjectPage() {
       ai_id: selectedCardId,
       image_path: image,
     };
-
     try {
       const formData = new FormData();
       formData.append("name", projectData.name);
       formData.append("description", projectData.description);
       formData.append("input_type", projectData.input_type);
-      formData.append("ai_id", projectData.ai_id);
+      if (projectData.ai_id) {
+        formData.append("ai_id", projectData.ai_id);
+      }
       if (projectData.image_path) {
         formData.append("file", projectData.image_path);
       }
-
       // formData.append("image_path", image);
       await axios.post(
         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/create`, formData,
@@ -121,8 +119,6 @@ function CreateProjectPage() {
           withCredentials: true,
         });
       navigate(`/workspaces/${workspaceId}/project-list`);
-      // console.log("Project created successfully!");
-      // ทำการ reset หรือเปลี่ยนหน้า
     } catch (error) {
       console.error("Error creating project:", error);
     }
@@ -142,14 +138,11 @@ function CreateProjectPage() {
           : `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/my_approved`;
 
         // เรียก API ทั้งสองอย่างพร้อมกัน
-        const [workspaceResponse, aiModelsResponse] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/detail/${workspaceId}`,
-            { withCredentials: true }),
+        const [aiModelsResponse] = await Promise.all([
           axios.get(aiModelsUrl, { withCredentials: true })
         ]);
 
         // ตั้งค่า State
-        setWorkspaceDetail(workspaceResponse.data);
         setAIData(aiModelsResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -161,8 +154,10 @@ function CreateProjectPage() {
     fetchData();
   }, [user, workspaceId]);
 
-  if (loading) {
-    return <LoadingSpinner />;
+  const { workspaceDetail, isLoadingWorkspace } =
+  useWorkspaceData();
+  if (loading||isLoadingWorkspace) {
+    return <SkeletonLayout />;
   }
   return (
     <>

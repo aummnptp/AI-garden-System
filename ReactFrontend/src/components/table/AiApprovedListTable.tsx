@@ -39,6 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 interface Data {
+  aiId: string;
   name: string;
   ai: string;
   ai_image: string;
@@ -90,11 +91,6 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-  };
-
-
-  const handleAccept = (index: number) => {
-    setRows((prevRows) => prevRows.filter((_, i) => i !== index));
   };
 
   const stableSort = (
@@ -232,11 +228,11 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
                         </Typography>
                     ) : actionSuccess ? (
                         <Typography color="success">
-                            ✅ ถอนสิทธิ์ AI <b>{selectedAi?.name}</b> สำเร็จ! กำลังรีเฟรช...
+                            ถอนสิทธิ์ AI <b>{selectedAi?.name}</b> สำเร็จ! กำลังรีเฟรช...
                         </Typography>
                     ) : (
                         <Typography color="error">
-                            ❌ ไม่สามารถถอนสิทธิ์ AI <b>{selectedAi?.name}</b> ได้ กรุณาลองใหม่
+                            ไม่สามารถถอนสิทธิ์ AI <b>{selectedAi?.name}</b> ได้ กรุณาลองใหม่
                         </Typography>
                     )}
                 </DialogContent>

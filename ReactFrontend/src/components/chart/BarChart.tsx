@@ -17,6 +17,7 @@ interface UploadHistory {
   response_keys: {
     key: string;
     displayFormat: string;
+    meaning?: string;
   }[];
 }
 

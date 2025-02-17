@@ -7,10 +7,6 @@ import {  VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material"
 import {  SubDocs, } from "../../types/Docs";
 import { useAuth } from "../../context/AuthContext";
 
-
-
-
-
 interface SubDocListProps {
   docsId: string;
   subDocuments: SubDocs[];

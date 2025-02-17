@@ -21,7 +21,6 @@ const ProjectAccessManagePage = () => {
     isLoadingWorkspace,
     memberDatas,
     isLoadingMembers,
-    refetchMemberDatas,
   } = useWorkspaceData();
 
   const {

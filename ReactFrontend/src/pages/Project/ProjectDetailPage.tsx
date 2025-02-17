@@ -1,90 +1,66 @@
-import {  useState } from "react";
+import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
 
-
-import { ExclamationCircleOutlined, PictureOutlined, ScheduleOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  PictureOutlined,
+  ScheduleOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import Barchart from "../../components/chart/BarChart";
-import DoughnutChart from "../../components/chart/doughnutChart";
 import SummaryCard from "../../components/chart/sumaryCard";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Alert, Button, Snackbar, } from "@mui/material";
+import { Link, useParams } from "react-router-dom";
+import { Alert, Button, Snackbar } from "@mui/material";
 
 import { formatDate } from "../../function/util";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
-
-
 
 import { useFetchQuery } from "../../hook/useFetchQuery";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 
-
-
-
-
 const ProjectDetailPage = () => {
-  // const [workspaceDetail, setWorkspaceDetail] = useState<{ name?: string }>({});
-  // const [projectDetail, setProjectDetail] = useState<Project | null>(null);
-  // const [loading, setLoading] = useState(true);
-  const { workspaceId, projectId } = useParams<{ workspaceId?: string, projectId?: string }>();
-  const [openAlert, setOpenAlert] = useState(false); 
+  const { workspaceId, projectId } = useParams<{
+    workspaceId?: string;
+    projectId?: string;
+  }>();
+  const [openAlert, setOpenAlert] = useState(false);
 
-  // const {
-  //   data: projectDetail = {},
-  //   isLoading: isLoadingProjectDetail,
-  //   error: errorProjectDetail,
-  // } = useFetchQuery(
-  //   ["project-detail", workspaceId ?? "", projectId ?? ""],
-  //   `/workspaces/${workspaceId}/projects/detail/${projectId}`
-  // );
-
-  // const {
-  //   data: workspaceDetail = {},
-  //   isLoading: isLoadingWorkspaceDetail,
-  //   error: errorWorkspaceDetail,
-  // } = useFetchQuery(
-  //   ["workspace-detail", workspaceId ?? ""],
-  //   `/workspaces/detail/${workspaceId}`
-  // );
+  const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
+  const { projectDetail, isLoadingProjectDetail } = useProjecteData();
 
   const {
     data: mediaCount = { imageCount: 0, videoCount: 0 },
     isLoading: isLoadingMediaCount,
-
   } = useFetchQuery(
     ["media-count", workspaceId ?? "", projectId ?? ""],
     `/workspaces/${workspaceId}/projects/count-media/${projectId}`
   );
+  // ตรวจสอบข้อผิดพลาด
 
-
-      const { workspaceDetail, isLoadingWorkspace, } =
-        useWorkspaceData();
-      const { projectDetail, isLoadingProjectDetail,  } =
-        useProjecteData();
-    
-  
-
-    if (isLoadingProjectDetail || isLoadingWorkspace||isLoadingMediaCount) return <SkeletonLayout />;
-    // ตรวจสอบข้อผิดพลาด
-  const uploadIcon = projectDetail.input_type === "รูปภาพ" ? <PictureOutlined /> : <VideoCameraOutlined />;
-  
-  
-
-
+  if (isLoadingProjectDetail || isLoadingWorkspace || isLoadingMediaCount)
+    return <SkeletonLayout />;
+  const uploadIcon =
+    projectDetail.input_type === "รูปภาพ" ? (
+      <PictureOutlined />
+    ) : (
+      <VideoCameraOutlined />
+    );
   return (
     <>
-    <Snackbar open={openAlert} autoHideDuration={6000}>
+      <Snackbar open={openAlert} autoHideDuration={6000}>
         <Alert severity="error" sx={{ width: "100%" }}>
           this project not allowed
         </Alert>
       </Snackbar>
       <div className="flex h-full min-h-screen bg-neutral-100">
         {/* side bar */}
-        <Sidebar workspace={workspaceDetail} project={projectDetail}/>
+        <Sidebar workspace={workspaceDetail} project={projectDetail} />
 
         {/* content container */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
@@ -102,18 +78,18 @@ const ProjectDetailPage = () => {
           {/* detail */}
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
             <div className="grid grid-cols-6">
-            {projectDetail.imagePath ? (
-             <img
-               className=" col-span-2 w-full h-[100%] object-cover"
-             src={projectDetail.imagePath}
-             />
-            ) : (
-              <ProjectImage
-              projectName={projectDetail.name}
-              className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
-              /> 
-           )}
-            
+              {projectDetail.imagePath ? (
+                <img
+                  className=" col-span-2 w-full h-[100%] object-cover"
+                  src={projectDetail.imagePath}
+                />
+              ) : (
+                <ProjectImage
+                  projectName={projectDetail.name}
+                  className="m-2  w-full   col-span-2  h-[100%] rounded-[10px] mx-2 border-2 flex items-center justify-center text-white font-medium text-5xl"
+                />
+              )}
+
               <div className="col-span-4 p-6">
                 <div>
                   <div className="flex items-center">
@@ -125,7 +101,7 @@ const ProjectDetailPage = () => {
                     </h1>
 
                     <span className=" ml-3 w-fit bg-indigo-600 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                    {projectDetail.ai_model.ai_type}
+                      {projectDetail.ai_model.ai_type}
                     </span>
                   </div>
                   <div className=" w-full border border-zinc-300" />
@@ -134,12 +110,11 @@ const ProjectDetailPage = () => {
                 <div className="flex items-center my-4">
                   <img
                     className="w-10 h-10 rounded-full border-2 bg-red-200 "
-                    src={projectDetail.createdBy.picture}
-
+                    src={projectDetail.createdBy.picture || null}
                   />
                   <div className="ml-2">
                     <p className="text-black text-lg font-normal">
-                    {projectDetail.createdBy.name}
+                      {projectDetail.createdBy.name}
                     </p>
                     <p className="text-indigo-900 text-base font-medium">
                       ผู้สร้างโปรเจกต์
@@ -149,16 +124,13 @@ const ProjectDetailPage = () => {
                 <p className=" text-neutral-700 text-lg font-normal">
                   รายละเอียด
                 </p>
-                <p>
-                  {projectDetail.description}
-                </p>
+                <p>{projectDetail.description}</p>
                 <div className="mb-2 mt-4">
-                {projectDetail.ai_model.ai_tag.map((tag: string) => (
-                  <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
-                    {tag}
-                  </span>
-                ))}
-                
+                  {projectDetail.ai_model.ai_tag.map((tag: string) => (
+                    <span className=" w-fit bg-indigo-400 rounded-[5px] me-2 px-2.5 py-0.5   text-white text-lg font-normal">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -172,8 +144,6 @@ const ProjectDetailPage = () => {
             </div>
             <p className="ml-3">
               {projectDetail.ai_model.input_desc}
-              {/* รูปภาพที่นำมาอัพโหลด ให้ประมวลผลต้องเป็นรูปภาพเกี่ยวกับสัตว์เลี้ยง
-              ได้แก่สุนัข แมว นก กระต่าย เต่า เท่านั้น{" "} */}
             </p>
 
             {/* เริ่มต้นใช้งาน */}
@@ -190,27 +160,35 @@ const ProjectDetailPage = () => {
                 </div>
               </div>
               <Link
-  to={projectDetail.ai_model.enable ? `/workspaces/${workspaceId}/project/${projectId}/predict` : "#"}
-  className={`ml-16 mt-2 ${!projectDetail.ai_model.enable ? "pointer-events-none opacity-50" : ""}`}>
-  <Button
-    variant="contained"
-    size="large"
-    startIcon={uploadIcon}
-    sx={{
-      backgroundColor: "#4f46e5",
-      "&:hover": {
-        backgroundColor: "#3730a3",
-      },
-    }}
-    disabled={!projectDetail.ai_model.enable} // ปิดปุ่มถ้า AI Model ไม่ Enable
-  >
-    {projectDetail.input_type === "รูปภาพ" ? "อัพโหลดรูปภาพ" : "อัพโหลดวิดีโอ"}
-  </Button>
-</Link>
-
+                to={
+                  projectDetail.ai_model.enable
+                    ? `/workspaces/${workspaceId}/project/${projectId}/predict`
+                    : "#"
+                }
+                className={`ml-16 mt-2 ${
+                  !projectDetail.ai_model.enable
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }`}
+              >
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={uploadIcon}
+                  sx={{
+                    backgroundColor: "#4f46e5",
+                    "&:hover": {
+                      backgroundColor: "#3730a3",
+                    },
+                  }}
+                  disabled={!projectDetail.ai_model.enable} // ปิดปุ่มถ้า AI Model ไม่ Enable
+                >
+                  {projectDetail.input_type === "รูปภาพ"
+                    ? "อัพโหลดรูปภาพ"
+                    : "อัพโหลดวิดีโอ"}
+                </Button>
+              </Link>
             </div>
-
-
           </div>
 
           <div className="mt-10 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative ">
@@ -228,11 +206,6 @@ const ProjectDetailPage = () => {
             </div>
 
             <div className="">
-
-
-
-
-
               {/* Sumary Content Row1 */}
               <div className="grid grid-cols-3 px-10">
                 <SummaryCard
@@ -246,13 +219,14 @@ const ProjectDetailPage = () => {
                 />
                 {/* รูป summary */}
                 {projectDetail.input_type === "รูปภาพ" ? (
-
                   <SummaryCard
                     icon={
-                      <PictureOutlined style={{ color: "#fff", fontSize: "2em" }} />
+                      <PictureOutlined
+                        style={{ color: "#fff", fontSize: "2em" }}
+                      />
                     }
                     label="ประมวลผลด้วยภาพ"
-                    value={mediaCount.imageCount.toLocaleString()}  // แสดงจำนวนรูปภาพ
+                    value={mediaCount.imageCount.toLocaleString()} // แสดงจำนวนรูปภาพ
                     valueType="ภาพ"
                     disable={mediaCount.imageCount === 0}
                   />
@@ -273,10 +247,12 @@ const ProjectDetailPage = () => {
                 {projectDetail.input_type === "วิดีโอ" ? (
                   <SummaryCard
                     icon={
-                      <VideoCameraOutlined style={{ color: "#fff", fontSize: "2em" }} />
+                      <VideoCameraOutlined
+                        style={{ color: "#fff", fontSize: "2em" }}
+                      />
                     }
                     label="ประมวลผลด้วยวิดีโอ"
-                    value={mediaCount.videoCount.toLocaleString()}  // แสดงจำนวนวิดีโอ
+                    value={mediaCount.videoCount.toLocaleString()} // แสดงจำนวนวิดีโอ
                     valueType="วิดีโอ"
                     disable={mediaCount.videoCount === 0}
                   />
@@ -300,10 +276,6 @@ const ProjectDetailPage = () => {
                 <div className=" w-full   mx-auto flex">
                   {/* <UsageBarChart /> */}
                   <SubmitRankTable></SubmitRankTable>
-
-
-
-
                 </div>
               </div>
 
@@ -317,10 +289,10 @@ const ProjectDetailPage = () => {
                   {/* </div> */}
                   <div className="ml-4">
                     <div className="py-4">
-                    <p className="text-gray-600">วันที่สร้าง</p>
-                    <span className="text-indigo-900 text-2xl font-bold">
-                      {formatDate(projectDetail.created_at)}
-                    </span>
+                      <p className="text-gray-600">วันที่สร้าง</p>
+                      <span className="text-indigo-900 text-2xl font-bold">
+                        {formatDate(projectDetail.created_at)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -328,11 +300,11 @@ const ProjectDetailPage = () => {
                 <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
                   <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
                   <div className="ml-4">
-                  <div className="py-4">
-                    <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
-                    <span className="text-indigo-900 text-2xl font-bold">
-                    {formatDate(projectDetail.updated_at)}
-                    </span>
+                    <div className="py-4">
+                      <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
+                      <span className="text-indigo-900 text-2xl font-bold">
+                        {formatDate(projectDetail.updated_at)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -347,7 +319,6 @@ const ProjectDetailPage = () => {
                     <DoughnutChart />
                   </div> */}
                 </div>
-
               </div>
             </div>
           </div>

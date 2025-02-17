@@ -6,7 +6,7 @@ interface WorkspaceCardProps {
   workspaceId: string;
   name: string;
   description: string;
-  // createById: string;
+  createById?: string;
   createdAt: string;
   updatedAt: string;
   members: {

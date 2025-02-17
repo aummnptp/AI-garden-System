@@ -1,17 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Reorder } from "framer-motion";
-
-
-
 import {
   DeleteOutlined,
   EditOutlined,
-
   PlusCircleOutlined,
 } from "@ant-design/icons";
-
-import { Button,Menu, MenuItem, TextField } from "@mui/material";
-
+import { Button, Menu, MenuItem, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import SubDocList from "./subDocList";
 
@@ -22,20 +16,24 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 
-import { Docs, SubDocListProps, SubDocs,} from "../../types/Docs";
+import { Docs, SubDocs } from "../../types/Docs";
 import { useAuth } from "../../context/AuthContext";
-
-
 
 interface DocListProps {
   docs: Docs[];
   onTitleAdd: () => void;
-  onClickMenu: (event: React.MouseEvent<HTMLButtonElement>, docId: string) => void;
+  onClickMenu: (
+    event: React.MouseEvent<HTMLButtonElement>,
+    docId: string
+  ) => void;
   onCloseMenu: (docId: string) => void;
   headingOptionModal: { [key: string]: HTMLElement | null };
   renameDocId: string | null;
   setRenameDocId: (docId: string | null) => void;
-  onchangeDocTitle: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, docId: string) => void;
+  onchangeDocTitle: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    docId: string
+  ) => void;
   onInputKeyDown: (e: React.KeyboardEvent, docId: string) => void;
   onDeleteDoc: (docId: string) => void;
   onDocsToggleVisibility: (docId: string, currentHiddenState: boolean) => void;
@@ -48,13 +46,16 @@ interface DocListProps {
     isEnterKey?: boolean
   ) => void;
   onReorderSubDocs: (docId: string, newSubDocsOrder: SubDocs[]) => void;
-  onSubDocsToggleVisibility: (subDocId: string, currentHiddenState: boolean) => void;
+  onSubDocsToggleVisibility: (
+    subDocId: string,
+    currentHiddenState: boolean
+  ) => void;
   onReorderMode: boolean;
   onSetReorderMode: (mode: boolean) => void;
   onReorderDocs: (newDocsOrder: Docs[]) => void;
   onSaveReorder: () => void;
   handleDocsTitleUpdate: (docId: string, newTitle: string) => Promise<void>;
-  patchSubDocsTitle: (subDocId: string, newTitle: string) => Promise<void>; 
+  patchSubDocsTitle: (subDocId: string, newTitle: string) => Promise<void>;
 }
 
 const DocList: React.FC<DocListProps> = ({
@@ -84,32 +85,34 @@ const DocList: React.FC<DocListProps> = ({
   const { isAdmin } = useAuth();
   return (
     <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
-      <h1 className="w-[95%] ml-2 text-black text-3xl font-normal">Documentation</h1>
+      <h1 className="w-[95%] ml-2 text-black text-3xl font-normal">
+        Documentation
+      </h1>
       <div className="flex justify-between pt-4">
-      {isAdmin&&(
-        <Button
-          variant="contained"
-          size="small"
-          sx={{
-            backgroundColor: "#4f46e5",
-            "&:hover": { backgroundColor: "#3730a3" },
-          }}
-          onClick={onTitleAdd}
-        >
-          <PlusCircleOutlined /> Add New Heading
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="contained"
+            size="small"
+            sx={{
+              backgroundColor: "#4f46e5",
+              "&:hover": { backgroundColor: "#3730a3" },
+            }}
+            onClick={onTitleAdd}
+          >
+            <PlusCircleOutlined /> Add New Heading
+          </Button>
         )}
-        {isAdmin&&(
-        <Button
-          variant={onReorderMode ? "outlined" : "text"}
-          style={{ cursor: "pointer", minWidth: "auto", padding: "4px 8px" }}
-          sx={{ color: "#4f46e5" }}
-          onClick={() => {
-            onSetReorderMode(!onReorderMode);
-          }}
-        >
-          <SwapVertOutlined /> {onReorderMode ? "Sorting" : "Sort"}
-        </Button>
+        {isAdmin && (
+          <Button
+            variant={onReorderMode ? "outlined" : "text"}
+            style={{ cursor: "pointer", minWidth: "auto", padding: "4px 8px" }}
+            sx={{ color: "#4f46e5" }}
+            onClick={() => {
+              onSetReorderMode(!onReorderMode);
+            }}
+          >
+            <SwapVertOutlined /> {onReorderMode ? "Sorting" : "Sort"}
+          </Button>
         )}
       </div>
       <div className="w-[95%] border border-zinc-300 mx-auto my-2 mb-4" />
@@ -160,7 +163,7 @@ const DocList: React.FC<DocListProps> = ({
                       onKeyDown={(e) => onInputKeyDown(e, doc.docsId)}
                       onBlur={() => {
                         setRenameDocId(null);
-                        handleDocsTitleUpdate(doc.docsId, doc.title); 
+                        handleDocsTitleUpdate(doc.docsId, doc.title);
                       }}
                     />
                   </div>
@@ -179,49 +182,66 @@ const DocList: React.FC<DocListProps> = ({
                 )}
                 <div className="mx-2 flex items-center h-full w-fit">
                   {doc.hidden && <VisibilityOffOutlined />}
-                  {isAdmin&& (
-                  <>
-                  <Button
-                    className="hover:bg-gray-100 rounded-lg gap-3 cursor-pointer"
-                    id={`basic-button-${doc.docsId}`}
-                    aria-controls={open ? `basic-menu-${doc.docsId}` : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
-                    onClick={(e) => onClickMenu(e, doc.docsId)}
-                    style={{ cursor: "pointer", minWidth: "auto", padding: "4px 8px" }}
-                  >
-                    <i className="bi bi-three-dots text-gray-600" />
-                  </Button>
-                
-                  <Menu
-                    id={`basic-menu-${doc.docsId}`}
-                    anchorEl={headingOptionModal[doc.docsId]}
-                    open={open}
-                    onClose={() => onCloseMenu(doc.docsId)}
-                    MenuListProps={{ "aria-labelledby": `basic-button-${doc.docsId}` }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        setRenameDocId(doc.docsId);
-                        onCloseMenu(doc.docsId);
-                      }}
-                    >
-                      <EditOutlined /> Rename
-                    </MenuItem>
-                    <MenuItem onClick={() => onDocsToggleVisibility(doc.docsId, doc.hidden)}>
-                      {doc.hidden ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
-                      {doc.hidden ? "Show Content" : "Hide Content"}
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        onDeleteDoc(doc.docsId);
-                        onCloseMenu(doc.docsId);
-                      }}
-                    >
-                      <DeleteOutlined /> Delete
-                    </MenuItem>
-                  </Menu>
-                </>)}
+                  {isAdmin && (
+                    <>
+                      <Button
+                        className="hover:bg-gray-100 rounded-lg gap-3 cursor-pointer"
+                        id={`basic-button-${doc.docsId}`}
+                        aria-controls={
+                          open ? `basic-menu-${doc.docsId}` : undefined
+                        }
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={(e) => onClickMenu(e, doc.docsId)}
+                        style={{
+                          cursor: "pointer",
+                          minWidth: "auto",
+                          padding: "4px 8px",
+                        }}
+                      >
+                        <i className="bi bi-three-dots text-gray-600" />
+                      </Button>
+
+                      <Menu
+                        id={`basic-menu-${doc.docsId}`}
+                        anchorEl={headingOptionModal[doc.docsId]}
+                        open={open}
+                        onClose={() => onCloseMenu(doc.docsId)}
+                        MenuListProps={{
+                          "aria-labelledby": `basic-button-${doc.docsId}`,
+                        }}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            setRenameDocId(doc.docsId);
+                            onCloseMenu(doc.docsId);
+                          }}
+                        >
+                          <EditOutlined /> Rename
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() =>
+                            onDocsToggleVisibility(doc.docsId, doc.hidden)
+                          }
+                        >
+                          {doc.hidden ? (
+                            <VisibilityOutlined />
+                          ) : (
+                            <VisibilityOffOutlined />
+                          )}
+                          {doc.hidden ? "Show Content" : "Hide Content"}
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            onDeleteDoc(doc.docsId);
+                            onCloseMenu(doc.docsId);
+                          }}
+                        >
+                          <DeleteOutlined /> Delete
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  )}
                 </div>
               </div>
               <SubDocList
@@ -230,7 +250,9 @@ const DocList: React.FC<DocListProps> = ({
                 onAddSubTitle={onSubTitleAdd}
                 onDeleteSubDoc={onDeleteSubDoc}
                 onChangeSubTitle={onChangeSubTitle}
-                onSubDocsReorder={(newOrder) => onReorderSubDocs(doc.docsId, newOrder)}
+                onSubDocsReorder={(newOrder) =>
+                  onReorderSubDocs(doc.docsId, newOrder)
+                }
                 onReOrderMode={onReorderMode}
                 onSubDocToggleVisibility={onSubDocsToggleVisibility}
                 patchSubDocsTitle={patchSubDocsTitle}

@@ -51,7 +51,7 @@ const UsageBarChart: React.FC = () => {
     chart.getDatasetMeta(0).data.forEach((dataPoint,index) => {
         ctx.font = 'bold 12px sans-serif'
         ctx.fillStyle = 'black';
-        ctx.fillText(data.datasets[0].data[index],dataPoint.x,dataPoint.y)
+        ctx.fillText(String(data.datasets[0].data[index]), dataPoint.x, dataPoint.y)
       
     });
     }

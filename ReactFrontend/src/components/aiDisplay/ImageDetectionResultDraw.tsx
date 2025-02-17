@@ -55,17 +55,17 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
     image.src = InputImage;
     image.onload = () => {
       // ตั้งค่า canvas ตามขนาดของรูป (หรือกำหนดค่าอื่นๆ ตามที่ต้องการ)
-      // if (aiDisplayType === "segmentation") {
-      //   const canvasWidth = image.width;
-      //   const canvasHeight = image.height;
-      //   canvas.width = canvasWidth;
-      //   canvas.height = canvasHeight;
-      //   context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-      // } else {
-      //   canvas.width = image.width;
-      //   canvas.height = image.height;
-      //   context.drawImage(image, 0, 0);
-      // }
+      if (aiDisplayType === "segmentation") {
+        const canvasWidth = image.width;
+        const canvasHeight = image.height;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+      } else {
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+      }
 
       if (showAnnotations && detections) {
         if (aiDisplayType === "objectdetection") {
@@ -147,11 +147,11 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
           });
         }
       }
-      else {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-      }
+      // else {
+      //   canvas.width = image.width;
+      //   canvas.height = image.height;
+      //   context.drawImage(image, 0, 0);
+      // }
     };
   }, [InputImage, detections, showAnnotations, aiDisplayType, colorSet]);
 

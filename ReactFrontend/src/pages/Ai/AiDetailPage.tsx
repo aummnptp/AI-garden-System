@@ -11,8 +11,8 @@ const AiDetail = () => {
   const [aiData, setAiData] = useState<any>(null);
 
   // 🔹 State สำหรับ Dialog
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // ✅ Dialog ยืนยัน
-  const [openResultDialog, setOpenResultDialog] = useState(false);  // ✅ Dialog แจ้งผล
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); 
+  const [openResultDialog, setOpenResultDialog] = useState(false); 
   const [dialogMessage, setDialogMessage] = useState("");
 
   // 🔹 ฟังก์ชันเปิด Dialog ยืนยัน
@@ -37,7 +37,7 @@ const AiDetail = () => {
   };
 
   const handleSendRequest = async () => {
-    handleCloseConfirmDialog(); // ✅ ปิด Dialog ยืนยันก่อนส่งคำขอ
+    handleCloseConfirmDialog(); //ปิด Dialog ยืนยันก่อนส่งคำขอ
     console.log("AI ID (ai_id):", ai_id);
     try {
       const response = await axios.post(
@@ -45,10 +45,10 @@ const AiDetail = () => {
         { ai_id: ai_id },
         { withCredentials: true }
       );
-      handleOpenResultDialog(`✅ คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || "สำเร็จ"}`);
+      handleOpenResultDialog(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${response.data.message || "สำเร็จ"}`);
     } catch (error) {
-      console.error("❌ เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:", error);
-      handleOpenResultDialog("❌ ไม่สามารถส่งคำขอใช้งานได้");
+      console.error("เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:", error);
+      handleOpenResultDialog("ไม่สามารถส่งคำขอใช้งานได้");
     }
   };
 
