@@ -17,8 +17,8 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
   predictResult,
 }) => {
 
-  let PredictData = null;
-  let ai_text_type = null;
+  let PredictData: number[] = [];
+  // let ai_text_type = null;
   
   // ถ้าตีย์มี displayFormat data ให้ PredictDrawData = display format data ตัวนั้น
   const searchChartKey = predictResult.response_keys?.find(
@@ -27,8 +27,9 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
   );
   
   if (searchChartKey) {
+
     // กำหนด `ai_text_type` จาก `displayFormat`
-    ai_text_type = searchChartKey.displayFormat;
+    // ai_text_type = searchChartKey.displayFormat;
   
     // แยก key ออกเป็นส่วนย่อย (เช่น detections.position)
     const keyParts = searchChartKey.key.split(".");
@@ -41,7 +42,11 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
     }
   
     // กำหนดค่าให้ PredictDrawData
-    PredictData = data;
+    if (Array.isArray(data) && data.every(item => typeof item === 'number')) {
+      PredictData = data;
+    } else {
+      console.error("Data is not an array of numbers:", data);
+    }
   }
   
 
@@ -52,21 +57,21 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
   console.log(textKeys)
 
   // สร้างข้อมูลที่เหมาะสมสำหรับ TextResultDisplay
-  const textData = textKeys?.map((textKey) => {
-    const keyParts = textKey.key.split(".");
-    let data = predictResult.prediction;
+  // const textData = textKeys?.map((textKey) => {
+  //   const keyParts = textKey.key.split(".");
+  //   let data = predictResult.prediction;
 
-    // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
-    for (const part of keyParts) {
-      data = data?.[part];
-      if (!data) break;
-    }
+  //   // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
+  //   for (const part of keyParts) {
+  //     data = data?.[part];
+  //     if (!data) break;
+  //   }
 
-    return {
-      meaning: textKey.meaning,
-      value: data,
-    };
-  });
+  //   return {
+  //     meaning: textKey.meaning,
+  //     value: data,
+  //   };
+  // });
 
  
 
@@ -74,9 +79,9 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
     <div className="w-full">
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
-        <RegressionChart detections={PredictData}/>
+        <RegressionChart detections={PredictData || []}/>
           
-           <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} />
+           <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} aiName="AI Name" ai_type={predictResult.ai_type} />
         
         {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>

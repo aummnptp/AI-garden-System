@@ -35,6 +35,8 @@ import InvitedPage from "../pages/Workspace/InvitedPage.tsx";
 import ProjectPermissionGuard from "../components/auth/ProjectPermissionGuard.tsx";
 import PredictAiModelPage from "../pages/Project/ProjectPredictAiModelPage.tsx";
 
+
+
 export const router = createBrowserRouter([
     {
       path: "/",

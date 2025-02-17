@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useEffect, useRef, } from 'react';
+
 import Chart from 'chart.js/auto';
 
 interface RegressionChartProps {
-  detections: number[];
+  detections: any;
 }
 
 const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
-  const [chartData, setChartData] = useState<any>(null);
+  // const [chartData, setChartData] = useState<any>(null);
   const chartRef = useRef<any>(null); // สร้าง ref สำหรับ Chart
 
   useEffect(() => {
@@ -16,18 +16,32 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
     }
 
     if (detections && detections.length > 0) {
-      const newChartData = {
-        labels: detections.map((_, index) => (index + 1).toString()), // กำหนด labels ให้เป็นตัวเลข
+      interface ChartData {
+        labels: string[];
+        datasets: {
+          label: string;
+          data: number[];
+          borderColor: string;
+          borderWidth: number;
+          fill: boolean;
+          tension: number;
+          pointRadius: number;
+          pointHoverRadius: number;
+        }[];
+      }
+
+      const newChartData: ChartData = {
+        labels: detections.map((_: any, index: number) => (index + 1).toString()), // กำหนด labels ให้เป็นตัวเลข
         datasets: [
           {
-            label: 'Regression Data',
-            data: detections, 
-            borderColor: 'rgba(75,192,192,1)',
-            borderWidth: 2,
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 6, 
+        label: 'Regression Data',
+        data: detections, 
+        borderColor: 'rgba(75,192,192,1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 6, 
           },
         ],
       };
@@ -55,7 +69,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
                 text: 'Points',
               },
               ticks: {
-                callback: function (value, index) {
+                callback: function (_, index) {
                   // แสดงแค่ตัวเลข 0, 100, 200, 300, 400 เท่านั้น
                   return index % 100 === 0 ? index : null;
                 },

@@ -2,13 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
-import { createBrowserRouter,RouterProvider,Route ,Link } from 'react-router-dom'
+
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { createTheme, ThemeProvider } from '@mui/material'
 import { AuthProvider } from './context/AuthContext';
-import { router } from './routes/router';
+
+import App from './App';
 
 
 
@@ -56,14 +57,14 @@ const queryClient = new QueryClient({
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
   <ThemeProvider theme={theme}>
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <React.StrictMode>
-          <RouterProvider router={router} />
-        </React.StrictMode>
-        <ReactQueryDevtools initialIsOpen={false} /> 
+        <App />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </AuthProvider>
   </ThemeProvider>
+</React.StrictMode>
 );

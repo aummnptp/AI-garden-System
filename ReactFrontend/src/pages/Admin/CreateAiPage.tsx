@@ -37,7 +37,7 @@ const AddAiPage: React.FC = () => {
   const [aiType, setAiType] = useState("Object Detection");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [_, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   // state สำหรับ preview predict result (ถ้ามี)
   const [predictResult, setPredictResult] = useState<

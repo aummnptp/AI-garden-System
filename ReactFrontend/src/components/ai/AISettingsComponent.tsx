@@ -4,12 +4,13 @@ import AISettingDialog from './AISettingDialog';
 import { updateAISettingService } from '../../api/services/AiSettingService';
 import { SettingFilled } from '@ant-design/icons';
 import { useAiData } from '../../hook/ai/useAiData';
+import LoadingSpinner from '../LoadingSpinner';
 
 const AISettingsComponent: React.FC = () => {
   const {
     aiSettingData,
     isLoadingAiSetting,
-    isErrorAiSetting,
+
     refetchAiSetting,
   } = useAiData();
 
@@ -35,8 +36,8 @@ const AISettingsComponent: React.FC = () => {
     }
   };
 
-  // if (isLoadingAiSetting) return <div>Loading settings...</div>;
-  // if (isErrorAiSetting) return <div>Error loading settings: {isErrorAiSetting.message}</div>;
+  if (isLoadingAiSetting) return <LoadingSpinner/>;
+
 
   return (
     <>

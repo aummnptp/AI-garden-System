@@ -10,9 +10,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link, redirect, useParams } from "react-router-dom";
-import axios from "axios";
-import { Close, Delete } from "@mui/icons-material";
+import { Link, useParams } from "react-router-dom";
+
+import { Close, } from "@mui/icons-material";
 
 import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";

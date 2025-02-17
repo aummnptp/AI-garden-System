@@ -15,7 +15,6 @@ export const addNoteService = async (projectId: string, historyId: string, title
       console.log("Note added successfully:", response.data);
       return response.data;
     } catch (error) {
-      console.error(" Error adding note:", error.response?.data || error.message);
       throw error;
     }
   };

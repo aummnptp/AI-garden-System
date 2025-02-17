@@ -45,7 +45,7 @@ const UsageBarChart: React.FC = () => {
 
   const doubleLabels: Plugin<'bar'> = {
     id: 'doubleLabels',
-    afterDatasetsDraw(chart, args, plugins) {
+    afterDatasetsDraw(chart) {
     const {ctx, data} =chart;
     ctx.save();
     chart.getDatasetMeta(0).data.forEach((dataPoint,index) => {
@@ -58,8 +58,8 @@ const UsageBarChart: React.FC = () => {
   }
 const profileImage: Plugin<'bar'> = {
   id: 'profileImage',
-  afterDatasetsDraw(chart, args, plugins) {
-    const { ctx, data, chartArea: { left, right }, scales: { y } } = chart;
+  afterDatasetsDraw(chart, _) {
+    const { ctx, data, chartArea: { left }, scales: { y } } = chart;
     ctx.save();
 
     const dataset = data.datasets[0] as typeof data.datasets[0] & { images: string[] };

@@ -13,7 +13,7 @@ interface ObjectDetection {
 }
 interface SegmentationDetection {
   label: string;
-  polygon: [number, number][];
+  polygons: [number, number][][]; // ต้องเป็นอาร์เรย์ของอาร์เรย์จุด
 }
 
 interface ImageDetectionResultDrawProps {
@@ -106,21 +106,14 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
   
           // ---------------------- แก้ส่วนนี้ ----------------------
           (detections as SegmentationDetection[]).forEach((detection, index) => {
-            // ปรับเป็น polygons แทน polygon
             const { label, polygons } = detection;
-  
-            // ใช้สีจาก colorSet โดยวนลูป
-            const color =
-              colorSet && colorSet.length > 0
-                ? colorSet[index % colorSet.length]
-                : "green";
-            // สำหรับ segmentation, ปรับสี fill ให้มี alpha 0.3
+          
+            const color = colorSet && colorSet.length > 0 ? colorSet[index % colorSet.length] : "green";
             const fillColor = hexToRgba(color, 0.3);
-  
-            // วาดทีละ polygon ใน polygons
-            polygons.forEach((polygon) => {
+          
+            polygons.forEach((polygon: [number, number][]) => {
               context.beginPath();
-              polygon.forEach(([x, y], idx) => {
+              polygon.forEach(([x, y]: [number, number], idx: number) => {
                 if (idx === 0) {
                   context.moveTo(x, y);
                 } else {
@@ -134,13 +127,13 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
               context.fill();
               context.stroke();
             });
-  
-            // หาจุดสูงสุดเพื่อแปะ label (กรณีมีหลาย polygon ก็รวมจุดหมด)
-            const allPoints = polygons.flat(); // รวมจุดจากทุก polygon
-            const minY = Math.min(...allPoints.map((point) => point[1]));
-            const labelPoint = allPoints.find((point) => point[1] === minY) || [0, 0];
+          
+            // หาจุดสูงสุดของ polygon เพื่อแสดง label
+            const allPoints: [number, number][] = polygons.flat();
+            const minY = Math.min(...allPoints.map((point: [number, number]) => point[1]));
+            const labelPoint = allPoints.find((point: [number, number]) => point[1] === minY) || [0, 0];
             const [labelX, labelY] = labelPoint;
-  
+          
             context.font = "25px Arial";
             context.fillStyle = color;
             context.fillText(`${index + 1}. ${label}`, labelX, labelY - 5);

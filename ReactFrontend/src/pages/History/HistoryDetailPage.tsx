@@ -11,7 +11,7 @@ import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Note } from "../../types/History";
 
 const HistoryDetailPage = () => {
-  const { workspaceId, projectId, historyId } = useParams<{
+  const {  projectId, historyId } = useParams<{
     workspaceId: string;
     projectId: string;
     historyId: string;

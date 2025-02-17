@@ -71,7 +71,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
     setter(isNaN(newValue) || newValue < 0 ? 0 : newValue);
   };
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 

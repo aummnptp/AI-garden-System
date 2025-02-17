@@ -71,7 +71,6 @@ export const changeMemberRole = async (workspaceId: string, memberId: string, ne
         
         return response.data;
     } catch (error) {
-        console.error("Error change role:", error.response.data.message);
         throw error;
     }
 };

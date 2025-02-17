@@ -29,7 +29,7 @@ const ProjectDetailPage = () => {
     workspaceId?: string;
     projectId?: string;
   }>();
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openAlert] = useState(false);
 
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import  {  useRef, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -145,7 +145,7 @@ const {
   memberDatas,
   isLoadingMembers,
 
-  refetchInviteLink,
+  // refetchInviteLink,
   refetchUserDatas,
   refetchPendingUser,
   refetchMemberDatas,
@@ -364,7 +364,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                       </li>
                     )}
                     value={selectedUsers}
-                    onChange={(event, newValue) => {
+                    onChange={(_, newValue) => {
                       setSelectedUsers(newValue);
                     }}
                     renderInput={(params) => (

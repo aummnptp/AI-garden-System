@@ -54,7 +54,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({
         id="Editor"
         
         tinymceScriptSrc={"/tinymce/tinymce.min.js"}
-        onInit={(evt, editor) => setText(editor.getContent())}
+        onInit={(_, editor) => setText(editor.getContent())}
         value={value}
         init={{
 

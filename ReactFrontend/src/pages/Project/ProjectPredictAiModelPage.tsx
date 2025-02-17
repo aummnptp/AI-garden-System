@@ -1,4 +1,4 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, DragEvent,useState } from 'react';
 import {  useParams } from 'react-router-dom';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
@@ -48,19 +48,19 @@ const PredictAiModelPage: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files ? event.target.files[0] : null;
-    setFile(selectedFile);
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCustomedImageUrl(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setCustomedImageUrl(null);
-    }
-  };
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const selectedFile = event.target.files ? event.target.files[0] : null;
+  //   setFile(selectedFile);
+  //   if (selectedFile) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setCustomedImageUrl(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(selectedFile);
+  //   } else {
+  //     setCustomedImageUrl(null);
+  //   }
+  // };
   
 
   const handleProcessUrlChange = (url: string) => {

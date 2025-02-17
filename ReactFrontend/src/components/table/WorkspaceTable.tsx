@@ -193,10 +193,10 @@ const Workspacetable: React.FC = () => {
 
             <TableBody>
               {filteredData.map((row) => {
-                const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
-                const imagePath = row.project.imagePath.startsWith("http")
-                  ? row.project.imagePath
-                  : `${BASE_URL}${row.project.imagePath}`;
+                // const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
+                // const imagePath = row.project.imagePath.startsWith("http")
+                //   ? row.project.imagePath
+                //   : `${BASE_URL}${row.project.imagePath}`;
 
                 return (
                   <TableRow key={row.historyId}>

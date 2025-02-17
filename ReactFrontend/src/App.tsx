@@ -1,16 +1,13 @@
+import React from "react";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes/router";
 
-// import {Routes, Route,Link,NavLink} from 'react-router-dom'
-// import Home from './pages/Home';
+const App: React.FC = () => {
+  return (
+    <main>
+      <RouterProvider router={router} />
+    </main>
+  );
+};
 
-// function App() {
-
-//   return (
-//     <main>
-//         <Routes>
-//             <Route index element={<Home/>}/>
-//         </Routes>
-//     </main>
-//   )
-// }
-
-// export default App
+export default App;

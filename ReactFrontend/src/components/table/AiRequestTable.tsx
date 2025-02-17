@@ -28,14 +28,14 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//     '&:nth-of-type(odd)': {
+//         backgroundColor: theme.palette.action.hover,
+//     },
+//     '&:last-child td, &:last-child th': {
+//         border: 0,
+//     },
+// }));
 
 interface Data {
     id: number;

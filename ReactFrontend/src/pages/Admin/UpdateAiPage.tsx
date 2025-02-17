@@ -34,7 +34,6 @@ const UpdateAiPage: React.FC = () => {
   const [colorSet, setColorSet] = useState<string[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  const [selectDisplayOptions, setSelectDisplayOptions] = useState<string[]>([]);
   const [predictResult, setPredictResult] = useState<{ response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined>();
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
@@ -67,9 +66,6 @@ const UpdateAiPage: React.FC = () => {
 
       const keys = data.response_keys.map((item) => item.key);
       setSelectOptions(keys);
-      const displayformats = data.response_keys.map((item) => item.displayFormat);
-      setSelectDisplayOptions(displayformats);
-      setColorSet(data.colorSet)
       setEnable(data.enable)
       setVisible(data.visible)
     }
