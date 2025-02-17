@@ -6,8 +6,8 @@ networks:
 services:
   # Database Service
   db:
-    image: postgres
-    restart: always
+    image: postgres:15-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
@@ -28,15 +28,16 @@ services:
   nest-backend:
     build:
       context: ./nest-backend
-    restart: always
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
     ports:
-      - "3000:3000" # พอร์ต Backend
+      - "3000:3000"
     volumes:
-      - ./nest-backend/uploads:/app/uploads # Map โฟลเดอร์ uploads
-      - ./nest-backend/.env:/app/.env # 
+      - ./nest-backend/uploads:/app/uploads
+      - ./nest-backend/.env:/app/.env
     environment:
       DATABASE_URL: postgres://postgres:admin@db:5432/ai_garden_db
-      NODE_ENV: development
+      NODE_ENV: production
     networks:
       - ai_garden_network
     depends_on:
@@ -47,20 +48,13 @@ services:
   react-frontend:
     build:
       context: ./ReactFrontend
+      dockerfile: Dockerfile.prod
     ports:
-      - "3001:5173"
-    stdin_open: true
-    tty: true
-
-    volumes:
-      - ./ReactFrontend:/app
-      - /app/node_modules
-    environment:
-      REACT_APP_API_URL: http://localhost:3000
+      - "3001:80"  # Serve ผ่านพอร์ต 80 (Production)
     networks:
       - ai_garden_network
-    command: npm run dev -- --host
-
+    depends_on:
+      - nest-backend
 
 volumes:
   db-data:
