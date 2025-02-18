@@ -4,9 +4,8 @@ networks:
   ai_garden_network:
     driver: bridge
 services:
-  # Database Service
   db:
-    image: postgres:15-alpine
+    image: postgres:17
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -24,7 +23,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Backend Service (NestJS)
   nest-backend:
     build:
       context: ./nest-backend
@@ -44,16 +42,16 @@ services:
       db:
         condition: service_healthy
 
-  # Frontend Service (React)
   react-frontend:
-    build:
-      context: ./ReactFrontend
-      dockerfile: Dockerfile.prod
-    ports:
-      - "3001:80"  # Serve ผ่านพอร์ต 80 (Production)
-    networks:
-      - ai_garden_network
-    depends_on:
+      build:
+        context: ./ReactFrontend
+        dockerfile: Dockerfile.prod
+      restart: unless-stopped
+      ports:
+        - "8080:80"
+      networks:
+        - ai_garden_network
+      depends_on:
       - nest-backend
 
 volumes:

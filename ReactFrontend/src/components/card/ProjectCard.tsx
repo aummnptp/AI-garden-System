@@ -18,7 +18,7 @@ const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
            <div className='mx-2 w-fit h-fit  flex items-center  '>
              <img
              className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
-             src={props.projectImage}
+             src={`${import.meta.env.VITE_NEST_BACKEND_API_URL}${props.projectImage}`}
              alt={`${props.name} project`}
              />
               </div>

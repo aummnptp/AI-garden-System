@@ -217,7 +217,7 @@ export class WorkspacesController {
   @UseGuards(JwtGuard)
   @Get('/generate-invite/:workspaceId')
   async generateInvite(@Param('workspaceId') workspaceId: string, @Req() req) {
-    return this.workspacesService.generateInviteLink(workspaceId, req.user.userId);
+    return this.workspacesService.generateInviteLink(workspaceId,);
   }
 
   @Get('/validate-invite')

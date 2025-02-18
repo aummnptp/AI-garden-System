@@ -336,9 +336,9 @@ export class WorkspacesService {
     });
   }
 
-  async generateInviteLink(workspaceId: string, inviterId: string): Promise<string> {
+  async generateInviteLink(workspaceId: string): Promise<string> {
     const secret = process.env.INVITE_SECRET 
-    const token = jwt.sign({ workspaceId, inviterId }, secret, { expiresIn: '7d' });
+    const token = jwt.sign({ workspaceId }, secret, { expiresIn: '7d' });
     return `${process.env.REACT_APP_API_URL}/invite?token=${token}`;
   }
   async validateInviteToken(token: string): Promise<{ workspaceId: string }> {
@@ -386,7 +386,7 @@ export class WorkspacesService {
 
   async getAllWorkspacesInSystem(): Promise<Workspace[]> {
     return this.workspaceRepository.find({
-        relations: ['members', 'members.user'], // ✅ โหลดข้อมูลสมาชิกและผู้ใช้ใน workspace
+        relations: ['members', 'members.user'], 
     });
 }
 

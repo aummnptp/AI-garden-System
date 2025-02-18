@@ -1,0 +1,16 @@
+# nest-backend/Dockerfile.dev
+FROM node:18
+
+WORKDIR /app
+
+# คัดลอก package.json และ package-lock.json แล้วติดตั้ง dependencies (รวม dev dependencies ด้วย)
+COPY package*.json ./
+RUN npm install
+
+# คัดลอก source code ทั้งหมด
+COPY . .
+
+EXPOSE 5173
+
+# รันในโหมดพัฒนา (เช่นใช้ ts-node-dev หรือ nodemon)
+CMD ["npm", "run", "start:dev"]

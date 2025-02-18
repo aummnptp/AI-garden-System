@@ -100,7 +100,7 @@ const NotificationMenu: React.FC<NotificationMenuProps> = ({
             </MenuItem>
           ))
         ) : (
-          <MenuItem disabled>ไม่มีการแจ้งเตือน</MenuItem>
+          <MenuItem disabled>No Invitation</MenuItem>
         )}
       </Menu>
     </>

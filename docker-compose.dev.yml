@@ -1,0 +1,59 @@
+version: '3.8'
+
+networks:
+  ai_garden_network:
+    driver: bridge
+services:
+  # db:
+  #   image: postgres:17
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: ai_garden_db
+  #   networks:
+  #     - ai_garden_network
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  nest-backend:
+    build:
+      context: ./nest-backend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./upload:/app/upload
+      - ./nest-backend/.env:/app/.env
+    environment:
+      DATABASE_URL: postgres://postgres:admin@host.docker.internal:5432/ai_garden_db
+      NODE_ENV: development
+    networks:
+      - ai_garden_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  react-frontend:
+      build:
+        context: ./ReactFrontend
+        dockerfile: Dockerfile.dev
+      restart: unless-stopped
+      ports:
+        - "5173:5173"
+      networks:
+        - ai_garden_network
+      depends_on:
+      - nest-backend
+      volumes:
+      - ./ReactFrontend:/app
+
+volumes:
+  db-data:

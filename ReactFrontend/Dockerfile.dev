@@ -1,0 +1,16 @@
+# ReactFrontend/Dockerfile.dev
+FROM node:18
+
+WORKDIR /app
+
+# คัดลอก package.json และ package-lock.json แล้วติดตั้ง dependencies
+COPY package*.json ./
+RUN npm install
+
+# คัดลอก source code ทั้งหมด
+COPY . .
+
+EXPOSE 3000
+
+# รัน development server (เช่น create-react-app)
+CMD ["npm", "run", "dev"]
