@@ -188,9 +188,9 @@ const AddAiPage: React.FC = () => {
         meaning: key.meaning,
         displayFormat: key.displayFormat,
       })),
-      enable, // New field: enable (boolean)
-      visible, // New field: visible (boolean)
-      colorSet, // New field: colorSet (array of colors)
+      enable, 
+      visible,
+      colorSet, 
     };
 
     try {

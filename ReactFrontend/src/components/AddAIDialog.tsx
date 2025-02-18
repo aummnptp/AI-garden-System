@@ -175,10 +175,10 @@ export default function AddAIDialog() {
         if (selectedToRemove.includes(ai.aiId)) {
           return { ...ai, permissions: [] };
         }
-        if (selectedToAdd.includes(ai.aiId)) { // ✅ ใช้ `includes(ai.id)` แทน `some()`
+        if (selectedToAdd.includes(ai.aiId)) { 
           return {
             ...ai,
-            permissions: [{ id: Date.now(), ai_id: ai.aiId, user_id: userId, approve: false }], // ✅ เพิ่ม ai_id
+            permissions: [{ id: Date.now(), ai_id: ai.aiId, user_id: userId, approve: false }], 
           };
         }
         return ai;
@@ -187,12 +187,12 @@ export default function AddAIDialog() {
     setSelectedToRemove([]);
     setSelectedToAdd([]);
     setOpen(false);
-    setSaveDialogOpen(false); // ปิด Dialog หลังการบันทึก
+    setSaveDialogOpen(false); 
     window.location.reload();
   };
 
   const handleCancelSave = () => {
-    setSaveDialogOpen(false); // ปิด Dialog
+    setSaveDialogOpen(false); 
   };
 
   const filteredAiData = aiListData

@@ -15,13 +15,15 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import ProjectImageInput from "../../components/input/ProjectImageInput";
 import { Close } from "@mui/icons-material";
 
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProjectService, updateProjectService } from "../../api/services/ProjectService";
+import toast from "react-hot-toast";
 
 const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
@@ -29,11 +31,10 @@ const ProjectSetting = () => {
   const [description, setDescription] = useState<string>("");
   const [inputType, setInputType] = useState<string>("");
   const [open, setOpen] = React.useState(false);
-  const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
+  const [confirmText, setConfirmText] = useState(""); 
   const [image, setImage] = useState<File | null>(null);
-
-  const isDeleteDisabled = confirmText !== name;
-
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { workspaceDetail, isLoadingWorkspace, } =
     useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail, } =
@@ -48,7 +49,6 @@ const ProjectSetting = () => {
     }
   }, [projectDetail]);
 
-  const navigate = useNavigate();
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -68,66 +68,53 @@ const ProjectSetting = () => {
   };
 
   // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
-  const handleSave = async () => {
-    try {
-      // เตรียมข้อมูล payload
-      const payload = {
-        name: name,
-        description: description,
-        input_type: inputType,
-      };
-
-      // ใช้ FormData สำหรับอัปโหลดรูปถ้ามี
+  const updateProjectMutation = useMutation({
+    mutationFn: async () => {
       const formData = new FormData();
-      for (const [key, value] of Object.entries(payload)) {
-        formData.append(key, value);
-      }
-
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("input_type", inputType);
       if (image) {
         formData.append("file", image);
       }
 
-      // ส่งคำขอ PATCH เพื่ออัปเดต Project
-      const response = await axios.patch(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/workspaces/${workspaceId}/projects/update/${projectId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
-
-      // แสดงข้อความสำเร็จ หรือรีเฟรชหน้า
-      console.log("อัปเดต Project สำเร็จ:", response.data);
+      return updateProjectService({ workspaceId: workspaceId!, projectId: projectId!, formData });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-detail", workspaceId, projectId] });
+      queryClient.invalidateQueries({ queryKey: ["projects", workspaceId] });
+      toast.success("Project updated successfully!");
       navigate(`/workspaces/${workspaceId}/project-list`);
-      // alert("Project updated successfully!");
-    } catch (error) {
-      // จัดการข้อผิดพลาด
-      console.error("เกิดข้อผิดพลาดในการอัปเดต Project:", error);
-      alert("เกิดข้อผิดพลาดในการอัปเดต Project");
-    }
+    },
+    onError: (error) => {
+      console.error("Error updating project:", error);
+      toast.error("Failed to update project.");
+    },
+  });
+
+  const deleteProjectMutation = useMutation({
+    mutationFn: async () => {
+      return deleteProjectService({ workspaceId: workspaceId!, projectId: projectId! });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects", workspaceId!] });
+      toast.success("Project deleted successfully!");
+      navigate(`/workspaces/${workspaceId}/project-list`);
+    },
+    onError: (error) => {
+      console.error("Error deleting project:", error);
+      toast.error("Failed to delete project.");
+    },
+  });
+
+  
+
+  const handleSave = () => {
+    updateProjectMutation.mutate();
   };
 
-  const handleDelte = async () => {
-    try {
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_NEST_BACKEND_API_URL
-        }/workspaces/${workspaceId}/projects/delete/${projectId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      navigate(`/workspaces/${workspaceId}/project-list`);
-      console.log("ลบ Workspace สำเร็จ:", response.data);
-    } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการลบ Workspace:", error);
-      alert("เกิดข้อผิดพลาดในการลบ Workspace");
-    }
+  const handleDelete = () => {
+    deleteProjectMutation.mutate();
   };
 
   const handleModalDelete = () => {
@@ -138,6 +125,7 @@ const ProjectSetting = () => {
     setOpen(false);
   };
 
+  const isDeleteDisabled = confirmText !== name;
   if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
@@ -191,7 +179,7 @@ const ProjectSetting = () => {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDelte();
+              handleDelete();
               handleClose();
             }}
             autoFocus

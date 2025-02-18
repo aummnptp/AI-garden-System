@@ -8,6 +8,7 @@ import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Member, ProjectPermission } from "../../types/User";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 const ProjectAccessManagePage = () => {
@@ -15,7 +16,7 @@ const ProjectAccessManagePage = () => {
     workspaceId: string;
     projectId: string;
   }>();
-
+  const queryClient = useQueryClient();
   const {
     workspaceDetail,
     isLoadingWorkspace,
@@ -26,10 +27,9 @@ const ProjectAccessManagePage = () => {
   const {
     projectDetail,
     isLoadingProjectDetail,
-    refetchProject,
     projectPermissions,
     isLoadingPermissions,
-    refetchPermissions,
+
   } = useProjecteData();
 
 
@@ -40,35 +40,52 @@ const ProjectAccessManagePage = () => {
   );
 
   
-  const handlePermissionChange = async (permission: boolean) => {
-
-    try {
-      await changeProjectPermissionService(workspaceId!, projectId!, permission);
-      await refetchProject();
-    } catch (error) {
-      console.error(" Error updating project permission:", error);
+  const changePermissionMutation = useMutation({
+    mutationFn: async (permission: boolean) => {
+      if (!workspaceId || !projectId) throw new Error("Workspace or Project ID is undefined.");
+      return changeProjectPermissionService(workspaceId, projectId, permission);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-detail", workspaceId, projectId] });
+      queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
+    },
+    onError: (error) => {
+      console.error("Error updating project permission:", error);
       alert("Failed to update access settings.");
-    }
-  };
+    },
+  });
 
 
-  const handleMemberCheckboxChange = async (userId: string) => {
-    if (!projectDetail?.permission_only) return;
-  
-    try {
+  const toggleMemberPermissionMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      if (!workspaceId || !projectId) throw new Error("Workspace or Project ID is undefined.");
+
       if (selectedMembers.has(userId)) {
-        await revokeProjectPermission(workspaceId!, projectId!, userId);
+        return revokeProjectPermission(workspaceId, projectId, userId);
       } else {
-        await grantProjectPermission(workspaceId!, projectId!, userId);
+        return grantProjectPermission(workspaceId, projectId, userId);
       }
-      await refetchPermissions();
-    } catch (error) {
-      console.error(" Error updating member permissions:", error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
+    },
+    onError: (error) => {
+      console.error("Error updating member permissions:", error);
       alert("Failed to update member permissions.");
-    }
+    },
+  });
+
+  const handlePermissionChange = (permission: boolean) => {
+    changePermissionMutation.mutate(permission);
   };
 
-  if (isLoadingProjectDetail || isLoadingWorkspace ||isLoadingPermissions||isLoadingMembers) return <SkeletonLayout />;
+  const handleMemberCheckboxChange = (userId: string) => {
+    toggleMemberPermissionMutation.mutate(userId);
+  };
+
+  if (isLoadingProjectDetail || isLoadingWorkspace || isLoadingPermissions || isLoadingMembers) {
+    return <SkeletonLayout />;
+  }
 
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">

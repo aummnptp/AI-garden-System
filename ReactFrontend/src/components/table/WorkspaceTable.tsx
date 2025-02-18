@@ -78,8 +78,8 @@ const Workspacetable: React.FC = () => {
 
     if (searchItem.trim()) {
       filtered = filtered.filter(item =>
-        item.project.name.toLowerCase().includes(searchItem.toLowerCase()) || // ✅ ค้นหาชื่อโปรเจค
-        item.user.name.toLowerCase().includes(searchItem.toLowerCase()) // ✅ ค้นหาชื่อผู้ใช้งาน
+        item.project.name.toLowerCase().includes(searchItem.toLowerCase()) || 
+        item.user.name.toLowerCase().includes(searchItem.toLowerCase()) 
       );
     }
 
@@ -207,7 +207,7 @@ const Workspacetable: React.FC = () => {
                           src={row.project.imagePath}
                           sx={{ width: 100, height: 100, borderRadius: "10px" }}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/images/default-image.png"; // ✅ ถ้ารูปโหลดไม่สำเร็จ ใช้ default-image
+                            (e.target as HTMLImageElement).src = "/images/default-image.png"; 
                           }}
                         />
                       ) : (

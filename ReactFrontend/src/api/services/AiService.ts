@@ -97,10 +97,10 @@ export const updateAiModelService = async (
   
     try {
       const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
-      console.log("✅ API Response:", response.data); // ดูค่าที่ API ส่งกลับมา
+      console.log(" API Response:", response.data); // ดูค่าที่ API ส่งกลับมา
       return response.data ?? []; // ป้องกัน undefined
     } catch (error) {
-      console.error("❌ Error fetching approved AI models:", error);
+      console.error("Error fetching approved AI models:", error);
       return [];
     }
   };

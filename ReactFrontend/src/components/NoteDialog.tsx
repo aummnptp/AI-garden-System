@@ -44,22 +44,22 @@ const AddNoteDialog: React.FC<AddNoteDialogProps> = ({ projectId, historyId, onN
 
   const handleSave = async () => {
     if (!historyId || !projectId) {
-      alert("⚠️ Missing required data!");
+      alert("Missing required data!");
       return;
     }
     if (!noteTitle.trim() || !noteDetail.trim()) {
-      alert("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน");
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
     try {
-      console.log("📤 Adding note for projectId:", projectId, "historyId:", historyId);
+      console.log("Adding note for projectId:", projectId, "historyId:", historyId);
       await addNoteService(projectId, historyId, noteTitle, noteDetail);
-      console.log("✅ Note successfully added!");
-      await onNoteAdded(); // 🔄 รีโหลด Note ใหม่
+      console.log("Note successfully added!");
+      await onNoteAdded();
       handleClose();
     } catch (error) {
-      console.error("❌ Error saving note", error);
+      console.error(" Error saving note", error);
       alert("Failed to save note.");
     }
   };

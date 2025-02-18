@@ -19,8 +19,6 @@ function CreateProjectPage() {
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
-  // const [projectImage, setProjecImage] = useState('');
-  const { user } = useAuth(); // ดึง user จาก AuthContext
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [inputType, setInputType] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
@@ -30,6 +28,7 @@ function CreateProjectPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = React.useState(false);
   const [alertText, setAlertText] = useState("");
+  const { user } = useAuth(); // ดึง user จาก AuthContext
 
   
 

@@ -11,6 +11,7 @@ export const useWorkspaceData  = () => {
     data: workspaceDetail,
     isLoading: isLoadingWorkspace,
     isError: isErrorWorkspace,
+    refetch:refetchWorkspaceDetail,
   } = useQuery({
     queryKey: ["workspace-detail", workspaceId],
     queryFn: () => fetchWorkspaceDetailService(workspaceId!),
@@ -89,6 +90,7 @@ export const useWorkspaceData  = () => {
     workspaceDetail,
     isLoadingWorkspace,
     isErrorWorkspace,
+    refetchWorkspaceDetail,
 
     myWorkspace,
     isLoadingMyWorkspace,

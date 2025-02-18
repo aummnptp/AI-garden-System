@@ -43,8 +43,22 @@ export const revokeProjectPermission = async (workspaceId: string,projectId: str
     }
 };
 
+export const updateProjectService = async ({ workspaceId, projectId, formData }: { workspaceId: string, projectId: string, formData: FormData }) => {
+    const { data } = await axios.patch(
+        `${BASE_URL}/workspaces/${workspaceId}/projects/update/${projectId}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
+    );
+    return data;
+};
 
-
+export const deleteProjectService = async ({ workspaceId, projectId }: { workspaceId: string, projectId: string }): Promise<any> => {
+    const { data } = await axios.delete(
+        `${BASE_URL}/workspaces/${workspaceId}/projects/delete/${projectId}`,
+        { withCredentials: true }
+    );
+    return data;
+};
 
 export const fetchProjectDetailService = async (workspaceId: string, projectId: string) => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`);

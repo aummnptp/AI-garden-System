@@ -42,7 +42,7 @@ export class UserController {
 
   @Role("admin")
     @UseGuards(JwtGuard, RolesGuard)
-  @Patch('promote/:userId') // ✅ เปลี่ยนเส้นทางเป็น 'promote/:userId'
+  @Patch('promote/:userId') 
   promoteToAdmin(@Param('userId') userId: string) {
     return this.userService.promoteToAdmin(userId);
   }

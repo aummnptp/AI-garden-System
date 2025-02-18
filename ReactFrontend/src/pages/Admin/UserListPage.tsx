@@ -4,7 +4,7 @@ import UserListTable from "../../components/table/UserListTable";
 import AdminSidebar from "../../components/AdminSidebar";
 
 const UserList = () => {
-  const [searchQuery, setSearchQuery] = useState(""); // ✅ เก็บค่าค้นหา
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <>
@@ -21,12 +21,12 @@ const UserList = () => {
                 type="text"
                 className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 placeholder="ค้นหาผู้ใช้"
-                value={searchQuery} // ✅ ค่าจาก state
-                onChange={(e) => setSearchQuery(e.target.value)} // ✅ อัปเดตค่า searchQuery
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
               />
             </div>
             <div className="m-6 flex justify-start gap-4">
-              <UserListTable searchQuery={searchQuery} /> {/* ✅ ส่ง searchQuery ไป */}
+              <UserListTable searchQuery={searchQuery} /> 
             </div>
           </div>
         </div>

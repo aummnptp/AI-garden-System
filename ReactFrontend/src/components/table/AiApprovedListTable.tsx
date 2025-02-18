@@ -134,14 +134,14 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
         setRows((prevRows) => prevRows.filter((row) => row.aiId !== selectedAi.aiId)); // ลบออกจากตาราง
         setActionSuccess(true); // แสดงข้อความสำเร็จ
 
-        // ✅ ปิด Dialog และ Refresh หน้าเว็บหลังจาก 2 วินาที
+       
         setTimeout(() => {
             setOpenDialog(false);
             window.location.reload();
         }, 2000);
     } catch (error) {
-        console.error("❌ ไม่สามารถถอนสิทธิ์ได้:", error);
-        setActionSuccess(false); // แสดงข้อความล้มเหลว
+        console.error("ไม่สามารถถอนสิทธิ์ได้:", error);
+        setActionSuccess(false); 
     }
 };
 
@@ -218,7 +218,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
           ))}
         </TableBody>
       </Table>
-      {/* ✅ Dialog ยืนยันการถอนสิทธิ์ */}
+
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>{actionSuccess === null ? "ยืนยันการถอนสิทธิ์" : actionSuccess ? "ถอนสิทธิ์สำเร็จ" : "เกิดข้อผิดพลาด"}</DialogTitle>
                 <DialogContent>

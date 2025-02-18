@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CreateWorkspaceProps {
   showModal: boolean;
@@ -9,26 +10,33 @@ interface CreateWorkspaceProps {
   fetchWorkspaces: () => void;
 }
 
-export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal, fetchWorkspaces }) => {
+export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal }) => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const queryClient = useQueryClient();
+
+  const createWorkspaceMutation = useMutation({
+    mutationFn: async () => {
+      return axios.post(
+        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
+        { name, description },
+        { withCredentials: true }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-workspace"] }); 
+      setName("");
+      setDescription("");
+      setShowModal(false); // ปิด Dialog
+    },
+    onError: (error) => {
+      console.error("Error creating workspace:", error);
+    },
+  });
+
 
   const handleSubmit = () => {
-    axios
-      .post(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
-        { name: name, description: description },
-        { withCredentials: true }
-      )
-      .then(() => {
-        setName('');
-        setDescription('');
-        setShowModal(false); // ปิด Dialog
-        fetchWorkspaces(); // ดึงข้อมูล workspace ใหม่
-      })
-      .catch((error) => {
-        console.error('Error creating workspace:', error);
-      });
+    createWorkspaceMutation.mutate();
   };
 
   return (

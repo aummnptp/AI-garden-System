@@ -10,29 +10,27 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Close, } from "@mui/icons-material";
 
 import { deleteWorkspaceService, updateWorkspaceService } from "../../api/services/WorkspaceService";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const WorkspaceSettingPage = () => {
-  // let { workspaceId } = useParams();
+
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { workspaceDetail, isLoadingWorkspace, } = useWorkspaceData();
 
-  // ดึงข้อมูล workspace detail
-
-  const {
-    workspaceDetail,
-    isLoadingWorkspace
-
-  } = useWorkspaceData();
   
 
   useEffect(() => {
@@ -44,31 +42,53 @@ const WorkspaceSettingPage = () => {
 
  
 
+  const updateWorkspaceMutation = useMutation({
+    mutationFn: async ({ workspaceId, name, description }: { workspaceId: string; name: string; description: string }) => {
+      return updateWorkspaceService(workspaceId, name, description);
+    },
+    onSuccess: async () => {
+     queryClient.invalidateQueries({ queryKey: ["workspace-detail", workspaceId] });
+     queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
+     toast.success("Update  workspace successfully!")
+      navigate("/workspaces");
+    },
+    onError: () => {
+      toast.error("Failed to update workspace!")
+    },
+  });
 
-  const handleSave = async () => {
-    try {
-      await updateWorkspaceService(workspaceId ?? "", name, description);
-      window.location.href = "/workspaces";
-    } catch (error) {
-      alert("เกิดข้อผิดพลาดในการอัปเดต Workspace");
-    }
+  // Mutation สำหรับลบ Workspace
+  const deleteWorkspaceMutation = useMutation({
+    mutationFn: async ({ workspaceId }: { workspaceId: string }) => {
+      return deleteWorkspaceService(workspaceId);
+    },
+    onSuccess: async() => {
+      await queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
+      navigate("/workspaces");
+      toast.success("Delete workspace successfully!")
+    },
+    onError: () => {
+      toast.error("Failed to delete workspace!")
+
+    },
+  });
+
+  const handleSave = () => {
+    updateWorkspaceMutation.mutate({ workspaceId: workspaceId ?? "", name, description });
   };
-
   const handleModalDelete = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+    setConfirmText("");
   };
-  const handleDelte = async () => {
-    try {
-      await deleteWorkspaceService(workspaceId ?? "");
-      window.location.href = "/workspaces";
-    } catch (error) {
-      alert("เกิดข้อผิดพลาดในการลบ Workspace");
-    }
+
+  const handleDelete = () => {
+    deleteWorkspaceMutation.mutate({ workspaceId: workspaceId ?? "" });
   };
+
   const isDeleteDisabled = confirmText !== name;
 
   if (isLoadingWorkspace) return <SkeletonLayout />;
@@ -121,7 +141,7 @@ const WorkspaceSettingPage = () => {
               variant="contained"
               color="error"
               onClick={() => {
-                handleDelte();
+                handleDelete();
                 handleClose();
               }}
               autoFocus

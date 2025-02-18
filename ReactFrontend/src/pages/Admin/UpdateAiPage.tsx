@@ -63,7 +63,7 @@ const UpdateAiPage: React.FC = () => {
       setInputDescription(data.input_desc);
       setAiType(data.ai_type);
       setTags(data.ai_tag);
-
+      setColorSet(data.colorSet);
       const keys = data.response_keys.map((item) => item.key);
       setSelectOptions(keys);
       setEnable(data.enable)

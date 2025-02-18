@@ -73,14 +73,14 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
     fetchUserData();
   }, []);
 
-  // ✅ ฟังก์ชันเปลี่ยนการเรียงข้อมูล
+
   const handleRequestSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  // ✅ ฟังก์ชันจัดเรียงข้อมูล
+
   const stableSort = (array: Data[], comparator: (a: Data, b: Data) => number) => {
     return [...array].sort(comparator);
   };
@@ -97,7 +97,7 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
     return 0;
   };
 
-  // ✅ ฟิลเตอร์ผู้ใช้ตาม `searchQuery`
+
   const filteredRows = rows.filter(user => 
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );

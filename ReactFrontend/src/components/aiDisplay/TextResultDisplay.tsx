@@ -96,7 +96,7 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
                         {keyItem.meaning}
                       </th>
                     ))}
-              <th className="py-3 px-4 text-left text-lg font-medium">Color</th> {/* ✅ เพิ่มคอลัมน์สี */}
+              <th className="py-3 px-4 text-left text-lg font-medium">Color</th> 
             </tr>
           </thead>
           <tbody>

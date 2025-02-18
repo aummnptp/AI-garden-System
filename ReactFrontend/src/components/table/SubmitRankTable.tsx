@@ -159,15 +159,15 @@ export default function SubmitRankTable() {
   return (
     <div className="w-full mx-auto flex">
       
-      {/* 🏆 ตาราง Ranking */}
+ 
       <div className="mx-4 px-4 w-[60%]">
         <TableContainer
           component={Paper}
           sx={{ 
             width: "100%", 
-            maxHeight: "500px", // ✅ กำหนดความสูงคงที่
+            maxHeight: "500px",
             minHeight: "500px", 
-            overflowY: "auto" // ✅ ให้เลื่อนแนวตั้งได้เมื่อข้อมูลเกิน
+            overflowY: "auto"
           }}
         >
           <Table stickyHeader sx={{ width: "100%" }} aria-label="customized table">
@@ -218,9 +218,9 @@ export default function SubmitRankTable() {
       <div
         className="px-4 border rounded-[5px] w-[40%] overflow-y-auto"
         style={{ 
-          maxHeight: "500px", // ✅ กำหนดความสูงคงที่
+          maxHeight: "500px",
           minHeight: "500px", 
-          overflowY: "auto" // ✅ ให้เลื่อนแนวตั้งได้เมื่อข้อมูลเกิน
+          overflowY: "auto" 
         }}
       >
         <h2 className="text-indigo-900 text-2xl font-semibold mb-4">ประวัติการอัปโหลด</h2>
