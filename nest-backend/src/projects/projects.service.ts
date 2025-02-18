@@ -94,7 +94,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     }
     await this.projectRepository.update(projectId, {
       ...updateProjectDto,
-      imagePath: filePath, // เพิ่มไฟล์พาธลงในโปรเจค
+      imagePath: filePath, 
     });
     const updatedProject = await this.projectRepository.findOne({ where: { projectId } });
     if (!updatedProject) {
@@ -135,12 +135,8 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       relations: ['ai_model', 'createdBy'],
     });
     if (!project) throw new NotFoundException('Project not found');
-    return {
-      ...project, 
-      imagePath: project.imagePath
-        ? `${process.env.NEST_APP_API_URL}${project.imagePath}`
-        : null,
-    };
+    return project;
+     
   }
 
   async remove(workspaceId: string, projectId: string): Promise<void> {
@@ -222,12 +218,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       order: { createdAt: 'DESC' },
     });
 
-    return allHistory.map((history) => ({
-      ...history,
-      filePath: history.filePath
-        ? `${process.env.NEST_APP_API_URL}${history.filePath}`
-        : null,
-    }));
+    return allHistory;
   }
 
   async getHistory(historyId: string): Promise<ProjectHistory> {
@@ -239,13 +230,8 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     if (!history) {
       throw new NotFoundException('History not found');
     }
-    return {
-      ...history,
-      filePath: history.filePath
-        ? `${process.env.NEST_APP_API_URL}${history.filePath}`
-        : null,
-        
-    };
+    return history
+     
   }
 
   async deleteHistory(workspaceId: string, projectId: string, historyId: string): Promise<{ message: string }> {
@@ -329,12 +315,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
         relations: ['ai_model', 'user', 'project'], // ดึงข้อมูลที่เกี่ยวข้องทั้งหมด
         order: { createdAt: 'DESC' },
       });
-      return allHistory.map((history) => ({
-        ...history,
-        filePath: history.filePath
-          ? `${process.env.NEST_APP_API_URL}${history.filePath}`
-          : null,
-      }));
+      return allHistory
     } catch (error) {
       console.error('Error fetching all history:', error);
       throw new InternalServerErrorException('Failed to fetch all project history');

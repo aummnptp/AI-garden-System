@@ -17,7 +17,7 @@ import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
 import { Alert, Button, Snackbar } from "@mui/material";
 
-import { formatDate } from "../../function/util";
+import { formatDate, getImageUrl } from "../../function/util";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 
@@ -81,7 +81,7 @@ const ProjectDetailPage = () => {
               {projectDetail.imagePath ? (
                 <img
                   className=" col-span-2 w-full h-[100%] object-cover"
-                  src={projectDetail.imagePath}
+                  src={getImageUrl(projectDetail.imagePath)}
                 />
               ) : (
                 <ProjectImage

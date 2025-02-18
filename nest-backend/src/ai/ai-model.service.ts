@@ -100,12 +100,7 @@ export class AIModelService {
     }
   
     const aiModels = await queryBuilder.getMany();
-    return aiModels.map((aiModel) => ({
-      ...aiModel,
-      imagePath: aiModel.imagePath
-        ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
-        : null,
-    }));
+    return aiModels
   }
 
   async findOne(aiId: string): Promise<AIModel> {
@@ -114,16 +109,10 @@ export class AIModelService {
     if (!aiModel) {
       throw new NotFoundException(`AI Model with id ${aiId} not found`);
     }
+
   
-    // สร้าง URL ของรูปภาพ
-    const imageUrl  = aiModel.imagePath
-      ? `${process.env.NEST_APP_API_URL}${aiModel.imagePath}`
-      : null;
-  
-    return {
-      ...aiModel,
-      imagePath:imageUrl ,
-    };
+    return aiModel
+
   }
   
   remove(aiId: string): Promise<void> {

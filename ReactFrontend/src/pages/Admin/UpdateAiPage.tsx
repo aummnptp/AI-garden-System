@@ -94,7 +94,6 @@ const UpdateAiPage: React.FC = () => {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-          console.log("Response from API:", jsonData);
           setPredictResult({ response_keys: responseKeys, prediction: jsonData });
           setCustomedImageUrl(URL.createObjectURL(file));
           // Extract keys from JSON
@@ -118,7 +117,6 @@ const UpdateAiPage: React.FC = () => {
           const keys = extractKeys(jsonData);
           setSelectOptions(keys);
         } else {
-          console.log("Response is not JSON");
         }
       } catch (error) {
         console.error("Error uploading file:", error);
@@ -187,9 +185,9 @@ const UpdateAiPage: React.FC = () => {
         meaning: rk.meaning,
         displayFormat: rk.displayFormat,
       })),
-      enable,         // New field: enable (boolean)
-      visible,     // New field: visible (boolean)
-      colorSet,      // New field: colorSet (array of colors)
+      enable,         
+      visible,    
+      colorSet,      
     };
 
     const formData = new FormData();
@@ -232,8 +230,8 @@ const UpdateAiPage: React.FC = () => {
   if (isLoading) return <div>Loading AI data...</div>;
   if (error) return <div>Error loading AI data: {(error as Error).message}</div>;
 
-  console.log(predictResult)
-  return (
+
+    return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32">
         <AdminSidebar />

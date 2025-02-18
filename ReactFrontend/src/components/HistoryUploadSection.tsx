@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { formatDate, formatTime } from "../function/util";
+import { formatDate, formatTime, getImageUrl } from "../function/util";
 import { useHistoryData } from "../hook/history/useHistoryData";
 import { deleteHistoryService } from "../api/services/HistoryService";
 import { IconButton } from "@mui/material";
@@ -87,13 +87,13 @@ const HistoryUploadSection: React.FC<HistoryUploadSectionProps> = ({
           {inputType === "วิดีโอ" ? (
             <video
               className="w-32 h-32 border-2 rounded-md object-cover"
-              src={entry.filePath}
+              src={getImageUrl(entry.filePath)}
               controls
             />
           ) : (
             <img
               className="w-32 h-32 border-2 rounded-md object-cover"
-              src={entry.filePath}
+              src={getImageUrl(entry.filePath)}
               alt={entry.user.name}
               loading="lazy"
             />

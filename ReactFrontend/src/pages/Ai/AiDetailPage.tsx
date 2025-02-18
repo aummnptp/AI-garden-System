@@ -5,6 +5,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography }
 import axios from "axios";
 import MiniFooter from "../../components/MiniFooter";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { getImageUrl } from "../../function/util";
 
 const AiDetail = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();
@@ -82,7 +83,7 @@ const AiDetail = () => {
 
           <div className="mt-4 p-4 h-fit w-11/12 bg-white rounded-[15px] justify-self-center relative">
             <div className="grid grid-cols-6">
-              <img className="col-span-2 h-[100%] object-cover" src={aiData.imagePath} alt="AI" />
+              <img className="col-span-2 h-[100%] object-cover" src={getImageUrl(aiData.imagePath)} alt="AI" />
               <div className="col-span-4 p-6">
                 <div>
                   <div className="flex items-center">

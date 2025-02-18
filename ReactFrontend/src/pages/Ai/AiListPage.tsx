@@ -11,6 +11,7 @@ import { Autocomplete, InputAdornment,  TextField } from "@mui/material";
 import { AIDataType } from "../../types/Ai";
 
 import { useApprovedAiData } from "../../hook/ai/useApprovedAiData";
+import { getImageUrl } from "../../function/util";
 
 
 
@@ -64,7 +65,7 @@ function AIlist() {
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
                 <button
-                  onClick={() => setSelectedTab("all")} // 🟢 เปลี่ยน state
+                  onClick={() => setSelectedTab("all")} 
                   className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "all"
                     ? "text-blue-600 border-blue-600"
                     : "hover:text-gray-600 hover:border-gray-300"
@@ -75,7 +76,7 @@ function AIlist() {
               </li>
               <li className="me-2">
                 <button
-                  onClick={() => setSelectedTab("approved")} // 🟢 เปลี่ยน state
+                  onClick={() => setSelectedTab("approved")} 
                   className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "approved"
                     ? "text-blue-600 border-blue-600"
                     : "hover:text-gray-600 hover:border-gray-300"
@@ -138,7 +139,7 @@ function AIlist() {
                 name={data.name}
                 aiDesc={data.description}
                 tags={data.ai_tag}
-                img={data.imagePath}
+                img={getImageUrl(data.imagePath)}
                 type={data.ai_type}
               />
             ))

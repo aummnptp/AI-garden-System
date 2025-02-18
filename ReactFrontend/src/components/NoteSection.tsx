@@ -1,6 +1,7 @@
 import React from "react";
 
 import { SpeakerNotesOutlined } from "@mui/icons-material";
+import { getImageUrl } from "../function/util";
 
 interface NoteSectionProps {
   projectNoteData: any[];
@@ -31,7 +32,7 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
               <div className="w-[20%]">
                 <img
                   className="w-36 h-36 object-cover border-2 rounded-md"
-                  src={note.history.filePath}
+                  src={getImageUrl(note.history.filePath)}
                   alt="Note Image"
                 />
                 <p className="text-sm text-gray-600">{note.history.image_name || " "}</p>

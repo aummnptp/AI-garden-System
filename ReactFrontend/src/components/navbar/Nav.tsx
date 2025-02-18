@@ -61,7 +61,9 @@ function Nav() {
     }
   }, [isAuthenticated]);
 
-  if (isLoadingInvitedNotification) return <LoadingSpinner />;
+  if (isLoadingInvitedNotification) 
+  return   <nav className="bg-white w-full sticky z-20 top-0 start-0 border-b border-gray-200">
+    <LoadingSpinner/></nav>;
 
 
   return (

@@ -7,6 +7,7 @@ import { useAiData } from "../../hook/ai/useAiData";
 import { useSearchFilters } from "../../hook/useSearchFilter";
 import { SearchOutlined } from "@mui/icons-material";
 import { AIDataType } from "../../types/Ai";
+import { getImageUrl } from "../../function/util";
 
 function AdminAi() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
@@ -101,7 +102,7 @@ function AdminAi() {
                     name={data.name}
                     aiDesc={data.description}
                     tags={data.ai_tag}
-                    img={data.imagePath}
+                    img={getImageUrl(data.imagePath)}
                     type={data.ai_type}
                   />
                 ))}

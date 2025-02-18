@@ -78,14 +78,12 @@ const AddAiPage: React.FC = () => {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-          console.log("Response from API:", jsonData);
           // Update predictResult state
           const updatedPredictResult = {
             response_keys: responseKeys,
             prediction: jsonData,
           };
           setPredictResult(updatedPredictResult);
-          console.log("PredictResult updated:", updatedPredictResult);
           // Set image preview URL
           setCustomedImageUrl(URL.createObjectURL(file));
 
@@ -122,10 +120,8 @@ const AddAiPage: React.FC = () => {
           };
 
           const extractedKeys = extractKeys(jsonData);
-          console.log("Extracted keys:", extractedKeys);
           setSelectOptions(extractedKeys);
         } else {
-          console.log("Response is not JSON");
         }
       } catch (error) {
         console.error("Error uploading file:", error);
@@ -217,7 +213,6 @@ const AddAiPage: React.FC = () => {
         throw new Error(errorData.message || "Something went wrong!");
       }
       const data = await response.json();
-      console.log("Success:", data);
       navigate("/admin/admin-ai");
     } catch (error) {
       console.error("Error:", error);

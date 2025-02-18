@@ -79,7 +79,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
             const color =
               colorSet && colorSet.length > 0
                 ? colorSet[index % colorSet.length]
-                : "green";
+                : "00ff00";
 
             // สำหรับ fill style ให้ใช้สีที่มี alpha (0.2)
             const fillColor = hexToRgba(color, 0.2);
@@ -108,7 +108,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
           (detections as SegmentationDetection[]).forEach((detection, index) => {
             const { label, polygons } = detection;
           
-            const color = colorSet && colorSet.length > 0 ? colorSet[index % colorSet.length] : "green";
+            const color = colorSet && colorSet.length > 0 ? colorSet[index % colorSet.length] : "#00ff00";
             const fillColor = hexToRgba(color, 0.3);
           
             polygons.forEach((polygon: [number, number][]) => {

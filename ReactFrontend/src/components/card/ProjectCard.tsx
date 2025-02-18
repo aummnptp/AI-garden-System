@@ -1,6 +1,7 @@
 import React from 'react'
 import ProjectImage from './ProjectLetterImage';
 import { Card } from '@mui/material';
+import { getImageUrl } from '../../function/util';
 interface ProjectCardProps {
 
     name:string;
@@ -18,7 +19,7 @@ const ProjectCard :React.FC<ProjectCardProps> = (props) =>{
            <div className='mx-2 w-fit h-fit  flex items-center  '>
              <img
              className="m-2 w-[300px] h-[186px] rounded-[10px]  mx-auto border-2  justify-center object-cover"
-             src={`${import.meta.env.VITE_NEST_BACKEND_API_URL}${props.projectImage}`}
+             src={getImageUrl(props.projectImage)}
              alt={`${props.name} project`}
              />
               </div>

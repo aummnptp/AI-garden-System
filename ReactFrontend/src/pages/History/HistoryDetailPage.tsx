@@ -9,6 +9,7 @@ import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Note } from "../../types/History";
+import { getImageUrl } from "../../function/util";
 
 const HistoryDetailPage = () => {
   const {  projectId, historyId } = useParams<{
@@ -49,7 +50,7 @@ const HistoryDetailPage = () => {
 
             <div className="p-5">
               <AIDisPlayResultComponent
-                resultImage={historyDetail.filePath}
+                resultImage={getImageUrl(historyDetail.filePath)}
                 predictResult={historyDetail}
               />
             </div>
