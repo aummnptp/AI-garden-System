@@ -3,12 +3,13 @@ import Sidebar from "../../components/Sidebar";
 import { Button, Checkbox, } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
-import { changeProjectPermissionService, grantProjectPermission, revokeProjectPermission } from "../../api/services/ProjectService";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Member, ProjectPermission } from "../../types/User";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { useProjectAccessMutations } from "../../hook/projects/useProjectAccessMutations";
+import MiniFooter from "../../components/MiniFooter";
 
 
 const ProjectAccessManagePage = () => {
@@ -16,7 +17,7 @@ const ProjectAccessManagePage = () => {
     workspaceId: string;
     projectId: string;
   }>();
-  const queryClient = useQueryClient();
+
   const {
     workspaceDetail,
     isLoadingWorkspace,
@@ -32,55 +33,29 @@ const ProjectAccessManagePage = () => {
 
   } = useProjecteData();
 
-
+  const { changePermissionMutation, toggleMemberPermissionMutation } =
+  useProjectAccessMutations(workspaceId, projectId);
 
   
   const selectedMembers = new Set(
     projectPermissions?.map((perm:ProjectPermission) => perm.user.userId) ?? []
   );
 
-  
-  const changePermissionMutation = useMutation({
-    mutationFn: async (permission: boolean) => {
-      if (!workspaceId || !projectId) throw new Error("Workspace or Project ID is undefined.");
-      return changeProjectPermissionService(workspaceId, projectId, permission);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project-detail", workspaceId, projectId] });
-      queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
-    },
-    onError: (error) => {
-      console.error("Error updating project permission:", error);
-      alert("Failed to update access settings.");
-    },
-  });
 
-
-  const toggleMemberPermissionMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      if (!workspaceId || !projectId) throw new Error("Workspace or Project ID is undefined.");
-
-      if (selectedMembers.has(userId)) {
-        return revokeProjectPermission(workspaceId, projectId, userId);
-      } else {
-        return grantProjectPermission(workspaceId, projectId, userId);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
-    },
-    onError: (error) => {
-      console.error("Error updating member permissions:", error);
-      alert("Failed to update member permissions.");
-    },
-  });
 
   const handlePermissionChange = (permission: boolean) => {
-    changePermissionMutation.mutate(permission);
+    if (!workspaceId || !projectId) return;
+    changePermissionMutation.mutate({ workspaceId, projectId, permission });
   };
 
   const handleMemberCheckboxChange = (userId: string) => {
-    toggleMemberPermissionMutation.mutate(userId);
+    if (!workspaceId || !projectId) return;
+    toggleMemberPermissionMutation.mutate({
+      workspaceId,
+      projectId,
+      userId,
+      hasPermission: selectedMembers.has(userId),
+    });
   };
 
   if (isLoadingProjectDetail || isLoadingWorkspace || isLoadingPermissions || isLoadingMembers) {
@@ -197,20 +172,9 @@ const ProjectAccessManagePage = () => {
           </div>
         </div>
       </div>
-      <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
-        <Button
-          size="large"
-          variant="contained"
-          sx={{
-            backgroundColor: "#4f46e5",
-            "&:hover": { backgroundColor: "#3730a3" },
-          }}
-          style={{ marginRight: "0.5rem" }}
-          // onClick={handleSave}
-        >
-          Save
-        </Button>
-      </div>
+      {/* <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
+      <MiniFooter/>
+      </div> */}
     </div>
   );
 };

@@ -21,7 +21,6 @@ interface SubDocListProps {
   onSubDocsReorder: (newSubDocsOrder: SubDocs[]) => void;
   onReOrderMode: boolean;
   onSubDocToggleVisibility: (subDocId: string, currentHiddenState: boolean) => void;
-  patchSubDocsTitle: (subDocId: string, newTitle: string) => Promise<void>; 
 }
 
 const SubDocList: React.FC<SubDocListProps> = ({
@@ -33,7 +32,6 @@ const SubDocList: React.FC<SubDocListProps> = ({
   onSubDocsReorder,
   onReOrderMode,
   onSubDocToggleVisibility,
-  patchSubDocsTitle,
 }) => {
   const { isAdmin } = useAuth();
   const [subDocOptionModal, setSubDocOptionModal] = useState<{ [key: string]: HTMLElement | null }>({});
@@ -73,7 +71,7 @@ const SubDocList: React.FC<SubDocListProps> = ({
                       }}
                       ref={wrapperRef}
                       onBlur={() => {
-                        patchSubDocsTitle(subDoc.subDocsId, subDoc.title);
+                        // updateSubDocsTitleMutation.mutate({ subDocId: subDoc.subDocsId, newTitle: subDoc.title });
                         setRenameSubDocId(null);
                       }}
                     />

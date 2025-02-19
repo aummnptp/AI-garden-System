@@ -6,20 +6,6 @@ import ContentEditor from "../components/docs/ContentEditor";
 import { useParams } from "react-router-dom";
 import SaveContentModal from "../components/docs/modal/SaveContentModal";
 import DiscardContentModal from "../components/docs/modal/DiscardConentModal";
-import {
-  addSubtitleService,
-  addTitleService,
-  changeDocsVisiblityService,
-  changeSubDocsVisiblityService,
-  deleteSubTitleService,
-  deleteTitleService,
-  saveDocsOrderService,
-  saveSubDocsOrderService,
-  updateContentDocumentService,
-  updateContentSubDocumentService,
-  updateDocsTitleService,
-  updateSubDocsTitleService,
-} from "../api/services/DocsService";
 import { Docs, SubDocs } from "../types/Docs";
 import DeleteSubDocModal from "../components/docs/modal/DeleteSubDocModal";
 import DeleteDocModal from "../components/docs/modal/DeleteDocModal";
@@ -27,6 +13,8 @@ import SaveReorderModal from "../components/docs/modal/SaveReorderModal";
 import { useDocsData } from "../hook/docs/useDocsData";
 import WelcomeDocs from "../components/docs/WelcomeDocs";
 import SkeletonLayout from "../components/SkeletonPageLayout";
+import { useDocsMutations } from "../hook/docs/useDocsMutations";
+import { useUpdateContent } from "../hook/docs/useUpdateContentMutation";
 
 const DocsPage: React.FC = () => {
   const { docsId, subDocsId } = useParams<Record<string, string | undefined>>();
@@ -42,28 +30,44 @@ const DocsPage: React.FC = () => {
 
   // State สำหรับ Docs List
   const [docs, setDocs] = useState<Docs[]>([]);
+  const [initialDocs, setInitialDocs] = useState<Docs[]>([]);
   const [onReorderMode, setOnReorderMode] = useState<boolean>(false);
   const [reorderModalOpen, setReorderModalOpen] = useState<boolean>(false);
   const [headingOptionModal, setHeadingOptionModal] = useState<{
     [key: string]: HTMLElement | null;
   }>({});
   const [renameDocId, setRenameDocId] = useState<string | null>(null);
-
-  // State สำหรับ Modal confirm delete
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteSubModalOpen, setDeleteSubModalOpen] = useState<boolean>(false);
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
   const [selectedSubDocId, setSelectedSubDocId] = useState<string | null>(null);
+  const onCloseSaveModal = () => setSaveContentModal(false);
+  const onOpenSaveModal = () => setSaveContentModal(true);
+  const onCloseDiscardModal = () => setDiscardContentModal(false);
+  const onOpenDiscardModal = () => setDiscardContentModal(true);
+
 
   const {
     contentData,
     contentLoading,
-    refetchContent,
 
     docsData,
     docsLoading,
-    refetchDocs,
   } = useDocsData();
+
+  const {
+    addTitleMutation,
+    addSubTitleMutation,
+    deleteTitleMutation,
+    deleteSubTitleMutation,
+    updateDocsTitleMutation,
+    updateSubDocsTitleMutation,
+    saveOrderMutation,
+    toggleVisibilityMutation,
+    toggleSubDocVisibilityMutation,
+} = useDocsMutations();
+
+const updateContentMutation = useUpdateContent();
 
   useEffect(() => {
     if (contentData) {
@@ -86,36 +90,13 @@ const DocsPage: React.FC = () => {
     setShowTextEditor(true);
   };
 
-  const handleSave = async () => {
-    if (!editorValue.trim()) {
-      alert("กรุณากรอกเนื้อหาก่อนบันทึก");
-      return;
-    }
-    try {
-      if (subDocsId) {
-        await updateContentSubDocumentService(subDocsId, editorValue);
-      } else if (docsId) {
-        await updateContentDocumentService(docsId, editorValue);
-      }
-      setCurrentPageData(editorValue);
-      setShowTextEditor(false);
-      refetchContent()
-    } catch (error) {
-      console.error("Error saving content", error);
-    } finally {
-      setSaveContentModal(false);
-    }
-  };
 
   const handleDiscard = () => {
     setShowTextEditor(false);
     setDiscardContentModal(false);
   };
 
-  const onCloseSaveModal = () => setSaveContentModal(false);
-  const onOpenSaveModal = () => setSaveContentModal(true);
-  const onCloseDiscardModal = () => setDiscardContentModal(false);
-  const onOpenDiscardModal = () => setDiscardContentModal(true);
+
 
   const handleClickMenu = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -130,60 +111,36 @@ const DocsPage: React.FC = () => {
   const handleCloseMenu = (docId: string) => {
     setHeadingOptionModal((prev) => ({ ...prev, [docId]: null }));
   };
+  
 
-  const handleDocsTitleUpdate = async (docId: string, newTitle: string) => {
-    try {
-      await updateDocsTitleService(docId, newTitle);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to update document title:", error);
-    }
+  const handleSaveContent = () => {
+    updateContentMutation.mutate({
+      docsId,
+      subDocsId,
+      editorValue,
+      onSuccessCallback: () => {
+        setCurrentPageData(editorValue);
+        setShowTextEditor(false);
+      },
+    });
+
+    setSaveContentModal(false);
   };
 
-  const handleTitleAdd = async () => {
-    try {
-      await addTitleService();
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to add title:", error);
-    }
+  const handleTitleAdd = () => {
+    addTitleMutation.mutate();
   };
 
-  const handleSubTitleAdd = async (docId: string) => {
-    try {
-      await addSubtitleService(docId);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to add subtitle:", error);
-    }
+  const handleSubTitleAdd = (docId: string) => {
+    addSubTitleMutation.mutate(docId);
   };
 
-  const handleDeleteDoc = async (docId: string) => {
-    try {
-      await deleteTitleService(docId);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to delete document:", error);
-    }
+  const handleDeleteDoc = (docId: string) => {
+    deleteTitleMutation.mutate(docId);
   };
 
-  const handleDeleteSubDoc = async (subDocId: string) => {
-    try {
-      await deleteSubTitleService(subDocId);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to delete sub-document:", error);
-    }
-  };
-
-  const onchangeDocTitle = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-      docId: string
-    ) => {
-    const newTitle = e.target.value;
-    setDocs((prevDocs) =>
-      prevDocs.map((d) => (d.docsId === docId ? { ...d, title: newTitle } : d))
-    );
+  const handleDeleteSubDoc = (subDocId: string) => {
+    deleteSubTitleMutation.mutate(subDocId);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent, docId: string) => {
@@ -191,42 +148,53 @@ const DocsPage: React.FC = () => {
       setRenameDocId(null);
       const doc = docs.find((d) => d.docsId === docId);
       if (doc) {
-        handleDocsTitleUpdate(docId, doc.title);
+        updateDocsTitleMutation.mutate({ docId, newTitle: doc.title });
       }
     }
   };
+
+  const onchangeDocTitle = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    docId: string
+  ) => {
+    const newTitle = e.target.value;
+    setDocs((prevDocs) =>
+      prevDocs.map((d) => (d.docsId === docId ? { ...d, title: newTitle } : d))
+    );
+  };
+
   
   const onChangeSubTitle = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     docId: string,
     subDocId: string,
     isEnterKey: boolean = false
-  ) => {
+) => {
     const newTitle = e.target.value;
     setDocs((prevDocs) =>
-      prevDocs.map((d) => {
-        if (d.docsId === docId) {
-          const updatedSubs = d.subDocuments.map((sub) =>
-            sub.subDocsId === subDocId ? { ...sub, title: newTitle } : sub
-          );
-          return { ...d, subDocuments: updatedSubs };
-        }
-        return d;
-      })
+        prevDocs.map((d) => {
+            if (d.docsId === docId) {
+                const updatedSubs = d.subDocuments.map((sub) =>
+                    sub.subDocsId === subDocId ? { ...sub, title: newTitle } : sub
+                );
+                return { ...d, subDocuments: updatedSubs };
+            }
+            return d;
+        })
     );
     if (isEnterKey) {
-      patchSubDocsTitle(subDocId, newTitle);
+        updateSubDocsTitleMutation.mutate({ subDocId, newTitle });
     }
-  };
+};
+const handleEnterReorderMode = () => {
+  setInitialDocs([...docs]); // เก็บลำดับเดิมไว้ใน initialDocs
+  setOnReorderMode(true);
+};
 
-  const patchSubDocsTitle = async (subDocId: string, newTitle: string) => {
-    try {
-      await updateSubDocsTitleService(subDocId, newTitle);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to update sub-document title:", error);
-    }
-  };
+const handleCancelReorder = () => {
+  setDocs(initialDocs); // คืนค่าลำดับกลับไปเป็นค่าเดิม
+  setOnReorderMode(false);
+};
 
   const onReorder = (newDocsOrder: Docs[]) => {
     setDocs(newDocsOrder);
@@ -240,51 +208,30 @@ const DocsPage: React.FC = () => {
     );
   };
 
-  const handleSaveReorder = async () => {
-    try {
-      const docsToSave = docs.map((d, index) => ({
+  const handleSaveReorder = () => {
+    const docsToSave = docs.map((d, index) => ({
+      docsId: d.docsId,
+      order: index + 1,
+    }));
+    const subDocsToSave = docs.flatMap((d) =>
+      d.subDocuments.map((sub, index) => ({
         docsId: d.docsId,
+        subDocsId: sub.subDocsId,
         order: index + 1,
-      }));
-      const subDocsToSave = docs.flatMap((d) =>
-        d.subDocuments.map((sub, index) => ({
-          docsId: d.docsId,
-          subDocsId: sub.subDocsId,
-          order: index + 1,
-        }))
-      );
-      await saveDocsOrderService(docsToSave);
-      await saveSubDocsOrderService(subDocsToSave);
-      refetchDocs();
-      console.log("Order saved successfully for docs and sub-docs");
-    } catch (error) {
-      console.error("Failed to save reorder:", error);
-    }
+      }))
+    );
+    saveOrderMutation.mutate({ docsToSave, subDocsToSave });
     setReorderModalOpen(false);
+    setOnReorderMode(false);
   };
 
-  const handleDocsToggleVisibility = async (
-    docId: string,
-    currentHiddenState: boolean
-  ) => {
-    try {
-      await changeDocsVisiblityService(docId, !currentHiddenState);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to toggle document visibility:", error);
-    }
+
+  const handleDocsToggleVisibility = (docId: string, currentHiddenState: boolean) => {
+    toggleVisibilityMutation.mutate({ docId, newState: !currentHiddenState });
   };
 
-  const handleSubDocsToggleVisibility = async (
-    subDocId: string,
-    currentHiddenState: boolean
-  ) => {
-    try {
-      await changeSubDocsVisiblityService(subDocId, !currentHiddenState);
-      refetchDocs();
-    } catch (error) {
-      console.error("Failed to toggle sub-document visibility:", error);
-    }
+  const handleSubDocsToggleVisibility = (subDocId: string, currentHiddenState: boolean) => {
+    toggleSubDocVisibilityMutation.mutate({ subDocId, newState: !currentHiddenState });
   };
 
   const handleHeadingDelete = () => {
@@ -353,7 +300,7 @@ const DocsPage: React.FC = () => {
         headingOptionModal={headingOptionModal}
         renameDocId={renameDocId}
         setRenameDocId={setRenameDocId}
-        onchangeDocTitle={onchangeDocTitle}
+        onchangeDocTitle={onchangeDocTitle} 
         onInputKeyDown={handleInputKeyDown}
         // เมื่อกด delete จะเปิด modal confirm delete
         onDeleteDoc={(docId: string) => {
@@ -370,12 +317,12 @@ const DocsPage: React.FC = () => {
         onReorderSubDocs={onSubDocsReorder}
         onSubDocsToggleVisibility={handleSubDocsToggleVisibility}
         onReorderMode={onReorderMode}
-        onSetReorderMode={setOnReorderMode}
+        onSetReorderMode={handleEnterReorderMode} // เริ่มโหมด Reorder
         onReorderDocs={onReorder}
         onSaveReorder={() => setReorderModalOpen(true)}
-        handleDocsTitleUpdate={handleDocsTitleUpdate}
-        patchSubDocsTitle={patchSubDocsTitle}
-      />
+        onCancelReorder={handleCancelReorder} // ยกเลิกการ Reorder
+
+        />
 
       {/* Content Container */}
       <div className="w-[80%] ml-auto px-2 flex flex-col items-center pb-32 h-full min-h-screen bg-white">
@@ -389,7 +336,7 @@ const DocsPage: React.FC = () => {
       <SaveContentModal
         open={saveContentModal}
         onClose={onCloseSaveModal}
-        onSave={handleSave}
+        onSave={handleSaveContent}
       />
       <ContentEditor
         value={editorValue}

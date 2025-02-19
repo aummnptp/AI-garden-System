@@ -16,13 +16,11 @@ import {
 } from "@mui/material";
 import Select from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
-import { cancelPendingInvite, changeMemberRole, pendingInviteMember, removeMember } from "../../api/services/MemberService";
 import { memberData } from "../../types/Invitation";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import { Member, PendingUserData } from "../../types/User";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { useWorkspaceInvitationMutation } from "../../hook/workspaces/useWorkspaceInvitationMutation";
 
 interface userData {
   id: number;
@@ -36,8 +34,30 @@ const WorkspaceInvitationPage = () => {
   const { workspaceId } = useParams<{ workspaceId?: string, projectId?: string }>();
   const [selectedUsers, setSelectedUsers] = useState<userData[]>([]);
   const [removeMembeIndex, setRemoveMembeIndex] = useState<number | null>(null);
-  const queryClient = useQueryClient();
 
+  const {
+    inviteLink,
+    isLoadingInviteLink,
+  
+    workspaceDetail,
+    isLoadingWorkspace,
+    
+    userDatas,
+    isLoadingAvailableUsers,
+    pendingUserDatas,
+    isLoadingPendingUsers,
+  
+    memberDatas,
+    isLoadingMembers,
+  
+  } = useWorkspaceData();
+  
+  const {
+    inviteMembers,
+    removeMember,
+    cancelPending,
+    changeRole,
+  } = useWorkspaceInvitationMutation();
   const handleOpenRemoveMemberDialog = (index: number) => {
     setRemoveMembeIndex(index); 
   };
@@ -45,7 +65,6 @@ const WorkspaceInvitationPage = () => {
   const handleCloseRemoveMemberDialog= () => {
     setRemoveMembeIndex(null);  
   };
-
  
   const qrRef = useRef<HTMLCanvasElement | null>(null);
   const handleDownloadQRCode = () => {
@@ -72,108 +91,35 @@ const WorkspaceInvitationPage = () => {
       });
   };
 
-  const inviteMutation = useMutation({
-    mutationFn: async () => {
-      if (!workspaceId) throw new Error("Workspace ID is undefined.");
-      return pendingInviteMember(workspaceId, selectedUsers);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["available-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["pending-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
-
-      setSelectedUsers([]);
-    },
-    onError: (error) => {
-      console.error("Error inviting members:", error);
-    },
-  });
-
-
-  const removeMemberMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      if (!workspaceId) throw new Error("Workspace ID is undefined.");
-      return removeMember(workspaceId, userId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["available-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["pending-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
-      
-    },
-    onError: (error) => {
-      console.error("Error removing member:", error);
-    },
-  });
-
-  const cancelPendingMutation = useMutation({
-    mutationFn: async (inviteId: string) => {
-      if (!workspaceId) throw new Error("Workspace ID is undefined.");
-      return cancelPendingInvite(workspaceId, inviteId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["available-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["pending-user", workspaceId] });
-      queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
-    },
-    onError: (error) => {
-      console.error("Error canceling invite:", error);
-    },
-  });
-
-  const changeRoleMutation = useMutation({
-    mutationFn: async ({ memberId, newRole }: { memberId: string; newRole: string }) => {
-      if (!workspaceId) throw new Error("Workspace ID is undefined.");
-      return changeMemberRole(workspaceId, memberId, newRole);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
-    },
-    onError: (error) => {
-      console.error("Error changing member role:", error);
-    },
-  });
-
-
   const handleInviteButton = () => {
-    inviteMutation.mutate();
+    if (workspaceId) {
+      inviteMembers({
+        workspaceId,
+        selectedUsers,
+        onSuccessCallback: () => setSelectedUsers([]),
+      });
+    }
   };
 
   const handleRemoveMember = (userId: string) => {
-    removeMemberMutation.mutate(userId);
+    if (workspaceId) {
+      removeMember({ workspaceId, userId });
+    }
   };
 
   const handleCancelPending = (inviteId: string) => {
-    cancelPendingMutation.mutate(inviteId);
+    if (workspaceId) {
+      cancelPending({ workspaceId, inviteId });
+    }
   };
 
   const handleChangeRole = (memberId: string, newRole: string) => {
-    changeRoleMutation.mutate({ memberId, newRole });
+    if (workspaceId) {
+      changeRole({ workspaceId, memberId, newRole });
+    }
   };
 
-
-
-
-const {
-  inviteLink,
-  isLoadingInviteLink,
-
-  workspaceDetail,
-  isLoadingWorkspace,
-  
-  userDatas,
-  isLoadingAvailableUsers,
-  pendingUserDatas,
-  isLoadingPendingUsers,
-
-  memberDatas,
-  isLoadingMembers,
-
-
-} = useWorkspaceData();
-
 if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoadingPendingUsers||isLoadingMembers) return <SkeletonLayout />;
-
 
   return (
     <>

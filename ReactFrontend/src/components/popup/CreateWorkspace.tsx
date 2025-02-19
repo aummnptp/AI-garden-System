@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCreateWorkspaceMutation } from '../../hook/workspaces/useCreateWorkspaceMutation';
 
 interface CreateWorkspaceProps {
   showModal: boolean;
@@ -13,32 +12,21 @@ interface CreateWorkspaceProps {
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal }) => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const queryClient = useQueryClient();
-
-  const createWorkspaceMutation = useMutation({
-    mutationFn: async () => {
-      return axios.post(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
-        { name, description },
-        { withCredentials: true }
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-workspace"] }); 
-      setName("");
-      setDescription("");
-      setShowModal(false); // ปิด Dialog
-    },
-    onError: (error) => {
-      console.error("Error creating workspace:", error);
-    },
-  });
+  const { mutate: createWorkspace } = useCreateWorkspaceMutation();
+ 
 
 
   const handleSubmit = () => {
-    createWorkspaceMutation.mutate();
+    createWorkspace({
+      name,
+      description,
+      onSuccessCallback: () => {
+        setName("");
+        setDescription("");
+        setShowModal(false);
+      },
+    });
   };
-
   return (
     <Dialog
       open={showModal}

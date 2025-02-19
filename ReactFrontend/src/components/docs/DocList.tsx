@@ -19,6 +19,7 @@ import {
 import { Docs, SubDocs } from "../../types/Docs";
 import { useAuth } from "../../context/AuthContext";
 
+
 interface DocListProps {
   docs: Docs[];
   onTitleAdd: () => void;
@@ -51,11 +52,10 @@ interface DocListProps {
     currentHiddenState: boolean
   ) => void;
   onReorderMode: boolean;
-  onSetReorderMode: (mode: boolean) => void;
+  onSetReorderMode: () => void;
   onReorderDocs: (newDocsOrder: Docs[]) => void;
   onSaveReorder: () => void;
-  handleDocsTitleUpdate: (docId: string, newTitle: string) => Promise<void>;
-  patchSubDocsTitle: (subDocId: string, newTitle: string) => Promise<void>;
+  onCancelReorder: () => void;
 }
 
 const DocList: React.FC<DocListProps> = ({
@@ -79,8 +79,8 @@ const DocList: React.FC<DocListProps> = ({
   onSetReorderMode,
   onReorderDocs,
   onSaveReorder,
-  handleDocsTitleUpdate,
-  patchSubDocsTitle,
+  onCancelReorder,
+  
 }) => {
   const { isAdmin } = useAuth();
   return (
@@ -108,7 +108,7 @@ const DocList: React.FC<DocListProps> = ({
             style={{ cursor: "pointer", minWidth: "auto", padding: "4px 8px" }}
             sx={{ color: "#4f46e5" }}
             onClick={() => {
-              onSetReorderMode(!onReorderMode);
+              onSetReorderMode()
             }}
           >
             <SwapVertOutlined /> {onReorderMode ? "Sorting" : "Sort"}
@@ -117,20 +117,26 @@ const DocList: React.FC<DocListProps> = ({
       </div>
       <div className="w-[95%] border border-zinc-300 mx-auto my-2 mb-4" />
       {onReorderMode && (
-        <div className="flex justify-end">
-          <Button
+    <div className="flex justify-end gap-2">
+        <Button
+            variant="outlined"
+            size="small"
+            sx={{ color: "#4f46e5", borderColor: "#4f46e5" }}
+            onClick={onCancelReorder}
+        >
+            Cancel
+        </Button>
+
+        <Button
             variant="contained"
             size="small"
-            sx={{
-              backgroundColor: "#4f46e5",
-              "&:hover": { backgroundColor: "#3730a3" },
-            }}
+            sx={{ backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
             onClick={onSaveReorder}
-          >
+        >
             <SaveOutlined /> Save Reorder
-          </Button>
-        </div>
-      )}
+        </Button>
+    </div>
+)}
       <Reorder.Group
         axis="y"
         values={docs}
@@ -163,7 +169,6 @@ const DocList: React.FC<DocListProps> = ({
                       onKeyDown={(e) => onInputKeyDown(e, doc.docsId)}
                       onBlur={() => {
                         setRenameDocId(null);
-                        handleDocsTitleUpdate(doc.docsId, doc.title);
                       }}
                     />
                   </div>
@@ -254,9 +259,7 @@ const DocList: React.FC<DocListProps> = ({
                   onReorderSubDocs(doc.docsId, newOrder)
                 }
                 onReOrderMode={onReorderMode}
-                onSubDocToggleVisibility={onSubDocsToggleVisibility}
-                patchSubDocsTitle={patchSubDocsTitle}
-              />
+                onSubDocToggleVisibility={onSubDocsToggleVisibility}              />
             </div>
           );
         })}

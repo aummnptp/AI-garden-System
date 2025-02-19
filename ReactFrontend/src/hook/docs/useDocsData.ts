@@ -13,11 +13,10 @@ export const useDocsData = () => {
         isError: contentError,
         refetch: refetchContent,
     } = useQuery({
-        queryKey: subDocsId ? [`content-subdocs-${subDocsId}`] : [`content-docs-${docsId}`],
+        queryKey: ["content", docsId, subDocsId],
         queryFn: () => fetchContentData(docsId, subDocsId),
         enabled: !!docsId || !!subDocsId,
     });
-
 
     const {
         data: docsData,

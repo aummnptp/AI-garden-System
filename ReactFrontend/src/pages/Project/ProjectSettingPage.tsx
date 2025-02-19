@@ -14,16 +14,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProjectImageInput from "../../components/input/ProjectImageInput";
 import { Close } from "@mui/icons-material";
 
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteProjectService, updateProjectService } from "../../api/services/ProjectService";
-import toast from "react-hot-toast";
+import { useProjectMutations } from "../../hook/projects/useProjectMutations";
 
 const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
@@ -33,12 +31,13 @@ const ProjectSetting = () => {
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); 
   const [image, setImage] = useState<File | null>(null);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
   const { workspaceDetail, isLoadingWorkspace, } =
     useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail, } =
     useProjecteData();
+
+const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(workspaceId, projectId);
 
   useEffect(() => {
     if (projectDetail) {
@@ -67,54 +66,23 @@ const ProjectSetting = () => {
     e.preventDefault();
   };
 
-  // ฟังก์ชันจัดการการคลิกปุ่มบันทึก
-  const updateProjectMutation = useMutation({
-    mutationFn: async () => {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("input_type", inputType);
-      if (image) {
-        formData.append("file", image);
-      }
-
-      return updateProjectService({ workspaceId: workspaceId!, projectId: projectId!, formData });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project-detail", workspaceId, projectId] });
-      queryClient.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      toast.success("Project updated successfully!");
-      navigate(`/workspaces/${workspaceId}/project-list`);
-    },
-    onError: (error) => {
-      console.error("Error updating project:", error);
-      toast.error("Failed to update project.");
-    },
-  });
-
-  const deleteProjectMutation = useMutation({
-    mutationFn: async () => {
-      return deleteProjectService({ workspaceId: workspaceId!, projectId: projectId! });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects", workspaceId!] });
-      toast.success("Project deleted successfully!");
-      navigate(`/workspaces/${workspaceId}/project-list`);
-    },
-    onError: (error) => {
-      console.error("Error deleting project:", error);
-      toast.error("Failed to delete project.");
-    },
-  });
-
-  
-
   const handleSave = () => {
-    updateProjectMutation.mutate();
+    if (!workspaceId || !projectId) return;
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("input_type", inputType);
+    if (image) {
+      formData.append("file", image);
+    }
+
+    updateProjectMutation.mutate({ workspaceId, projectId, formData });
   };
 
   const handleDelete = () => {
-    deleteProjectMutation.mutate();
+    if (!workspaceId || !projectId) return;
+    deleteProjectMutation.mutate({ workspaceId, projectId });
   };
 
   const handleModalDelete = () => {
