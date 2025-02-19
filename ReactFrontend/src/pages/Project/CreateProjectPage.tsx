@@ -11,6 +11,7 @@ import { AIDataType } from '../../types/Ai';
 import { useAuth } from "../../context/AuthContext"; // นำเข้า useAuth
 import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
+import { getImageUrl } from '../../function/util';
 const { TextArea } = Input;
 
 
@@ -307,7 +308,7 @@ function CreateProjectPage() {
                       aiDesc={data.description}
                       tags={data.ai_tag}
                       // img={`/images/ai/healthAi.webp`}
-                      img={data.imagePath}
+                      img={getImageUrl(data.imagePath)}
                       type={data.ai_type}
                       isSelected={data.aiId === selectedCardId} // เช็คว่าการ์ดถูกเลือกหรือไม่
                       onSelect={() => handleSelectCard(data.aiId)} // ส่งฟังก์ชัน onClick
@@ -320,8 +321,8 @@ function CreateProjectPage() {
                 <img
                   className="w-full h-48 object-cover"
                   src={
-                    selectedAI.imagePath ||
-                    "/images/ai/healthAi.webp"
+                    getImageUrl(selectedAI.imagePath ||
+                    "/images/ai/healthAi.webp")
                   } // แสดงรูปจาก selectedAI หรือรูป default
                   alt={selectedAI.name}
                 />

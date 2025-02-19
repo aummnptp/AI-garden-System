@@ -8,8 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TrophyFilled } from '@ant-design/icons';
-import { formatDate, formatTime } from '../../function/util';
+import { formatDate, formatTime, getImageUrl } from '../../function/util';
 import { useParams } from 'react-router-dom';
+import { Avatar } from '@mui/material';
 
 export interface RankingData {
   userId: string;
@@ -59,7 +60,13 @@ export default function SubmitRankTable() {
   useEffect(() => {
     const fetchRankingData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`);
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (response.ok) {
           const data: RankingData[] = await response.json();
           setRankingData(data);
@@ -76,7 +83,13 @@ export default function SubmitRankTable() {
   useEffect(() => {
     const fetchUploadHistory = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/all-history/${projectId}`);
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/all-history/${projectId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           const mappedData: UploadHistory[] = data.map((item: any) => ({
@@ -99,7 +112,13 @@ export default function SubmitRankTable() {
   useEffect(() => {
     const fetchProjectDetail = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`);
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (response.ok) {
           const detail = await response.json();
           setInputType(detail.input_type);
@@ -137,20 +156,28 @@ export default function SubmitRankTable() {
               {rankingData.map((row, index) => (
                 <StyledTableRow key={row.userId}>
                   <StyledTableCell sx={{ textAlign: "center", fontSize: "1rem", fontFamily: "inherit" }}>
-                    <span className={`text-3xl font-bold ${index < 3 ? "text-indigo-600" : ""}`}>
+                  {index < 3 && (
+                      <TrophyFilled
+                        style={{
+                          fontSize: "1.525rem",
+                          color: index === 0 ? "#FFD700" : index === 1 ? "#C0C0C0" : "#CD7F32",
+                        }}
+                      />
+                    )}
+                    <span className={`text-3xl font-bold ${index < 3 ? "text-indigo-600" : "text-indigo-600"}`}>
                       {index + 1}
                     </span>
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontSize: "1rem", fontFamily: "inherit" }}>
                     <div className="flex items-center w-fit">
-                      <img className="w-10 h-10 rounded-full border-2" src={row.picture} alt="Avatar" />
+                      <Avatar className="w-10 h-10 rounded-full border-2" src={row.picture} alt="Avatar" />
                       <div className="ml-2">
                         <p className="text-indigo-900 text-lg font-medium">{row.name}</p>
                       </div>
                     </div>
                   </StyledTableCell>
                   <StyledTableCell sx={{ textAlign: "center", fontSize: "1rem", fontFamily: "inherit" }}>
-                    <p className="text-black text-xl font-medium">{row.submitNumber}</p>
+                    <p className="text-indigo-600 text-xl font-medium">{row.submitNumber}</p>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -169,7 +196,7 @@ export default function SubmitRankTable() {
         {uploadHistory.map((data) => (
           <div key={data.createdAt} className="mb-4 border-b pb-4">
             <div className="flex items-center mb-2">
-              <img className="w-10 h-10 rounded-full border-2" src={data.userPicture} alt={data.userName} />
+              <Avatar className="w-10 h-10 rounded-full border-2" src={data.userPicture} alt={data.userName} />
               <div className="ml-3">
                 <p className="text-indigo-900 text-lg font-medium">{data.userName}</p>
                 <p className="text-gray-600 text-sm">
@@ -180,7 +207,7 @@ export default function SubmitRankTable() {
             {inputType === "วิดีโอ" ? (
               <video className="w-28 h-28 border-2 object-cover rounded-md" src={data.filePath} controls />
             ) : (
-              <img className="w-28 h-28 border-2 object-cover rounded-md" src={data.filePath} alt={data.userName} loading="lazy" />
+              <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(data.filePath)} alt={data.userName} loading="lazy" />
             )}
           </div>
         ))}

@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { Desk, PsychologyOutlined } from '@mui/icons-material';
 import axios from "axios";
+import { getImageUrl } from '../../function/util';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

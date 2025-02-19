@@ -12,6 +12,7 @@ import axios from 'axios';
 
 
 import { styled } from '@mui/material/styles';
+import { getImageUrl } from '../../function/util';
 
 
 
@@ -42,7 +43,7 @@ interface Data {
   aiId: string;
   name: string;
   ai: string;
-  ai_image: string;
+  imagePath: string;
   email: string;
   date: Date;
   ai_type: string;
@@ -180,7 +181,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
                 <div className="flex items-center my-2 w-fit ml-32">
                   <img
                     className="w-14 h-14 rounded-[10px] border-2"
-                    src={row.ai_image}
+                    src={getImageUrl(row.imagePath)}
                   />
                   <div className="ml-2">
                     <p className="text-black text-lg font-medium">{row.name}</p>
