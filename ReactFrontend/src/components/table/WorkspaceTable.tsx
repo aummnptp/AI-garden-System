@@ -6,7 +6,7 @@ import {
   InputLabel, Select, MenuItem, SelectChangeEvent
 } from "@mui/material";
 import { CameraOutlined, PlaySquareOutlined } from "@ant-design/icons";
-import { formatDate } from '../../function/util';
+import { formatDate, getImageUrl } from '../../function/util';
 import { formatTime } from '../../function/util';
 import ProjectImage from '../../components/card/ProjectLetterImage';
 
@@ -204,7 +204,7 @@ const Workspacetable: React.FC = () => {
                       {row.project.imagePath && row.project.imagePath.trim() !== "" ? (
                         <Avatar
                           variant="square"
-                          src={row.project.imagePath}
+                          src={getImageUrl(row.project.imagePath)}
                           sx={{ width: 100, height: 100, borderRadius: "10px" }}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = "/images/default-image.png"; 

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
-import { formatDate } from '../../function/util';
+import { formatDate, getImageUrl } from '../../function/util';
 import { formatTime } from '../../function/util';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -206,7 +206,7 @@ const SortableTable: React.FC = () => {
                                         <div className="flex items-center my-2 w-fit">
                                             <img
                                                 className="w-14 h-14 rounded-[10px] border-2"
-                                                src={row.aiModel.imagePath || "/images/default-ai.png"}
+                                                src={getImageUrl(row.aiModel.imagePath || "/images/default-ai.png")}
                                                 alt={row.aiModel.name || "AI Model"}
                                             />
                                             <div className="ml-2">

@@ -9,6 +9,7 @@ import AddAIDialog from '../../components/AddAIDialog';
 import { Workspace } from '../../types/Workspace';
 import { Button } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
+import { getImageUrl } from '../../function/util';
 
 const UserDetailPage = () => {
   const { userId } = useParams();

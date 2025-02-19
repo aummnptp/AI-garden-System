@@ -38,7 +38,7 @@ function WorkspaceList() {
         error: errorMyWorkspace,
     } = useFetchQuery(
         ["my-workspace",],
-        `/workspaces/my-workspaces`
+        `/workspaces/all`
     );
     if (isLoadingMyWorkspace) return <div>Loading...</div>;
     // ตรวจสอบข้อผิดพลาด

@@ -13,6 +13,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { DialogContentText, Grid } from '@mui/material';
 import axios from 'axios';
+import { getImageUrl } from '../function/util';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -252,7 +253,7 @@ export default function AddAIDialog() {
                   <Grid item xs={6} sm={4} md={3} key={ai.aiId}>
                     <div className="relative bg-gray-100 rounded-lg p-4 text-center shadow-md">
                       <img
-                        src={ai.imagePath || "placeholder.png"}
+                        src={getImageUrl(ai.imagePath || "placeholder.png")}
                         alt="AI Example"
                         className="rounded-md mb-2"
                         style={{
