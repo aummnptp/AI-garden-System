@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import AISettingDialog from './AISettingDialog';
-import { updateAISettingService } from '../../api/services/AiSettingService';
+
 import { SettingFilled } from '@ant-design/icons';
 import { useAiData } from '../../hook/ai/useAiData';
 import LoadingSpinner from '../LoadingSpinner';
+import { useUpdateAISettingsMutation } from '../../hook/ai/useUpdateAISettingsMutation';
 
 const AISettingsComponent: React.FC = () => {
   const {
     aiSettingData,
     isLoadingAiSetting,
-
-    refetchAiSetting,
   } = useAiData();
 
   const initialLimit = aiSettingData ? aiSettingData.maxUsagePerDay : 10;
@@ -19,25 +18,18 @@ const AISettingsComponent: React.FC = () => {
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
+  const { mutate: updateAISettings } = useUpdateAISettingsMutation();
+
   const handleOpenDialog = () => setDialogOpen(true);
   const handleCloseDialog = () => setDialogOpen(false);
 
-  const handleSaveSettings = async (newLimit: number, newIsLimitEnabled: boolean) => {
-    console.log("handleSaveSettings - newLimit:", newLimit, "newIsLimitEnabled:", newIsLimitEnabled);
-    try {
-      const updatedSettings = await updateAISettingService(newLimit, newIsLimitEnabled);
-      console.log('Settings updated:', updatedSettings);
-      refetchAiSetting();
-    } catch (error) {
-      console.error('Error updating settings:', error);
-      alert("Error updating settings");
-    } finally {
-      setDialogOpen(false);
-    }
+  const handleSaveSettings = (newLimit: number, newIsLimitEnabled: boolean) => {
+    updateAISettings({ newLimit, newIsLimitEnabled });
+    setDialogOpen(false);
   };
 
-  if (isLoadingAiSetting) return <LoadingSpinner/>;
 
+  if (isLoadingAiSetting) return <LoadingSpinner/>;
 
   return (
     <>

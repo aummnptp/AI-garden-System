@@ -78,13 +78,13 @@ const SubDocList: React.FC<SubDocListProps> = ({
                   </div>
                 ) : onReOrderMode ? (
                   <Reorder.Item key={subDoc.subDocsId} value={subDoc}>
-                    <span className="py-1 flex w-full text-gray-500 justify-between cursor-pointer hover:text-blue-600">
+                    <span className="py-1 flex w-full text-gray-500 font-medium justify-between cursor-pointer hover:text-blue-600">
                       {subDoc.title}
                     </span>
                   </Reorder.Item>
                 ) : (
                   <Link to={`/docs/${docsId}/${subDoc.subDocsId}`}>
-                    <span className="py-1 flex w-full text-gray-500 justify-between cursor-pointer hover:text-blue-600">
+                    <span className="py-1 flex w-full text-gray-500 font-medium justify-between cursor-pointer hover:text-blue-600">
                       {subDoc.title}
                     </span>
                   </Link>

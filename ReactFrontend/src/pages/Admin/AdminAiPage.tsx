@@ -8,6 +8,7 @@ import { useSearchFilters } from "../../hook/useSearchFilter";
 import { SearchOutlined } from "@mui/icons-material";
 import { AIDataType } from "../../types/Ai";
 import { getImageUrl } from "../../function/util";
+import AISettingsComponent from "../../components/ai/AISettingsComponent";
 
 function AdminAi() {
   const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
@@ -18,16 +19,15 @@ function AdminAi() {
   return (
     <>
       <div className="flex bg-neutral-100 h-full pb-32  min-h-screen ">
-        {/* Slidebar placeholder */}
         <AdminSidebar></AdminSidebar>
 
         {/* Main content */}
         <div className=" w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32  h-full min-h-screen">
           {/* Top card (create sort workspace name) */}
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
-            <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                รายชื่อ AI
+          <div className="flex justify-between items-center p-5">
+          <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
+            รายชื่อ AI
               </h1>
 
               <Link to="/admin/createai">
@@ -36,7 +36,7 @@ function AdminAi() {
                   sx={{
                     backgroundColor: "#4f46e5",
                     "&:hover": {
-                      backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                      backgroundColor: "#3730a3", 
                     },
                   }}
                 >
@@ -45,7 +45,7 @@ function AdminAi() {
               </Link>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
-            <div className="m-6 flex justify-between items-center gap-4 ">
+            <div className="m-6 flex flex-wrap items-center gap-4">
             <TextField
               fullWidth
               variant="outlined"
@@ -59,24 +59,27 @@ function AdminAi() {
                   </InputAdornment>
                 ),
               }}
-              className="w-1/2"
-            />
+              className="flex-1 min-w-[200px]"
+              />
                
                <Autocomplete
           options={AI_TYPES}
           value={typeFilter}
           onChange={(_, newValue) => setTypeFilter(newValue)}
         renderInput={(params) => <TextField {...params} label="ประเภท AI" variant="outlined" />}
-              className="w-1/4"
-          />
+        className="flex-1 min-w-[150px]"
+        />
            <Autocomplete
               multiple
               options={aiTags || []} 
               value={tagFilter}
               onChange={(_, newValue) => setTagFilter(newValue)}
               renderInput={(params) => <TextField {...params} label="Tag AI" variant="outlined" />}
-              className="w-1/4"
-            />
+              className="flex-1 min-w-[150px]"
+              />
+            <div className="flex-none">
+             <AISettingsComponent/>
+            </div>
             </div>
           </div>
 

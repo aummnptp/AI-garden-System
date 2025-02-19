@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDate, formatTime, getImageUrl } from "../function/util";
-import { useHistoryData } from "../hook/history/useHistoryData";
-import { deleteHistoryService } from "../api/services/HistoryService";
 import { IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import ConfirmDeleteModal from "./history/modal/ConfirmDeleteModal";
+import { useDeleteHistoryMutation } from "../hook/history/useDeleteHistoryMutation";
 
 interface HistoryUploadSectionProps {
   historyData: any[];
@@ -20,25 +19,20 @@ const HistoryUploadSection: React.FC<HistoryUploadSectionProps> = ({
   projectId,
   inputType,
 }) => {
-  const { refetchHistory } = useHistoryData(); // ใช้ refetch เพื่อโหลดข้อมูลใหม่
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+  const { mutate: deleteHistory } = useDeleteHistoryMutation();
 
   const handleDeleteClick = (historyId: string) => {
     setSelectedHistoryId(historyId);
     setOpenConfirmModal(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (selectedHistoryId) {
-      try {
-        await deleteHistoryService(workspaceId, projectId, selectedHistoryId);
-        refetchHistory(); // โหลดข้อมูลใหม่หลังลบสำเร็จ
-      } catch (error) {
-        console.error("Failed to delete history:", error);
-      } finally {
-        setOpenConfirmModal(false);
-      }
+      deleteHistory({ workspaceId, projectId, historyId: selectedHistoryId });
+      setOpenConfirmModal(false);
     }
   };
 

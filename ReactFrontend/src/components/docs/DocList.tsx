@@ -85,7 +85,7 @@ const DocList: React.FC<DocListProps> = ({
   const { isAdmin } = useAuth();
   return (
     <div className="px-3 pt-6 pb-24 h-full w-[20%] bg-white shadow border fixed z-40 overflow-y-scroll">
-      <h1 className="w-[95%] ml-2 text-black text-3xl font-normal">
+      <h1 className="w-[95%] mx-auto text-3xl font-bold text-blue-800">
         Documentation
       </h1>
       <div className="flex justify-between pt-4">
@@ -174,13 +174,13 @@ const DocList: React.FC<DocListProps> = ({
                   </div>
                 ) : onReorderMode ? (
                   <Reorder.Item key={doc.docsId} value={doc}>
-                    <span className="py-2 flex-1 pl-3 text-lg font-medium cursor-pointer hover:text-indigo-800">
+                    <span className="py-2 flex-1 pl-3 text-lg font-semibold text-gray-700 cursor-pointer hover:text-indigo-800">
                       {doc.title}
                     </span>
                   </Reorder.Item>
                 ) : (
                   <Link to={`/docs/${doc.docsId}`}>
-                    <span className="py-2 flex-1 pl-3 text-lg font-medium cursor-pointer hover:text-indigo-800">
+                    <span className="py-2 flex-1 pl-3 text-lg font-semibold text-gray-700 cursor-pointer hover:text-indigo-800">
                       {doc.title}
                     </span>
                   </Link>

@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MiniFooter from '../../components/MiniFooter';
 import AdminSidebar from "../../components/AdminSidebar";
-import axios from 'axios';
 import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
 import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle,} from '@mui/material';
 import ColorPickerTags from '../../components/ai/ColorPickerTags';
-import { useQuery } from '@tanstack/react-query';
 import { AiModelData, ResponseKey } from '../../types/Ai';
 import DeleteConfirmationDialog from '../../components/ai/DeleteConfirationAiDialog';
 import AiResponseKeys from '../../components/ai/AiResponseKey';
 import AiTagInput from '../../components/ai/AiTagInputComponent';
 import AiFileUpload from '../../components/ai/AiFileUpload';
 import AiBasicInfo from '../../components/ai/AiBasicIfoInput';
+import { useAiData } from '../../hook/ai/useAiData';
+import SkeletonLayout from '../../components/SkeletonPageLayout';
+import { useAiModelMutation } from '../../hook/ai/useAiModelMutation';
+import toast from 'react-hot-toast';
 
 
 const UpdateAiPage: React.FC = () => {
   const { ai_id } = useParams();
-  const navigate = useNavigate();
+
 
   // State definitions
   const [aiName, setAiName] = useState('');
@@ -42,34 +44,25 @@ const UpdateAiPage: React.FC = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Fetch AI model data via React Query
-  const { data, isLoading, error } = useQuery<AiModelData>({
-    queryKey: ['ai-model', ai_id],
-    queryFn: async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}`,
-        { withCredentials: true }
-      );
-      return response.data;
-    },
-    enabled: !!ai_id,
-  });
+  const { aiModelData, isLoadingAiModel } = useAiData();
+  const { updateAiModel, deleteAiModel } = useAiModelMutation();
 
   useEffect(() => {
-    if (data) {
-      setAiName(data.name);
-      setDescription(data.description);
-      setServiceUri(data.api_uri);
-      setResponseKeys(data.response_keys);
-      setInputDescription(data.input_desc);
-      setAiType(data.ai_type);
-      setTags(data.ai_tag);
-      setColorSet(data.colorSet);
-      const keys = data.response_keys.map((item) => item.key);
+    if (aiModelData) {
+      setAiName(aiModelData.name);
+      setDescription(aiModelData.description);
+      setServiceUri(aiModelData.api_uri);
+      setResponseKeys(aiModelData.response_keys);
+      setInputDescription(aiModelData.input_desc);
+      setAiType(aiModelData.ai_type);
+      setTags(aiModelData.ai_tag);
+      setColorSet(aiModelData.colorSet);
+      const keys = aiModelData.response_keys.map((item) => item.key);
       setSelectOptions(keys);
-      setEnable(data.enable)
-      setVisible(data.visible)
+      setEnable(aiModelData.enable)
+      setVisible(aiModelData.visible)
     }
-  }, [data]);
+  }, [aiModelData]);
 
   useEffect(() => {
     setPredictResult((prev) => ({
@@ -78,6 +71,7 @@ const UpdateAiPage: React.FC = () => {
       prediction: prev?.prediction || {},
     }));
   }, [responseKeys]);
+
   // Handler for file upload & testing Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -86,7 +80,7 @@ const UpdateAiPage: React.FC = () => {
       const formData = new FormData();
       formData.append("file", file);
       if (!serviceUri) {
-        alert("กรุณาใส่ Service URI ก่อน");
+        toast.error("กรุณาใส่ Service URI ก่อน");
         return;
       }
       try {
@@ -157,23 +151,16 @@ const UpdateAiPage: React.FC = () => {
     }
   };
 
-  // Delete AI model handler
-  const handleConfirmDelete = async () => {
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/remove-ai`,
-        { withCredentials: true }
-      );
-      navigate("/admin/admin-ai");
-    } catch (error) {
-      console.error("Error during deletion:", error);
-    }
-  };
 
-  // Submit handler for updating AI model
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const modelData = {
+
+    if (!ai_id) {
+      toast.error("AI ID is not defined.");
+      return;
+    }
+
+    const modelData: AiModelData = {
       name: aiName,
       description,
       ai_type: aiType,
@@ -185,37 +172,24 @@ const UpdateAiPage: React.FC = () => {
         meaning: rk.meaning,
         displayFormat: rk.displayFormat,
       })),
-      enable,         
-      visible,    
-      colorSet,      
+      enable,
+      visible,
+      colorSet,
     };
 
-    const formData = new FormData();
-    if (uploadedFile) formData.append("file", uploadedFile);
-    formData.append("modelData", JSON.stringify(modelData));
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${ai_id}/update-ai`,
-        { method: "PATCH", body: formData, credentials: "include" }
-      );
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => { throw new Error(response.statusText); });
-        throw new Error(errorData.message || "Something went wrong!");
-      }
-      const contentType = response.headers.get("Content-Type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        console.log("Success:", data);
-      } else {
-        console.log("Success:", await response.text());
-      }
-      navigate("/admin/admin-ai");
-    } catch (error) {
-      console.error("Error:", error);
-      alert(`Error: ${error || "Failed to update AI model"}`);
+    updateAiModel.mutate({
+      ai_id,
+      modelData,
+      uploadedFile,
+    });
+  };
+  
+  const handleConfirmDelete = () => {
+    if (ai_id) {
+      deleteAiModel.mutate(ai_id);
     }
   };
+
 
   let ai_text_type = null;
   if (predictResult) {
@@ -227,8 +201,8 @@ const UpdateAiPage: React.FC = () => {
     }
   }
 
-  if (isLoading) return <div>Loading AI data...</div>;
-  if (error) return <div>Error loading AI data: {(error as Error).message}</div>;
+  if (isLoadingAiModel) return <SkeletonLayout/>
+
 
 
     return (

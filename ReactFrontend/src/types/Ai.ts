@@ -16,9 +16,10 @@ export type AIDataType ={
     api_uri: string;
     response_keys: ResponseKey[];
     input_desc: string;
+    image_path?: string; 
     ai_type: string;
     ai_tag: any[];
-    colorSet:[];
+    colorSet:string[];
     enable:boolean;
     visible:boolean;
   }
