@@ -269,8 +269,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       const img = new Image();
       img.src = selectedImage;
       img.onload = () => {
-        const canvas = canvasRef.current!;
+        if (!canvasRef.current) return; // Exit early if the canvas isn't available
+        const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
+        if (!ctx) return; // Optional: exit if context isn't available
+      
         const angleInRadians = (rotation * Math.PI) / 180;
         const absCos = Math.abs(Math.cos(angleInRadians));
         const absSin = Math.abs(Math.sin(angleInRadians));
@@ -278,14 +281,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
         const newCanvasHeight = img.width * absSin + img.height * absCos;
         canvas.width = newCanvasWidth;
         canvas.height = newCanvasHeight;
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-        ctx?.save();
-        ctx?.translate(canvas.width / 2, canvas.height / 2);
-        ctx?.rotate(angleInRadians);
-        if (flipHorizontal) ctx?.scale(-1, 1);
-        if (flipVertical) ctx?.scale(1, -1);
-        ctx?.drawImage(img, -img.width / 2, -img.height / 2);
-        ctx?.restore();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(angleInRadians);
+        if (flipHorizontal) ctx.scale(-1, 1);
+        if (flipVertical) ctx.scale(1, -1);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
         setImageWidthValue(canvas.width);
         setImageHeightValue(canvas.height);
         setOnProcessUrl(canvas.toDataURL("image/png"));
