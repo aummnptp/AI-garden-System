@@ -148,7 +148,7 @@ export default function AddAIDialog() {
     // ส่งข้อมูลการลบ
     if (idsToRemove.length > 0) {
       axios
-        .delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/remove-bulk`, {
+        .delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/remove-bulk/${userId}`, {
           data: { ids: idsToRemove },
           withCredentials: true,
         })
@@ -159,7 +159,7 @@ export default function AddAIDialog() {
     // ส่งข้อมูลการเพิ่ม
     if (idsToAdd.length > 0) {
       axios
-        .post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add-bulk`, idsToAdd, {
+        .post(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add-bulk/${userId}`, idsToAdd, {
           withCredentials: true,
         })
         .catch((error) => console.error("Error adding permissions:", error));

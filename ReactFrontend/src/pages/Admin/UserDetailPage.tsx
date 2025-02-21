@@ -7,7 +7,7 @@ import axios from 'axios';
 import WorkspaceCard from '../../components/card/WorkspaceCard';
 import AddAIDialog from '../../components/AddAIDialog';
 import { Workspace } from '../../types/Workspace';
-import { Button } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
 
 const UserDetailPage = () => {
@@ -17,6 +17,9 @@ const UserDetailPage = () => {
   const [myWorkspace, setMyWorkspace] = useState<Workspace[]>([]);
   const [aiCount, setAiCount] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -66,12 +69,19 @@ const UserDetailPage = () => {
         withCredentials: true,
       });
 
-      alert(`✅ ${userData?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!`);
-
       setUserData((prevData: any) => ({
         ...prevData,
         role: "admin",
       }));
+
+      // ปิด Dialog ยืนยันก่อน
+      setOpenConfirmDialog(false);
+
+      // เปิด Dialog แสดงความสำเร็จ หลังจากปิด Dialog ยืนยันแล้ว
+      setTimeout(() => {
+        setOpenSuccessDialog(true);
+      }, 300); // เพิ่ม delay เล็กน้อยเพื่อความลื่นไหล
+
     } catch (error) {
       console.error('❌ Error promoting user:', error);
       alert("❌ ไม่สามารถอัปเกรดเป็น Admin ได้");
@@ -79,6 +89,7 @@ const UserDetailPage = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <>
@@ -94,24 +105,24 @@ const UserDetailPage = () => {
             {/* Header: User Profile */}
             <div className="relative bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-[15px] text-white h-28">
               <div className="absolute top-5 right-5">
-              <Button
-                onClick={handlePromoteToAdmin}
-                variant="outlined"
-                sx={{
-                  background: 'white',
-                  borderColor: "#4f46e5", 
-                  color: "#4f46e5", 
-                  "&:hover": {
-                    borderColor: "#3730a3",
-                    backgroundColor: "rgba(79, 70, 229, 0.1)"
-                  }
-                }}
-                disabled={userData?.role === "admin" || loading}
-                startIcon={<AdminPanelSettings />}
-              >
-                {userData?.role === "admin" ? "เป็น Admin แล้ว" : "Promote เป็น Admin"}
-              </Button>
-            </div>
+                <Button
+                  onClick={() => setOpenConfirmDialog(true)} // เปิด Dialog ยืนยัน
+                  variant="outlined"
+                  sx={{
+                    background: 'white',
+                    borderColor: "#4f46e5", 
+                    color: "#4f46e5", 
+                    "&:hover": {
+                      borderColor: "#3730a3",
+                      backgroundColor: "rgba(79, 70, 229, 0.1)"
+                    }
+                  }}
+                  disabled={userData?.role === "admin" || loading}
+                  startIcon={<AdminPanelSettings />}
+                >
+                  {userData?.role === "admin" ? "เป็น Admin แล้ว" : "Promote เป็น Admin"}
+                </Button>
+              </div>
               <img
                 className="absolute w-32 h-32 rounded-full border-4 border-white top-[52px] left-6"
                 src={userData?.picture || "/images/default-profile.png"}
@@ -128,7 +139,7 @@ const UserDetailPage = () => {
                   <p className="text-xl text-blue-500">
                     <i className="bi bi-envelope"></i> : {userData.email || "N/A"}
                   </p>
-                  <p className="text-sm mt-1 text-gray-500">User since 1/9/24</p>
+                  
                 </>
               ) : (
                 <p className="text-gray-500">กำลังโหลดข้อมูลผู้ใช้...</p>
@@ -190,6 +201,36 @@ const UserDetailPage = () => {
       </div>
 
       <MiniFooter />
+      {/* 🔵 Dialog ยืนยันการ Promote */}
+      <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
+        <DialogTitle>ยืนยันการ Promote</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            คุณต้องการ Promote <b>{userData?.name}</b> เป็น Admin หรือไม่?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmDialog(false)} color="secondary">
+            ยกเลิก
+          </Button>
+          <Button onClick={handlePromoteToAdmin} color="primary" variant="contained">
+            ยืนยัน
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 🟢 Dialog แสดงความสำเร็จ */}
+      <Dialog open={openSuccessDialog} onClose={() => window.location.reload()}>
+        <DialogTitle>Promote สำเร็จ</DialogTitle>
+        <DialogContent>
+          <Typography>✅ {userData?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => window.location.reload()} color="primary" variant="contained">
+            ปิด
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

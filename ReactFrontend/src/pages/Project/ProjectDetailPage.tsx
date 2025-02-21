@@ -213,7 +213,7 @@ const ProjectDetailPage = () => {
                     <UserOutlined style={{ color: "#fff", fontSize: "2em" }} />
                   }
                   label="จำนวนผู้ใช้ทั้งหมด"
-                  value="512"
+                  value="4"
                   valueType="ผู้ใช้"
                   disable={false}
                 />

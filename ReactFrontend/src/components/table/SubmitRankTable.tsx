@@ -156,7 +156,7 @@ export default function SubmitRankTable() {
               {rankingData.map((row, index) => (
                 <StyledTableRow key={row.userId}>
                   <StyledTableCell sx={{ textAlign: "center", fontSize: "1rem", fontFamily: "inherit" }}>
-                  {index < 3 && (
+                    {index < 3 && (
                       <TrophyFilled
                         style={{
                           fontSize: "1.525rem",
@@ -188,7 +188,10 @@ export default function SubmitRankTable() {
       </div>
 
       {/* 📁 ประวัติการอัปโหลด */}
-      <div className="px-6 py-4 w-[40%] border rounded-[10px] shadow-lg bg-white">
+      <div
+        className="px-6 py-4 w-[40%] border rounded-[10px] shadow-lg bg-white"
+        style={{ maxHeight: "500px", minHeight: "500px", overflowY: "auto" }}
+      >
         <h2 className="text-indigo-900 text-2xl font-semibold mb-4 border-b pb-2">
           📂 ประวัติการอัปโหลด
         </h2>
@@ -205,9 +208,18 @@ export default function SubmitRankTable() {
               </div>
             </div>
             {inputType === "วิดีโอ" ? (
-              <video className="w-28 h-28 border-2 object-cover rounded-md" src={data.filePath} controls />
+              <video
+                className="w-28 h-28 border-2 object-cover rounded-md"
+                src={data.filePath}
+                controls
+              />
             ) : (
-              <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(data.filePath)} alt={data.userName} loading="lazy" />
+              <img
+                className="w-28 h-28 border-2 object-cover rounded-md"
+                src={getImageUrl(data.filePath)}
+                alt={data.userName}
+                loading="lazy"
+              />
             )}
           </div>
         ))}
