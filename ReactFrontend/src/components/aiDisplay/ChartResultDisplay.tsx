@@ -51,10 +51,10 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
   
 
 
-  const textKeys = predictResult.response_keys?.filter(
-    (responseKey) => responseKey.displayFormat === "text"
-  );
-  console.log(textKeys)
+  // const textKeys = predictResult.response_keys?.filter(
+  //   (responseKey) => responseKey.displayFormat === "text"
+  // );
+  // console.log(textKeys)
 
   // สร้างข้อมูลที่เหมาะสมสำหรับ TextResultDisplay
   // const textData = textKeys?.map((textKey) => {

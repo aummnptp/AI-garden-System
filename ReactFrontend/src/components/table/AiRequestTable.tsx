@@ -71,7 +71,6 @@ const SortableTable: React.FC = () => {
         axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/detail`, {
             withCredentials: true,
         }).then((response) => {
-            console.log("🟢 API Response:", response.data);
             const formattedData = response.data.map((item: any) => ({
                 ...item,
                 updatedAt: new Date(item.updatedAt),

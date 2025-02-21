@@ -38,7 +38,6 @@ function Nav() {
       await acceptInvitation(inviteId);
       refetchInvitedNotification();
     } catch (error) {
-      // console.log(error);
     }
   };
 
@@ -47,7 +46,6 @@ function Nav() {
       await rejectInvitation(inviteId);
       refetchInvitedNotification();
     } catch (error) {
-      // console.log(error);
     }
   };
 

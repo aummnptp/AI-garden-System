@@ -20,9 +20,6 @@ import toast from 'react-hot-toast';
 
 const UpdateAiPage: React.FC = () => {
   const { ai_id } = useParams();
-
-
-  // State definitions
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
@@ -40,10 +37,8 @@ const UpdateAiPage: React.FC = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
-
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Fetch AI model data via React Query
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
 
@@ -57,7 +52,8 @@ const UpdateAiPage: React.FC = () => {
       setAiType(aiModelData.ai_type);
       setTags(aiModelData.ai_tag);
       setColorSet(aiModelData.colorSet);
-      const keys = aiModelData.response_keys.map((item) => item.key);
+      const keys = aiModelData.response_keys.map((item: ResponseKey) => item.key);
+      setSelectOptions(keys);
       setSelectOptions(keys);
       setEnable(aiModelData.enable)
       setVisible(aiModelData.visible)

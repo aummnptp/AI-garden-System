@@ -142,7 +142,6 @@ const AIDemo = () => {
         },
       });
   
-      console.log('Upload successful', response.data);
   
       // เก็บผลลัพธ์ใน state
       setPredictResult(response.data);

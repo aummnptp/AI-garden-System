@@ -92,7 +92,6 @@ export class AiPermissionService {
   }
 
   async removeBulk(ids: string[]): Promise<{ deletedCount: number }> {
-    console.log('Received IDs:', ids);  // ตรวจสอบค่าที่ได้รับจาก frontend
     
     // ใช้ query builder แทน delete เฉยๆ เพื่อให้แน่ใจว่า query ทำงานได้ถูกต้อง
     const deleteResult = await this.aiPermissionRepository

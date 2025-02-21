@@ -170,7 +170,7 @@ const UserDetailPage = () => {
                   <AiApprovedListTable userId={userId} />
                 </div>
               ) : userTab === "Workspace" ? (
-                <div className="grid grid-cols-3 pb-8 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8 pt-2">
                   {myWorkspace.length > 0 ? myWorkspace.map((data: Workspace) => (
                     <div key={data.workspaceId} className="mb-4">
                       <Link to={`/workspaces/${data.workspaceId}/project-list`}>

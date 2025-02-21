@@ -82,13 +82,11 @@ export default function AddAIDialog() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching AI models:", error);
         setLoading(false);
       });
   }, []);
 
   const handleClickOpen = () => {
-    console.log("User ID:", userId); // เพิ่ม console log ที่นี่
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
@@ -165,9 +163,7 @@ export default function AddAIDialog() {
           withCredentials: true,
         })
         .catch((error) => console.error("Error adding permissions:", error));
-      console.log("🔍 userId:", userId);
-      console.log("🔍 selectedToAdd:", selectedToAdd);
-      console.log("🔍 idsToAdd:", idsToAdd);
+
     }
 
     // 

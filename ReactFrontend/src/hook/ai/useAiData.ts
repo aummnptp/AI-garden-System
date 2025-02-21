@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import { fetchAiLimitSettingService, fetchAiModelsService, fetchAllAiTag } from "../../api/services/AiService";
 import { useDebounce } from "../useDebounce";
-import { AiModelData } from "../../types/Ai";
 import axios from "axios";
 
 
@@ -40,7 +39,7 @@ export const  useAiData = () => {
     isLoading: isLoadingAiModel,
     isError: isErrorAiModel,
     refetch: refetchAiModel,
-  } = useQuery<AiModelData>({
+  } = useQuery({
     queryKey: ["ai-model", ai_id],
     queryFn: async () => {
       const response = await axios.get(

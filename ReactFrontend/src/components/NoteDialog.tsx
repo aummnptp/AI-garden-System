@@ -10,6 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
 import { NoteAddOutlined } from "@mui/icons-material";
 import { addNoteService } from "../api/services/HistoryService";
+import toast from "react-hot-toast";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": { padding: theme.spacing(2) },
@@ -43,24 +44,17 @@ const AddNoteDialog: React.FC<AddNoteDialogProps> = ({ projectId, historyId, onN
   };
 
   const handleSave = async () => {
-    if (!historyId || !projectId) {
-      alert("Missing required data!");
-      return;
-    }
     if (!noteTitle.trim() || !noteDetail.trim()) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      toast.error("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
     try {
-      console.log("Adding note for projectId:", projectId, "historyId:", historyId);
       await addNoteService(projectId, historyId, noteTitle, noteDetail);
-      console.log("Note successfully added!");
       await onNoteAdded();
       handleClose();
     } catch (error) {
-      console.error(" Error saving note", error);
-      alert("Failed to save note.");
+      toast.error("Failed to save note.");
     }
   };
   return (

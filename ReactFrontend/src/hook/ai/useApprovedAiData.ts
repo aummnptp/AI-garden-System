@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAiLimitSettingService, fetchAllAiTag, fetchApprovedAiService } from "../../api/services/AiService";
 
 export const useApprovedAiData = () => {
-  console.log("🔍 useApprovedAiData ถูกเรียก!"); 
 
   const {
     data: AIData = [],

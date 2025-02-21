@@ -14,7 +14,6 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
     const data = response.data;
-    console.log("Response from API:", data);
     // ฟังก์ชันสำหรับ extract keys จาก JSON (ระดับ 1 และ 2)
     const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
       const keys: string[] = [];
@@ -93,11 +92,9 @@ export const updateAiModelService = async (
   };
 
   export const fetchApprovedAiService = async () => {
-    console.log("📡 เรียก API: GET /ai-models/my_approved");
   
     try {
       const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
-      console.log(" API Response:", response.data); // ดูค่าที่ API ส่งกลับมา
       return response.data ?? []; // ป้องกัน undefined
     } catch (error) {
       console.error("Error fetching approved AI models:", error);

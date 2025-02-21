@@ -18,13 +18,10 @@ const InvitePage = () => {
       }
 
       try {
-        console.log("Checking authentication status...");
 
         const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/status`, { withCredentials: true });
-        console.log("Auth status response:", response.data);
 
         if (response.data.isAuthenticated) {
-          console.log("User is authenticated, joining workspace...");
 
           await axios.post(
             `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/join-workspace`,
@@ -39,7 +36,6 @@ const InvitePage = () => {
 
     
           Cookies.set("redirect_after_login", `/invite?token=${token}`, { expires: 1 / 144, path: "/" }); // หมดอายุใน 10 นาที
-          console.log("Storing redirect in cookies:", `/invite?token=${token}`);
 
           window.location.href = `${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`;
         }

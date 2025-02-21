@@ -15,8 +15,6 @@ export class AiPermissionController {
   @UseGuards(JwtGuard)
   @Post('add')
   async addAiPermission(@Req() req, @Body() data: CreateAiPermissionDto) {
-    console.log('Request User:', req.user); // Debug ดูว่า `req.user` มีข้อมูล `id` หรือไม่
-    console.log('AI ID (from request body):', data.ai_id);
     if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
     }
@@ -78,7 +76,6 @@ export class AiPermissionController {
   @UseGuards(JwtGuard, RolesGuard)
   @Delete('remove-bulk')
   async removeBulk(@Req() req, @Body() data: { ids: string[] }) {
-    console.log('IDs to remove:', data.ids);
     if (!req.user || !req.user.userId) {
       throw new Error('User not authenticated or invalid token');
     }

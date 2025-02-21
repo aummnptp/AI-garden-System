@@ -22,14 +22,12 @@ export class AuthController{
         maxAge: 1000 * 60 * 10, // อายุ 10 นาที
       });
   
-      console.log("Stored redirect URL in cookie:", redirectUrl);
       res.end();
     }
   
     @UseGuards(GoogleAuthGuard)
     @Get("google/redirect")
     async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
-      console.log("Received Google OAuth Redirect");
       const { accessToken } = await this.authService.googleLogin(req);
       res.cookie("access_token", accessToken, {
         httpOnly: true,
@@ -37,12 +35,9 @@ export class AuthController{
         sameSite: "strict",
       });
       const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
-      console.log(" Redirect URL from cookie:", redirectUrl);
       res.clearCookie("redirect_after_login");
   
-      const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
-      console.log("Redirecting to:", fullRedirectUrl);
-  
+      const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;  
       return res.redirect(fullRedirectUrl);
     }
   @Get('logout')

@@ -16,41 +16,15 @@ import { getImageUrl } from "../../function/util";
 
 
 function AIlist() {
-  const AI_TYPES = ["Classification", "Object Detection", "Segmentation"];
+  const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
 
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
   const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); 
   const approvedAiData = useApprovedAiData();
   const allAiData = useAiData();
 
-  
   const { AIData = [], isLoadingAI,  aiTags = [] } =
     selectedTab === "approved" ? approvedAiData : allAiData;
-
-
-  // const [AIData, setAIData] = useState<AIDataType[]>([]);
-
-
-  // const fetchAIData = () => {
-  //   const baseURL = import.meta.env.VITE_NEST_BACKEND_API_URL;
-  //   const url =
-  //     selectedTab === "approved"
-  //       ? `${baseURL}/ai-models/my_approved`
-  //       : `${baseURL}/ai-models/`;
-
-  //   axios
-  //     .get(url, selectedTab === "approved" ? { withCredentials: true } : {})
-  //     .then((response) => {
-  //       setAIData(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("There was an error fetching the AI data!", error);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   fetchAIData(); // 🟢 ดึงข้อมูลใหม่เมื่อเปลี่ยน tab
-  // }, [selectedTab]);
 
   return (
     <>

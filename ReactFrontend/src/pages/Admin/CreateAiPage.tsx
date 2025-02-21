@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import ColorPickerTags from "../../components/ai/ColorPickerTags";
-
 import AiFileUpload from "../../components/ai/AiFileUpload";
 import AiResponseKeys from "../../components/ai/AiResponseKey";
 import AiTagInput from "../../components/ai/AiTagInputComponent";
@@ -20,8 +17,10 @@ import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
 import ImageDetectionResultDraw from "../../components/aiDisplay/ImageDetectionResultDraw";
 import TextResultDisplay from "../../components/aiDisplay/TextResultDisplay";
 
+import { useAiModelMutation } from "../../hook/ai/useAiModelMutation";
+
 const AddAiPage: React.FC = () => {
-  const navigate = useNavigate();
+
 
   // States สำหรับข้อมูล AI Model (เริ่มต้นเป็นค่าว่าง)
   const [aiName, setAiName] = useState("");
@@ -40,6 +39,7 @@ const AddAiPage: React.FC = () => {
   const [_, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   // state สำหรับ preview predict result (ถ้ามี)
+  const { addAiModel } = useAiModelMutation();
   const [predictResult, setPredictResult] = useState<
     | {
         response_keys: {
@@ -172,10 +172,9 @@ const AddAiPage: React.FC = () => {
       setUploadedFile(event.target.files[0]);
     }
   };
-
-  // Submit handler สำหรับ POST (เพิ่ม AI ใหม่)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+  
     const modelData = {
       name: aiName,
       description,
@@ -183,42 +182,64 @@ const AddAiPage: React.FC = () => {
       api_uri: serviceUri,
       ai_tag: tags,
       input_desc: inputDescription,
-      response_keys: responseKeys.map((key) => ({
-        key: key.key,
-        meaning: key.meaning,
-        displayFormat: key.displayFormat,
+      response_keys: responseKeys.map((rk) => ({
+        key: rk.key,
+        meaning: rk.meaning,
+        displayFormat: rk.displayFormat,
       })),
-      enable, 
+      enable,
       visible,
-      colorSet, 
+      colorSet,
     };
+  
+    addAiModel.mutate(modelData);
+    };
+  // Submit handler สำหรับ POST (เพิ่ม AI ใหม่)
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const modelData = {
+  //     name: aiName,
+  //     description,
+  //     ai_type: aiType,
+  //     api_uri: serviceUri,
+  //     ai_tag: tags,
+  //     input_desc: inputDescription,
+  //     response_keys: responseKeys.map((key) => ({
+  //       key: key.key,
+  //       meaning: key.meaning,
+  //       displayFormat: key.displayFormat,
+  //     })),
+  //     enable, 
+  //     visible,
+  //     colorSet, 
+  //   };
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(modelData),
-          credentials: "include",
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(modelData),
+  //         credentials: "include",
+  //       }
+  //     );
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => {
-          throw new Error(response.statusText);
-        });
-        throw new Error(errorData.message || "Something went wrong!");
-      }
-      const data = await response.json();
-      navigate("/admin/admin-ai");
-    } catch (error) {
-      console.error("Error:", error);
-      alert(`Error: ${error || "Failed to add AI model"}`);
-    }
-  };
+  //     if (!response.ok) {
+  //       const errorData = await response.json().catch(() => {
+  //         throw new Error(response.statusText);
+  //       });
+  //       throw new Error(errorData.message || "Something went wrong!");
+  //     }
+  //     const data = await response.json();
+  //     navigate("/admin/admin-ai");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert(`Error: ${error || "Failed to add AI model"}`);
+  //   }
+  // };
 
   // Determine ai_text_type for preview (if any)
   let ai_text_type = null;
