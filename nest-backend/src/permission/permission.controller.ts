@@ -26,15 +26,13 @@ export class AiPermissionController {
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
-  @Post('add-bulk')
-  async addBulkPermissions(@Req() req, @Body() data: CreateAiPermissionDto[]) {
-    if (!req.user || !req.user.userId) {
-      throw new BadRequestException('User not authenticated');
-    }
-    return this.aiPermissionService.createBulk(data, req.user.userId);
+  @Post('add-bulk/:userId')
+  async addBulkPermissions(
+    @Param('userId') userId: string,
+    @Body() data: CreateAiPermissionDto[]
+  ) {
+    return this.aiPermissionService.createBulk(data, userId);
   }
-
-
 
   @Get()
   findAll() {
@@ -76,14 +74,13 @@ export class AiPermissionController {
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
-  @Delete('remove-bulk')
-  async removeBulk(@Req() req, @Body() data: { ids: string[] }) {
+  @Delete('remove-bulk/:userId')
+  async removeBulk(
+    @Param('userId') userId: string,
+    @Body() data: { ids: string[] }
+  ) {
     console.log('IDs to remove:', data.ids);
-    if (!req.user || !req.user.userId) {
-      throw new Error('User not authenticated or invalid token');
-    }
-
-    return this.aiPermissionService.removeBulk(data.ids);
+    return this.aiPermissionService.removeBulk(userId, data.ids);
   }
 
   @Role("admin")
