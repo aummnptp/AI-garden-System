@@ -7,6 +7,8 @@ export type AIDataType ={
     ai_type: string;
     enable:boolean;
     visible:boolean;
+    input_desc: string;
+    inputType: string
   }
 
 
@@ -22,6 +24,8 @@ export type AIDataType ={
     colorSet:string[];
     enable:boolean;
     visible:boolean;
+    inputType: string
+
   }
 
   export type ResponseKey= {

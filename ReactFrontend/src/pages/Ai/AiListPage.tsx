@@ -1,5 +1,4 @@
 
-import {  useState } from "react";
 import { SearchOutlined,  } from "@ant-design/icons";
 import AiCard from "../../components/card/AiCard";
 import MiniFooter from "../../components/MiniFooter";
@@ -10,22 +9,29 @@ import { useSearchFilters } from "../../hook/useSearchFilter";
 import { Autocomplete, InputAdornment,  TextField } from "@mui/material";
 import { AIDataType } from "../../types/Ai";
 
-import { useApprovedAiData } from "../../hook/ai/useApprovedAiData";
+
 import { getImageUrl } from "../../function/util";
+import { useSearchParams } from "react-router-dom";
 
 
 
 function AIlist() {
-  const AI_TYPES = ["Classification", "Object Detection", "Segmentation","Regression"];
-
+  const AI_TYPES = ["Classification", "Object Detection", "Segmentation", "Regression"];
   const { searchInput, setSearchInput, typeFilter, setTypeFilter, tagFilter, setTagFilter } = useSearchFilters();
-  const [selectedTab, setSelectedTab] = useState<"all" | "approved">("all"); 
-  const approvedAiData = useApprovedAiData();
-  const allAiData = useAiData();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const approvedOnly = searchParams.get("approvedOnly") === "true"; 
 
-  const { AIData = [], isLoadingAI,  aiTags = [] } =
-    selectedTab === "approved" ? approvedAiData : allAiData;
+  const { AIData = [], isLoadingAI,aiTags } = useAiData();
 
+  const handleTabChange = (tab: "all" | "approved") => {
+    const newParams = new URLSearchParams(searchParams);
+    if (tab === "approved") {
+      newParams.set("approvedOnly", "true"); 
+    } else {
+      newParams.delete("approvedOnly"); 
+    }
+    setSearchParams(newParams);
+  };
   return (
     <>
       <div className="bg-neutral-100 items-center justify-center h-full pb-32 grid grid-cols-1">
@@ -38,9 +44,9 @@ function AIlist() {
           <div className="m-6 flex justify-start">
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
-                <button
-                  onClick={() => setSelectedTab("all")} 
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "all"
+              <button
+                  onClick={() => handleTabChange("all")}
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${!approvedOnly
                     ? "text-blue-600 border-blue-600"
                     : "hover:text-gray-600 hover:border-gray-300"
                     }`}
@@ -50,13 +56,13 @@ function AIlist() {
               </li>
               <li className="me-2">
                 <button
-                  onClick={() => setSelectedTab("approved")} 
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${selectedTab === "approved"
+                  onClick={() => handleTabChange("approved")}
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${approvedOnly
                     ? "text-blue-600 border-blue-600"
                     : "hover:text-gray-600 hover:border-gray-300"
                     }`}
                 >
-                  AI ที่ได้รับสิทธิ
+                  AI ที่ได้รับสิทธิ์
                 </button>
               </li>
             </ul>

@@ -51,6 +51,7 @@ function Nav() {
 
   const handleLogout = async () => {
     await logout();
+    
     navigate("/");
   };
 

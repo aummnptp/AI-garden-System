@@ -4,12 +4,12 @@ import { fetchAiLimitSettingService, fetchAllAiTag, fetchApprovedAiService } fro
 export const useApprovedAiData = () => {
 
   const {
-    data: AIData = [],
+    data: MyApprovedAi = [],
     isLoading: isLoadingAI,
     isError: isErrorAI,
     refetch: refetchAIModels,
   } = useQuery({
-    queryKey: ["ai-approved-models"],
+    queryKey: ["my-ai-approved"],
     queryFn: async () => {
       const response = await fetchApprovedAiService();
 
@@ -41,7 +41,7 @@ export const useApprovedAiData = () => {
     
   
     return {
-      AIData,
+      MyApprovedAi,
       isLoadingAI,
       isErrorAI,
       refetchAIModels,

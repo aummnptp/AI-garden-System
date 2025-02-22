@@ -19,12 +19,11 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          minWidth: "75px", // ปรับขนาดปุ่ม
-          fontWeight: "bold", // ตัวอักษรหนา
-          borderRadius: "20px", // มุมมน
-          // borderRadius: '30px',
-          textTransform: "none", // ไม่ใช้ตัวพิมพ์ใหญ่ทั้งหมด
-          marginLeft: "10px", // ระยะห่างจากปุ่มอื่นๆ
+          minWidth: "75px",
+          fontWeight: "bold", 
+          borderRadius: "20px", 
+          textTransform: "none",
+          marginLeft: "10px", 
         },
       },
     },
@@ -60,12 +59,12 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
   <ThemeProvider theme={theme}>
-    <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <App />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <AuthProvider>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </AuthProvider>
       </QueryClientProvider>
-    </AuthProvider>
   </ThemeProvider>
 </React.StrictMode>
 );

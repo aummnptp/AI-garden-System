@@ -1,7 +1,7 @@
-import React, { ChangeEvent, DragEvent,useEffect,useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
-import { Alert, AlertTitle, Button, Skeleton } from '@mui/material';
+import { Alert, AlertTitle,  } from '@mui/material';
 
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useProjecteData } from '../../hook/projects/useProjectData';
@@ -12,7 +12,6 @@ import { ImageUploadForm } from '../../components/ai/predictPage/ImageUploadForm
 import { VideoUploadForm } from '../../components/ai/predictPage/VideoUploadForm';
 
 interface PredictResult {
-  ai_type: string;
   prediction: any;
 }
 const PredictAiModelPage: React.FC = () => {

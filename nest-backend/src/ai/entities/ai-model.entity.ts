@@ -2,8 +2,9 @@
 import { Permission } from '../../permission/entities/permission.entity';
 
 import { Project } from 'src/projects/entities/project.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { AIUsageLimit } from '../../ai-setting/entities/ai-usage-limit.entity';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Entity('ai_model')
@@ -39,8 +40,8 @@ export class AIModel {
   api_uri: string;
 
 
-  @Column('jsonb') // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-  response_keys: { key: string; meaning: string ,displayFormat: string}[]; // รูปแบบ Array ของ JSON object
+  @Column('jsonb') 
+  response_keys: { key: string; meaning: string ,displayFormat: string}[]; 
   
   @Column({name:'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -54,17 +55,17 @@ export class AIModel {
   @OneToMany(() => Permission, (permission) => permission.aiModel)
   permissions: Permission[];
 
-
   @OneToMany(() => Project,(project) => project.ai_model,)
   projects: Project[];
-
-  // @Column()
-  // create_by: string[];
   
-  @Column({name:'image_path', nullable: true }) // เพิ่มฟิลด์ imagePath
+  @Column({name:'image_path', nullable: true })
   imagePath: string;
 
+  @Column({name:'input_type', type: 'varchar', length: 50, default: 'รูปภาพ' })
+  inputType: string;
 
-  
+  @ManyToOne(() => User, (user) => user.aiModels, { nullable: true })
+  @JoinColumn({ name: "created_by" }) 
+  createdBy: User;
 
 }

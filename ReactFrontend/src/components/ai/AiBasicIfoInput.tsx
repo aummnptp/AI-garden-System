@@ -1,5 +1,5 @@
 
-import { FormControlLabel, Switch } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Switch } from '@mui/material';
 import React from 'react';
 
 interface AiBasicInfoProps {
@@ -9,12 +9,15 @@ interface AiBasicInfoProps {
   aiType: string;
   enable: boolean;
   visible: boolean;
+  inputType: string;
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onServiceUriChange: (value: string) => void;
   onTypeChange: (value: string) => void;
   onEnableChange: (value: boolean) => void;
   onVisibleChange: (value: boolean) => void;
+  onInputTypeChange: (value: string) => void;
+
 }
 
 const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
@@ -23,9 +26,11 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
   aiType,
   enable,
   visible,
+  inputType,
   onNameChange,
   onDescriptionChange,
   onTypeChange,
+  onInputTypeChange,
   onEnableChange,
   onVisibleChange,
 }) => {
@@ -61,6 +66,19 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
           <option value="Classification">Classification</option>
         </select>
       </div>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">AI Input Type</FormLabel>
+        <RadioGroup
+          row
+          value={inputType}
+          onChange={(e) => onInputTypeChange(e.target.value)}
+        >
+          <FormControlLabel value="รูปภาพและวิดีโอ" control={<Radio />} label="รูปภาพและวิดีโอ" />
+          <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
+          <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
+        </RadioGroup>
+      </FormControl>
+  
       <div className="flex items-center space-x-4">
         <FormControlLabel
           control={

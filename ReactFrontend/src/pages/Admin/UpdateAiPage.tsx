@@ -38,6 +38,7 @@ const UpdateAiPage: React.FC = () => {
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [inputType, setInputType] = useState<string>("รูปภาพ");
 
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
@@ -52,6 +53,7 @@ const UpdateAiPage: React.FC = () => {
       setAiType(aiModelData.ai_type);
       setTags(aiModelData.ai_tag);
       setColorSet(aiModelData.colorSet);
+      setInputType(aiModelData.inputType);
       const keys = aiModelData.response_keys.map((item: ResponseKey) => item.key);
       setSelectOptions(keys);
       setSelectOptions(keys);
@@ -163,6 +165,7 @@ const UpdateAiPage: React.FC = () => {
       api_uri: serviceUri,
       ai_tag: tags,
       input_desc: inputDescription,
+      inputType: inputType,
       response_keys: responseKeys.map((rk) => ({
         key: rk.key,
         meaning: rk.meaning,
@@ -171,6 +174,7 @@ const UpdateAiPage: React.FC = () => {
       enable,
       visible,
       colorSet,
+
     };
 
     updateAiModel.mutate({
@@ -226,6 +230,8 @@ const UpdateAiPage: React.FC = () => {
                 onTypeChange={setAiType}
                 onEnableChange={setEnable}    
                 onVisibleChange={setVisible} 
+                inputType={inputType}
+                onInputTypeChange={setInputType}
               />
               <ColorPickerTags
               colors={colorSet}

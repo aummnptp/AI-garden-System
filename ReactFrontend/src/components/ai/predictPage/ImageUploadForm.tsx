@@ -4,7 +4,6 @@ import { FileUploadArea } from "./FileUploadArea";
 import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 
 interface PredictResult {
-    ai_type: string;
     prediction: any;
   }
   
@@ -12,7 +11,7 @@ export const ImageUploadForm: React.FC<{
     file: File | null;
     setFile: (file: File | null) => void;
     uploadStep: number;
-    setUploadStep: (step: number) => void;
+    setUploadStep: (step: number | ((prev: number) => number)) => void;
     predictResult: PredictResult | null;
     setPredictResult: (result: PredictResult | null) => void;
     predictFromUrl: any;
@@ -31,7 +30,6 @@ export const ImageUploadForm: React.FC<{
     predictResult,
     setPredictResult,
     predictFromUrl,
-    predictFromFile,
     customedImageUrl,
     setCustomedImageUrl,
     customImage,
@@ -39,11 +37,12 @@ export const ImageUploadForm: React.FC<{
     setAlertText,
     setOpenAlert,
   }) => {
-    const handleToCustomStep = () => {
-      setUploadStep((prev) => Math.min(prev + 1, 5));
-      setCustomImage(file);
-      setFile(null);
-    };
+
+const handleToCustomStep = () => {
+  setUploadStep((prev: number) => Math.min(prev + 1, 5)); 
+  setCustomImage(file);
+  setFile(null);
+};
   
     const handleUpload = async () => {
       if (!customedImageUrl) {

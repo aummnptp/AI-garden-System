@@ -7,13 +7,13 @@ export const FileUploadArea: React.FC<{
     accept: string;
     placeholder: string;
   }> = ({ file, setFile, accept, placeholder }) => {
-    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
       e.preventDefault();
       const droppedFile = e.dataTransfer.files[0];
       setFile(droppedFile);
     };
   
-    const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
       e.preventDefault();
     };
   

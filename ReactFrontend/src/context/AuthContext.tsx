@@ -4,6 +4,7 @@ import {  getSessionService, logoutService } from "../api/services/AuthService";
 
 
 type User = {
+  id: string;
   name: string;
   email: string;
   picture: string;
@@ -32,7 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [workspaceRoles, setWorkspaceRoles] = useState<{ [key: string]: string }>({});
-
   const getSession = async () => {
     try {
       const response = await getSessionService(); 
@@ -66,6 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
+      
       await logoutService();
       setUser(null);
     } catch (error) {

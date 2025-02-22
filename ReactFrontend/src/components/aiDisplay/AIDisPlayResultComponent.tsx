@@ -5,7 +5,6 @@ import TextResultDisplay from "./TextResultDisplay";
 import RegressionChart from "./RegressionResultDraw";
 
 interface PredictResult {
-  ai_type: string;
   prediction: { [key: string]: any };
   response_keys?: { key: string; meaning: string; displayFormat: string }[];
   ai_model?: {
@@ -68,34 +67,6 @@ interface AIDisPlayResultComponentProps {
       // กำหนดค่าให้ PredictDrawData
       PredictDrawData = data as ObjectDetection[] | SegmentationDetection[];
     }
-    
-  
-  
-    // const textKeys = predictResult.response_keys?.filter(
-    //   (responseKey) => responseKey.displayFormat === "text"
-    // );
-    // console.log(textKeys)
-  
-    // สร้างข้อมูลที่เหมาะสมสำหรับ TextResultDisplay
-    // const textData = textKeys?.map((textKey) => {
-    //   const keyParts = textKey.key.split(".");
-    //   let data = predictResult.prediction;
-  
-    //   // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
-    //   for (const part of keyParts) {
-    //     data = data?.[part];
-    //     if (!data) break;
-    //   }
-  
-    //   return {
-    //     meaning: textKey.meaning,
-    //     value: data,
-    //   };
-    // });
-  
-   
-
- 
 
   return (
     <div className="w-full">

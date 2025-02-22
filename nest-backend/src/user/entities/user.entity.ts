@@ -2,6 +2,7 @@ import { AIUsageLimit } from "src/ai-setting/entities/ai-usage-limit.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Permission } from '../../permission/entities/permission.entity';
 import { Project } from "src/projects/entities/project.entity";
+import { AIModel } from "src/ai/entities/ai-model.entity";
 
 @Entity()
 export class User{
@@ -31,4 +32,7 @@ export class User{
 
       @OneToMany(() => Project, (project) => project.createdBy)
       projects: Project[];
+
+      @OneToMany(() => AIModel, (aiModel) => aiModel.createdBy)
+      aiModels: AIModel[];
 }

@@ -16,6 +16,7 @@
     ai_type: string;
     api_uri: string;
     ai_tag: string[];
+    inputType: string
     input_desc: string;
     response_keys: { key: string; meaning: string; displayFormat?: string }[];
     enable: boolean;

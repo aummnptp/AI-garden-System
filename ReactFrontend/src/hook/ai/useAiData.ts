@@ -12,9 +12,10 @@ export const  useAiData = () => {
 
 
   const filters: Record<string, string> = {
-    search: searchParams.get("search") || "", 
+    search: searchParams.get("search") || "",
     type: searchParams.get("type") || "",
     tag: searchParams.get("tag") || "",
+    approvedOnly: searchParams.get("approvedOnly") === "true" ? "true" : "",
   };
 
   const debouncedFilters = {

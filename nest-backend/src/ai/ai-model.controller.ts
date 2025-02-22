@@ -26,30 +26,27 @@ import { AIUsageLimitGuard } from 'src/ai-setting/guards/ai-usage-limit.guard';
 import { AIVisibleGuard } from 'src/ai-setting/guards/ai-visible.guard';
 import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 
-
-
 @Controller('ai-models')
 export class AIModelController {
   constructor(private readonly aiModelService: AIModelService) { }
-
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Post('add')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: './uploads', // กำหนดโฟลเดอร์เก็บรูปภาพ
+      destination: './uploads',
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
       },
     }),
   }))
-  async addModel(@UploadedFile() file: Express.Multer.File, @Body() createAIModelDto: CreateAIModelDto): Promise<any> {
-    const message = await this.aiModelService.addModel(createAIModelDto, file);
+  async addModel(@Request() req,@UploadedFile() file: Express.Multer.File, @Body() createAIModelDto: CreateAIModelDto): Promise<any> {
+    const userId = req.user.userId;
+    const message = await this.aiModelService.addModel(createAIModelDto, file,userId);
     return { message };
   }
-
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
@@ -65,13 +62,11 @@ export class AIModelController {
   }))
   async updateAI(
     @Param('aiId') aiId: string,
-    @Body('modelData') modelData: string, // ดึง modelData เป็น string
-    @UploadedFile() file: Express.Multer.File // ดึงไฟล์
+    @Body('modelData') modelData: string,
+    @UploadedFile() file: Express.Multer.File 
   ): Promise<string> {
-    // Parse JSON string ของ modelData
     const updateAIModelDto: UpdateAIModelDto = JSON.parse(modelData);
 
-    // ส่งไปที่ service พร้อมกับไฟล์
     const message = await this.aiModelService.update(aiId, updateAIModelDto, file);
     return message;
   }
@@ -83,9 +78,11 @@ export class AIModelController {
     @Query("search") search?: string,
     @Query("type") type?: string,
     @Query("tag") tag?: string,
+    @Query("approvedOnly") approvedOnly?: boolean,
     ) {
     const isAdmin = req.user?.role === "admin"
-    return this.aiModelService.findAll({ search, type, tag }, isAdmin);
+    const userId = req.user?.userId; 
+    return this.aiModelService.findAll({ search, type, tag }, isAdmin, userId, approvedOnly);
   }
 
   @Role("admin")
@@ -99,7 +96,8 @@ export class AIModelController {
   @Get('my_approved')
   async getMyApproved(@Request() req,) {
     const userId = req.user.userId;
-    return this.aiModelService.getMyApproved(userId);
+    const isAdmin = req.user.role === 'admin'; 
+    return this.aiModelService.getMyApproved(userId, isAdmin);
   }
 
   @UseGuards(JwtGuard)
@@ -108,7 +106,6 @@ export class AIModelController {
     return this.aiModelService.findOne(aiId);
   }
 
-  
   @UseGuards(JwtGuard,
    AIEnableGuard,AIVisibleGuard, AIUsageLimitGuard
   )
@@ -128,9 +125,6 @@ export class AIModelController {
     return this.aiModelService.remove(aiId);
   }
 
-
-
-  // แสดงในหน้า user detail จัดการสิทธิ์
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Get(':userId/models')

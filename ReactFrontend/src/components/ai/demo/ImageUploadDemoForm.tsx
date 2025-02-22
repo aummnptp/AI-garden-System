@@ -5,11 +5,10 @@ import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { Link } from "react-router-dom";
 import { AIDataType } from "../../../types/Ai";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
 
 interface PredictResult {
-    ai_type: string;
     prediction: any;
-    regression_params?: any | null;
   }
   
 export const ImageUploadDemoForm: React.FC<{
@@ -141,7 +140,10 @@ export const ImageUploadDemoForm: React.FC<{
               "&:hover": { backgroundColor: "#3730a3" },
             }}
             onClick={() => {
-              if (!image) return; // Alert handled in parent
+              if (!image) {
+                toast.error("กรุณาอัปโหลดรูปภาพก่อนดำเนินการต่อ");
+              return;
+            }
               setUploadStep(Math.min(uploadStep + 1, 5));
               setCustomImage(image);
               setImage(null);

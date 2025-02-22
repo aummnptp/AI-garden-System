@@ -3,7 +3,6 @@ import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { FileUploadArea } from "./FileUploadArea";
 
 interface PredictResult {
-    ai_type: string;
     prediction: any;
   }
   
