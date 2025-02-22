@@ -25,6 +25,7 @@ export type AIDataType ={
     enable:boolean;
     visible:boolean;
     inputType: string
+    
 
   }
 

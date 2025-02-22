@@ -38,10 +38,10 @@ const AddAiPage: React.FC = () => {
   const [inputType, setInputType] = useState<string>("รูปภาพ");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-  const [_, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  // state สำหรับ preview predict result (ถ้ามี)
   const { addAiModel } = useAiModelMutation();
+  
   const [predictResult, setPredictResult] = useState<
     | {
         response_keys: {
@@ -59,7 +59,6 @@ const AddAiPage: React.FC = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Handler สำหรับอัปโหลดไฟล์และทดสอบ Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -132,6 +131,7 @@ const AddAiPage: React.FC = () => {
       toast.error("กรุณาเลือกไฟล์ก่อน");
     }
   };
+
   useEffect(() => {
     setPredictResult((prev) => ({
       ...prev,
@@ -177,27 +177,30 @@ const AddAiPage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   
-    const modelData :AiModelData= {
-      name: aiName,
-      description,
-      ai_type: aiType,
-      api_uri: serviceUri,
-      ai_tag: tags,
-      inputType: inputType,
-      input_desc: inputDescription,
-      response_keys: responseKeys.map((rk) => ({
-        key: rk.key,
-        meaning: rk.meaning,
-        displayFormat: rk.displayFormat,
-      })),
-      enable,
-      visible,
-      colorSet,
-    };
-  
-    addAiModel.mutate(modelData);
-    };
+    if (!uploadedFile) {
+      toast.error("กรุณาอัปโหลดรูปภาพก่อน!");
+      return;
+    }
+  const modelData: AiModelData = {
+    name: aiName,
+    description,
+    ai_type: aiType,
+    api_uri: serviceUri,
+    ai_tag: tags,
+    inputType: inputType,
+    input_desc: inputDescription,
+    response_keys: responseKeys.map((rk) => ({
+      key: rk.key,
+      meaning: rk.meaning,
+      displayFormat: rk.displayFormat,
+    })),
+    enable,
+    visible,
+    colorSet,
+  };
 
+  addAiModel.mutate({ modelData, uploadedFile });
+};
 
   // Determine ai_text_type for preview (if any)
   let ai_text_type = null;

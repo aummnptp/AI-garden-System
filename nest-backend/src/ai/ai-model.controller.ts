@@ -42,11 +42,22 @@ export class AIModelController {
       },
     }),
   }))
-  async addModel(@Request() req,@UploadedFile() file: Express.Multer.File, @Body() createAIModelDto: CreateAIModelDto): Promise<any> {
-    const userId = req.user.userId;
-    const message = await this.aiModelService.addModel(createAIModelDto, file,userId);
-    return { message };
+  async addModel(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('modelData') modelData: string
+  ): Promise<any> {
+    try {
+      const userId = req.user.userId;
+      const parsedModelData = JSON.parse(modelData); 
+      const message = await this.aiModelService.addModel(parsedModelData, file, userId);
+      return { message };
+    } catch (error) {
+      console.error("Error parsing modelData:", error);
+      throw new BadRequestException("Invalid modelData format");
+    }
   }
+  
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)

@@ -11,17 +11,8 @@
   }
 
   interface AddAiModelProps {
-    name: string;
-    description: string;
-    ai_type: string;
-    api_uri: string;
-    ai_tag: string[];
-    inputType: string
-    input_desc: string;
-    response_keys: { key: string; meaning: string; displayFormat?: string }[];
-    enable: boolean;
-    visible: boolean;
-    colorSet: string[];
+    modelData: AiModelData;
+    uploadedFile?: File | null;
   }
   export const useAiModelMutation = () => {
     const queryClient = useQueryClient();
@@ -71,24 +62,34 @@
       },
     });
 
-    const addAiModel = 
-      useMutation({
-        mutationFn: async (modelData: AddAiModelProps) => {
-          const response = await axios.post(
-            `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
-            modelData,
-            { withCredentials: true }
-          );
-          return response.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["ai-models"] });
-          toast.success("AI Model added successfully!");
-          navigate("/admin/admin-ai");
-        },
-        onError: (error) => {
-          toast.error(`Failed to add AI Model.${error.message}`);
-        },
-      });
+
+
+    const addAiModel = useMutation({
+      mutationFn: async ({ modelData, uploadedFile }: AddAiModelProps) => {
+        if (!uploadedFile) throw new Error("ต้องแนบไฟล์รูปภาพ!");
+        const formData = new FormData();
+        formData.append("file", uploadedFile);
+        formData.append("modelData", JSON.stringify(modelData));
+    
+        const response = await axios.post(
+          `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
+          formData,
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+    
+        return response.data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["ai-models"] });
+        toast.success("AI Model added successfully!");
+        navigate("/admin/admin-ai");
+      },
+      onError: (error) => {
+        toast.error(`Failed to add AI Model. ${error.message}`);
+      },
+    });
     return { updateAiModel, deleteAiModel ,addAiModel};
   };
