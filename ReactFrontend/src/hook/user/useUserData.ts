@@ -1,11 +1,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchMyInvitationService } from "../../api/services/Userservice";
+import { fetchMyInvitationService, fetchUserWithPermissionAndWorkspaceCountService } from "../../api/services/Userservice";
 
 
 export const useUserData = () => {
   // const { workspaceId, projectId,historyId } = useParams<{ workspaceId: string; projectId: string; historyId:string}>();
+  const {
+    data: userData = [] ,  
+    isLoading: isLoadingUserData,
+    isError: isErrorUserData,
+    refetch: refetchUserData,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetchUserWithPermissionAndWorkspaceCountService(),
+  });
 
   //My Invitation
   const {
@@ -21,6 +30,10 @@ export const useUserData = () => {
 
  
   return {
+    userData,  
+    isLoadingUserData,
+    isErrorUserData,
+    refetchUserData,
 
     notiData,  
     isLoadingInvitedNotification,
