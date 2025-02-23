@@ -12,7 +12,8 @@ interface AdminAiCardProps {
   }
   const AdminAiCard: React.FC<AdminAiCardProps> = (props) => {
     return (
-      <Link to={`/admin/updateai/${props.id}`} className="w-full">
+      <Link to={`/admin/updateai/${props.id}`} className="w-full">  
+
         <Card className="w-full h-full flex flex-col shadow-md rounded-lg">
           {/* รูปภาพ */}
           <div className="w-full h-48">

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Alert,
-  AlertTitle,
   Box,
   Tab,
 } from "@mui/material";
@@ -14,8 +12,7 @@ import RotationTab from "./customizerImage/RotationTab";
 import GrayscaleTab from "./customizerImage/GrayscaleTab";
 import ResizeTab from "./customizerImage/ResizeTab";
 import PaddingTab from "./customizerImage/PaddingTab";
-import { processPaddingEffect } from "../function/imageProcessingUtils";
-
+import toast from "react-hot-toast";
 
 
 interface ImageUploaderProps {
@@ -60,8 +57,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
   const [paddingMode, setPaddingMode] = useState("custom");
 
   const [value, setValue] = useState("1");
-  const [open, setOpen] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
+
+
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -148,8 +145,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       onResetInput();
       setImageWidthValue(resizeWidth);
       setImageHeightValue(resizeHeight);
-      setAlertTitle("Apply Resize");
-      handleClickOpen();
+      toast.success("Apply Resize");
+      
     }
   };
 
@@ -160,8 +157,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       setOnProcessUrl(paddedImageURL);
       setIsPadding(false);
       onResetInput();
-      setAlertTitle("Apply Padding");
-      handleClickOpen();
+      toast.success("Apply Padding");
+      
     }
   };
 
@@ -172,8 +169,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       setOnProcessUrl(grayscaledImageURL);
       setIsGrayscale(false);
       onResetInput();
-      setAlertTitle("Apply Grayscale");
-      handleClickOpen();
+      toast.success("Apply Grayscale");
+      
     }
   };
 
@@ -269,8 +266,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       const img = new Image();
       img.src = selectedImage;
       img.onload = () => {
-        const canvas = canvasRef.current!;
+        if (!canvasRef.current) return; // Exit early if the canvas isn't available
+        const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
+        if (!ctx) return; // Optional: exit if context isn't available
+      
         const angleInRadians = (rotation * Math.PI) / 180;
         const absCos = Math.abs(Math.cos(angleInRadians));
         const absSin = Math.abs(Math.sin(angleInRadians));
@@ -278,14 +278,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
         const newCanvasHeight = img.width * absSin + img.height * absCos;
         canvas.width = newCanvasWidth;
         canvas.height = newCanvasHeight;
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-        ctx?.save();
-        ctx?.translate(canvas.width / 2, canvas.height / 2);
-        ctx?.rotate(angleInRadians);
-        if (flipHorizontal) ctx?.scale(-1, 1);
-        if (flipVertical) ctx?.scale(1, -1);
-        ctx?.drawImage(img, -img.width / 2, -img.height / 2);
-        ctx?.restore();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(angleInRadians);
+        if (flipHorizontal) ctx.scale(-1, 1);
+        if (flipVertical) ctx.scale(1, -1);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
         setImageWidthValue(canvas.width);
         setImageHeightValue(canvas.height);
         setOnProcessUrl(canvas.toDataURL("image/png"));
@@ -342,53 +342,75 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
   }, [resizeWidth, resizeHeight, isResizing]);
 
 
+
   useEffect(() => {
     if (isPadding && onProcessUrl && canvasRef.current) {
-      processPaddingEffect(
-        canvasRef.current,
-        onProcessUrl,
-        paddingMode as "custom" | "symmetric" | "square",
-        {
-          paddingLeft,
-          paddingRight,
-          paddingTop,
-          paddingBottom,
-          paddingSymmetric,
+      const image = new Image();
+      image.src = onProcessUrl;
+      image.onload = () => {
+        const canvas = canvasRef.current!;
+        const ctx = canvas.getContext("2d");
+        if(paddingMode == 'custom'){
+          if (ctx) {
+            // คำนวณความกว้างและความสูงที่รวม padding ด้านซ้าย ขวา บน ล่าง
+            const paddedWidth = image.width + paddingLeft + paddingRight;
+            const paddedHeight = image.height + paddingTop + paddingBottom;
+            canvas.width = paddedWidth;
+            canvas.height = paddedHeight;
+            setImagePaddedWidth(canvas.width);
+            setImagePaddedHeight(canvas.height);
+            // ตั้งค่าสีเป็นสีดำ
+            ctx.fillStyle = 'black';
+            // เติมสีดำในพื้นที่ทั้งหมดของ canvas
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // วาดรูปภาพโดยเริ่มจากตำแหน่งที่กำหนดด้วย padding บนและซ้าย
+            ctx.drawImage(image, paddingLeft, paddingTop);
+          }
         }
-      ).then(({ dataUrl, width, height }) => {
-        setImagePaddedWidth(width);
-        setImagePaddedHeight(height);
-        setOnProcessUrl(dataUrl);
-      });
+        if(paddingMode == 'symmetric'){
+          if (ctx) {
+          const paddedWidth = image.width + paddingSymmetric * 2;
+          const paddedHeight = image.height + paddingSymmetric * 2;
+          canvas.width = paddedWidth;
+          canvas.height = paddedHeight;
+          setImagePaddedWidth(canvas.width);
+          setImagePaddedHeight(canvas.height);
+          ctx.fillStyle = 'black';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+          ctx.drawImage(image, paddingSymmetric, paddingSymmetric);
+          }
+        }
+
+        if (paddingMode === 'square') {
+          if (ctx) {
+            const maxDimension = Math.max(image.width, image.height); //หาว่าwidth || height กว้างกว่า
+            const paddingHorizontal = (maxDimension - image.width) / 2; // Padding ด้านซ้ายและขวา
+            const paddingVertical = (maxDimension - image.height) / 2; // Padding ด้านบนและล่าง
+            // console.log(maxDimension,paddingHorizontal,paddingVertical)
+        
+            // ตั้งค่า canvas ให้มีความกว้างและความสูงเป็น maxDimension
+            canvas.width = maxDimension;
+            canvas.height = maxDimension;
+            setImagePaddedWidth(canvas.width);
+            setImagePaddedHeight(canvas.height);
+            // ตั้งค่าสีเป็นสีดำ
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+            // วาดรูปภาพที่กลาง canvas โดยเพิ่ม padding ด้านซ้าย/ขวา หรือบน/ล่าง
+            ctx.drawImage(image, paddingHorizontal, paddingVertical);
+          }
+        }
+        };
     }
-  }, [
-    paddingLeft,
-    paddingRight,
-    paddingTop,
-    paddingBottom,
-    paddingSymmetric,
-    isPadding,
-    paddingMode,
-  ]);
+  }, [paddingLeft, paddingRight, paddingTop, paddingBottom, paddingSymmetric,isPadding,paddingMode]);
+  
 
-  // ********* Alert *********
-  const startTimer = () => {
-    setTimeout(() => setOpen(false), 5000);
-  };
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  if (open) startTimer();
-
-  // ********* Render *********
+ 
   return (
     <div>
-      {open && (
-        <div className="fixed top-24 left-0 w-full flex justify-center z-50 animate-fade-in-out">
-          <Alert severity="info" onClose={handleClose}>
-            <AlertTitle>{alertTitle}</AlertTitle>
-          </Alert>
-        </div>
-      )}
       {selectedImage && (
         <div className="flex w-full">
           {isCropping ? (
@@ -399,8 +421,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
                   onCropDone={(croppedImageUrl: string) => {
                     setSelectedImage(croppedImageUrl);
                     setIsCropping(false);
-                    setAlertTitle("Cropped");
-                    handleClickOpen();
+                    toast.success("Cropped");
                   }}
                   onCancel={() => {
                     setIsCropping(false);

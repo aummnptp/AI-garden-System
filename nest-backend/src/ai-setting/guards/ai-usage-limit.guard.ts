@@ -43,7 +43,6 @@ export class AIUsageLimitGuard implements CanActivate {
     // ดึงค่าการตั้งค่า AI (เช่น maxUsagePerDay, isLimitEnabled)
     const settings = await this.aiSettingRepository.find({ take: 1 });
     const limitSetting = settings[0];
-    console.log("Limit Setting isLimitEnabled:", limitSetting?.isLimitEnabled);
     // ถ้า limit ถูกปิดใช้งาน ให้ผ่านทันที
     if (limitSetting && !limitSetting.isLimitEnabled) {
       return true;

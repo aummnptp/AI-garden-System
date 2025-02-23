@@ -354,7 +354,6 @@ export class WorkspacesService {
   async joinWorkspaceWithToken(token: string, userId: string): Promise<{ message: string }> {
     const secret = process.env.INVITE_SECRET 
     try {
-      console.log("Joining workspace with token:", token);
       const { workspaceId } = jwt.verify(token, secret) as { workspaceId: string };
       const workspace = await this.workspaceRepository.findOne({ where: { workspaceId } });
       if (!workspace) throw new NotFoundException('Workspace not found');

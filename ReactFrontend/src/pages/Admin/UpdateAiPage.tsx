@@ -20,9 +20,6 @@ import toast from 'react-hot-toast';
 
 const UpdateAiPage: React.FC = () => {
   const { ai_id } = useParams();
-
-
-  // State definitions
   const [aiName, setAiName] = useState('');
   const [description, setDescription] = useState('');
   const [serviceUri, setServiceUri] = useState('');
@@ -40,10 +37,9 @@ const UpdateAiPage: React.FC = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
-
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [inputType, setInputType] = useState<string>("รูปภาพ");
 
-  // Fetch AI model data via React Query
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
 
@@ -57,7 +53,9 @@ const UpdateAiPage: React.FC = () => {
       setAiType(aiModelData.ai_type);
       setTags(aiModelData.ai_tag);
       setColorSet(aiModelData.colorSet);
-      const keys = aiModelData.response_keys.map((item) => item.key);
+      setInputType(aiModelData.inputType);
+      const keys = aiModelData.response_keys.map((item: ResponseKey) => item.key);
+      setSelectOptions(keys);
       setSelectOptions(keys);
       setEnable(aiModelData.enable)
       setVisible(aiModelData.visible)
@@ -167,6 +165,7 @@ const UpdateAiPage: React.FC = () => {
       api_uri: serviceUri,
       ai_tag: tags,
       input_desc: inputDescription,
+      inputType: inputType,
       response_keys: responseKeys.map((rk) => ({
         key: rk.key,
         meaning: rk.meaning,
@@ -175,6 +174,7 @@ const UpdateAiPage: React.FC = () => {
       enable,
       visible,
       colorSet,
+
     };
 
     updateAiModel.mutate({
@@ -230,6 +230,8 @@ const UpdateAiPage: React.FC = () => {
                 onTypeChange={setAiType}
                 onEnableChange={setEnable}    
                 onVisibleChange={setVisible} 
+                inputType={inputType}
+                onInputTypeChange={setInputType}
               />
               <ColorPickerTags
               colors={colorSet}

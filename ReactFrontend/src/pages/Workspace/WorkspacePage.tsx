@@ -1,4 +1,4 @@
-import  {  useState } from "react";
+import { useState } from "react";
 import WorkspaceCard from "../../components/card/WorkspaceCard";
 import InvitedCard from "../../components/card/InvitedCard";
 import CreateWorkspace from "../../components/popup/CreateWorkspace";
@@ -29,14 +29,13 @@ function WorkspacePage() {
     refetchMyWorkspace,
     refetchInvitedWorkspace,
   } = useWorkspaceData();
-  
+
   if (isLoadingMyWorkspace || isLoadingInvitedWorkspace) {
-    return <LoadingSpinner/>;
+    return <LoadingSpinner />;
   }
   return (
     <>
       <div className=" bg-neutral-100 flex items-center justify-center h-full pb-32">
-        {/* popup */}
         <CreateWorkspace
           showModal={showModal}
           setShowModal={setShowModal}
@@ -44,7 +43,6 @@ function WorkspacePage() {
             refetchMyWorkspace();
             refetchInvitedWorkspace();
           }}
-          // fetchWorkspaces={fetchData}
         />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}
@@ -110,8 +108,10 @@ function WorkspacePage() {
                 )}
 
                 {/* My Workspace Card Group */}
-                <div className={`grid grid-cols-3 pb-8 pt-2`}>
-                  {myWorkspace.map((data:Workspace, index:any) => (
+                <div
+                  className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8 pt-2`}
+                >
+                  {myWorkspace.map((data: Workspace, index: any) => (
                     <div
                       key={index}
                       className={`mb-4 ${
@@ -119,15 +119,7 @@ function WorkspacePage() {
                       }`}
                     >
                       <Link to={`/workspaces/${data.workspaceId}/project-list`}>
-                        <WorkspaceCard
-                          workspaceId={data.workspaceId}
-                          name={data.name}
-                          description={data.description}
-                          members={data.members}
-                          updatedAt={data.updatedAt}
-                          createdAt={data.createdAt}
-                          // createById={data.createById}
-                        />
+                        <WorkspaceCard {...data} />
                       </Link>
                     </div>
                   ))}
@@ -182,8 +174,9 @@ function WorkspacePage() {
                 )}
 
                 {/* invited workspace Card */}
-                <div className={`grid grid-cols-3 pb-8 pt-2`}>
-                  {invitedWorkspace.map((data:Workspace, index:any) => (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8 pt-2`}
+                >
+                  {invitedWorkspace.map((data: Workspace, index: any) => (
                     <div
                       key={index}
                       className={`mb-4 ${
@@ -191,13 +184,7 @@ function WorkspacePage() {
                       }`}
                     >
                       <Link to={`/workspaces/${data.workspaceId}/project-list`}>
-                        <InvitedCard
-                          workspaceId={data.workspaceId}
-                          name={data.name}
-                          description={data.description}
-                          members={data.members}
-                          createdAt={data.createdAt}
-                          updatedAt={data.updatedAt}
+                        <InvitedCard {...data}
                         />
                       </Link>
                     </div>

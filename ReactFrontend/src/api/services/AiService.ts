@@ -14,7 +14,6 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
     const data = response.data;
-    console.log("Response from API:", data);
     // ฟังก์ชันสำหรับ extract keys จาก JSON (ระดับ 1 และ 2)
     const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
       const keys: string[] = [];

@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import { fetchAiLimitSettingService, fetchAiModelsService, fetchAllAiTag, fetchAllModelsWithApprovalStatus } from "../../api/services/AiService";
 import { useDebounce } from "../useDebounce";
-import { AiModelData } from "../../types/Ai";
 import axios from "axios";
 
 
@@ -12,9 +11,10 @@ export const  useAiData = () => {
   const [searchParams] = useSearchParams();
 
   const filters: Record<string, string> = {
-    search: searchParams.get("search") || "", 
+    search: searchParams.get("search") || "",
     type: searchParams.get("type") || "",
     tag: searchParams.get("tag") || "",
+    approvedOnly: searchParams.get("approvedOnly") === "true" ? "true" : "",
   };
 
   const debouncedFilters = {
@@ -37,7 +37,7 @@ export const  useAiData = () => {
     isLoading: isLoadingAiModel,
     isError: isErrorAiModel,
     refetch: refetchAiModel,
-  } = useQuery<AiModelData>({
+  } = useQuery({
     queryKey: ["ai-model", ai_id],
     queryFn: async () => {
       const response = await axios.get(

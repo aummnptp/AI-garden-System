@@ -64,3 +64,4 @@ export const fetchAllHistoryDaTaService = async (workspaceId: string) => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/all-history-in-project`);
   return data;
 };
+

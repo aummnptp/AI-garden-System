@@ -5,6 +5,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 
 import { useFetchQuery } from "../../hook/useFetchQuery";
 import WorkspaceCard from "../../components/card/WorkspaceCard";
+import InvitedCard from "../../components/card/InvitedCard";
 
 
 
@@ -71,18 +72,11 @@ function WorkspaceList() {
                     </div>
                     <div className="mt-4 h-fit w-[95%] bg-white rounded-[15px] items-center relative p-6">
                         {/* Card container */}
-                        <div className={`grid grid-cols-3 pb-8 pt-2`}>
+                        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8 pt-2`}>
                             {myWorkspace.map((data:WorkspaceCard) => (
                                 <div>
                                     <Link to={`/workspaces/${data.workspaceId}/project-list`}>
-                                        <WorkspaceCard
-                                            workspaceId={data.workspaceId}
-                                            name={data.name}
-                                            description={data.description}
-                                            members={data.members}
-                                            updatedAt={data.updatedAt}
-                                            createdAt={data.createdAt}
-                                            createById={data.createById}
+                                        <InvitedCard {...data}
                                         />
                                     </Link>
                                 </div>

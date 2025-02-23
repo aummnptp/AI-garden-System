@@ -40,7 +40,7 @@ import PredictAiModelPage from "../pages/Project/ProjectPredictAiModelPage.tsx";
 export const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,  // Set Layout as the main element
+      element: <Layout />,  
       children: [
     {
       path: "/",

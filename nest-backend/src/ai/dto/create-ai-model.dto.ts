@@ -50,7 +50,7 @@ export class CreateAIModelDto {
 
   @IsOptional()
   @IsString()
-  readonly imagePath?: string; // เพิ่มฟิลด์ imagePath
+  readonly imagePath?: string; 
 
   @IsOptional()
   @IsBoolean()
@@ -64,4 +64,10 @@ export class CreateAIModelDto {
   @IsArray()
   @IsString({ each: true })
   readonly color_set?: string[];
+
+  @IsOptional()
+  @IsString()
+  readonly inputType?: string;
+
+
 }

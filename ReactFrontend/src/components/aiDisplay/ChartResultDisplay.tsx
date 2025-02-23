@@ -48,42 +48,13 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
       console.error("Data is not an array of numbers:", data);
     }
   }
-  
-
-
-  const textKeys = predictResult.response_keys?.filter(
-    (responseKey) => responseKey.displayFormat === "text"
-  );
-  console.log(textKeys)
-
-  // สร้างข้อมูลที่เหมาะสมสำหรับ TextResultDisplay
-  // const textData = textKeys?.map((textKey) => {
-  //   const keyParts = textKey.key.split(".");
-  //   let data = predictResult.prediction;
-
-  //   // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
-  //   for (const part of keyParts) {
-  //     data = data?.[part];
-  //     if (!data) break;
-  //   }
-
-  //   return {
-  //     meaning: textKey.meaning,
-  //     value: data,
-  //   };
-  // });
-
- 
 
   return (
     <div className="w-full">
       <div className="flex w-full flex-wrap">
         {/* Render each response key */}
         <RegressionChart detections={PredictData || []}/>
-          
            <TextResultDisplay predictResult={predictResult} tags={["tag1", "tag2", "tag3"]} aiName="AI Name" ai_type={predictResult.ai_type} />
-        
-        {/* <pre>{JSON.stringify(textData, null, 2)}</pre> */}
         </div>
     </div>
   );

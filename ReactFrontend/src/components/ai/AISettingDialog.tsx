@@ -33,7 +33,6 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
             <Switch
               checked={isLimitActive}
               onChange={(e) => {
-                console.log("Switch changed: ", e.target.checked);
                 setIsLimitActive(e.target.checked);
               }}
               name="limitSwitch"

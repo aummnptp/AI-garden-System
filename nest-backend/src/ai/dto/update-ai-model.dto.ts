@@ -57,4 +57,8 @@ export class UpdateAIModelDto {
   @IsArray()
   @IsString({ each: true })
   readonly color_set?: string[];
+
+  @IsOptional()
+  @IsString()
+  readonly inputType?: string;
 }

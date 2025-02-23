@@ -1,6 +1,6 @@
 
 import Sidebar from "../../components/Sidebar";
-import { Button, Checkbox, } from "@mui/material";
+import { Checkbox, } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
@@ -9,9 +9,6 @@ import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Member, ProjectPermission } from "../../types/User";
 
 import { useProjectAccessMutations } from "../../hook/projects/useProjectAccessMutations";
-import MiniFooter from "../../components/MiniFooter";
-
-
 const ProjectAccessManagePage = () => {
   const { workspaceId, projectId } = useParams<{
     workspaceId: string;
@@ -172,9 +169,6 @@ const ProjectAccessManagePage = () => {
           </div>
         </div>
       </div>
-      {/* <div className=" pl-[20%] justify-end pr-12 w-full h-[12%]  bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
-      <MiniFooter/>
-      </div> */}
     </div>
   );
 };

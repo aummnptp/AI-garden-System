@@ -80,6 +80,7 @@ export default function AddAIDialog() {
   const [saveDialogOpen, setSaveDialogOpen] = useState(false); // Dialog ยืนยันการบันทึก
   const [aiToRemove, setAiToRemove] = useState<AIModel | null>(null); // AI ที่จะลบ
 
+
   React.useEffect(() => {
     if (allAiModelWithApprovalData) {
       setAiListData(allAiModelWithApprovalData);
@@ -89,6 +90,7 @@ export default function AddAIDialog() {
   if (isLoadingallAiModelWithApproval) {
     return <p>Loading AI data...</p>;
   }
+
 
   const handleClickOpen = () => {
     setOpen(true);

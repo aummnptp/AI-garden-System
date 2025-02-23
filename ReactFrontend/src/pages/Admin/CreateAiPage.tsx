@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import MiniFooter from "../../components/MiniFooter";
 import AdminSidebar from "../../components/AdminSidebar";
 import ColorPickerTags from "../../components/ai/ColorPickerTags";
-
 import AiFileUpload from "../../components/ai/AiFileUpload";
 import AiResponseKeys from "../../components/ai/AiResponseKey";
 import AiTagInput from "../../components/ai/AiTagInputComponent";
@@ -15,13 +12,16 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { ResponseKey } from "../../types/Ai";
+import { AiModelData, ResponseKey } from "../../types/Ai";
 import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
 import ImageDetectionResultDraw from "../../components/aiDisplay/ImageDetectionResultDraw";
 import TextResultDisplay from "../../components/aiDisplay/TextResultDisplay";
 
+import { useAiModelMutation } from "../../hook/ai/useAiModelMutation";
+import toast from "react-hot-toast";
+
 const AddAiPage: React.FC = () => {
-  const navigate = useNavigate();
+
 
   // States สำหรับข้อมูล AI Model (เริ่มต้นเป็นค่าว่าง)
   const [aiName, setAiName] = useState("");
@@ -35,11 +35,13 @@ const AddAiPage: React.FC = () => {
   const [colorSet, setColorSet] = useState<string[]>(["#00ff00"]);
   const [inputDescription, setInputDescription] = useState("");
   const [aiType, setAiType] = useState("Object Detection");
+  const [inputType, setInputType] = useState<string>("รูปภาพ");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-  const [_, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  // state สำหรับ preview predict result (ถ้ามี)
+  const { addAiModel } = useAiModelMutation();
+  
   const [predictResult, setPredictResult] = useState<
     | {
         response_keys: {
@@ -57,7 +59,6 @@ const AddAiPage: React.FC = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Handler สำหรับอัปโหลดไฟล์และทดสอบ Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -66,7 +67,7 @@ const AddAiPage: React.FC = () => {
       formData.append("file", file);
 
       if (!serviceUri) {
-        alert("กรุณาใส่ Service URI ก่อน");
+        toast.error("กรุณาใส่ Service URI ก่อน");
         return;
       }
 
@@ -124,12 +125,13 @@ const AddAiPage: React.FC = () => {
         } else {
         }
       } catch (error) {
-        console.error("Error uploading file:", error);
+    
       }
     } else {
-      alert("กรุณาเลือกไฟล์ก่อน");
+      toast.error("กรุณาเลือกไฟล์ก่อน");
     }
   };
+
   useEffect(() => {
     setPredictResult((prev) => ({
       ...prev,
@@ -172,53 +174,33 @@ const AddAiPage: React.FC = () => {
       setUploadedFile(event.target.files[0]);
     }
   };
-
-  // Submit handler สำหรับ POST (เพิ่ม AI ใหม่)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const modelData = {
-      name: aiName,
-      description,
-      ai_type: aiType,
-      api_uri: serviceUri,
-      ai_tag: tags,
-      input_desc: inputDescription,
-      response_keys: responseKeys.map((key) => ({
-        key: key.key,
-        meaning: key.meaning,
-        displayFormat: key.displayFormat,
-      })),
-      enable, 
-      visible,
-      colorSet, 
-    };
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/add`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(modelData),
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => {
-          throw new Error(response.statusText);
-        });
-        throw new Error(errorData.message || "Something went wrong!");
-      }
-      const data = await response.json();
-      navigate("/admin/admin-ai");
-    } catch (error) {
-      console.error("Error:", error);
-      alert(`Error: ${error || "Failed to add AI model"}`);
+  
+    if (!uploadedFile) {
+      toast.error("กรุณาอัปโหลดรูปภาพก่อน!");
+      return;
     }
+  const modelData: AiModelData = {
+    name: aiName,
+    description,
+    ai_type: aiType,
+    api_uri: serviceUri,
+    ai_tag: tags,
+    inputType: inputType,
+    input_desc: inputDescription,
+    response_keys: responseKeys.map((rk) => ({
+      key: rk.key,
+      meaning: rk.meaning,
+      displayFormat: rk.displayFormat,
+    })),
+    enable,
+    visible,
+    colorSet,
   };
+
+  addAiModel.mutate({ modelData, uploadedFile });
+};
 
   // Determine ai_text_type for preview (if any)
   let ai_text_type = null;
@@ -254,12 +236,15 @@ const AddAiPage: React.FC = () => {
                 aiType={aiType}
                 enable={enable}
                 visible={visible}
+                inputType={inputType} 
                 onNameChange={setAiName}
                 onDescriptionChange={setDescription}
                 onServiceUriChange={setServiceUri}
                 onTypeChange={setAiType}
                 onEnableChange={setEnable}    
                 onVisibleChange={setVisible} 
+                onInputTypeChange={setInputType}
+
               />
               <ColorPickerTags
                 colors={colorSet}
