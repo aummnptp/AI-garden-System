@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import { Checkbox, } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { ManageAccounts } from "@mui/icons-material";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Member, ProjectPermission } from "../../types/User";

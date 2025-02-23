@@ -1,11 +1,31 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchMyInvitationService } from "../../api/services/Userservice";
+import { fetchMyInvitationService, fetchUserWithPermissionAndWorkspaceCountService, fetchUserDetail } from "../../api/services/Userservice";
+import { useParams } from "react-router-dom";
 
 
 export const useUserData = () => {
-  // const { workspaceId, projectId,historyId } = useParams<{ workspaceId: string; projectId: string; historyId:string}>();
+  const { userId } = useParams<{ userId: string}>();
+  const {
+    data: userData = [] ,  
+    isLoading: isLoadingUserData,
+    isError: isErrorUserData,
+    refetch: refetchUserData,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetchUserWithPermissionAndWorkspaceCountService(),
+  });
+
+  const {
+    data: userDetailById,  
+    isLoading: isLoadinguserDetailById,
+    isError: isErroruserDetailById,
+    refetch: refetchuserDetailById,
+  } = useQuery({
+    queryKey: ["user-detail", userId],
+    queryFn: () => fetchUserDetail(userId!),
+  });
 
   //My Invitation
   const {
@@ -21,6 +41,15 @@ export const useUserData = () => {
 
  
   return {
+    userData,  
+    isLoadingUserData,
+    isErrorUserData,
+    refetchUserData,
+
+    userDetailById ,  
+    isLoadinguserDetailById,
+    isErroruserDetailById,
+    refetchuserDetailById,
 
     notiData,  
     isLoadingInvitedNotification,

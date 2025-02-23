@@ -25,12 +25,10 @@ export class AiPermissionController {
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Post('add-bulk/:userId')
-  async addBulkPermissions(
-    @Param('userId') userId: string,
-    @Body() data: CreateAiPermissionDto[]
-  ) {
-    return this.aiPermissionService.createBulk(data, userId);
+  async addBulkPermissions(@Param('userId') userId: string, @Body() data: { aiIds: string[] }) {
+    return this.aiPermissionService.createBulk(data.aiIds, userId);
   }
+
 
   @Get()
   findAll() {

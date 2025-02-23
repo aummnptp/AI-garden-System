@@ -1,7 +1,7 @@
 import Sidebar from '../../components/Sidebar'
 import MiniFooter from '../../components/MiniFooter'
 import Workspacetable from '../../components/table/WorkspaceTable'
-import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData'
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData'
 import SkeletonLayout from '../../components/SkeletonPageLayout'
 
 const WorkspaceHistoryPage = () => {

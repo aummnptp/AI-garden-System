@@ -1,29 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Paper, TableContainer,
-  Button, tableCellClasses,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableSortLabel,
+  Paper,
+  TableContainer,
+  Button,
+  tableCellClasses,
   Dialog,
   DialogTitle,
   DialogContent,
   Typography,
   DialogActions,
 } from '@mui/material';
-import axios from 'axios';
-
-
 import { styled } from '@mui/material/styles';
 import { getImageUrl } from '../../function/util';
-
-
-
-
+import { useUserApprovedAiData } from '../../hook/ai/useUserApprovedAiData';
+import { useAiPermissionMutations } from '../../hook/ai-permission/useAiPermissionMutation';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  width: '33.33%', // ทำให้คอลัมน์มีขนาดเท่าๆ กัน
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -39,6 +43,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
+
 interface Data {
   aiId: string;
   name: string;
@@ -47,60 +52,46 @@ interface Data {
   email: string;
   date: Date;
   ai_type: string;
+  ai_tag: string[];
 }
+
 interface AiListTableProps {
   userId?: string;
 }
 
-
-
-
-
 type Order = 'asc' | 'desc';
 
 const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
+  // ดึงข้อมูล AI ที่ได้รับอนุมัติ
+  const { AIData, refetchAIModels } = useUserApprovedAiData();
+  // ใช้งาน mutation สำหรับถอนสิทธิ์ AI
+  const { revokePermissionMutation } = useAiPermissionMutations();
+
   const [rows, setRows] = useState<Data[]>([]);
-  const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<keyof Data>("date");
+  const [order, setOrder] = useState<Order>('desc');
+  const [orderBy, setOrderBy] = useState<keyof Data>('date');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAi, setSelectedAi] = useState<{ aiId: string; name: string } | null>(null);
-  const [actionSuccess, setActionSuccess] = useState<boolean | null>(null); // null = ไม่แสดง, true = สำเร็จ, false = ล้มเหลว
+  const [actionSuccess, setActionSuccess] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (userId) {
-      axios
-        .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/approved/${userId}`, {
-          withCredentials: true,
-        }) // ดึงข้อมูล AI ที่เกี่ยวข้องกับ userId
-        .then((response) => {
-          setRows(response.data); // response.data ควรเป็น array ของ AI
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the AI data!", error);
-        });
-    }
-  }, [userId]);
+    setRows(AIData);
+  }, [AIData]);
 
   const handleOpenDialog = (aiId: string, name: string) => {
     setSelectedAi({ aiId, name });
-    setActionSuccess(null); // รีเซ็ตค่า
+    setActionSuccess(null);
     setOpenDialog(true);
   };
 
-
   const handleRequestSort = (property: keyof Data) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const stableSort = (
-    array: Data[],
-    comparator: (a: Data, b: Data) => number
-  ) => {
-    const stabilizedThis = array.map(
-      (el, index) => [el, index] as [Data, number]
-    );
+  const stableSort = (array: Data[], comparator: (a: Data, b: Data) => number) => {
+    const stabilizedThis = array.map((el, index) => [el, index] as [Data, number]);
     stabilizedThis.sort((a, b) => {
       const order = comparator(a[0], b[0]);
       if (order !== 0) return order;
@@ -110,7 +101,7 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
   };
 
   const getComparator = (order: Order, orderBy: keyof Data) => {
-    return order === "desc"
+    return order === 'desc'
       ? (a: Data, b: Data) => descendingComparator(a, b, orderBy)
       : (a: Data, b: Data) => -descendingComparator(a, b, orderBy);
   };
@@ -125,28 +116,28 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
     return 0;
   };
 
-  const handleRevokePermission = async () => {
+  const handleRevokePermission = () => {
     if (!userId || !selectedAi) return;
-    try {
-        await axios.delete(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/user/${userId}/ai/${selectedAi.aiId}`, {
-            withCredentials: true,
-        });
-
-        setRows((prevRows) => prevRows.filter((row) => row.aiId !== selectedAi.aiId)); // ลบออกจากตาราง
-        setActionSuccess(true); // แสดงข้อความสำเร็จ
-
-       
-        setTimeout(() => {
+    
+    // เรียก mutation แทนการใช้ axios.delete โดยตรง
+    revokePermissionMutation.mutate(
+      { userId, aiId: selectedAi.aiId },
+      {
+        onSuccess: () => {
+          // อัปเดตตารางโดยลบข้อมูลที่ถูกถอนสิทธิ์ออก
+          setRows((prevRows) => prevRows.filter((row) => row.aiId !== selectedAi.aiId));
+          setActionSuccess(true);
+          setTimeout(() => {
             setOpenDialog(false);
-            window.location.reload();
-        }, 2000);
-    } catch (error) {
-        console.error("ไม่สามารถถอนสิทธิ์ได้:", error);
-        setActionSuccess(false); 
-    }
-};
-
-
+            refetchAIModels();
+          }, 2000);
+        },
+        onError: () => {
+          setActionSuccess(false);
+        },
+      }
+    );
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -155,18 +146,18 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
           <StyledTableRow>
             <StyledTableCell align="center">
               <TableSortLabel
-                active={orderBy === "ai"}
-                direction={orderBy === "ai" ? order : "asc"}
-                onClick={() => handleRequestSort("ai")}
+                active={orderBy === 'ai'}
+                direction={orderBy === 'ai' ? order : 'asc'}
+                onClick={() => handleRequestSort('ai')}
               >
                 ชื่อ AI
               </TableSortLabel>
             </StyledTableCell>
             <StyledTableCell align="center">
               <TableSortLabel
-                active={orderBy === "ai"}
-                direction={orderBy === "ai" ? order : "asc"}
-                onClick={() => handleRequestSort("ai")}
+                active={orderBy === 'ai'}
+                direction={orderBy === 'ai' ? order : 'asc'}
+                onClick={() => handleRequestSort('ai')}
               >
                 Tag
               </TableSortLabel>
@@ -182,26 +173,26 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
                   <img
                     className="w-14 h-14 rounded-[10px] border-2"
                     src={getImageUrl(row.imagePath)}
+                    alt={row.name}
                   />
                   <div className="ml-2">
                     <p className="text-black text-lg font-medium">{row.name}</p>
-                    <p className="text-[#8D9BAE] text-sm font-normal">
-                      {row.ai_type}
-                    </p>
+                    <p className="text-[#8D9BAE] text-sm font-normal">{row.ai_type}</p>
                   </div>
                 </div>
               </StyledTableCell>
 
               <StyledTableCell align="center">
-                <span className="w-fit  bg-indigo-600 rounded-[10px] me-2 px-2.5 py-1.5  text-white text-sm font-normal">
-                  Tags
-                </span>
-                <span className="w-fit  bg-indigo-600 rounded-[10px] me-2 px-2.5  py-1.5   text-white text-sm font-normal">
-                  Tags
-                </span>
-                <span className="w-fit  bg-indigo-600 rounded-[10px] me-2 px-2.5  py-1.5   text-white text-sm font-normal">
-                  Tags
-                </span>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {row.ai_tag?.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-sky-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-lg"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </StyledTableCell>
 
               <StyledTableCell>
@@ -221,38 +212,42 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
       </Table>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>{actionSuccess === null ? "ยืนยันการถอนสิทธิ์" : actionSuccess ? "ถอนสิทธิ์สำเร็จ" : "เกิดข้อผิดพลาด"}</DialogTitle>
-                <DialogContent>
-                    {actionSuccess === null ? (
-                        <Typography>
-                            คุณแน่ใจหรือไม่ว่าต้องการถอนสิทธิ์การเข้าถึง AI <b>{selectedAi?.name}</b>?
-                        </Typography>
-                    ) : actionSuccess ? (
-                        <Typography color="success">
-                            ถอนสิทธิ์ AI <b>{selectedAi?.name}</b> สำเร็จ! กำลังรีเฟรช...
-                        </Typography>
-                    ) : (
-                        <Typography color="error">
-                            ไม่สามารถถอนสิทธิ์ AI <b>{selectedAi?.name}</b> ได้ กรุณาลองใหม่
-                        </Typography>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    {actionSuccess === null ? (
-                        <>
-                            <Button onClick={() => setOpenDialog(false)} color="secondary">
-                                ยกเลิก
-                            </Button>
-                            <Button onClick={handleRevokePermission} color="error" variant="contained">
-                                ถอนสิทธิ์
-                            </Button>
-                        </>
-                    ) : null}
-                </DialogActions>
-            </Dialog>
-
+        <DialogTitle>
+          {actionSuccess === null
+            ? 'ยืนยันการถอนสิทธิ์'
+            : actionSuccess
+            ? 'ถอนสิทธิ์สำเร็จ'
+            : 'เกิดข้อผิดพลาด'}
+        </DialogTitle>
+        <DialogContent>
+          {actionSuccess === null ? (
+            <Typography>
+              คุณแน่ใจหรือไม่ว่าต้องการถอนสิทธิ์การเข้าถึง AI <b>{selectedAi?.name}</b>?
+            </Typography>
+          ) : actionSuccess ? (
+            <Typography color="success">
+              ถอนสิทธิ์ AI <b>{selectedAi?.name}</b> สำเร็จ! กำลังรีเฟรช...
+            </Typography>
+          ) : (
+            <Typography color="error">
+              ไม่สามารถถอนสิทธิ์ AI <b>{selectedAi?.name}</b> ได้ กรุณาลองใหม่
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          {actionSuccess === null && (
+            <>
+              <Button onClick={() => setOpenDialog(false)} color="secondary">
+                ยกเลิก
+              </Button>
+              <Button onClick={handleRevokePermission} color="error" variant="contained">
+                ถอนสิทธิ์
+              </Button>
+            </>
+          )}
+        </DialogActions>
+      </Dialog>
     </TableContainer>
-
   );
 };
 

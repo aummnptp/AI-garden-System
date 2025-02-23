@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchAiLimitSettingService, fetchAllAiTag, fetchApprovedAiService } from "../../api/services/AiService";
+import { fetchApprovedAiService } from "../../api/services/AiService";
 
 export const useApprovedAiData = () => {
 
@@ -18,40 +18,10 @@ export const useApprovedAiData = () => {
     placeholderData: [],
   });
 
-  const {
-      data: aiSettingData,
-      isLoading: isLoadingAiSetting,
-      isError: isErrorAiSetting,
-      refetch: refetchAiSetting,
-    } = useQuery({
-      queryKey: ["ai-usage-limit-setting"],
-      queryFn: () => fetchAiLimitSettingService(),
-    });
-  
-  
-    const {
-      data: aiTags,
-      isLoading: isLoadingaiTags,
-      isError: isErroaiTags,
-    } = useQuery({
-      queryKey: ["ai-tags"],
-      queryFn: () => fetchAllAiTag(),
-    });
-  
-    
-  
     return {
       MyApprovedAi,
       isLoadingAI,
       isErrorAI,
       refetchAIModels,
-  
-      aiSettingData,
-      isLoadingAiSetting,
-      isErrorAiSetting,
-      refetchAiSetting,
-  
-      aiTags, isLoadingaiTags, isErroaiTags,
-  
     };
 };

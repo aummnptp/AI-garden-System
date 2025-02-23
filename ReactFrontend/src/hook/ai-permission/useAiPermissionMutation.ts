@@ -1,0 +1,102 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import {
+    revokePermissionService,
+    refusePermissionService,
+    approvePermissionService,
+    addBulkPermissionRequestService,
+    removeBulkPermissionRequestService
+} from "../../api/services/AiPermissionService";
+
+interface revokePermissionProps {
+    userId: string;
+    aiId: string;
+}
+interface permissionIdProps {
+    id: string;
+}
+interface removeBulkPermissionRequestProps {
+    userId: string;
+    ids: string[];
+}
+interface addBulkPermissionRequestProps {
+    userId: string;
+    aiIds: string[];
+}
+
+export const useAiPermissionMutations = () => {
+    const queryClient = useQueryClient();
+
+    const approvePermissionMutation = useMutation({
+        mutationFn: async ({ id }: permissionIdProps) => {
+            return approvePermissionService(id);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-approve"] });
+            toast.success("ยอมรับคำขอใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในการยอมรับคำขอใช้งาน AI");
+        },
+    });
+
+    const refusePermissionMutation = useMutation({
+        mutationFn: async ({ id }: permissionIdProps) => {
+            return refusePermissionService(id);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-refuse"] });
+            toast.success("ปฏิเสธคำขอใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในการปฏิเสธคำขอใช้งาน AI");
+        },
+    });
+
+    const revokePermissionMutation = useMutation({
+        mutationFn: async ({ userId, aiId }: revokePermissionProps) => {
+            return revokePermissionService(userId, aiId);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-revoke"] });
+            toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในการถอนการใช้งาน AI");
+        },
+    });
+
+    const addBulkPermissionRequest = useMutation({
+        mutationFn: async ({ userId, aiIds }: addBulkPermissionRequestProps) => {
+            return addBulkPermissionRequestService(userId, aiIds);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-add-bulk"] });
+            toast.success("เพิ่มสิทธิ์การใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในเพิ่มสิทธิ์ AI");
+        },
+    });
+
+    const removeBulkPermissionRequest = useMutation({
+        mutationFn: async ({ userId, ids }: removeBulkPermissionRequestProps) => {
+            return removeBulkPermissionRequestService(userId, ids);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-remove-bulk"] });
+            toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในการถอนสิทธิ์การใช้งาน AI");
+        },
+    });
+
+    return {
+        approvePermissionMutation,
+        refusePermissionMutation,
+        revokePermissionMutation,
+        addBulkPermissionRequest,
+        removeBulkPermissionRequest
+    };
+};
