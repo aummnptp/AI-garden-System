@@ -9,7 +9,7 @@ import axios from 'axios';
 import ProjectImageInput from '../../components/input/ProjectImageInput';
 import { AIDataType } from '../../types/Ai';
 import { useAuth } from "../../context/AuthContext"; // นำเข้า useAuth
-import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { getImageUrl } from '../../function/util';
 const { TextArea } = Input;

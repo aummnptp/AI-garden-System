@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { Close, } from "@mui/icons-material";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 import { useWorkspaceMutations } from "../../hook/workspaces/useWorkspaceMutations";

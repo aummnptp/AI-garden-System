@@ -35,8 +35,12 @@ export const fetchUserWithPermissionAndWorkspaceCountService = async () => {
   }
 };
 
+export const fetchUserDetail = async (userId: string) => {
+  const { data } = await axios.get(`${BASE_URL}/users/${userId}`);
+  return data;
+};
+
 export const fetchMyInvitationService = async () => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/get-my-invitation`);
   return data;
 };
-  

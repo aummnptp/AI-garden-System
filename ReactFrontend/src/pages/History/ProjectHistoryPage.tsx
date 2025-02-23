@@ -6,7 +6,7 @@ import { NoteAltOutlined, UploadFile } from "@mui/icons-material";
 import HistoryUploadSection from "../../components/HistoryUploadSection";
 import NoteSection from "../../components/NoteSection";
 import { useProjecteData } from "../../hook/projects/useProjectData";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
 
 import SkeletonLayout from "../../components/SkeletonPageLayout";

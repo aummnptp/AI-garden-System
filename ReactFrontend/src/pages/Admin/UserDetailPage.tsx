@@ -1,200 +1,153 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import AdminSidebar from '../../components/AdminSidebar';
 import { Link, useParams } from 'react-router-dom';
 import AiApprovedListTable from '../../components/table/AiApprovedListTable';
-import axios from 'axios';
 import WorkspaceCard from '../../components/card/WorkspaceCard';
 import AddAIDialog from '../../components/AddAIDialog';
 import { Workspace } from '../../types/Workspace';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
+import { useUserMutation } from '../../hook/user/useUserMutation';
+import { useUserData } from '../../hook/user/useUserData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
+import { useAiData } from '../../hook/ai/useAiData'; // ✅ นำเข้า useAiData
 
 const UserDetailPage = () => {
   const { userId } = useParams();
-  const [userTab, setUserTab] = useState<string>("Ai");
-  const [userData, setUserData] = useState<any>(null);
-  const [myWorkspace, setMyWorkspace] = useState<Workspace[]>([]);
-  const [aiCount, setAiCount] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-
+  const [userTab, setUserTab] = useState<string>('Ai');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
-  useEffect(() => {
-    if (userId) {
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/${userId}`, {
-        withCredentials: true,
-      })
-        .then(response => {
-          setUserData(response.data);
-        })
-        .catch(error => {
-          console.error('❌ Error fetching user data:', error);
-        });
+  const { userDetailById, isLoadinguserDetailById } = useUserData();
+  const promoteMutation = useUserMutation();
 
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${userId}/models`)
-        .then((response) => {
-          const approvedAiCount = response.data.filter((ai: any) =>
-            ai.permissions.some((permission: any) => permission.approve)
-          ).length;
-          setAiCount(approvedAiCount);
-        })
-        .catch((error) => {
-          console.error('❌ Error fetching AI models:', error);
-        });
-    }
-  }, [userId]);
+  // ✅ ใช้ข้อมูลจาก useAiData แทนการใช้ fetchUserAiModels
+  const { allAiModelWithApprovalData, isLoadingallAiModelWithApproval } = useAiData();
+  const aiCount = allAiModelWithApprovalData
+    ? allAiModelWithApprovalData.filter((ai: { permissions?: { approve: boolean }[] }) =>
+      ai.permissions?.some((permission: { approve: boolean }) => permission.approve)
+    ).length
+    : 0;
+
+  const {
+    personalWorkspaceData: myWorkspace = [],
+    isLoadingPersonalWorkspaceData: isLoadingWorkspaces,
+    refetchPersonalWorkspaceData: refetchWorkspaces
+  } = useWorkspaceData();
+
 
   useEffect(() => {
     if (userId) {
-      axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/personal/${userId}`, {
-        withCredentials: true,
-      })
-        .then((response) => {
-          setMyWorkspace(response.data);
-        })
-        .catch((error) => {
-          console.error('❌ Error fetching workspace data:', error);
-        });
+      refetchWorkspaces();
     }
-  }, [userId]);
+  }, [userId, refetchWorkspaces]);
 
-  const handlePromoteToAdmin = async () => {
+  const handlePromoteToAdmin = () => {
     if (!userId) return;
-    setLoading(true);
 
-    try {
-      await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/promote/${userId}`, {}, {
-        withCredentials: true,
-      });
-
-      setUserData((prevData: any) => ({
-        ...prevData,
-        role: "admin",
-      }));
-
-      // ปิด Dialog ยืนยันก่อน
-      setOpenConfirmDialog(false);
-
-      // เปิด Dialog แสดงความสำเร็จ หลังจากปิด Dialog ยืนยันแล้ว
-      setTimeout(() => {
-        setOpenSuccessDialog(true);
-      }, 300); // เพิ่ม delay เล็กน้อยเพื่อความลื่นไหล
-
-    } catch (error) {
-      console.error('❌ Error promoting user:', error);
-      alert("❌ ไม่สามารถอัปเกรดเป็น Admin ได้");
-    } finally {
-      setLoading(false);
-    }
+    promoteMutation.mutate(userId, {
+      onSuccess: () => {
+        setOpenConfirmDialog(false);
+        setTimeout(() => setOpenSuccessDialog(true), 300);
+      },
+    });
   };
-
 
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
         <AdminSidebar />
-
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] relative">
-            
-            {/* 🔵 Promote to Admin Button (มุมขวาบน) */}
-            
-
             {/* Header: User Profile */}
             <div className="relative bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-[15px] text-white h-28">
               <div className="absolute top-5 right-5">
                 <Button
-                  onClick={() => setOpenConfirmDialog(true)} // เปิด Dialog ยืนยัน
+                  onClick={() => setOpenConfirmDialog(true)}
                   variant="outlined"
                   sx={{
                     background: 'white',
-                    borderColor: "#4f46e5", 
-                    color: "#4f46e5", 
+                    borderColor: "#4f46e5",
+                    color: "#4f46e5",
                     "&:hover": {
                       borderColor: "#3730a3",
                       backgroundColor: "rgba(79, 70, 229, 0.1)"
                     }
                   }}
-                  disabled={userData?.role === "admin" || loading}
+                  disabled={userDetailById?.role === "admin" || isLoadinguserDetailById}
                   startIcon={<AdminPanelSettings />}
                 >
-                  {userData?.role === "admin" ? "เป็น Admin แล้ว" : "Promote เป็น Admin"}
+                  {userDetailById?.role === "admin" ? "เป็น Admin แล้ว" : "Promote เป็น Admin"}
                 </Button>
               </div>
               <img
                 className="absolute w-32 h-32 rounded-full border-4 border-white top-[52px] left-6"
-                src={userData?.picture || "/images/default-profile.png"}
+                src={userDetailById?.picture || '/images/default-profile.png'}
                 alt="User"
               />
             </div>
 
             <div className="ml-6 mt-20">
-              {userData ? (
+              {isLoadinguserDetailById ? (
+                <p className="text-gray-500">กำลังโหลดข้อมูลผู้ใช้...</p>
+              ) : userDetailById ? (
                 <>
                   <h2 className="text-3xl font-semibold">
-                    <i className="bi bi-person-circle"></i> {userData.name}
+                    <i className="bi bi-person-circle"></i> {userDetailById.name}
                   </h2>
                   <p className="text-xl text-blue-500">
-                    <i className="bi bi-envelope"></i> : {userData.email || "N/A"}
+                    <i className="bi bi-envelope"></i> : {userDetailById.email || 'N/A'}
                   </p>
-                  
                 </>
               ) : (
-                <p className="text-gray-500">กำลังโหลดข้อมูลผู้ใช้...</p>
+                <p className="text-gray-500">ไม่พบข้อมูลผู้ใช้</p>
               )}
             </div>
 
             {/* Tabs */}
             <div className="mt-6 flex justify-start px-6">
               <button
-                onClick={() => setUserTab("Ai")}
-                className={`w-1/2 border-b-2 rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium ${userTab === "Ai"
-                  ? "text-indigo-600 border-indigo-600"
-                  : "border-transparent text-gray-600 hover:border-gray-300"
-                  }`}
+                onClick={() => setUserTab('Ai')}
+                className={`w-1/2 border-b-2 rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium ${userTab === 'Ai' ? 'text-indigo-600 border-indigo-600' : 'border-transparent text-gray-600 hover:border-gray-300'}`}
               >
                 <i className="bi bi-card-list"></i> รายชื่อสิทธิ์ AI
               </button>
 
               <button
-                onClick={() => setUserTab("Workspace")}
-                className={`w-1/2 border-b-2 rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium ${userTab === "Workspace"
-                  ? "text-indigo-600 border-indigo-600"
-                  : "border-transparent text-gray-600 hover:border-gray-300"
-                  }`}
+                onClick={() => setUserTab('Workspace')}
+                className={`w-1/2 border-b-2 rounded-t-lg cursor-pointer px-4 py-2 text-center font-medium ${userTab === 'Workspace' ? 'text-indigo-600 border-indigo-600' : 'border-transparent text-gray-600 hover:border-gray-300'}`}
               >
                 <i className="bi bi-laptop"></i> Workspace
               </button>
             </div>
 
-            <div className='py-6 border-t'>
-              {userTab === "Ai" ? (
+            <div className="py-6 border-t">
+              {userTab === 'Ai' ? (
                 <div className="px-6">
                   <div className="flex justify-between items-center px-4 py-2">
-                    <span className='text-xl font-medium text-indigo-800'>
-                      <i className="bi bi-file-earmark-check-fill"></i> AI ได้รับสิทธิ์ : {aiCount}
+                    <span className="text-xl font-medium text-indigo-800">
+                      <i className="bi bi-file-earmark-check-fill"></i> AI ได้รับสิทธิ์ : {isLoadingallAiModelWithApproval ? 'กำลังโหลด...' : aiCount}
                     </span>
                     <AddAIDialog />
                   </div>
                   <AiApprovedListTable userId={userId} />
                 </div>
-              ) : userTab === "Workspace" ? (
+              ) : (
                 <div className="grid grid-cols-3 pb-8 pt-2">
-                  {myWorkspace.length > 0 ? myWorkspace.map((data: Workspace) => (
-                    <div key={data.workspaceId} className="mb-4">
-                      <Link to={`/workspaces/${data.workspaceId}/project-list`}>
-                        <WorkspaceCard {...data} />
-                      </Link>
-                    </div>
-                  )) : (
-                    <div className="text-center py-6 text-gray-500 text-xl">
-                      <i className="bi bi-folder-x"></i> ไม่พบข้อมูล Workspace
-                    </div>
+                  {isLoadingWorkspaces ? (
+                    <p className="text-gray-500">กำลังโหลดข้อมูล Workspace...</p>
+                  ) : (
+                    myWorkspace.map((data: Workspace) => (
+                      <div key={data.workspaceId} className="mb-4">
+                        <Link to={`/workspaces/${data.workspaceId}/project-list`}>
+                          <WorkspaceCard {...data} />
+                        </Link>
+                      </div>
+                    ))
                   )}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -206,7 +159,7 @@ const UserDetailPage = () => {
         <DialogTitle>ยืนยันการ Promote</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            คุณต้องการ Promote <b>{userData?.name}</b> เป็น Admin หรือไม่?
+            คุณต้องการ Promote <b>{userDetailById?.name}</b> เป็น Admin หรือไม่?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -223,7 +176,7 @@ const UserDetailPage = () => {
       <Dialog open={openSuccessDialog} onClose={() => window.location.reload()}>
         <DialogTitle>Promote สำเร็จ</DialogTitle>
         <DialogContent>
-          <Typography>✅ {userData?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
+          <Typography>✅ {userDetailById?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => window.location.reload()} color="primary" variant="contained">

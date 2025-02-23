@@ -20,7 +20,8 @@ import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { formatDate, getImageUrl } from '../../function/util';
 import { formatTime } from '../../function/util';
-import { useAiPermissionMutations } from '../../hook/ai-permission/userAiPermissionMutation';
+import { useAiPermissionMutations } from '../../hook/ai-permission/useAiPermissionMutation';
+import { useAiPermission } from '../../hook/ai-permission/useAiPermission';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -65,22 +66,18 @@ const SortableTable: React.FC = () => {
   } | null>(null);
 
   // ใช้ custom mutation hook
+  const { PermissionData } = useAiPermission();
   const { approvePermissionMutation, refusePermissionMutation } = useAiPermissionMutations();
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/detail`, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log("🟢 API Response:", response.data);
-        const formattedData = response.data.map((item: any) => ({
-          ...item,
-          updatedAt: new Date(item.updatedAt),
-        }));
-        setRows(formattedData);
-      });
-  }, []);
+    if (PermissionData) {
+      const formattedData = PermissionData.map((item: any) => ({
+        ...item,
+        updatedAt: new Date(item.updatedAt),
+      }));
+      setRows(formattedData);
+    }
+  }, [PermissionData]);
 
   const handleRequestSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';

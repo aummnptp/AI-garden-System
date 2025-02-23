@@ -9,7 +9,7 @@ import axios from 'axios';
 import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useProjecteData } from '../../hook/projects/useProjectData';
-import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
 
 interface PredictResult {
   ai_type: string;

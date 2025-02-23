@@ -3,7 +3,9 @@ import { toast } from "react-hot-toast";
 import {
     revokePermissionService,
     refusePermissionService,
-    approvePermissionService
+    approvePermissionService,
+    addBulkPermissionRequestService,
+    removeBulkPermissionRequestService
 } from "../../api/services/AiPermissionService";
 
 interface revokePermissionProps {
@@ -13,7 +15,14 @@ interface revokePermissionProps {
 interface permissionIdProps {
     id: string;
 }
-
+interface removeBulkPermissionRequestProps {
+    userId: string;
+    ids: string[];
+}
+interface addBulkPermissionRequestProps {
+    userId: string;
+    aiIds: string[];
+}
 
 export const useAiPermissionMutations = () => {
     const queryClient = useQueryClient();
@@ -23,7 +32,7 @@ export const useAiPermissionMutations = () => {
             return approvePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-approve"] });
             toast.success("ยอมรับคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -36,7 +45,7 @@ export const useAiPermissionMutations = () => {
             return refusePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-refuse"] });
             toast.success("ปฏิเสธคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -49,7 +58,7 @@ export const useAiPermissionMutations = () => {
             return revokePermissionService(userId, aiId);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-revoke"] });
             toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -57,9 +66,37 @@ export const useAiPermissionMutations = () => {
         },
     });
 
+    const addBulkPermissionRequest = useMutation({
+        mutationFn: async ({ userId, aiIds }: addBulkPermissionRequestProps) => {
+            return addBulkPermissionRequestService(userId, aiIds);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-add-bulk"] });
+            toast.success("เพิ่มสิทธิ์การใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในเพิ่มสิทธิ์ AI");
+        },
+    });
+
+    const removeBulkPermissionRequest = useMutation({
+        mutationFn: async ({ userId, ids }: removeBulkPermissionRequestProps) => {
+            return removeBulkPermissionRequestService(userId, ids);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission-remove-bulk"] });
+            toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
+        },
+        onError: () => {
+            toast.error("เกิดข้อผิดพลาดในการถอนสิทธิ์การใช้งาน AI");
+        },
+    });
+
     return {
         approvePermissionMutation,
         refusePermissionMutation,
-        revokePermissionMutation
+        revokePermissionMutation,
+        addBulkPermissionRequest,
+        removeBulkPermissionRequest
     };
 };

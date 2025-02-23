@@ -112,5 +112,8 @@ export const updateAiModelService = async (
     }
   };
 
-  
+  export const fetchAllModelsWithApprovalStatus = async (userId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/ai-models/${userId}/models`);
+    return data;
+  };
   

@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { fetchAvailableUsersService, fetchInvitedWorkspaces, fetchInviteLinkService, fetchMembersService, fetchMyWorkspaces, fetchPendingUsersService, fetchWorkspaceDetailService } from "../../api/services/WorkspaceService";
+import { fetchAvailableUsersService, fetchInvitedWorkspaces, fetchInviteLinkService, fetchMembersService, fetchMyWorkspaces, fetchPendingUsersService, fetchWorkspaceDetailService, fetchPersonalWorkspaceService } from "../../api/services/WorkspaceService";
 
 
 
 export const useWorkspaceData  = () => {
-  const { workspaceId} = useParams<{ workspaceId: string; projectId: string }>();
+  const { workspaceId, userId} = useParams<{ workspaceId: string; projectId: string ; userId: string}>();
   
   const {
     data: workspaceDetail,
@@ -86,6 +86,17 @@ export const useWorkspaceData  = () => {
     enabled: !!workspaceId,
   });
 
+  const {
+    data: personalWorkspaceData,
+    isLoading: isLoadingPersonalWorkspaceData,
+    isError: isErrorPersonalWorkspaceData,
+    refetch: refetchPersonalWorkspaceData,
+  } = useQuery({
+    queryKey: ["personal-workspace", userId],
+    queryFn: () => fetchPersonalWorkspaceService(userId!),
+    enabled: !!workspaceId,
+  });
+
   return {
     workspaceDetail,
     isLoadingWorkspace,
@@ -121,5 +132,10 @@ export const useWorkspaceData  = () => {
     isLoadingMembers,
     isErrorMembers,
     refetchMemberDatas,
+
+    personalWorkspaceData,
+    isLoadingPersonalWorkspaceData,
+    isErrorPersonalWorkspaceData,
+    refetchPersonalWorkspaceData,
   };
 };

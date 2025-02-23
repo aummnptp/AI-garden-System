@@ -19,7 +19,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { getImageUrl } from '../../function/util';
 import { useUserApprovedAiData } from '../../hook/ai/useUserApprovedAiData';
-import { useAiPermissionMutations } from '../../hook/ai-permission/userAiPermissionMutation';
+import { useAiPermissionMutations } from '../../hook/ai-permission/useAiPermissionMutation';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   width: '33.33%', // ทำให้คอลัมน์มีขนาดเท่าๆ กัน

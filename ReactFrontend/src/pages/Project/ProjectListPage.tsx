@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import ProjectCard from "../../components/card/ProjectCard";
 import MiniFooter from "../../components/MiniFooter";
 import Sidebar from "../../components/Sidebar";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { ProjectDataType } from "../../types/Project";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";

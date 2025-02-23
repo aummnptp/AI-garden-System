@@ -53,3 +53,8 @@ export const fetchMembersService = async (workspaceId: string) => {
   const { data } = await axios.get(`${BASE_URL}/workspaces/members-profiles/${workspaceId}`);
   return data;
 };
+
+export const fetchPersonalWorkspaceService = async (userId: string) => {
+  const { data } = await axios.get(`${BASE_URL}/workspaces/personal/${userId}`);
+  return data;
+};

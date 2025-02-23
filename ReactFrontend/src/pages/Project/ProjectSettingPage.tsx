@@ -19,7 +19,7 @@ import ProjectImageInput from "../../components/input/ProjectImageInput";
 import { Close } from "@mui/icons-material";
 
 import { useProjecteData } from "../../hook/projects/useProjectData";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useProjectMutations } from "../../hook/projects/useProjectMutations";
 

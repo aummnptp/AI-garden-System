@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllAiTag, fetchApprovedAiService } from "../../api/services/AiService";
+import { fetchApprovedAiService } from "../../api/services/AiService";
 
 export const useApprovedAiData = () => {
   console.log("🔍 useApprovedAiData ถูกเรียก!"); 
@@ -19,26 +19,10 @@ export const useApprovedAiData = () => {
     placeholderData: [],
   });
 
-  
-  
-    const {
-      data: aiTags,
-      isLoading: isLoadingaiTags,
-      isError: isErroaiTags,
-    } = useQuery({
-      queryKey: ["ai-tags"],
-      queryFn: () => fetchAllAiTag(),
-    });
-  
-    
-  
     return {
       AIData,
       isLoadingAI,
       isErrorAI,
       refetchAIModels,
-  
-      aiTags, isLoadingaiTags, isErroaiTags,
-  
     };
 };
