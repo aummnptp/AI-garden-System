@@ -12,7 +12,7 @@ export const useAiRequestPermissionMutation = () => {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
     onError: (error) => {

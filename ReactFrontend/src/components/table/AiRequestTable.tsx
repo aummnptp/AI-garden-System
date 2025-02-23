@@ -16,7 +16,6 @@ import {
   DialogActions,
   Typography,
 } from '@mui/material';
-import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import { formatDate, getImageUrl } from '../../function/util';
 import { formatTime } from '../../function/util';

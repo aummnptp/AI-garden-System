@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableHead,
@@ -145,7 +145,7 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stableSort(filteredRows, getComparator(order, orderBy)).map((row, index) => (
+          {stableSort(filteredRows, getComparator(order, orderBy)).map((row) => (
             <StyledTableRow key={row.userId}>
               <StyledTableCell>
                 <div className="flex items-center my-2 w-fit">
