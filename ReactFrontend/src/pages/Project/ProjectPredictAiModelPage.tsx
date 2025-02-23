@@ -4,7 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import { Alert, AlertTitle,  } from '@mui/material';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useProjecteData } from '../../hook/projects/useProjectData';
-import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
 import { useAiPrediction } from '../../hook/ai/useAiPrediction';
 import { StepIndicator } from '../../components/ai/predictPage/StepIndicator';
 import { ImageUploadForm } from '../../components/ai/predictPage/ImageUploadForm';
