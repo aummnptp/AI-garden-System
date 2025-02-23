@@ -48,7 +48,7 @@ services:
         dockerfile: Dockerfile.prod
       restart: unless-stopped
       ports:
-        - "8080:80"
+        - "8081:81"
       networks:
         - ai_garden_network
       depends_on:
