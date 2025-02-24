@@ -151,7 +151,7 @@ export default function SubmitRankTable() {
                     </StyledTableCell>
                     <StyledTableCell sx={{ fontSize: '1rem' }}>
                       <div className="flex items-center w-fit">
-                        <Avatar className="w-10 h-10 rounded-full border-2" src={row.picture} alt="Avatar" />
+                        <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(row.picture)} alt="Avatar" />
                         <div className="ml-2">
                           <p className="text-indigo-900 text-lg font-medium">{row.name}</p>
                         </div>

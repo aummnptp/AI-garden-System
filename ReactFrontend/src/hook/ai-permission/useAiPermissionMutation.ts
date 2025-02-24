@@ -32,7 +32,7 @@ export const useAiPermissionMutations = () => {
             return approvePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission-approve"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
             toast.success("ยอมรับคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -45,7 +45,7 @@ export const useAiPermissionMutations = () => {
             return refusePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission-refuse"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
             toast.success("ปฏิเสธคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -58,7 +58,7 @@ export const useAiPermissionMutations = () => {
             return revokePermissionService(userId, aiId);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission-revoke"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-approved-models"] });
             toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -71,7 +71,7 @@ export const useAiPermissionMutations = () => {
             return addBulkPermissionRequestService(userId, aiIds);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission-add-bulk"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval"] });
             toast.success("เพิ่มสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -84,7 +84,7 @@ export const useAiPermissionMutations = () => {
             return removeBulkPermissionRequestService(userId, ids);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission-remove-bulk"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval"] });
             toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
