@@ -21,6 +21,7 @@ import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { Member, PendingUserData } from "../../types/User";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useWorkspaceInvitationMutation } from "../../hook/workspaces/useWorkspaceInvitationMutation";
+import { getImageUrl } from "../../function/util";
 
 interface userData {
   id: number;
@@ -182,7 +183,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                         <div className="flex items-center ">
                           <img
                             className="w-10 h-10 rounded-full  border-2"
-                            src={member.user.picture|| "/images/homeImage/profile.webp"}
+                            src={getImageUrl(member.user.picture)|| "/images/homeImage/profile.webp"}
                             alt="User"
                             onError={(e) => {
                               e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -272,7 +273,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                       <div className="flex items-center ">
                         <img
                           className="w-10 h-10 rounded-full  border-2"
-                          src={pending.user.picture|| "/images/homeImage/profile.webp"}
+                          src={getImageUrl(pending.user.picture)|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
                             e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -313,7 +314,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                     renderOption={(props, option) => (
                       <li {...props}>
                         <img
-                          src={option.picture|| "/images/homeImage/profile.webp"}
+                          src={getImageUrl(option.picture)|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
                             e.currentTarget.onerror = null; // ป้องกัน loop error

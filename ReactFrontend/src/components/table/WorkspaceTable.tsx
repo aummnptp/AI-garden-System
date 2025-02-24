@@ -242,7 +242,7 @@ const Workspacetable: React.FC = () => {
 
                   <TableCell>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Avatar src={row.user.picture} sx={{ width: 40, height: 40, mr: 1 }} />
+                      <Avatar src={getImageUrl(row.user.picture)} sx={{ width: 40, height: 40, mr: 1 }} />
                       <Typography>{row.user.name}</Typography>
                     </Box>
                   </TableCell>

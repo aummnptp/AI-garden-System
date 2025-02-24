@@ -52,7 +52,7 @@ const HistoryUploadSection: React.FC<HistoryUploadSectionProps> = ({
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-full border-2"
-              src={entry.user.picture}
+              src={getImageUrl(entry.user.picture)}
               alt={entry.user.name}
             />
             <div className="ml-3 flex items-center gap-2">

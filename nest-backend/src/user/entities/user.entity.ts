@@ -6,20 +6,23 @@ import { AIModel } from "src/ai/entities/ai-model.entity";
 
 @Entity()
 export class User{
-    @PrimaryGeneratedColumn('uuid',{ name: 'user_id' })// ใช้ id เป็น Primary Key
+    @PrimaryGeneratedColumn('uuid',{ name: 'user_id' })
     userId: string;
 
   
-    @Column({ unique: true ,name:'google_id'})  // googleId ควรเป็นค่าที่ได้จาก Google และควรจะเป็น unique
+    @Column({ unique: true ,name:'google_id'})
     googleId: string;
   
-    @Column({ unique: true }) // อีเมลควรจะเป็น unique เพื่อป้องกันการซ้ำกัน
+    @Column({ unique: true })
     email: string;
     @Column()
     name: string;
     @Column()
     picture: string;
 
+    @Column({ nullable: true })
+
+    googlePictureUrl: string; 
     @Column({ default: 'user' })
     role: string;
 

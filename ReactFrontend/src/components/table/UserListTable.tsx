@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { Desk, PsychologyOutlined } from '@mui/icons-material';
 import { useUserData } from '../../hook/user/useUserData';
+import { getImageUrl } from '../../function/util';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -149,7 +150,7 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
             <StyledTableRow key={row.userId}>
               <StyledTableCell>
                 <div className="flex items-center my-2 w-fit">
-                  <img className="w-10 h-10 rounded-full border-2" src={row.picture} alt={row.name} />
+                  <img className="w-10 h-10 rounded-full border-2" src={getImageUrl(row.picture)} alt={row.name} />
                   <div className="ml-2">
                     <p className="text-black text-lg font-medium">{row.name}</p>
                     <p className="text-[#8D9BAE] text-sm font-normal">{row.email}</p>

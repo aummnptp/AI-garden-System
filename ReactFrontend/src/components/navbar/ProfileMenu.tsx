@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Menu, MenuItem, Typography, Avatar } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { getImageUrl } from "../../function/util";
 
 
 interface ProfileMenuProps {
@@ -29,7 +30,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onlogout}) => {
       {/* ปุ่มเปิดเมนู */}
       <div onClick={handleClick} className="flex items-center w-fit ml-3 hover:bg-gray-100 p-2 cursor-pointer rounded-lg">
         <Avatar
-          src={user.picture || "/images/homeImage/profile.webp"}
+          src={getImageUrl(user.picture) || "/images/homeImage/profile.webp"}
           alt="InviterProfile"
           sx={{ width: 40, height: 40, marginRight: 1 }}
         />

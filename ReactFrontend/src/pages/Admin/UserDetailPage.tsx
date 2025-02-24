@@ -12,6 +12,7 @@ import { useUserMutation } from '../../hook/user/useUserMutation';
 import { useUserData } from '../../hook/user/useUserData';
 import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
 import { useAiData } from '../../hook/ai/useAiData'; 
+import { getImageUrl } from '../../function/util';
 
 const UserDetailPage = () => {
   const { userId } = useParams();
@@ -82,7 +83,7 @@ const UserDetailPage = () => {
               </div>
               <img
                 className="absolute w-32 h-32 rounded-full border-4 border-white top-[52px] left-6"
-                src={userDetailById?.picture || '/images/default-profile.png'}
+                src={getImageUrl(userDetailById?.picture) || '/images/default-profile.png'}
                 alt="User"
               />
             </div>

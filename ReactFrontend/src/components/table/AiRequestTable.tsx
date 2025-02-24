@@ -217,7 +217,7 @@ const SortableTable: React.FC = () => {
                     <div className="flex items-center my-2 w-fit">
                       <img
                         className="w-10 h-10 rounded-full border-2"
-                        src={row.user.picture}
+                        src={getImageUrl(row.user.picture)}
                         alt={row.user.name}
                       />
                       <div className="ml-2">
