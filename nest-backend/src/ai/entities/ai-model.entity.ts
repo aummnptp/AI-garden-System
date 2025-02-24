@@ -52,7 +52,7 @@ export class AIModel {
   @OneToMany(() => AIUsageLimit, (usageLimit) => usageLimit.ai)
   usageLimits: AIUsageLimit[];
 
-  @OneToMany(() => Permission, (permission) => permission.aiModel)
+  @OneToMany(() => Permission, (permission) => permission.aiModel, { onDelete: 'CASCADE' })
   permissions: Permission[];
 
   @OneToMany(() => Project,(project) => project.ai_model,)

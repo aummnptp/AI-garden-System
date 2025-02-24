@@ -3,13 +3,11 @@ import { FileUploadArea } from "../predictPage/FileUploadArea";
 import ImageUploader from "../../ImageUploader";
 import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { Link } from "react-router-dom";
-import { AIDataType } from "../../../types/Ai";
+import { AIDataType, PredictResult } from "../../../types/Ai";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import toast from "react-hot-toast";
 
-interface PredictResult {
-    prediction: any;
-  }
+
   
 export const ImageUploadDemoForm: React.FC<{
     uploadStep: number;

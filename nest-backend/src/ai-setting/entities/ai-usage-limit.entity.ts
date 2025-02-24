@@ -18,7 +18,7 @@ export class AIUsageLimit {
   @Column({ default: 0 })
   usageCount: number;
 
-  @ManyToOne(() => AIModel, (ai) => ai.usageLimits)
+  @ManyToOne(() => AIModel, (ai) => ai.usageLimits,{ onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ai_id' })
   ai: AIModel;
 

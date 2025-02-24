@@ -23,7 +23,7 @@ export class Permission {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => AIModel, (aiModel) => aiModel.permissions)
+  @ManyToOne(() => AIModel, (aiModel) => aiModel.permissions,{ onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ai_id' })
   aiModel: AIModel;
 }

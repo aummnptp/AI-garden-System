@@ -26,7 +26,7 @@ response_keys: { key: string; meaning: string ,displayFormat:string}[]; // ร�
   @JoinColumn({ name: 'project_id' })
   project: Project; // ความสัมพันธ์กับ Workspace
 
-  @ManyToOne(() => AIModel)
+  @ManyToOne(() => AIModel,{ onDelete: 'CASCADE' })
   ai_model: AIModel;
 
 

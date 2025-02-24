@@ -6,7 +6,7 @@ import AiApprovedListTable from '../../components/table/AiApprovedListTable';
 import WorkspaceCard from '../../components/card/WorkspaceCard';
 import AddAIDialog from '../../components/AddAIDialog';
 import { Workspace } from '../../types/Workspace';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { AdminPanelSettings } from '@mui/icons-material';
 import { useUserMutation } from '../../hook/user/useUserMutation';
 import { useUserData } from '../../hook/user/useUserData';
@@ -18,7 +18,6 @@ const UserDetailPage = () => {
   const { userId } = useParams();
   const [userTab, setUserTab] = useState<string>('Ai');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   const { userDetailById, isLoadinguserDetailById } = useUserData();
   const promoteMutation = useUserMutation();
@@ -49,7 +48,6 @@ const UserDetailPage = () => {
     promoteMutation.mutate(userId, {
       onSuccess: () => {
         setOpenConfirmDialog(false);
-        setTimeout(() => setOpenSuccessDialog(true), 300);
       },
     });
   };
@@ -172,18 +170,7 @@ const UserDetailPage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* 🟢 Dialog แสดงความสำเร็จ */}
-      <Dialog open={openSuccessDialog} onClose={() => window.location.reload()}>
-        <DialogTitle>Promote สำเร็จ</DialogTitle>
-        <DialogContent>
-          <Typography>{userDetailById?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => window.location.reload()} color="primary" variant="contained">
-            ปิด
-          </Button>
-        </DialogActions>
-      </Dialog>
+      
     </>
   );
 };
