@@ -7,7 +7,7 @@ export const useAiPermission = () => {
     const {
         data: PermissionData = [],
     } = useQuery({
-        queryKey: ["ai-permisision"],
+        queryKey: ["ai-permission"],
         queryFn: () => fetchPermissionDetailService(),
     });
 
