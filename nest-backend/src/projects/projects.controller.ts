@@ -141,17 +141,9 @@ export class ProjectsController {
   }
 
   @UseGuards(JwtGuard)
-  @Get(':projectId/ranking')
-  async getUploadRanking(@Param('projectId') projectId: string): Promise<RankingData[]> {
-    return this.projectsService.getUploadRanking(projectId);
+  @Get('/statistic/:projectId')
+  async getUploadStatistics(@Param('projectId') projectId: string) {
+    return await this.projectsService.getUploadStatistics(projectId);
   }
-
-  @UseGuards(JwtGuard)
-  @Get('/count-media/:projectId')
-  async getMediaCount(@Param('projectId') projectId: string) {
-    return await this.projectsService.countMedia(projectId);
-  }
-
-  
 
 }

@@ -1,27 +1,21 @@
 import { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ProjectImage from "../../components/card/ProjectLetterImage";
-
 import {
   ExclamationCircleOutlined,
   PictureOutlined,
   ScheduleOutlined,
   UploadOutlined,
-  UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
 import MiniFooter from "../../components/MiniFooter";
 import Barchart from "../../components/chart/BarChart";
-import SummaryCard from "../../components/chart/sumaryCard";
 import SubmitRankTable from "../../components/table/SubmitRankTable";
 import { Link, useParams } from "react-router-dom";
 import { Alert, Button, Snackbar } from "@mui/material";
-
-import { formatDate, getImageUrl } from "../../function/util";
+import { getImageUrl } from "../../function/util";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
-
-import { useFetchQuery } from "../../hook/useFetchQuery";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const ProjectDetailPage = () => {
@@ -34,16 +28,8 @@ const ProjectDetailPage = () => {
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
 
-  const {
-    data: mediaCount = { imageCount: 0, videoCount: 0 },
-    isLoading: isLoadingMediaCount,
-  } = useFetchQuery(
-    ["media-count", workspaceId ?? "", projectId ?? ""],
-    `/workspaces/${workspaceId}/projects/count-media/${projectId}`
-  );
-  // ตรวจสอบข้อผิดพลาด
 
-  if (isLoadingProjectDetail || isLoadingWorkspace || isLoadingMediaCount)
+  if (isLoadingProjectDetail || isLoadingWorkspace)
     return <SkeletonLayout />;
   const uploadIcon =
     projectDetail.input_type === "รูปภาพ" ? (
@@ -165,11 +151,10 @@ const ProjectDetailPage = () => {
                     ? `/workspaces/${workspaceId}/project/${projectId}/predict`
                     : "#"
                 }
-                className={`ml-16 mt-2 ${
-                  !projectDetail.ai_model.enable
+                className={`ml-16 mt-2 ${!projectDetail.ai_model.enable
                     ? "pointer-events-none opacity-50"
                     : ""
-                }`}
+                  }`}
               >
                 <Button
                   variant="contained"
@@ -204,123 +189,14 @@ const ProjectDetailPage = () => {
                 <div className="mt-6 w-full border border-zinc-300" />
               </div>
             </div>
-
-            <div className="">
-              {/* Sumary Content Row1 */}
-              <div className="grid grid-cols-3 px-10">
-                <SummaryCard
-                  icon={
-                    <UserOutlined style={{ color: "#fff", fontSize: "2em" }} />
-                  }
-                  label="จำนวนผู้ใช้ทั้งหมด"
-                  value="4"
-                  valueType="ผู้ใช้"
-                  disable={false}
-                />
-                {/* รูป summary */}
-                {projectDetail.input_type === "รูปภาพ" ? (
-                  <SummaryCard
-                    icon={
-                      <PictureOutlined
-                        style={{ color: "#fff", fontSize: "2em" }}
-                      />
-                    }
-                    label="ประมวลผลด้วยภาพ"
-                    value={mediaCount.imageCount.toLocaleString()} // แสดงจำนวนรูปภาพ
-                    valueType="ภาพ"
-                    disable={mediaCount.imageCount === 0}
-                  />
-                ) : (
-                  <SummaryCard
-                    icon={
-                      <VideoCameraOutlined
-                        style={{ color: "#fff", fontSize: "2em" }}
-                      />
-                    }
-                    label="ประมวลผลด้วยภาพ"
-                    value=""
-                    valueType="ภาพ"
-                    disable={true}
-                  />
-                )}
-                {/* วิดีโอ summary */}
-                {projectDetail.input_type === "วิดีโอ" ? (
-                  <SummaryCard
-                    icon={
-                      <VideoCameraOutlined
-                        style={{ color: "#fff", fontSize: "2em" }}
-                      />
-                    }
-                    label="ประมวลผลด้วยวิดีโอ"
-                    value={mediaCount.videoCount.toLocaleString()} // แสดงจำนวนวิดีโอ
-                    valueType="วิดีโอ"
-                    disable={mediaCount.videoCount === 0}
-                  />
-                ) : (
-                  <SummaryCard
-                    icon={
-                      <VideoCameraOutlined
-                        style={{ color: "#fff", fontSize: "2em" }}
-                      />
-                    }
-                    label="ประมวลผลด้วยวิดีโอ"
-                    value=""
-                    valueType="วิดีโอ"
-                    disable={true}
-                  />
-                )}
-              </div>
-
-              {/* usage  */}
-              <div className="flex  my-10 ">
-                <div className=" w-full   mx-auto flex">
-                  {/* <UsageBarChart /> */}
-                  <SubmitRankTable></SubmitRankTable>
-                </div>
-              </div>
-
-              {/* Sumary Content Row/ */}
-              <div className="grid grid-cols-2 px-10 my-4">
-                {/* create date card */}
-                <div className="flex h-full items-center  bg-white shadow rounded-md m-2">
-                  <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
-                  {/* <div className="w-12 h-12 ml-2 bg-indigo-900 rounded flex items-center justify-center"> */}
-                  {/* icon */}
-                  {/* </div> */}
-                  <div className="ml-4">
-                    <div className="py-4">
-                      <p className="text-gray-600">วันที่สร้าง</p>
-                      <span className="text-indigo-900 text-2xl font-bold">
-                        {formatDate(projectDetail.created_at)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {/* update date card */}
-                <div className="h-full flex items-center bg-white shadow rounded-md  m-2">
-                  <div className="w-2 h-full bg-indigo-600 rounded-tl-[15px] rounded-bl-[15px]" />
-                  <div className="ml-4">
-                    <div className="py-4">
-                      <p className="text-gray-600">วันที่อัปเดตล่าสุด</p>
-                      <span className="text-indigo-900 text-2xl font-bold">
-                        {formatDate(projectDetail.updated_at)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+              <SubmitRankTable></SubmitRankTable>
               <div>
                 <div className="flex ">
                   <div className="w-[70%] mx-auto">
                     <Barchart />
                   </div>
-                  {/* <div className="w-[30%] mx-auto">
-                    <DoughnutChart />
-                  </div> */}
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>

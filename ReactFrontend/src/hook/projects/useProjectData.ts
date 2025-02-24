@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchProjectDetailService, fetchProjectPermissionsService, fetchProjectsService, fetchRankingData } from "../../api/services/ProjectService";
+import { fetchProjectDetailService, fetchProjectPermissionsService, fetchProjectsService, fetchStatistic } from "../../api/services/ProjectService";
 import { useParams } from "react-router-dom";
 
 export const useProjecteData = () => {
@@ -38,13 +38,13 @@ export const useProjecteData = () => {
   });
 
   const {
-    data: rankingData,
-    isLoading: isLoadingRanking,
-    isError: errorRanking,
-    refetch: refetchRanking,
+    data: statisticData,
+    isLoading: isLoadingStatistic,
+    isError: errorStatistic,
+    refetch: refetchStatistic,
   } = useQuery({
-    queryKey: ["project-ranking",  workspaceId, projectId],
-    queryFn: () => fetchRankingData(workspaceId!, projectId!),
+    queryKey: ["project-statistic",  workspaceId, projectId],
+    queryFn: () => fetchStatistic(workspaceId!, projectId!),
     enabled: !!workspaceId && !!projectId,
   });
   
@@ -65,9 +65,9 @@ export const useProjecteData = () => {
     isErrorPermissions,
     refetchPermissions,
 
-    rankingData,
-    isLoadingRanking,
-    errorRanking,
-    refetchRanking,
+    statisticData,
+    isLoadingStatistic,
+    errorStatistic,
+    refetchStatistic,
   };
 };

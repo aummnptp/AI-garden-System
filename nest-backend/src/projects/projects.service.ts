@@ -250,62 +250,56 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     await this.projectHistoryRepository.remove(history);
     return { message: 'History deleted successfully' };
   }
-  async getUploadRanking(projectId: string) {
-    const history = await this.projectHistoryRepository.find({
-      where: {
-        project: {
-          projectId: projectId  // หรือใช้ project_id ถ้าตั้งชื่อคอลัมน์นี้ใน Project
-        }
-      },
-      relations: ['project', 'user'] // ดึงข้อมูล project และ user มาด้วย
-    });
+
+async getUploadStatistics(projectId: string) {
+  const history = await this.projectHistoryRepository.find({
+    where: { project: { projectId } },
+    relations: ['project', 'user'] // ดึงข้อมูล project และ user มาด้วย
+  });
+
+  // ใช้ Set เพื่อนับ userId ที่ไม่ซ้ำ
+  const uniqueUsers = new Set(history.map(item => item.user.userId));
+  const userCount = uniqueUsers.size; // นับจำนวน userId ที่ไม่ซ้ำ
+
+  // นับจำนวนรูปภาพ
+  const imageExtensions = ['.jpg', '.jpeg', '.png'];
+  const imageCount = history.filter(item => 
+    imageExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
+  ).length;
+
+  // นับจำนวนวิดีโอ
+  const videoExtensions = ['.mp4', '.mov', '.avi'];
+  const videoCount = history.filter(item => 
+    videoExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
+  ).length;
+
+  // จัดอันดับการอัปโหลด
+  const ranking = history.reduce((acc, item) => {
+    const userId = item.user.userId;
+    if (!acc[userId]) {
+      acc[userId] = {
+        userId: userId,
+        submitNumber: 0,
+        name: item.user.name,
+        picture: item.user.picture
+      };
+    }
+    acc[userId].submitNumber += 1;
+    return acc;
+  }, {} as Record<string, { userId: string; submitNumber: number; name: string; picture: string }>);
+
+  // แปลง Object เป็น Array และเรียงลำดับ
+  const sortedRanking = Object.values(ranking).sort((a, b) => b.submitNumber - a.submitNumber);
+
+  return {
+    userCount,      // จำนวนผู้ใช้ที่มีการอัปโหลด
+    imageCount,     // จำนวนรูปภาพ
+    videoCount,     // จำนวนวิดีโอ
+    ranking: sortedRanking // อันดับการอัปโหลด
+  };
+}
 
 
-
-    const ranking = history.reduce((acc, item) => {
-      const userId = item.user.userId;  // เข้าถึง userId ผ่าน item.user.id
-      if (!acc[userId]) {
-        acc[userId] = {
-          userId: userId,
-          submitNumber: 0,
-          name: item.user.name,  // ดึงชื่อจาก user
-          picture: item.user.picture  // ดึงรูปจาก user
-        };
-      }
-      acc[userId].submitNumber += 1;  // นับจำนวนอัปโหลด
-      return acc;
-    }, {});
-
-    // แปลง object เป็น array และจัดเรียงตาม submitNumber
-    const sortedRanking = Object.values(ranking) as RankingData[];  // ใช้ Type Assertion ตรงนี้
-    sortedRanking.sort((a, b) => b.submitNumber - a.submitNumber);
-  
-    return sortedRanking;
-
-  }
-
-  async countMedia(projectId: string) {
-    const projectHistory = await this.projectHistoryRepository.find({
-      where: { project: { projectId } }
-    });
-  
-    // นับจำนวนรูปภาพ
-    const imageExtensions = ['.jpg', '.jpeg', '.png'];
-    const imageCount = projectHistory.filter((item) => 
-      imageExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
-    ).length;
-  
-    // นับจำนวนวิดีโอ
-    const videoExtensions = ['.mp4', '.mov', '.avi'];
-    const videoCount = projectHistory.filter((item) => 
-      videoExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
-    ).length;
-  
-    return {
-      imageCount,
-      videoCount
-    };
-  }
 
   async getAllHistoryFromAllProject(): Promise<ProjectHistory[]> {
     try {

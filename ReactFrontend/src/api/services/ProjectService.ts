@@ -77,7 +77,7 @@ export const fetchProjectPermissionsService = async (workspaceId: string, projec
     return data;
 };
 
-export const fetchRankingData = async (workspaceId: string, projectId: string) => {
-    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`);
+export const fetchStatistic = async (workspaceId: string, projectId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/statistic/${projectId}`);
     return data;
 };

@@ -106,8 +106,6 @@ const SortableTable: React.FC = () => {
           onSuccess: () => {
             setRows((prevRows) => prevRows.filter((_, i) => i !== index));
           },
-          onError: (error) => {
-          },
         }
       );
     } else {
@@ -116,8 +114,6 @@ const SortableTable: React.FC = () => {
         {
           onSuccess: () => {
             setRows((prevRows) => prevRows.filter((_, i) => i !== index));
-          },
-          onError: (error) => {
           },
         }
       );

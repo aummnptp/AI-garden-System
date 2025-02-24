@@ -10,7 +10,7 @@ interface SummaryCardProps {
 }
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ icon, label, value, valueType, disable }) => {
-  const cardClass = disable ?  "flex items-center bg-gray-300 shadow rounded-md p-4 m-2 opacity-50 cursor-not-allowed" :"flex items-center bg-white shadow rounded-md p-4 m-2" ;
+  const cardClass = disable ?  "flex items-center bg-gray-300 shadow rounded-md p-4 m-2 opacity-50 cursor-not-allowed h-[150px]" :"flex items-center bg-white shadow rounded-md p-4 m-2 h-[150px]" ;
 
   return (
     <div className={cardClass}>
