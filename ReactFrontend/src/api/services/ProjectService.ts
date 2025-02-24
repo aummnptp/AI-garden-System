@@ -17,7 +17,7 @@ export const changeProjectPermissionService = async (workspaceId: string, projec
     }
 }
 
-export const grantProjectPermission = async (workspaceId: string,projectId: string, userId: string) => {
+export const grantProjectPermission = async (workspaceId: string, projectId: string, userId: string) => {
     try {
         const response = await axios.post(
             PROJECT_ROUTES.grantPermission(workspaceId, projectId),
@@ -30,11 +30,11 @@ export const grantProjectPermission = async (workspaceId: string,projectId: stri
 
 }
 
-export const revokeProjectPermission = async (workspaceId: string,projectId: string, userId: string) => {
+export const revokeProjectPermission = async (workspaceId: string, projectId: string, userId: string) => {
     try {
         const response = await axios.delete(
             PROJECT_ROUTES.revokePermission(workspaceId, projectId),
-            { data: { userId } } 
+            { data: { userId } }
         );
         return response.data;
     } catch (error) {
@@ -61,8 +61,8 @@ export const deleteProjectService = async ({ workspaceId, projectId }: { workspa
 };
 
 export const fetchProjectDetailService = async (workspaceId: string, projectId: string) => {
-  const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`);
-  return data;
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/detail/${projectId}`);
+    return data;
 };
 
 
@@ -71,11 +71,16 @@ export const fetchProjectDetailService = async (workspaceId: string, projectId: 
 export const fetchProjectsService = async (workspaceId: string) => {
     const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects`);
     return data;
-  };
-  
+};
 
-  
+
+
 export const fetchProjectPermissionsService = async (workspaceId: string, projectId: string) => {
     const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/permissions/${projectId}`);
     return data;
-  };
+};
+
+export const fetchRankingData = async (workspaceId: string, projectId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/workspaces/${workspaceId}/projects/${projectId}/ranking`);
+    return data;
+};

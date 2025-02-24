@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent,  useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import {Button } from '@mui/material';
 import { AIDataType } from '../../types/Ai';
-import { useWorkspaceData } from '../../hook/workspaces/useWorksapceData';
+import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useApprovedAiData } from '../../hook/ai/useApprovedAiData';
 import { useCreateProjectMutation } from '../../hook/projects/useCreateProject';

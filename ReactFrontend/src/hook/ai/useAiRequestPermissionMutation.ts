@@ -12,8 +12,8 @@ export const useAiRequestPermissionMutation = () => {
       );
       return response.data;
     },
-    onSuccess: (data) => {
-      toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย: ${data.message || "สำเร็จ"}`);
+    onSuccess: () => {
+      toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
     onError: (error) => {
       console.error("เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:", error);

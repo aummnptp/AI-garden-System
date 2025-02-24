@@ -14,7 +14,7 @@ services:
     networks:
       - ai_garden_network
     ports:
-      - "5432:5432"
+      - 5432
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile.prod
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - 3000:3000
     volumes:
       - ./nest-backend/uploads:/app/uploads
       - ./nest-backend/.env:/app/.env
@@ -48,7 +48,7 @@ services:
         dockerfile: Dockerfile.prod
       restart: unless-stopped
       ports:
-        - "8080:80"
+        - 8081:80
       networks:
         - ai_garden_network
       depends_on:

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { fetchHistoryNoteDataService, fetchProjectHistoryDetailService, fetchProjectHistoryService, fetchProjectNotesService } from "../../api/services/HistoryService";
+import { fetchHistoryNoteDataService, fetchProjectHistoryDetailService, fetchProjectHistoryService, fetchProjectNotesService, fetchAllHistoryDaTaService } from "../../api/services/HistoryService";
 
 
 export const useHistoryData = () => {
@@ -16,7 +16,6 @@ export const useHistoryData = () => {
     queryFn: () => fetchProjectHistoryService(workspaceId!, projectId!),
     enabled: !!workspaceId && !!projectId,
   });
-
 
   const {
     data: projectNotes = [], 
@@ -38,6 +37,16 @@ export const useHistoryData = () => {
       historyId ],
     queryFn: () => fetchProjectHistoryDetailService(workspaceId!,projectId!,historyId!),
     enabled: !!projectId && !!historyId,
+  });
+
+  const {
+    data: allHistoryData, 
+    isLoading: isLoadingallHistory,
+    isError: isErrorallHistory,
+  } = useQuery({
+    queryKey: ["all-history-project", workspaceId],
+    queryFn: () => fetchAllHistoryDaTaService(workspaceId!),
+    enabled: !!workspaceId,
   });
 
   const {
@@ -67,6 +76,9 @@ export const useHistoryData = () => {
     isLoadingHistoryDetail,
     isErrorHistoryDetail,
 
+    allHistoryData, 
+    isLoadingallHistory,
+    isErrorallHistory,
 
     historyNoteData,
     isLoadingHistoryNoteData,

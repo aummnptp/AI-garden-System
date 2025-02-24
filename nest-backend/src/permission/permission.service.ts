@@ -35,16 +35,23 @@ export class AiPermissionService {
     return this.aiPermissionRepository.save(newPermission);
   }
 
-  async createBulk(data: CreateAiPermissionDto[], userId: string) {
-    const permissions = data.map((item) =>
+  async createBulk(aiIds: string[], userId: string) {
+    if (!Array.isArray(aiIds) || aiIds.length === 0) {
+      throw new Error("❌ aiIds must be a non-empty array");
+    }
+  
+    const permissions = aiIds.map((aiId) =>
       this.aiPermissionRepository.create({
-        ...item,
+        ai_id: aiId,
         user_id: userId,
         approve: true,
       })
     );
+  
     return this.aiPermissionRepository.save(permissions);
-}
+  }
+  
+
 
   async findAll() {
     return this.aiPermissionRepository.find();

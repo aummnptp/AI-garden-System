@@ -1,15 +1,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { fetchAiLimitSettingService, fetchAiModelById, fetchAiModelsService, fetchAllAiTag } from "../../api/services/AiService";
+import { fetchAiLimitSettingService, fetchAiModelById, fetchAiModelsService, fetchAllAiTag,fetchAllModelsWithApprovalStatus } from "../../api/services/AiService";
 import { useDebounce } from "../useDebounce";
 
 
 
 export const  useAiData = () => {
-  const { ai_id } = useParams<{ ai_id:string}>();
+  const { ai_id,  userId} = useParams<{ ai_id:string, userId:string}>();
   const [searchParams] = useSearchParams();
-
 
   const filters: Record<string, string> = {
     search: searchParams.get("search") || "",
@@ -33,8 +32,6 @@ export const  useAiData = () => {
      enabled: !ai_id,
   });
 
-
-
   const {
     data: aiModelData,
     isLoading: isLoadingAiModel,
@@ -44,6 +41,17 @@ export const  useAiData = () => {
     queryKey: ["ai-model", ai_id],
     queryFn: () => fetchAiModelById(ai_id!),
     enabled: !!ai_id, 
+  });
+
+  const {
+    data: allAiModelWithApprovalData,
+    isLoading: isLoadingallAiModelWithApproval,
+    isError: isErrorallAiModelWithApproval,
+    refetch: refetchallAiModelWithApproval,
+  } = useQuery({
+    queryKey: ["ai-models-with-approval", userId], 
+    queryFn: () => fetchAllModelsWithApprovalStatus(userId!),
+     enabled: !!userId,
   });
 
   const {
@@ -79,6 +87,10 @@ export const  useAiData = () => {
     isErrorAiModel,
     refetchAiModel,
 
+    allAiModelWithApprovalData,
+    isLoadingallAiModelWithApproval,
+    isErrorallAiModelWithApproval,
+    refetchallAiModelWithApproval,
 
     aiSettingData,
     isLoadingAiSetting,

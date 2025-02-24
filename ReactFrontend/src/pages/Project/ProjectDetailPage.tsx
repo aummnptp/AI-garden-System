@@ -18,7 +18,7 @@ import { Link, useParams } from "react-router-dom";
 import { Alert, Button, Snackbar } from "@mui/material";
 
 import { formatDate, getImageUrl } from "../../function/util";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { useProjecteData } from "../../hook/projects/useProjectData";
 
 import { useFetchQuery } from "../../hook/useFetchQuery";

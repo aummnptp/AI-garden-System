@@ -17,7 +17,7 @@ import {
 import Select from "@mui/material/Select";
 import { Link, useParams } from "react-router-dom";
 import { memberData } from "../../types/Invitation";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { Member, PendingUserData } from "../../types/User";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useWorkspaceInvitationMutation } from "../../hook/workspaces/useWorkspaceInvitationMutation";

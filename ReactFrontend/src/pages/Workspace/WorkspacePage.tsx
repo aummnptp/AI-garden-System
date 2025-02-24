@@ -6,7 +6,7 @@ import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import MiniFooter from "../../components/MiniFooter";
 import { Button } from "@mui/material";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { Workspace } from "../../types/Workspace";
 

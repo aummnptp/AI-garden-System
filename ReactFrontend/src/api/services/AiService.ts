@@ -125,7 +125,6 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
     return data;
   };
   export const fetchApprovedAiService = async () => {
-  
     try {
       const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
       return response.data ?? []; // ป้องกัน undefined
@@ -161,3 +160,19 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
   
     return response.data;
   };
+
+  export const fetchUserApprovedAiService = async (userId: string) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/ai-models/approved/${userId}`);
+      return response.data ?? []; // ป้องกัน undefined
+    } catch (error) {
+      console.error("Error fetching approved AI models:", error);
+      return [];
+    }
+  };
+
+  export const fetchAllModelsWithApprovalStatus = async (userId: string) => {
+    const { data } = await axios.get(`${BASE_URL}/ai-models/${userId}/models`);
+    return data;
+  };
+  

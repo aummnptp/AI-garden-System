@@ -5,7 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import { useParams } from "react-router-dom";
 import AddNoteDialog from "../../components/NoteDialog";
 import { useProjecteData } from "../../hook/projects/useProjectData";
-import { useWorkspaceData } from "../../hook/workspaces/useWorksapceData";
+import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import { useHistoryData } from "../../hook/history/useHistoryData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Note } from "../../types/History";

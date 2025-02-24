@@ -1,20 +1,28 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Paper, TableContainer,
-  Button, tableCellClasses,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableSortLabel,
+  Paper,
+  TableContainer,
+  Button,
+  tableCellClasses,
+  Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { Desk, PsychologyOutlined } from '@mui/icons-material';
-import axios from "axios";
-import { getImageUrl } from '../../function/util';
+import { useUserData } from '../../hook/user/useUserData';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -34,7 +42,7 @@ interface Data {
   userId: number;
   name: string;
   email: string;
-  picture: string,
+  picture: string;
   approvedCount: number; // จำนวน AI ที่ใช้งานได้
   workspaceCount: number; // จำนวน Workspace ที่สร้าง
 }
@@ -42,45 +50,29 @@ interface Data {
 type Order = 'asc' | 'desc';
 
 const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
+  // ดึงข้อมูล userData จาก custom hook
+  const {
+    userData,
+    isLoadingUserData,
+    isErrorUserData,
+  } = useUserData();
+
   const [rows, setRows] = useState<Data[]>([]);
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users`, { withCredentials: true });
-      const users = response.data;
-
-      const usersWithCounts = await Promise.all(
-        users.map(async (user: any) => {
-          const { data: approvedData } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/count-approved/${user.userId}`, { withCredentials: true });
-          const { data: workspaceData } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/count/${user.userId}`, { withCredentials: true });
-
-          return {
-            ...user,
-            approvedCount: approvedData.approvedCount,
-            workspaceCount: workspaceData.workspaceCount,
-          };
-        })
-      );
-
-      setRows(usersWithCounts);
-    } catch (error) {
-      console.error("❌ There was an error fetching the user data!", error);
-    }
-  };
-
+  // เมื่อ userData เปลี่ยนแปลง ให้อัปเดต state rows
   useEffect(() => {
-    fetchUserData();
-  }, []);
-
+    if (userData) {
+      setRows(userData);
+    }
+  }, [userData]);
 
   const handleRequestSort = (property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
 
   const stableSort = (array: Data[], comparator: (a: Data, b: Data) => number) => {
     return [...array].sort(comparator);
@@ -98,10 +90,18 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
     return 0;
   };
 
-
-  const filteredRows = rows.filter(user => 
+  // กรองข้อมูลตาม searchQuery
+  const filteredRows = rows.filter((user) =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (isLoadingUserData) {
+    return <Typography>กำลังโหลดข้อมูล...</Typography>;
+  }
+
+  if (isErrorUserData) {
+    return <Typography color="error">เกิดข้อผิดพลาดในการโหลดข้อมูล</Typography>;
+  }
 
   return (
     <TableContainer component={Paper}>
@@ -111,9 +111,9 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
             {/* Sort ตาม ชื่อผู้ใช้ */}
             <StyledTableCell>
               <TableSortLabel
-                active={orderBy === "name"}
-                direction={orderBy === "name" ? order : "asc"}
-                onClick={() => handleRequestSort("name")}
+                active={orderBy === 'name'}
+                direction={orderBy === 'name' ? order : 'asc'}
+                onClick={() => handleRequestSort('name')}
               >
                 ชื่อผู้ใช้
               </TableSortLabel>
@@ -122,9 +122,9 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
             {/* Sort ตาม จำนวน AI ที่ใช้งานได้ */}
             <StyledTableCell align="center">
               <TableSortLabel
-                active={orderBy === "approvedCount"}
-                direction={orderBy === "approvedCount" ? order : "asc"}
-                onClick={() => handleRequestSort("approvedCount")}
+                active={orderBy === 'approvedCount'}
+                direction={orderBy === 'approvedCount' ? order : 'asc'}
+                onClick={() => handleRequestSort('approvedCount')}
               >
                 จำนวน AI ที่ใช้งานได้
               </TableSortLabel>
@@ -133,9 +133,9 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
             {/* Sort ตาม จำนวน Workspace ที่สร้าง */}
             <StyledTableCell align="center">
               <TableSortLabel
-                active={orderBy === "workspaceCount"}
-                direction={orderBy === "workspaceCount" ? order : "asc"}
-                onClick={() => handleRequestSort("workspaceCount")}
+                active={orderBy === 'workspaceCount'}
+                direction={orderBy === 'workspaceCount' ? order : 'asc'}
+                onClick={() => handleRequestSort('workspaceCount')}
               >
                 Workspace ที่สร้าง
               </TableSortLabel>
@@ -145,11 +145,11 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stableSort(filteredRows, getComparator(order, orderBy)).map((row, index) => (
-            <StyledTableRow key={index}>
+          {stableSort(filteredRows, getComparator(order, orderBy)).map((row) => (
+            <StyledTableRow key={row.userId}>
               <StyledTableCell>
                 <div className="flex items-center my-2 w-fit">
-                  <img className="w-10 h-10 rounded-full border-2" src={row.picture} />
+                  <img className="w-10 h-10 rounded-full border-2" src={row.picture} alt={row.name} />
                   <div className="ml-2">
                     <p className="text-black text-lg font-medium">{row.name}</p>
                     <p className="text-[#8D9BAE] text-sm font-normal">{row.email}</p>
@@ -159,32 +159,25 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
 
               <StyledTableCell align="center">
                 <PsychologyOutlined />
-                <span className='text-black text-lg font-medium'> มีสิทธิ์ </span>
-                <span className='text-indigo-800 text-xl font-medium'>
-                  {row.approvedCount}
-                </span>
+                <span className="text-black text-lg font-medium"> มีสิทธิ์ </span>
+                <span className="text-indigo-800 text-xl font-medium">{row.approvedCount}</span>
               </StyledTableCell>
 
               <StyledTableCell align="center">
                 <Desk />
-                <span className='text-black text-lg font-medium'>ทั้งหมด </span>
-                <span className='text-indigo-800 text-xl font-medium'>
-                  {row.workspaceCount}
-                </span>
+                <span className="text-black text-lg font-medium">ทั้งหมด </span>
+                <span className="text-indigo-800 text-xl font-medium">{row.workspaceCount}</span>
               </StyledTableCell>
 
-              <StyledTableCell>
+              <StyledTableCell align="center">
                 <div className="mx-auto flex justify-center">
-                  <Link key={row.userId} to={`/admin/user/${row.userId}`}>
+                  <Link to={`/admin/user/${row.userId}`}>
                     <Button
                       variant="outlined"
                       sx={{
-                        color: "indigo",
-                        borderColor: "indigo",
-                        "&:hover": {
-                          backgroundColor: "indigo",
-                          color: "white",
-                        },
+                        color: 'indigo',
+                        borderColor: 'indigo',
+                        '&:hover': { backgroundColor: 'indigo', color: 'white' },
                       }}
                     >
                       รายละเอียด

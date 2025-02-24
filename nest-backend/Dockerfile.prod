@@ -1,10 +1,12 @@
-# nest-backend
+
 FROM node:18 AS builder
 WORKDIR /app
 
 
 COPY package*.json ./
 RUN npm install --omit=dev
+RUN npm install -g @nestjs/cli
+RUN npm install --save-dev @types/express
 
 
 COPY . .
@@ -21,5 +23,5 @@ COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3000
 
-# รัน Backend
+
 CMD ["node", "dist/main.js"]
