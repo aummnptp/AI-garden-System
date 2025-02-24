@@ -1,7 +1,6 @@
   import { useMutation, useQueryClient } from "@tanstack/react-query";
   import { useNavigate } from "react-router-dom";
   import { AiModelData } from "../../types/Ai";
-  import axios from "axios";
   import toast from "react-hot-toast";
 import { addAiModelService, deleteAiModelService, updateAiModelService } from "../../api/services/AiService";
 

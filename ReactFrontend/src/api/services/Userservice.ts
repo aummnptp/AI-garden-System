@@ -30,13 +30,12 @@ export const fetchUserWithPermissionAndWorkspaceCountService = async () => {
     );
     return usersWithCounts;
   } catch (error) {
-    console.error("Error fetching user data:", error);
     throw error;
   }
 };
 
 export const fetchUserDetail = async (userId: string) => {
-  const { data } = await axios.get(`${BASE_URL}/users/${userId}`);
+  const { data } = await axios.get(`${BASE_URL}/users/get-user/${userId}`);
   return data;
 };
 

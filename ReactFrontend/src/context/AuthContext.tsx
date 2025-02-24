@@ -38,7 +38,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await getSessionService(); 
       setUser(response); 
     } catch (error) {
-      console.error("User not authenticated:", error);
       setUser(null); 
     } finally {
       setLoading(false); 
@@ -48,8 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const getUserSession = useCallback(() => {
     setLoading(true);
     getSession()
-      .catch((error) => {
-        console.error("Error fetching session:", error);
+      .catch(() => {
         setUser(null); 
       })
       .finally(() => {
@@ -70,7 +68,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await logoutService();
       setUser(null);
     } catch (error) {
-      console.error("Logout failed:", error);
     }
   };
 
@@ -88,7 +85,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setWorkspaceRoles((prevRoles) => ({ ...prevRoles, [workspaceId]: data.role }));
       return data.role;
     } catch (error) {
-      console.error(`Error fetching role for workspace ${workspaceId}:`, error);
       return null;
     }
   }, [workspaceRoles]);
@@ -111,7 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.warn(`Permission denied for project ${projectId}`);
         return false;
       }
-      console.error(`Error fetching project ${projectId}:`, error);
       return false;
     }
   };

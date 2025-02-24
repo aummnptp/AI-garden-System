@@ -18,7 +18,6 @@ export const pendingInviteMember = async (workspaceId: string,selectedUsers:{ema
         );
         return response.data;
       } catch (error) {
-        console.error("Error sending invites:", error);
         throw error; 
       }
 };
@@ -35,7 +34,6 @@ export const cancelPendingInvite = async (workspaceId: string, inviteId: string)
         
         return response.data;
     } catch (error) {
-        console.error("Error canceling invite:", error);
         throw error;
     }
 };
@@ -52,7 +50,6 @@ export const removeMember = async (workspaceId: string, userId: string) => {
         
         return response.data;
     } catch (error) {
-        console.error("Error canceling invite:", error);
         throw error;
     }
 };
@@ -83,7 +80,6 @@ export const acceptInvitation = async (inviteId:string) => {
         
         return response.data;
     } catch (error) {
-        console.error("Error canceling invite:", error);
         throw error;
     }
 };
@@ -96,7 +92,6 @@ export const rejectInvitation = async (inviteId:string) => {
         
         return response.data;
     } catch (error) {
-        console.error("Error canceling invite:", error);
         throw error;
     }
 };

@@ -45,7 +45,6 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
     if (Array.isArray(data) && data.every(item => typeof item === 'number')) {
       PredictData = data;
     } else {
-      console.error("Data is not an array of numbers:", data);
     }
   }
 

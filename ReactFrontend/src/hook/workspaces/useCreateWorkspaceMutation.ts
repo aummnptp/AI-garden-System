@@ -23,8 +23,7 @@ export const useCreateWorkspaceMutation = () => {
       toast.success("Workspace created successfully!");
       if (onSuccessCallback) onSuccessCallback();
     },
-    onError: (error) => {
-      console.error("Error creating workspace:", error);
+    onError: () => {
       toast.error("Failed to create workspace!");
     },
   });

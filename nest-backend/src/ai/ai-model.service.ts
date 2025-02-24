@@ -14,7 +14,6 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import { Permission } from '../permission/entities/permission.entity';
 import { User } from 'src/user/entities/user.entity';
-import { convertDetectionsToPolygons } from '../common/utils/polygon.util';
 
 
 @Injectable()
@@ -158,16 +157,12 @@ export class AIModelService {
   };
     } catch (error: any) {
       if (error.code === 'ECONNRESET') {
-        console.error('Connection Reset Error: The connection was forcibly closed by the remote host');
         throw new InternalServerErrorException('Connection reset by the remote server');
       } else if (error.response) {
-        console.error('API error:', error.response.data);
         throw new InternalServerErrorException(`Prediction failed: ${error.response.data}`);
       } else if (error.request) {
-        console.error('No response from API:', error.request);
         throw new InternalServerErrorException('Prediction failed: No response from API');
       } else {
-        console.error('Error message:', error.message);
         throw new InternalServerErrorException(`Prediction failed: ${error.message}`);
       }
     }

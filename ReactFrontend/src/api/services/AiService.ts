@@ -38,38 +38,9 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
     const keys = extractKeys(data);
     return { data, keys };
   } catch (error) {
-    console.error("Error uploading file:", error);
     throw error;
   }
 };
-
-// export const updateAiModelService = async (
-//     aiId: string,
-//     modelData: any,
-//     file?: File
-//   ) => {
-//     const formData = new FormData();
-//     if (file) {
-//       formData.append("file", file);
-//     }
-//     formData.append("modelData", JSON.stringify(modelData));
-  
-//     try {
-//       const response = await axios.patch(
-//         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${aiId}/update-ai`,
-//         formData,
-//         {
-//           headers: {
-//           },
-//         }
-//       );
-//       return response.data;
-//     } catch (error: any) {
-//       console.error("Error updating AI model:", error);
-//       throw error;
-//     }
-//   };
-
 
   
   export const predictFromUrlService = async (ai_id: string, imageUrl: string) => {
@@ -129,7 +100,6 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
       const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
       return response.data ?? []; // ป้องกัน undefined
     } catch (error) {
-      console.error("Error fetching approved AI models:", error);
       return [];
     }
   };
@@ -166,7 +136,6 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
       const response = await axios.get(`${BASE_URL}/ai-models/approved/${userId}`);
       return response.data ?? []; // ป้องกัน undefined
     } catch (error) {
-      console.error("Error fetching approved AI models:", error);
       return [];
     }
   };

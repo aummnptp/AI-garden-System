@@ -47,7 +47,7 @@ export class UserController {
     return this.userService.promoteToAdmin(userId);
   }
 
-  @Get(':id')
+  @Get('get-user/:id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }

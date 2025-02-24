@@ -19,8 +19,7 @@ export const useUpdateAISettingsMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["ai-usage-limit-setting"] });
       toast.success("AI Settings updated successfully!");
     },
-    onError: (error) => {
-      console.error("Error updating AI settings:", error);
+    onError: () => {
       toast.error("Failed to update AI settings.");
     },
   });

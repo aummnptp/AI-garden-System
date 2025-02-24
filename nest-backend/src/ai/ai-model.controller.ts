@@ -53,7 +53,6 @@ export class AIModelController {
       const message = await this.aiModelService.addModel(parsedModelData, file, userId);
       return { message };
     } catch (error) {
-      console.error("Error parsing modelData:", error);
       throw new BadRequestException("Invalid modelData format");
     }
   }

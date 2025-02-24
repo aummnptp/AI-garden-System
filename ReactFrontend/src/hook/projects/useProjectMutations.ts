@@ -29,8 +29,7 @@ export const useProjectMutations = (workspaceId?: string, projectId?: string) =>
       toast.success("Project updated successfully!");
       navigate(`/workspaces/${workspaceId}/project-list`);
     },
-    onError: (error) => {
-      console.error("Error updating project:", error);
+    onError: () => {
       toast.error("Failed to update project.");
     },
   });
@@ -44,8 +43,7 @@ export const useProjectMutations = (workspaceId?: string, projectId?: string) =>
       toast.success("Project deleted successfully!");
       navigate(`/workspaces/${workspaceId}/project-list`);
     },
-    onError: (error) => {
-      console.error("Error deleting project:", error);
+    onError: () => {
       toast.error("Failed to delete project.");
     },
   });

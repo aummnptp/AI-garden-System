@@ -206,7 +206,6 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
 
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      console.error('Error during prediction:', errorMessage, file);
       throw new InternalServerErrorException(`Prediction failed: ${errorMessage}`);
     }
   }
@@ -317,7 +316,6 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       });
       return allHistory
     } catch (error) {
-      console.error('Error fetching all history:', error);
       throw new InternalServerErrorException('Failed to fetch all project history');
     }
   }

@@ -10,9 +10,7 @@ const InvitePage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const checkAuth = async () => {
-      if (!token) {
-        console.error("No token found in invite link!");
-   
+      if (!token) {   
         navigate("/");
         return;
       }
@@ -40,7 +38,6 @@ const InvitePage = () => {
           window.location.href = `${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`;
         }
       } catch (error) {
-        console.error("Error joining workspace:", error);
         navigate("/");
       }
     };

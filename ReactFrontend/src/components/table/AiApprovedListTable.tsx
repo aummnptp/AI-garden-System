@@ -119,7 +119,6 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
   const handleRevokePermission = () => {
     if (!userId || !selectedAi) return;
     
-    // เรียก mutation แทนการใช้ axios.delete โดยตรง
     revokePermissionMutation.mutate(
       { userId, aiId: selectedAi.aiId },
       {

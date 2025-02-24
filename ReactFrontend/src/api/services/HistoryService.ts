@@ -4,15 +4,12 @@ const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
 export const addNoteService = async (projectId: string, historyId: string, title: string, content: string) => {
   try {
-    console.log("Sending request to add note:", { projectId, historyId, title, content });
 
     const response = await axios.post(
       `${BACKEND_API_URL}/projects/${projectId}/notes/add-note/${historyId}`,
       { title, content },
       { withCredentials: true }
     );
-
-    console.log("Note added successfully:", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -32,7 +29,6 @@ export const deleteHistoryService = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error deleting history:", error);
     throw error;
   }
 };

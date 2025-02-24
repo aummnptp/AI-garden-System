@@ -12,7 +12,6 @@ export const changeProjectPermissionService = async (workspaceId: string, projec
         );
         return response.data;
     } catch (error) {
-        console.error("Error changing project permission:", error);
         throw error;
     }
 }
@@ -24,7 +23,6 @@ export const grantProjectPermission = async (workspaceId: string, projectId: str
             { userId });
         return response.data;
     } catch (error) {
-        console.error(" Error granting project permission:", error);
         throw error;
     }
 
@@ -38,7 +36,6 @@ export const revokeProjectPermission = async (workspaceId: string, projectId: st
         );
         return response.data;
     } catch (error) {
-        console.error(" Error revoking project permission:", error);
         throw error;
     }
 };

@@ -25,6 +25,7 @@ export const useUserData = () => {
   } = useQuery({
     queryKey: ["user-detail", userId],
     queryFn: () => fetchUserDetail(userId!),
+        enabled: !!userId,
   });
 
   //My Invitation

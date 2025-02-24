@@ -11,7 +11,7 @@ import { AdminPanelSettings } from '@mui/icons-material';
 import { useUserMutation } from '../../hook/user/useUserMutation';
 import { useUserData } from '../../hook/user/useUserData';
 import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
-import { useAiData } from '../../hook/ai/useAiData'; // ✅ นำเข้า useAiData
+import { useAiData } from '../../hook/ai/useAiData'; 
 
 const UserDetailPage = () => {
   const { userId } = useParams();
@@ -22,7 +22,6 @@ const UserDetailPage = () => {
   const { userDetailById, isLoadinguserDetailById } = useUserData();
   const promoteMutation = useUserMutation();
 
-  // ✅ ใช้ข้อมูลจาก useAiData แทนการใช้ fetchUserAiModels
   const { allAiModelWithApprovalData, isLoadingallAiModelWithApproval } = useAiData();
   const aiCount = allAiModelWithApprovalData
     ? allAiModelWithApprovalData.filter((ai: { permissions?: { approve: boolean }[] }) =>
@@ -176,7 +175,7 @@ const UserDetailPage = () => {
       <Dialog open={openSuccessDialog} onClose={() => window.location.reload()}>
         <DialogTitle>Promote สำเร็จ</DialogTitle>
         <DialogContent>
-          <Typography>✅ {userDetailById?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
+          <Typography>{userDetailById?.name} ได้รับสิทธิ์เป็น Admin เรียบร้อยแล้ว!</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => window.location.reload()} color="primary" variant="contained">

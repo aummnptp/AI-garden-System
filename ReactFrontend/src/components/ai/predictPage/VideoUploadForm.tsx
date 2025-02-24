@@ -23,7 +23,6 @@ export const VideoUploadForm: React.FC<{
   }) => {
     const handleUploadVideo = async () => {
       if (!file) {
-        console.error("No file selected");
         return;
       }
       setUploadStep(2);

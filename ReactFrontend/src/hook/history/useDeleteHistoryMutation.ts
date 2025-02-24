@@ -19,8 +19,7 @@ export const useDeleteHistoryMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["history-data", workspaceId, projectId] });
       toast.success("History deleted successfully!");
     },
-    onError: (error) => {
-      console.error("Failed to delete history:", error);
+    onError: () => {
       toast.error("Failed to delete history!");
     },
   });

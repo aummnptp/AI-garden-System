@@ -107,7 +107,6 @@ const SortableTable: React.FC = () => {
             setRows((prevRows) => prevRows.filter((_, i) => i !== index));
           },
           onError: (error) => {
-            console.error("Error approving permission:", error);
           },
         }
       );
@@ -119,7 +118,6 @@ const SortableTable: React.FC = () => {
             setRows((prevRows) => prevRows.filter((_, i) => i !== index));
           },
           onError: (error) => {
-            console.error("Error rejecting permission:", error);
           },
         }
       );

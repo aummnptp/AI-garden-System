@@ -371,7 +371,6 @@ export class WorkspacesService {
       });
       return { message: 'Successfully joined the workspace' };
     } catch (error) {
-      console.error("Join workspace failed:", error);
       throw new UnauthorizedException('Invalid or expired invite link');
     }
   }

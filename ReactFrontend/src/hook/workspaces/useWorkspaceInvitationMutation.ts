@@ -44,8 +44,7 @@ export const useWorkspaceInvitationMutation = () => {
       toast.success("Members invited successfully!");
       if (onSuccessCallback) onSuccessCallback();
     },
-    onError: (error) => {
-      console.error("Error inviting members:", error);
+    onError: () => {
       toast.error("Failed to invite members!");
     },
   });
@@ -59,8 +58,7 @@ export const useWorkspaceInvitationMutation = () => {
         queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
       toast.success("Member removed successfully!");
     },
-    onError: (error) => {
-      console.error("Error removing member:", error);
+    onError: () => {
       toast.error("Failed to remove member!");
     },
   });
@@ -75,8 +73,7 @@ export const useWorkspaceInvitationMutation = () => {
         queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
       toast.success("Pending invite canceled!");
     },
-    onError: (error) => {
-      console.error("Error canceling invite:", error);
+    onError: () => {
       toast.error("Failed to cancel invite!");
     },
   });
@@ -89,8 +86,7 @@ export const useWorkspaceInvitationMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["member-user", workspaceId] });
       toast.success("Member role updated!");
     },
-    onError: (error) => {
-      console.error("Error changing member role:", error);
+    onError: () => {
       toast.error("Failed to change role!");
     },
   });

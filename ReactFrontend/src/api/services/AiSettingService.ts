@@ -15,7 +15,6 @@ export const updateAISettingService = async (maxUsagePerDay: number, isLimitEnab
       );
       return response.data;
     } catch (error) {
-      console.error("Error updating AI Setting", error);
       throw error;
     }
   };

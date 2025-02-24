@@ -11,7 +11,6 @@ export const addTitleService = async () => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error addSubtitle :", error);
     throw error;
   }
 };
@@ -24,7 +23,6 @@ export const addSubtitleService = async (docsId: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error addSubtitle :", error);
     throw error;
   }
 };
@@ -37,7 +35,6 @@ export const updateDocsTitleService = async (docsId: string, newTitle: string) =
     );
     return response.data; 
   } catch (error) {
-    console.error("Error updateDocs:", error);
     throw error; 
   }
 };
@@ -51,7 +48,6 @@ export const updateSubDocsTitleService = async (subDocsId: string, newTitle: str
     );
     return response.data;
   } catch (error) {
-    console.error("Error updateSubDocsTitle", error);
     throw error;
   }
 };
@@ -63,7 +59,6 @@ export const deleteTitleService = async (docsId: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error updateSubDocsTitle", error);
     throw error;
   }
 };
@@ -75,7 +70,6 @@ export const deleteSubTitleService = async (subDocsId: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error updateSubDocsTitle", error);
     throw error;
   }
 };
@@ -88,7 +82,6 @@ export const changeDocsVisiblityService = async (docsId: string, hiddenChangeSta
     );
     return response.data; 
   } catch (error) {
-    console.error("Error updating document visibility:", error);
     throw error;
   }
 };
@@ -101,7 +94,6 @@ export const changeSubDocsVisiblityService = async (subDocsId: string, hiddenCha
     );
     return response.data;
   } catch (error) {
-    console.error("Error updateSubDocsTitle", error);
     throw error;
   }
 };
@@ -114,7 +106,6 @@ export const saveDocsOrderService = async (docsToSave: { docsId: string; order: 
     );
     return response.data;
   } catch (error) {
-    console.error("Error saving docs order:", error);
     throw error;
   }
 };
@@ -128,7 +119,6 @@ export const saveSubDocsOrderService = async (subDocsToSave: { docsId: string; s
     );
     return response.data;
   } catch (error) {
-    console.error("Error saving subdocs order:", error);
     throw error;
   }
 };
@@ -139,7 +129,6 @@ export const updateContentDocumentService = async (docsId: string, content: stri
     const response = await axios.patch(`${DOCS_ROUTES.updateDocument}${docsId}`, { content });
     return response.data;
   } catch (error) {
-    console.error(` Error updating document ${docsId}:`, error);
     throw error;
   }
 };
@@ -149,7 +138,6 @@ export const updateContentSubDocumentService = async (subDocsId: string, content
     const response = await axios.patch(`${DOCS_ROUTES.updateSubDocument}${subDocsId}`, { content });
     return response.data;
   } catch (error) {
-    console.error(` Error updating sub-document ${subDocsId}:`, error);
     throw error;
   }
 };

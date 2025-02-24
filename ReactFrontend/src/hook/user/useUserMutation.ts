@@ -12,8 +12,7 @@ export const useUserMutation = () => {
     onSuccess: () => {
       toast.success(`เปลี่ยนผู้ใช้เป็น admin สำเร็จ`);
     },
-    onError: (error) => {
-      console.error("เกิดข้อผิดพลาด:", error);
+    onError: () => {
       toast.error("เกิดข้อผิดพลาด");
     },
   });

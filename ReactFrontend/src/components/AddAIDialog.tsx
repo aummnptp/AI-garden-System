@@ -132,7 +132,6 @@ export default function AddAIDialog() {
 
   const handleConfirmSave = () => {
     if (!selectedToRemove.length && !selectedToAdd.length) {
-      console.error("No changes to save");
       setSaveDialogOpen(false);
       return;
     }

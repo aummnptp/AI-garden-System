@@ -31,8 +31,7 @@ interface ChangePermissionProps {
         queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
         toast.success("Project permission updated successfully!");
       },
-      onError: (error) => {
-        console.error("Error updating project permission:", error);
+      onError: () => {
         toast.error("Failed to update access settings.");
       },
     });
@@ -51,8 +50,7 @@ interface ChangePermissionProps {
         queryClient.invalidateQueries({ queryKey: ["project-permissions", projectId] });
         toast.success("Member permissions updated successfully!");
       },
-      onError: (error) => {
-        console.error("Error updating member permissions:", error);
+      onError: () => {
         toast.error("Failed to update member permissions.");
       },
     });

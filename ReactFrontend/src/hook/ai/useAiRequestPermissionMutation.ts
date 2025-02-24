@@ -15,8 +15,7 @@ export const useAiRequestPermissionMutation = () => {
     onSuccess: () => {
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
-    onError: (error) => {
-      console.error("เกิดข้อผิดพลาดในการส่งคำขอใช้งาน:", error);
+    onError: () => {
       toast.error("ไม่สามารถส่งคำขอใช้งานได้");
     },
   });
