@@ -1,4 +1,5 @@
 import axios from "axios";
+import { convertUrlToFile } from "../../function/fileUtils";
 const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
 axios.defaults.withCredentials = true;
@@ -42,31 +43,58 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
   }
 };
 
-export const updateAiModelService = async (
-    aiId: string,
-    modelData: any,
-    file?: File
-  ) => {
-    const formData = new FormData();
-    if (file) {
-      formData.append("file", file);
-    }
-    formData.append("modelData", JSON.stringify(modelData));
+// export const updateAiModelService = async (
+//     aiId: string,
+//     modelData: any,
+//     file?: File
+//   ) => {
+//     const formData = new FormData();
+//     if (file) {
+//       formData.append("file", file);
+//     }
+//     formData.append("modelData", JSON.stringify(modelData));
+  
+//     try {
+//       const response = await axios.patch(
+//         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${aiId}/update-ai`,
+//         formData,
+//         {
+//           headers: {
+//           },
+//         }
+//       );
+//       return response.data;
+//     } catch (error: any) {
+//       console.error("Error updating AI model:", error);
+//       throw error;
+//     }
+//   };
+
+
+  
+  export const predictFromUrlService = async (ai_id: string, imageUrl: string) => {
+    if (!ai_id) throw new Error("Missing AI ID");
   
     try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/${aiId}/update-ai`,
-        formData,
-        {
-          headers: {
-          },
-        }
-      );
+      // แปลง URL เป็น File
+      const file = await convertUrlToFile(imageUrl, "processedImage.jpg");
+  
+      const formData = new FormData();
+      formData.append("file", file);
+  
+      const response = await axios.post(`${BASE_URL}/ai-models/predict/${ai_id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
       return response.data;
     } catch (error: any) {
-      console.error("Error updating AI model:", error);
-      throw error;
+      const errorMessage = error.response?.data?.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ";
+      throw new Error(errorMessage);
     }
+  };
+
+  export const deleteAiModelService = async (ai_id: string) => {
+    await axios.delete(`${BASE_URL}/ai-models/${ai_id}/remove-ai`);
   };
  
   export const fetchAiModelsService = async (filters: Record<string, string | null> = {}) => {
@@ -91,6 +119,11 @@ export const updateAiModelService = async (
     return data;
   };
 
+
+  export const fetchAiModelById  = async (ai_id: string) => {
+    const { data } = await axios.get(`${BASE_URL}/ai-models/${ai_id}`);
+    return data;
+  };
   export const fetchApprovedAiService = async () => {
   
     try {
@@ -102,3 +135,29 @@ export const updateAiModelService = async (
     }
   };
   
+  export const addAiModelService = async (modelData: any, uploadedFile?: File) => {
+    const formData = new FormData();
+    if (uploadedFile) {
+      formData.append("file", uploadedFile);
+    }
+    formData.append("modelData", JSON.stringify(modelData));
+  
+    const response = await axios.post(`${BASE_URL}/ai-models/add`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  
+    return response.data;
+  };
+  
+
+  export const updateAiModelService = async (ai_id: string, modelData: any, uploadedFile?: File) => {
+    const formData = new FormData();
+    if (uploadedFile) formData.append("file", uploadedFile);
+    formData.append("modelData", JSON.stringify(modelData));
+  
+    const response = await axios.patch(`${BASE_URL}/ai-models/${ai_id}/update-ai`, formData, {
+      withCredentials: true,
+    });
+  
+    return response.data;
+  };

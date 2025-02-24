@@ -34,6 +34,7 @@
     "@nestjs/platform-express": "^10.4.15",
     "@nestjs/typeorm": "^10.0.2",
     "axios": "^1.7.9",
+    "convex-hull": "^1.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express-session": "^1.18.1",

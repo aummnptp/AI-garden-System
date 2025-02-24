@@ -12,6 +12,10 @@ export const updateWorkspaceService = async (workspaceId: string, name: string, 
     return response.data;
 };
 
+export const createWorkspaceService = async (name: string, description: string) => {
+  const response = await axios.post(`${BASE_URL}/workspaces/create`, { name, description }, { withCredentials: true });
+  return response.data;
+};
 
 export const deleteWorkspaceService = async (workspaceId: string) => {
     const response = await axios.delete(`${WORKSPACE_ROUTES.deleteWorkspace}{${workspaceId}}`);

@@ -25,6 +25,7 @@
     "axios": "^1.7.7",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.3",
+    "convex-hull": "^1.0.3",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.3.31",
     "js-cookie": "^3.0.5",

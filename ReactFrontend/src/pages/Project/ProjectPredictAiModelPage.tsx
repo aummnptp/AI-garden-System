@@ -1,7 +1,6 @@
 import React, { useEffect,useState } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
-import { Alert, AlertTitle,  } from '@mui/material';
 
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useProjecteData } from '../../hook/projects/useProjectData';
@@ -10,17 +9,15 @@ import { useAiPrediction } from '../../hook/ai/useAiPrediction';
 import { StepIndicator } from '../../components/ai/predictPage/StepIndicator';
 import { ImageUploadForm } from '../../components/ai/predictPage/ImageUploadForm';
 import { VideoUploadForm } from '../../components/ai/predictPage/VideoUploadForm';
+import { PredictResult } from '../../types/Ai';
 
-interface PredictResult {
-  prediction: any;
-}
+
 const PredictAiModelPage: React.FC = () => {
   const [uploadStep, setUploadStep] = useState(1);
   const [file, setFile] = useState<File | null>(null);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
-  const [alertText, setAlertText] = useState<string | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
   const { predictFromUrl, predictFromFile } = useAiPrediction();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
@@ -43,14 +40,6 @@ const PredictAiModelPage: React.FC = () => {
   return (
     <>
       <div className="flex h-full min-h-screen bg-neutral-100">
-        {openAlert && (
-          <div className="fixed top-24 w-full flex justify-center z-50 animate-fade-in-out">
-            <Alert severity="error" onClose={() => setOpenAlert(false)}>
-              <AlertTitle>Error</AlertTitle>
-              {alertText}
-            </Alert>
-          </div>
-        )}
         <Sidebar workspace={workspaceDetail} project={projectDetail} />
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
           <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] relative">
@@ -75,8 +64,6 @@ const PredictAiModelPage: React.FC = () => {
                 setCustomedImageUrl={setCustomedImageUrl}
                 customImage={customImage}
                 setCustomImage={setCustomImage}
-                setAlertText={setAlertText}
-                setOpenAlert={setOpenAlert}
               />
             ) : (
               <VideoUploadForm

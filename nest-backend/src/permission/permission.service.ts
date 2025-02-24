@@ -91,8 +91,6 @@ export class AiPermissionService {
   }
 
   async removeBulk(userId: string, ids: string[]): Promise<{ deletedCount: number }> {
-    console.log('Received IDs:', ids);
-    
     const deleteResult = await this.aiPermissionRepository
       .createQueryBuilder()
       .delete()

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import { createWorkspaceService } from "../../api/services/WorkspaceService";
+
 
 interface CreateWorkspaceProps {
   name: string;
@@ -8,19 +9,15 @@ interface CreateWorkspaceProps {
   onSuccessCallback?: () => void;
 }
 
-const createWorkspaceService = async ({ name, description }: CreateWorkspaceProps) => {
-  return axios.post(
-    `${import.meta.env.VITE_NEST_BACKEND_API_URL}/workspaces/create`,
-    { name, description },
-    { withCredentials: true }
-  );
-};
+
 
 export const useCreateWorkspaceMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createWorkspaceService,
+    mutationFn: async ({ name, description }: CreateWorkspaceProps) => {
+      return createWorkspaceService(name, description);
+    },
     onSuccess: (_data, { onSuccessCallback }) => {
       queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
       toast.success("Workspace created successfully!");

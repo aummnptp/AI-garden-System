@@ -387,9 +387,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
           if (ctx) {
             const maxDimension = Math.max(image.width, image.height); //หาว่าwidth || height กว้างกว่า
             const paddingHorizontal = (maxDimension - image.width) / 2; // Padding ด้านซ้ายและขวา
-            const paddingVertical = (maxDimension - image.height) / 2; // Padding ด้านบนและล่าง
-            // console.log(maxDimension,paddingHorizontal,paddingVertical)
-        
+            const paddingVertical = (maxDimension - image.height) / 2; // Padding ด้านบนและล่าง        
             // ตั้งค่า canvas ให้มีความกว้างและความสูงเป็น maxDimension
             canvas.width = maxDimension;
             canvas.height = maxDimension;

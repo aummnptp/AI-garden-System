@@ -34,3 +34,13 @@ export type AIDataType ={
     meaning: string
     displayFormat: string;
   }
+  export type PredictResult= {
+    response_keys: { key: string; meaning: string; displayFormat?: string }[];
+    prediction: any;
+    ai_model?: {
+      colorSet: string[];
+      ai_tag: string;
+      name: string;
+      ai_type: string;
+    };
+  }

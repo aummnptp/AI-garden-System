@@ -14,11 +14,19 @@ import {
 } from "@mui/material";
 import { AiModelData, ResponseKey } from "../../types/Ai";
 import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
-import ImageDetectionResultDraw from "../../components/aiDisplay/ImageDetectionResultDraw";
-import TextResultDisplay from "../../components/aiDisplay/TextResultDisplay";
-
 import { useAiModelMutation } from "../../hook/ai/useAiModelMutation";
 import toast from "react-hot-toast";
+import AIDisPlayResultComponent from "../../components/aiDisplay/AIDisPlayResultComponent";
+export interface PredictResult {
+  response_keys: { key: string; meaning: string; displayFormat?: string }[];
+  prediction: any;
+  ai_model?: {
+    colorSet: string[];
+    ai_tag: string;
+    name: string;
+    ai_type: string;
+  };
+}
 
 const AddAiPage: React.FC = () => {
 
@@ -42,17 +50,7 @@ const AddAiPage: React.FC = () => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const { addAiModel } = useAiModelMutation();
   
-  const [predictResult, setPredictResult] = useState<
-    | {
-        response_keys: {
-          key: string;
-          meaning: string;
-          displayFormat?: string;
-        }[];
-        prediction: any;
-      }
-    | undefined
-  >();
+  const [predictResult, setPredictResult] = useState<PredictResult>();
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] =
     useState(false);
@@ -79,13 +77,16 @@ const AddAiPage: React.FC = () => {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-          // Update predictResult state
-          const updatedPredictResult = {
+          setPredictResult({
             response_keys: responseKeys,
             prediction: jsonData,
-          };
-          setPredictResult(updatedPredictResult);
-          // Set image preview URL
+            ai_model: {
+              name: aiName,
+              ai_tag: tags.join(", "),
+              colorSet: colorSet,
+              ai_type: aiType,
+            },
+          });
           setCustomedImageUrl(URL.createObjectURL(file));
 
           // Extract keys from JSON
@@ -132,13 +133,21 @@ const AddAiPage: React.FC = () => {
     }
   };
 
+
   useEffect(() => {
     setPredictResult((prev) => ({
       ...prev,
       response_keys: responseKeys,
       prediction: prev?.prediction || {},
+      ai_model: {
+        name: aiName,
+        ai_tag: tags.join(", "),
+        colorSet: colorSet,
+        ai_type: aiType,
+      },
     }));
-  }, [responseKeys]);
+  }, [responseKeys, aiName, tags, colorSet, aiType]);
+  
   // Handlers สำหรับ Response Keys
   const handleAddKey = () =>
     setResponseKeys([
@@ -201,19 +210,6 @@ const AddAiPage: React.FC = () => {
 
   addAiModel.mutate({ modelData, uploadedFile });
 };
-
-  // Determine ai_text_type for preview (if any)
-  let ai_text_type = null;
-  if (predictResult) {
-    const searchDrawKey = responseKeys.find(
-      (rk) =>
-        rk.displayFormat === "objectdetection" ||
-        rk.displayFormat === "segmentation"
-    );
-    if (searchDrawKey) {
-      ai_text_type = searchDrawKey.displayFormat;
-    }
-  }
 
   return (
     <>
@@ -315,21 +311,9 @@ const AddAiPage: React.FC = () => {
                 >
                   <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
                   <DialogContent>
-                    <ImageDetectionResultDraw
-                      detections={predictResult?.prediction?.detections || []}
-                      InputImage={customedImageUrl!}
-                      aiDisplayType={ai_text_type || ""}
-                      colorSet ={colorSet}
-                    />
-                    {predictResult && (
-                      <TextResultDisplay
-                        predictResult={predictResult}
-                        tags={tags}
-                        aiName={aiName}
-                        ai_type={aiType}
-                        colorSet ={colorSet}
-                      />
-                    )}
+                  <AIDisPlayResultComponent resultImage={customedImageUrl || ""} predictResult={predictResult}
+                  // colorSet={predictResult?.ai_model?.colorSet || []}
+ />
                   </DialogContent>
                   <DialogActions>
                     <Button

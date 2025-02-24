@@ -2,10 +2,10 @@ import { Button, Skeleton } from "@mui/material";
 import ImageUploader from "../../ImageUploader";
 import { FileUploadArea } from "./FileUploadArea";
 import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
+import toast from "react-hot-toast";
+import { PredictResult } from "../../../types/Ai";
 
-interface PredictResult {
-    prediction: any;
-  }
+
   
 export const ImageUploadForm: React.FC<{
     file: File | null;
@@ -20,8 +20,6 @@ export const ImageUploadForm: React.FC<{
     setCustomedImageUrl: (url: string | null) => void;
     customImage: File | null;
     setCustomImage: (file: File | null) => void;
-    setAlertText: (text: string | null) => void;
-    setOpenAlert: (open: boolean) => void;
   }> = ({
     file,
     setFile,
@@ -34,8 +32,6 @@ export const ImageUploadForm: React.FC<{
     setCustomedImageUrl,
     customImage,
     setCustomImage,
-    setAlertText,
-    setOpenAlert,
   }) => {
 
 const handleToCustomStep = () => {
@@ -46,7 +42,7 @@ const handleToCustomStep = () => {
   
     const handleUpload = async () => {
       if (!customedImageUrl) {
-        console.error("No image URL to upload");
+        toast.error("No image URL to upload");
         return;
       }
       setUploadStep(3);
@@ -56,8 +52,7 @@ const handleToCustomStep = () => {
           setUploadStep(4);
         },
         onError: (error: any) => {
-          setAlertText(error.message);
-          setOpenAlert(true);
+          toast.error(error.message);
           setUploadStep(2);
         },
       });

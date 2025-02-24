@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MiniFooter from '../../components/MiniFooter';
 import AdminSidebar from "../../components/AdminSidebar";
-import TextResultDisplay from '../../components/aiDisplay/TextResultDisplay';
-import ImageDetectionResultDraw from '../../components/aiDisplay/ImageDetectionResultDraw';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle,} from '@mui/material';
 import ColorPickerTags from '../../components/ai/ColorPickerTags';
-import { AiModelData, ResponseKey } from '../../types/Ai';
+import { AiModelData, PredictResult, ResponseKey } from '../../types/Ai';
 import DeleteConfirmationDialog from '../../components/ai/DeleteConfirationAiDialog';
 import AiResponseKeys from '../../components/ai/AiResponseKey';
 import AiTagInput from '../../components/ai/AiTagInputComponent';
@@ -16,6 +14,7 @@ import { useAiData } from '../../hook/ai/useAiData';
 import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useAiModelMutation } from '../../hook/ai/useAiModelMutation';
 import toast from 'react-hot-toast';
+import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
 
 
 const UpdateAiPage: React.FC = () => {
@@ -33,7 +32,8 @@ const UpdateAiPage: React.FC = () => {
   const [colorSet, setColorSet] = useState<string[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  const [predictResult, setPredictResult] = useState<{ response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined>();
+  const [predictResult, setPredictResult] = useState<PredictResult
+  >();
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
@@ -67,8 +67,14 @@ const UpdateAiPage: React.FC = () => {
       ...prev,
       response_keys: responseKeys,
       prediction: prev?.prediction || {},
+      ai_model: {
+        name: aiName,
+        ai_tag: tags.join(", "),
+        colorSet: colorSet,
+        ai_type: aiType,
+      },
     }));
-  }, [responseKeys]);
+  }, [responseKeys, aiName, tags, colorSet, aiType]);
 
   // Handler for file upload & testing Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +92,16 @@ const UpdateAiPage: React.FC = () => {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-          setPredictResult({ response_keys: responseKeys, prediction: jsonData });
+          setPredictResult({
+            response_keys: responseKeys,
+            prediction: jsonData,
+            ai_model: {
+              name: aiName,
+              ai_tag: tags.join(", "),
+              colorSet: colorSet,
+              ai_type: aiType,
+            },
+          });
           setCustomedImageUrl(URL.createObjectURL(file));
           // Extract keys from JSON
           const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
@@ -111,10 +126,10 @@ const UpdateAiPage: React.FC = () => {
         } else {
         }
       } catch (error) {
-        console.error("Error uploading file:", error);
+        toast.error("Error uploading file:");
       }
     } else {
-      alert("กรุณาเลือกไฟล์ก่อน");
+      toast.error("กรุณาเลือกไฟล์ก่อน");
     }
   };
 
@@ -191,148 +206,141 @@ const UpdateAiPage: React.FC = () => {
   };
 
 
-  let ai_text_type = null;
-  if (predictResult) {
-    const searchDrawKey = responseKeys.find(rk =>
-      rk.displayFormat === "objectdetection" || rk.displayFormat === "segmentation"
-    );
-    if (searchDrawKey) {
-      ai_text_type = searchDrawKey.displayFormat;
-    }
-  }
-
   if (isLoadingAiModel) return <SkeletonLayout/>
 
 
 
     return (
-    <>
-      <div className="flex bg-neutral-100 h-full pb-32">
-        <AdminSidebar />
-        <div className="w-1/5 bg-neutral-200 h-full" />
-        <div className="w-4/5 grid grid-cols-1 items-center justify-center h-full">
-          <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] mx-auto relative">
-            <div className="flex justify-between items-center p-5">
-              <h1 className="text-3xl font-medium tracking-tight text-indigo-900">Edit AI</h1>
+      <>
+        <div className="flex bg-neutral-100 h-full pb-32">
+          <AdminSidebar />
+          <div className="w-1/5 bg-neutral-200 h-full" />
+          <div className="w-4/5 grid grid-cols-1 items-center justify-center h-full">
+            <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] mx-auto relative">
+              <div className="flex justify-between items-center p-5">
+                <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
+                  Edit AI
+                </h1>
+              </div>
+              <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
+              <form onSubmit={handleSubmit} className="m-6 space-y-4">
+                <AiBasicInfo
+                  aiName={aiName}
+                  description={description}
+                  serviceUri={serviceUri}
+                  aiType={aiType}
+                  enable={enable}
+                  visible={visible}
+                  onNameChange={setAiName}
+                  onDescriptionChange={setDescription}
+                  onServiceUriChange={setServiceUri}
+                  onTypeChange={setAiType}
+                  onEnableChange={setEnable}
+                  onVisibleChange={setVisible}
+                  inputType={inputType}
+                  onInputTypeChange={setInputType}
+                />
+                <ColorPickerTags
+                  colors={colorSet}
+                  onChange={(newColors: string[]) => setColorSet(newColors)}
+                />
+                <AiFileUpload
+                  serviceUri={serviceUri}
+                  onServiceUriChange={setServiceUri}
+                  onUriTest={handleUri}
+                  fileInputRef={fileInputRef}
+                  customedImageUrl={customedImageUrl}
+                  predictResult={predictResult}
+                  onShowPreview={() => setExamplePredictResultModal(true)}
+                />
+                <AiResponseKeys
+                  responseKeys={responseKeys}
+                  selectOptions={selectOptions}
+                  onAddKey={handleAddKey}
+                  onRemoveKey={handleRemoveKey}
+                  onKeyChange={handleKeyChange}
+                />
+                <AiTagInput
+                  tags={tags}
+                  newTag={newTag}
+                  onTagAdd={handleTagAdd}
+                  onTagChange={setNewTag}
+                  onTagRemove={handleTagRemove}
+                />
+                <div className="form-group">
+                  <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
+                  <textarea
+                    value={inputDescription}
+                    onChange={(e) => setInputDescription(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>AI Picture</label>
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="pl-[20%] pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center justify-between">
+                  <Button
+                    variant="contained"
+                    color="error"
+                    size="large"
+                    onClick={() => setConfirmDeleteModal(true)}
+                    sx={{ mr: 2 }}
+                  >
+                    Remove AI
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#4f46e5",
+                      "&:hover": { backgroundColor: "#3730a3" },
+                    }}
+                    size="large"
+                    type="submit"
+                    className="p-2 bg-indigo-600 rounded-lg text-white"
+                  >
+                    Save
+                  </Button>
+                </div>
+              </form>
+              <Dialog
+                open={examplePredictResultModal}
+                onClose={() => setExamplePredictResultModal(false)}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+                maxWidth="lg"
+                fullWidth
+              >
+                <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
+                <DialogContent>
+                  <AIDisPlayResultComponent resultImage={customedImageUrl || ""} predictResult={predictResult} 
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setExamplePredictResultModal(false)}
+                  >
+                    ปิด
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              <DeleteConfirmationDialog
+                open={confirmDeleteModal}
+                onClose={() => setConfirmDeleteModal(false)}
+                onConfirm={handleConfirmDelete}
+              />
             </div>
-            <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
-            <form onSubmit={handleSubmit} className="m-6 space-y-4">
-            <AiBasicInfo
-                aiName={aiName}
-                description={description}
-                serviceUri={serviceUri}
-                aiType={aiType}
-                enable={enable}
-                visible={visible}
-                onNameChange={setAiName}
-                onDescriptionChange={setDescription}
-                onServiceUriChange={setServiceUri}
-                onTypeChange={setAiType}
-                onEnableChange={setEnable}    
-                onVisibleChange={setVisible} 
-                inputType={inputType}
-                onInputTypeChange={setInputType}
-              />
-              <ColorPickerTags
-              colors={colorSet}
-              onChange={(newColors: string[]) => setColorSet(newColors)}
-              />
-              <AiFileUpload
-                serviceUri={serviceUri}
-                onServiceUriChange={setServiceUri}
-                onUriTest={handleUri}
-                fileInputRef={fileInputRef}
-                customedImageUrl={customedImageUrl}
-                predictResult={predictResult}
-                onShowPreview={() => setExamplePredictResultModal(true)}
-              />
-              <AiResponseKeys
-                responseKeys={responseKeys}
-                selectOptions={selectOptions}
-                onAddKey={handleAddKey}
-                onRemoveKey={handleRemoveKey}
-                onKeyChange={handleKeyChange}
-              />
-              <AiTagInput
-                tags={tags}
-                newTag={newTag}
-                onTagAdd={handleTagAdd}
-                onTagChange={setNewTag}
-                onTagRemove={handleTagRemove}
-              />
-              <div className="form-group">
-                <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
-                <textarea
-                  value={inputDescription}
-                  onChange={(e) => setInputDescription(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div className="form-group">
-                <label>AI Picture</label>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div className="pl-[20%] pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center justify-between">
-                <Button
-                  variant="contained"
-                  color="error"
-                  size="large"
-                  onClick={() => setConfirmDeleteModal(true)}
-                  sx={{ mr: 2 }}
-                >
-                  Remove AI
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: '#4f46e5', '&:hover': { backgroundColor: '#3730a3' } }}
-                  size="large"
-                  type="submit"
-                  className="p-2 bg-indigo-600 rounded-lg text-white"
-                >
-                  Save
-                </Button>
-              </div>
-            </form>
-            <Dialog
-              open={examplePredictResultModal}
-              onClose={() => setExamplePredictResultModal(false)}
-              aria-labelledby="modal-title"
-              aria-describedby="modal-description"
-              maxWidth="lg"
-              fullWidth
-            >
-              <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
-              <DialogContent>
-                <ImageDetectionResultDraw
-                  detections={predictResult?.prediction?.detections || []}
-                  InputImage={customedImageUrl!}
-                  aiDisplayType={ai_text_type || ''}
-                  colorSet={colorSet} 
-
-                />
-                {predictResult && <TextResultDisplay predictResult={predictResult} tags={tags} aiName={aiName} ai_type={aiType} />}
-              </DialogContent>
-              <DialogActions>
-                <Button variant="contained" color="primary" onClick={() => setExamplePredictResultModal(false)}>
-                  ปิด
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <DeleteConfirmationDialog
-              open={confirmDeleteModal}
-              onClose={() => setConfirmDeleteModal(false)}
-              onConfirm={handleConfirmDelete}
-            />
           </div>
         </div>
-      </div>
-      <MiniFooter />
-    </>
-  );
+        <MiniFooter />
+      </>
+    );
 };
 
 export default UpdateAiPage;

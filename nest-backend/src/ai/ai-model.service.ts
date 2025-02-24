@@ -14,6 +14,8 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import { Permission } from '../permission/entities/permission.entity';
 import { User } from 'src/user/entities/user.entity';
+import { convertDetectionsToPolygons } from '../common/utils/polygon.util';
+
 
 @Injectable()
 export class AIModelService {
@@ -149,12 +151,11 @@ export class AIModelService {
       if (!response.data) {
         throw new BadRequestException('No response from external API');
       }
-    
-      return {
-        response_keys: model.response_keys,
-        prediction: response.data,
-        ai_model: model,
-      };
+  return {
+    response_keys: model.response_keys,
+    prediction: response.data,
+    ai_model: model,
+  };
     } catch (error: any) {
       if (error.code === 'ECONNRESET') {
         console.error('Connection Reset Error: The connection was forcibly closed by the remote host');

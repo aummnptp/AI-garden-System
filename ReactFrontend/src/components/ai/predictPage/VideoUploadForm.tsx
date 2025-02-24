@@ -1,11 +1,9 @@
 import { Button, Skeleton } from "@mui/material";
 import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { FileUploadArea } from "./FileUploadArea";
+import { PredictResult } from "../../../types/Ai";
 
-interface PredictResult {
-    prediction: any;
-  }
-  
+
 export const VideoUploadForm: React.FC<{
     file: File | null;
     setFile: (file: File | null) => void;

@@ -77,7 +77,6 @@ export class AiPermissionController {
     @Param('userId') userId: string,
     @Body() data: { ids: string[] }
   ) {
-    console.log('IDs to remove:', data.ids);
     return this.aiPermissionService.removeBulk(userId, data.ids);
   }
 

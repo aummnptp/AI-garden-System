@@ -13,7 +13,7 @@ interface ObjectDetection {
 }
 interface SegmentationDetection {
   label: string;
-  polygons: [number, number][][]; // ต้องเป็นอาร์เรย์ของอาร์เรย์จุด
+  polygons: [number, number][][];
 }
 
 interface ImageDetectionResultDrawProps {
@@ -140,11 +140,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
           });
         }
       }
-      // else {
-      //   canvas.width = image.width;
-      //   canvas.height = image.height;
-      //   context.drawImage(image, 0, 0);
-      // }
+
     };
   }, [InputImage, detections, showAnnotations, aiDisplayType, colorSet]);
 
