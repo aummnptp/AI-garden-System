@@ -9,6 +9,7 @@ import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { Member, ProjectPermission } from "../../types/User";
 
 import { useProjectAccessMutations } from "../../hook/projects/useProjectAccessMutations";
+import { getImageUrl } from "../../function/util";
 const ProjectAccessManagePage = () => {
   const { workspaceId, projectId } = useParams<{
     workspaceId: string;
@@ -134,7 +135,7 @@ const ProjectAccessManagePage = () => {
                       <div className="flex items-center">
                         <img
                           className="w-10 h-10 rounded-full border-2"
-                          src={member.user.picture}
+                          src={getImageUrl(member.user.picture)}
                           alt={member.user.name}
                         />
                         <div className="ml-2">

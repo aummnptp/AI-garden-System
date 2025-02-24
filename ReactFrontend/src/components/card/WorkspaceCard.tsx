@@ -1,6 +1,7 @@
 import React from 'react'
 
 import calculateDaysPassed from '../../function/caculatedDaysPassed';
+import { getImageUrl } from '../../function/util';
 
 interface WorkspaceCardProps {
   workspaceId: string;
@@ -55,8 +56,7 @@ const WorkspaceCard: React.FC<WorkspaceCardProps> = (props) => {
                 <img 
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                // src={member.avatar} 
-                src={member.user.picture|| "/images/homeImage/profile.webp"}
+                src={getImageUrl(member.user.picture)|| "/images/homeImage/profile.webp"}
                 onError={(e) => {
                   e.currentTarget.onerror = null; // ป้องกัน loop error
                   e.currentTarget.src = "/images/homeImage/profile.webp"; // 

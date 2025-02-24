@@ -1,5 +1,6 @@
 import React from 'react'
 import {MoreOutlined}  from '@ant-design/icons';
+import { getImageUrl } from '../../function/util';
 
 interface WorkspaceCardProps {
   workspaceId: string;
@@ -49,7 +50,7 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 <p className='mr-1 text-black/opacity-75 text-xs font-normal'>create by</p>
                 <img 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                src={props.members[0].user.picture|| "/images/homeImage/profile.webp"}
+                src={getImageUrl(props.members[0].user.picture)|| "/images/homeImage/profile.webp"}
                 alt="creator"
                 onError={(e) => {
                   e.currentTarget.onerror = null; // ป้องกัน loop error
@@ -66,7 +67,7 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 <img 
                 key={index} 
                 className="w-8 h-8 rounded-full border-2 border-white" 
-                src={member.user.picture|| "/images/homeImage/profile.webp"} 
+                src={getImageUrl(member.user.picture)|| "/images/homeImage/profile.webp"} 
                 onError={(e) => {
                   e.currentTarget.onerror = null; // ป้องกัน loop error
                   e.currentTarget.src = "/images/homeImage/profile.webp"; // 

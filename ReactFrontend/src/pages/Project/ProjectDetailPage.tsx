@@ -110,7 +110,7 @@ const ProjectDetailPage = () => {
                 <div className="flex items-center my-4">
                   <img
                     className="w-10 h-10 rounded-full border-2 bg-red-200 "
-                    src={projectDetail.createdBy.picture || null}
+                    src={getImageUrl(projectDetail.createdBy.picture)|| "/images/homeImage/profile.webp"}
                   />
                   <div className="ml-2">
                     <p className="text-black text-lg font-normal">

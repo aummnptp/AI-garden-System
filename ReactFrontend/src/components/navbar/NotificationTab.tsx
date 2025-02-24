@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, MenuItem, Avatar, Typography, Button } from '@mui/material';
+import { getImageUrl } from '../../function/util';
 
 type Notification = {
   inviteId: string;
@@ -66,7 +67,7 @@ const NotificationMenu: React.FC<NotificationMenuProps> = ({
               sx={{ "&:hover": { backgroundColor: "transparent" }, cursor: "default" }}
             >
               <Avatar
-                src={noti.invitedBy.picture || "/images/homeImage/profile.webp"}
+                src={getImageUrl(noti.invitedBy.picture) || "/images/homeImage/profile.webp"}
                 alt="InviterProfile"
                 sx={{ width: 40, height: 40, marginRight: 1 }}
               />

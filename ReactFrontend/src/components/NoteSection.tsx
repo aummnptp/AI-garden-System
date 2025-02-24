@@ -17,7 +17,7 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
             <div className="flex items-center">
               <img
                 className="w-10 h-10 rounded-full border-2"
-                src={note.createdBy?.picture || "/images/homeImage/profile.webp"}
+                src={getImageUrl(note.createdBy?.picture) || "/images/homeImage/profile.webp"}
                 alt="User Profile"
               />
               <div className="ml-2">
