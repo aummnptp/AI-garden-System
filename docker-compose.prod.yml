@@ -31,7 +31,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./nest-backend/uploads:/app/uploads
+      - uploads-data:/app/uploads
       - ./nest-backend/.env:/app/.env
     environment:
       DATABASE_URL: postgres://postgres:admin@db:5432/ai_garden_db
@@ -56,3 +56,4 @@ services:
 
 volumes:
   db-data:
+  uploads-data:

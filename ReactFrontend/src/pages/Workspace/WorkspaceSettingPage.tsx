@@ -16,27 +16,52 @@ import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 import { useWorkspaceMutations } from "../../hook/workspaces/useWorkspaceMutations";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+const workspaceSchema = z.object({
+  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
+  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
+});
+
 
 const WorkspaceSettingPage = () => {
+  const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
-  const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
+
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(workspaceSchema),
+  });
+
   const { workspaceDetail, isLoadingWorkspace, } = useWorkspaceData();
   const { updateWorkspaceMutation, deleteWorkspaceMutation } =
     useWorkspaceMutations(workspaceId);
 
-  useEffect(() => {
-    if (workspaceDetail) {
-      setName(workspaceDetail.name);
-      setDescription(workspaceDetail.description);
-    }
-  }, [workspaceDetail]);
+    useEffect(() => {
+      if (workspaceDetail) {
+        setValue("name", workspaceDetail.name);
+        setValue("description", workspaceDetail.description);
+      }
+    }, [workspaceDetail, setValue]);
 
-  const handleSave = () => {
-    updateWorkspaceMutation.mutate({ workspaceId: workspaceId ?? "", name, description });
-  };
+    const onSubmit = (data: { name: string; description: string }) => {
+      updateWorkspaceMutation.mutate({
+        workspaceId: workspaceId ?? "",
+        name: data.name,
+        description: data.description,
+      });
+    };
+
   const handleModalDelete = () => {
     setOpen(true);
   };
@@ -55,7 +80,7 @@ const WorkspaceSettingPage = () => {
   if (isLoadingWorkspace) return <SkeletonLayout />;
   return (
     <>
-      <div className="flex h-full min-h-screen bg-neutral-100">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex h-full min-h-screen bg-neutral-100">
         {/* confirm modal delete */}
         <Dialog
           open={open}
@@ -150,9 +175,9 @@ const WorkspaceSettingPage = () => {
                 </li>
               </ul>
             </div>
-
+       
             {/* <div className="w-full h-[0px] border border-zinc-300 mx-auto" /> */}
-            <div className=" w-[80%] mx-auto items-center pt-8 pb-10">
+          <div  className="w-[80%] mx-auto pt-8 pb-10">
               <label className="mx-auto flex-col flex text-black text-2xl mb-2  ">
                 Workspace name
               </label>
@@ -161,12 +186,9 @@ const WorkspaceSettingPage = () => {
                   id="standard-number"
                   placeholder="workspace name"
                   defaultValue={"Workspace Name"}
-                  // label="Number"
-                  // InputLabelProps={{
-                  //   shrink: true,
-                  // }}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...register("name")}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
                 />
               </div>
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
@@ -179,9 +201,9 @@ const WorkspaceSettingPage = () => {
                   placeholder="workspace description"
                   multiline
                   rows={4}
-                  defaultValue={"รายละเอียด ........"}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  {...register("description")}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
                 />
               </div>
             </div>
@@ -207,13 +229,13 @@ const WorkspaceSettingPage = () => {
               "&:hover": { backgroundColor: "#3730a3" },
             }}
             style={{ marginRight: "0.5rem" }}
-            onClick={handleSave}
+           type="submit" 
           >
             Save
           </Button>
         </div>
         
-      </div>
+    </form>
     </>
   );
 };

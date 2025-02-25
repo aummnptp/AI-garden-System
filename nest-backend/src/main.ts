@@ -16,7 +16,7 @@ async function bootstrap() {
   });
   
   // เสิร์ฟไฟล์จากโฟลเดอร์ 'uploads'
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
+  app.useStaticAssets('/app/uploads', { prefix: '/uploads' });
   await app.listen(3000);
 }
 bootstrap();
