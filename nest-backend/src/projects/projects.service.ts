@@ -223,14 +223,18 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   async getHistory(historyId: string): Promise<ProjectHistory> {
     const history = await this.projectHistoryRepository.findOne({
       where: { historyId: historyId },
+      select: {
+        prediction: true, 
+
+      },
       relations: ['ai_model'],
     });
-
+  
     if (!history) {
       throw new NotFoundException('History not found');
     }
-    return history
-     
+    
+    return history;
   }
 
   async deleteHistory(workspaceId: string, projectId: string, historyId: string): Promise<{ message: string }> {
@@ -250,52 +254,57 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     await this.projectHistoryRepository.remove(history);
     return { message: 'History deleted successfully' };
   }
-
 async getUploadStatistics(projectId: string) {
   const history = await this.projectHistoryRepository.find({
     where: { project: { projectId } },
-    relations: ['project', 'user'] // ดึงข้อมูล project และ user มาด้วย
+    select: {
+      prediction: true, 
+    },
+    relations: ['user'],
   });
 
-  // ใช้ Set เพื่อนับ userId ที่ไม่ซ้ำ
-  const uniqueUsers = new Set(history.map(item => item.user.userId));
-  const userCount = uniqueUsers.size; // นับจำนวน userId ที่ไม่ซ้ำ
-
-  // นับจำนวนรูปภาพ
   const imageExtensions = ['.jpg', '.jpeg', '.png'];
-  const imageCount = history.filter(item => 
-    imageExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
-  ).length;
-
-  // นับจำนวนวิดีโอ
   const videoExtensions = ['.mp4', '.mov', '.avi'];
-  const videoCount = history.filter(item => 
-    videoExtensions.some(ext => item.filePath?.toLowerCase().endsWith(ext))
-  ).length;
+
+  // ใช้ Set เพื่อนับ userId ที่ไม่ซ้ำ
+  const uniqueUsers = new Set<string>();
+  let imageCount = 0;
+  let videoCount = 0;
 
   // จัดอันดับการอัปโหลด
-  const ranking = history.reduce((acc, item) => {
-    const userId = item.user.userId;
-    if (!acc[userId]) {
-      acc[userId] = {
-        userId: userId,
-        submitNumber: 0,
-        name: item.user.name,
-        picture: item.user.picture
-      };
-    }
-    acc[userId].submitNumber += 1;
-    return acc;
-  }, {} as Record<string, { userId: string; submitNumber: number; name: string; picture: string }>);
+  const ranking: Record<string, { userId: string; submitNumber: number; name: string; picture: string }> = {};
 
-  // แปลง Object เป็น Array และเรียงลำดับ
-  const sortedRanking = Object.values(ranking).sort((a, b) => b.submitNumber - a.submitNumber);
+  history.forEach(item => {
+    const user = item.user;
+    if (user) {
+      uniqueUsers.add(user.userId);
+
+      if (!ranking[user.userId]) {
+        ranking[user.userId] = {
+          userId: user.userId,
+          submitNumber: 0,
+          name: user.name,
+          picture: user.picture,
+        };
+      }
+      ranking[user.userId].submitNumber += 1;
+    }
+
+    const filePath = item.filePath?.toLowerCase();
+    if (filePath) {
+      if (imageExtensions.some(ext => filePath.endsWith(ext))) {
+        imageCount++;
+      } else if (videoExtensions.some(ext => filePath.endsWith(ext))) {
+        videoCount++;
+      }
+    }
+  });
 
   return {
-    userCount,      // จำนวนผู้ใช้ที่มีการอัปโหลด
-    imageCount,     // จำนวนรูปภาพ
-    videoCount,     // จำนวนวิดีโอ
-    ranking: sortedRanking // อันดับการอัปโหลด
+    userCount: uniqueUsers.size,
+    imageCount,
+    videoCount,
+    ranking: Object.values(ranking).sort((a, b) => b.submitNumber - a.submitNumber),
   };
 }
 

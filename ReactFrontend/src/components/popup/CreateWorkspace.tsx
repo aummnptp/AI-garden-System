@@ -1,98 +1,107 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCreateWorkspaceMutation } from '../../hook/workspaces/useCreateWorkspaceMutation';
+import toast from 'react-hot-toast';
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface CreateWorkspaceProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  fetchWorkspaces: () => void;
 }
+const workspaceSchema = z.object({
+  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
+  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
+});
 
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal }) => {
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
   const { mutate: createWorkspace } = useCreateWorkspaceMutation();
  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(workspaceSchema),
+  });
 
-
-  const handleSubmit = () => {
+  const onSubmit = (data: { name: string; description: string }) => {
     createWorkspace({
-      name,
-      description,
+      name: data.name,
+      description: data.description,
       onSuccessCallback: () => {
-        setName("");
-        setDescription("");
+        reset(); 
         setShowModal(false);
+        toast.success("Workspace created successfully!");
       },
     });
   };
   return (
-    <Dialog
-      open={showModal}
-      onClose={() => setShowModal(false)}
-      maxWidth="sm"
-      fullWidth
-    >
-      <DialogTitle>
-        <span className="text-2xl font-semibold text-indigo-900">สร้าง Workspace</span>
-        <IconButton
-          aria-label="close"
-          onClick={() => setShowModal(false)}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent dividers>
-        <div className="flex flex-col space-y-4">
-          <div>
-            <span className="font-medium tracking-tight text-indigo-900">ชื่อ Workspace</span>
-            <span className="ml-2 text-red-500 text-sm">*</span>
-            <TextField
-              fullWidth
-              placeholder="ชื่อ Workspace"
-              variant="outlined"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              margin="normal"
-            />
-          </div>
-          <div>
-            <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
-            <TextField
-              fullWidth
-              placeholder="คำอธิบาย Workspace"
-              variant="outlined"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              multiline
-              rows={4}
-              margin="normal"
-            />
-          </div>
+    <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="sm" fullWidth>
+    <DialogTitle>
+      <span className="text-2xl font-semibold text-indigo-900">สร้าง Workspace</span>
+      <IconButton
+        aria-label="close"
+        onClick={() => setShowModal(false)}
+        sx={{
+          position: "absolute",
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+    </DialogTitle>
+    <DialogContent dividers>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
+        <div>
+          <span className="font-medium tracking-tight text-indigo-900">ชื่อ Workspace</span>
+          <span className="ml-2 text-red-500 text-sm">*</span>
+          <TextField
+            fullWidth
+            placeholder="ชื่อ Workspace"
+            variant="outlined"
+            {...register("name")}
+            margin="normal"
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
         </div>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          onClick={handleSubmit}
-          variant="contained"
-          sx={{
-            backgroundColor: '#4f46e5',
-            '&:hover': {
-              backgroundColor: '#3730a3',
-            },
-          }}
-        >
-          สร้าง
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <div>
+          <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
+          <TextField
+            fullWidth
+            placeholder="คำอธิบาย Workspace"
+            variant="outlined"
+            {...register("description")}
+            multiline
+            rows={4}
+            margin="normal"
+            error={!!errors.description}
+            helperText={errors.description?.message}
+          />
+        </div>
+        <DialogActions>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              backgroundColor: "#4f46e5",
+              "&:hover": {
+                backgroundColor: "#3730a3",
+              },
+            }}
+          >
+            สร้าง
+          </Button>
+        </DialogActions>
+      </form>
+    </DialogContent>
+  </Dialog>
   );
 };
 

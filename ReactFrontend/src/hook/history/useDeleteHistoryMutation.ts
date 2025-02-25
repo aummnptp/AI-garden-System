@@ -16,7 +16,8 @@ export const useDeleteHistoryMutation = () => {
       return deleteHistoryService(workspaceId, projectId, historyId);
     },
     onSuccess: (_data, { workspaceId, projectId }) => {
-      queryClient.invalidateQueries({ queryKey: ["history-data", workspaceId, projectId] });
+      queryClient.invalidateQueries({ queryKey: ["all-history-project", workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ["project-history", workspaceId, projectId] });
       toast.success("History deleted successfully!");
     },
     onError: () => {

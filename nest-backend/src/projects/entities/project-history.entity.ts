@@ -14,7 +14,7 @@ historyId: string;
 @Column({nullable: true })
 filePath: string;
 
-@Column('jsonb')
+@Column('jsonb', { select: false })
 prediction:{}[];
 
 @Column('jsonb',{name:"response_keys"}) // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL

@@ -18,7 +18,6 @@ import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useWorkspaceMutations } from "../../hook/workspaces/useWorkspaceMutations";
 
 const WorkspaceSettingPage = () => {
-
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);

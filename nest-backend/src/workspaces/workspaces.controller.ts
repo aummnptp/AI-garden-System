@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, Req, Query, Res, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, ParseIntPipe, NotFoundException, Req, Query, Res, BadRequestException, ValidationPipe, UsePipes } from '@nestjs/common';
 import { WorkspacesService } from './workspaces.service';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -27,9 +27,9 @@ export class WorkspacesController {
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   @Post('create')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Request() req, @Body() createWorkspaceDto: CreateWorkspaceDto) {
     const userId = req.user.userId;
-    // return  req.user
     return this.workspacesService.create(createWorkspaceDto, userId);
   }
 
