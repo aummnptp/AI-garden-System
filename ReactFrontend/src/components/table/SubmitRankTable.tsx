@@ -175,7 +175,7 @@ export default function SubmitRankTable() {
             projectHistory.map((item: any) => (
               <div key={item.createdAt} className="mb-4 border-b pb-4">
                 <div className="flex items-center mb-2">
-                  <Avatar className="w-10 h-10 rounded-full border-2" src={item.user.picture} alt={item.user.name} />
+                  <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(item.user.picture)} alt={item.user.name} />
                   <div className="ml-3">
                     <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
                     <p className="text-gray-600 text-sm">
