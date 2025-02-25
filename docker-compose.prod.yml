@@ -54,6 +54,8 @@ services:
       - ai_garden_network
     depends_on:
       - nest-backend
+    volumes:
+      - ./ReactFrontend/nginx.conf:/etc/nginx/nginx.conf
 
 volumes:
   db-data:
