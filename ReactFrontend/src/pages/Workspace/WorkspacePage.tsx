@@ -26,8 +26,6 @@ function WorkspacePage() {
     isLoadingMyWorkspace,
     invitedWorkspace,
     isLoadingInvitedWorkspace,
-    refetchMyWorkspace,
-    refetchInvitedWorkspace,
   } = useWorkspaceData();
 
   if (isLoadingMyWorkspace || isLoadingInvitedWorkspace) {
@@ -39,10 +37,7 @@ function WorkspacePage() {
         <CreateWorkspace
           showModal={showModal}
           setShowModal={setShowModal}
-          fetchWorkspaces={() => {
-            refetchMyWorkspace();
-            refetchInvitedWorkspace();
-          }}
+
         />
         <div className=" flex flex-col items-center justify-center w-full ">
           {/* My Worksspace Container */}

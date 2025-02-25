@@ -37,7 +37,7 @@ const hexToRgba = (hex: string, alpha: number): string => {
   return hex;
 };
 
-// component สำหรับวาดผลลัพธ์การตรวจจับวัตถุ
+
 const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ detections, InputImage ,  aiDisplayType, colorSet,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -54,7 +54,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
     const image = new Image();
     image.src = InputImage;
     image.onload = () => {
-      // ตั้งค่า canvas ตามขนาดของรูป (หรือกำหนดค่าอื่นๆ ตามที่ต้องการ)
+
       if (aiDisplayType === "segmentation") {
         const canvasWidth = image.width;
         const canvasHeight = image.height;
@@ -69,19 +69,19 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
 
       if (showAnnotations && detections) {
         if (aiDisplayType === "objectdetection") {
-          // วาด Bounding Boxes สำหรับ Object Detection
+
           (detections as ObjectDetection[]).forEach((detection, index) => {
             const confidence = detection.confidence.toFixed(2);
             const labelText = `${index + 1}. ${detection.label} (${confidence})`;
             const { x1, y1, x2, y2 } = detection.position;
 
-            // วนลูปใช้สีจาก colorSet
+
             const color =
               colorSet && colorSet.length > 0
                 ? colorSet[index % colorSet.length]
                 : "00ff00";
 
-            // สำหรับ fill style ให้ใช้สีที่มี alpha (0.2)
+            // color fill alpha (0.2)
             const fillColor = hexToRgba(color, 0.2);
 
             context.beginPath();
@@ -92,19 +92,17 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
             context.fill();
             context.stroke();
             context.font = "30px Arial";
-            // ใช้สีเดียวกันสำหรับข้อความ (หรือปรับตามต้องการ)
             context.fillStyle = color;
             context.fillText(labelText, x1, y1 - 5);
           });
         } else if (aiDisplayType === "segmentation") {
-          // กำหนดขนาดของ canvas สำหรับ segmentation
+
           const canvasWidth = image.width;
           const canvasHeight = image.height;
           canvas.width = canvasWidth;
           canvas.height = canvasHeight;
           context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
   
-          // ---------------------- แก้ส่วนนี้ ----------------------
           (detections as SegmentationDetection[]).forEach((detection, index) => {
             const { label, polygons } = detection;
           
@@ -128,7 +126,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
               context.stroke();
             });
           
-            // หาจุดสูงสุดของ polygon เพื่อแสดง label
+            //  label
             const allPoints: [number, number][] = polygons.flat();
             const minY = Math.min(...allPoints.map((point: [number, number]) => point[1]));
             const labelPoint = allPoints.find((point: [number, number]) => point[1] === minY) || [0, 0];

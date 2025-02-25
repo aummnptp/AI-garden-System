@@ -49,13 +49,9 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
       data = data?.[part];
       if (!data) break;
     }
-    if (searchDrawKey.displayFormat === "segmentation") {
-      if (Array.isArray(data)) {
-        PredictDrawData = convertDetectionsToPolygons(data) as SegmentationDetection[];
-      }
-    } else {
+ 
       PredictDrawData = data as ObjectDetection[] | SegmentationDetection[];
-    }
+    
   }
 
   return (
