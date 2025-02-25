@@ -2,8 +2,8 @@ import { Button } from '@mui/material';
 import React from 'react'
 
 interface ProjectImageInputProps {
-    image: File | null;
-    setImage: (image: File | null) => void;
+    image?: File; 
+    setImage: (file?: File) => void;
     handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
     handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -74,7 +74,7 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
               variant="outlined"
               color="error"
               onClick={() => {
-                setImage(null);
+                setImage(undefined);
               }}
             >
               <i className="bi bi-trash-fill mr-1" />

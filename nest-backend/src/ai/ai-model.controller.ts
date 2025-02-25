@@ -35,7 +35,7 @@ export class AIModelController {
   @Post('add')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: '/app/uploads',
+      destination: './uploads',
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
@@ -63,7 +63,7 @@ export class AIModelController {
   @Patch(':aiId/update-ai')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: '/app/uploads',
+      destination: './uploads',
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);

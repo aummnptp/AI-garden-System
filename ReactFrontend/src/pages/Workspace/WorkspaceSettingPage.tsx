@@ -14,16 +14,12 @@ import { Link, useParams } from "react-router-dom";
 import { Close, } from "@mui/icons-material";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
-
 import { useWorkspaceMutations } from "../../hook/workspaces/useWorkspaceMutations";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { workspaceSchema, WorkspaceSchemaType } from "../../validations/workspaceSchema";
 
-const workspaceSchema = z.object({
-  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
-  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
-});
+
 
 
 const WorkspaceSettingPage = () => {
@@ -37,7 +33,7 @@ const WorkspaceSettingPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<WorkspaceSchemaType>({
     resolver: zodResolver(workspaceSchema),
   });
 

@@ -4,17 +4,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useCreateWorkspaceMutation } from '../../hook/workspaces/useCreateWorkspaceMutation';
 import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { workspaceSchema, WorkspaceSchemaType } from '../../validations/workspaceSchema';
 
 interface CreateWorkspaceProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const workspaceSchema = z.object({
-  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
-  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
-});
+
 
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal }) => {
   const { mutate: createWorkspace } = useCreateWorkspaceMutation();
@@ -24,7 +21,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<WorkspaceSchemaType>({
     resolver: zodResolver(workspaceSchema),
   });
 

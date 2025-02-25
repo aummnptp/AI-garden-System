@@ -21,7 +21,7 @@ export class ProjectsController {
   @Post('create')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: '/app/uploads/project', 
+      destination: './uploads/project', 
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
@@ -67,7 +67,7 @@ export class ProjectsController {
   @Patch('update/:projectId')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: '/app/uploads/project', // กำหนดโฟลเดอร์เก็บไฟล์
+      destination: './uploads/project', // กำหนดโฟลเดอร์เก็บไฟล์
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
@@ -96,7 +96,7 @@ export class ProjectsController {
   @Post('predict/:projectId')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
-      destination: '/app/uploads/project/history/',
+      destination: './uploads/project/history/',
       filename: (req, file, cb) => {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
