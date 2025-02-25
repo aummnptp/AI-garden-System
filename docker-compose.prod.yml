@@ -47,6 +47,7 @@ services:
     build:
       context: ./ReactFrontend
       dockerfile: Dockerfile.prod
+    restart: unless-stopped
     ports:
       - 8081:80
     networks:
