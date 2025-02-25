@@ -70,11 +70,11 @@ function Footer() {
                   
                 <img
                   className="w-16 h-16 mr-5"
-                  src="../../public/images/logo/KMITL_Logo.png"
+                  src="/images/logo/KMITL_Logo.png"
                   />
                 <img
                   className="w-16 h-16 mr-5"
-                  src="../../public/images/logo/ITKMITL_Logo.png"
+                  src="/images/logo/ITKMITL_Logo.png"
                   />
                 </div>
               </div>
