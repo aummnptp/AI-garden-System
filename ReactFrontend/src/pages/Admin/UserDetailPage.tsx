@@ -15,7 +15,7 @@ import { useAiData } from '../../hook/ai/useAiData';
 import { getImageUrl } from '../../function/util';
 
 const UserDetailPage = () => {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId?: string }>();
   const [userTab, setUserTab] = useState<string>('Ai');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
@@ -45,7 +45,7 @@ const UserDetailPage = () => {
   const handlePromoteToAdmin = () => {
     if (!userId) return;
 
-    promoteMutation.mutate(userId, {
+    promoteMutation.mutate({ userId }, {
       onSuccess: () => {
         setOpenConfirmDialog(false);
       },

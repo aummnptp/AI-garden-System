@@ -72,7 +72,6 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
   const [orderBy, setOrderBy] = useState<keyof Data>('date');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAi, setSelectedAi] = useState<{ aiId: string; name: string } | null>(null);
-  const [actionSuccess, setActionSuccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     setRows(AIData);
@@ -80,7 +79,6 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
 
   const handleOpenDialog = (aiId: string, name: string) => {
     setSelectedAi({ aiId, name });
-    setActionSuccess(null);
     setOpenDialog(true);
   };
 
@@ -118,25 +116,22 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
 
   const handleRevokePermission = () => {
     if (!userId || !selectedAi) return;
-    
+  
+    // ปิด Dialog ทันทีเมื่อกดปุ่ม
+    setOpenDialog(false);
+  
     revokePermissionMutation.mutate(
       { userId, aiId: selectedAi.aiId },
       {
         onSuccess: () => {
           // อัปเดตตารางโดยลบข้อมูลที่ถูกถอนสิทธิ์ออก
           setRows((prevRows) => prevRows.filter((row) => row.aiId !== selectedAi.aiId));
-          setActionSuccess(true);
-          setTimeout(() => {
-            setOpenDialog(false);
-            refetchAIModels();
-          }, 2000);
-        },
-        onError: () => {
-          setActionSuccess(false);
-        },
+          refetchAIModels(); // รีเฟรชข้อมูล AI ที่อนุมัติ
+        }
       }
     );
   };
+  
 
   return (
     <TableContainer component={Paper}>
@@ -211,41 +206,23 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
       </Table>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>
-          {actionSuccess === null
-            ? 'ยืนยันการถอนสิทธิ์'
-            : actionSuccess
-            ? 'ถอนสิทธิ์สำเร็จ'
-            : 'เกิดข้อผิดพลาด'}
-        </DialogTitle>
+        <DialogTitle>ยืนยันการถอนสิทธิ์</DialogTitle>
         <DialogContent>
-          {actionSuccess === null ? (
-            <Typography>
-              คุณแน่ใจหรือไม่ว่าต้องการถอนสิทธิ์การเข้าถึง AI <b>{selectedAi?.name}</b>?
-            </Typography>
-          ) : actionSuccess ? (
-            <Typography color="success">
-              ถอนสิทธิ์ AI <b>{selectedAi?.name}</b> สำเร็จ! กำลังรีเฟรช...
-            </Typography>
-          ) : (
-            <Typography color="error">
-              ไม่สามารถถอนสิทธิ์ AI <b>{selectedAi?.name}</b> ได้ กรุณาลองใหม่
-            </Typography>
-          )}
+          <Typography>
+            คุณแน่ใจหรือไม่ว่าต้องการถอนสิทธิ์การเข้าถึง AI <b>{selectedAi?.name}</b>?
+          </Typography>
         </DialogContent>
         <DialogActions>
-          {actionSuccess === null && (
-            <>
-              <Button onClick={() => setOpenDialog(false)} color="secondary">
-                ยกเลิก
-              </Button>
-              <Button onClick={handleRevokePermission} color="error" variant="contained">
-                ถอนสิทธิ์
-              </Button>
-            </>
-          )}
+          <Button onClick={() => setOpenDialog(false)} color="secondary">
+            ยกเลิก
+          </Button>
+          <Button onClick={handleRevokePermission} color="error" variant="contained">
+            ถอนสิทธิ์
+          </Button>
         </DialogActions>
       </Dialog>
+
+
     </TableContainer>
   );
 };

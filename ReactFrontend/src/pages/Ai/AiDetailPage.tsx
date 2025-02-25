@@ -1,4 +1,4 @@
-import {useState } from "react";
+import { useState } from "react";
 import { ExclamationCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from "@mui/material";
@@ -6,6 +6,7 @@ import MiniFooter from "../../components/MiniFooter";
 import { getImageUrl } from "../../function/util";
 import { useAiData } from "../../hook/ai/useAiData";
 import { useAiRequestPermissionMutation } from "../../hook/ai/useAiRequestPermissionMutation";
+import { useAiPermission } from "../../hook/ai-permission/useAiPermission";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 
 const AiDetail = () => {
@@ -13,8 +14,8 @@ const AiDetail = () => {
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { mutate: requestPermission } = useAiRequestPermissionMutation();
   // 🔹 State สำหรับ Dialog
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); 
-
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const { checkPermission } = useAiPermission();
 
 
   const handleOpenConfirmDialog = () => {
@@ -34,7 +35,7 @@ const AiDetail = () => {
   };
 
 
-  if (isLoadingAiModel ||!aiModelData) {
+  if (isLoadingAiModel || !aiModelData) {
     return <SkeletonLayout />;
   }
 
@@ -99,8 +100,14 @@ const AiDetail = () => {
                   ทดลองใช้งาน
                 </Button>
               </Link>
-              <Button onClick={handleOpenConfirmDialog} variant="contained" size="large" sx={{ my: "5px", backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}>
-                ส่งคำขอใช้งาน
+              <Button
+                onClick={handleOpenConfirmDialog}
+                variant="contained"
+                size="large"
+                disabled={checkPermission?.hasPermission ?? false}  // ปิดปุ่มถ้าเคยขอสิทธิ์แล้ว
+                sx={{ my: "5px", backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
+              >
+                {checkPermission?.hasPermission ? "ขอสิทธิ์แล้ว" : "ส่งคำขอใช้งาน"}
               </Button>
             </div>
           </div>

@@ -22,6 +22,15 @@ export class AiPermissionController {
     return this.aiPermissionService.create(data, req.user.userId);
   }
 
+  @UseGuards(JwtGuard)
+  @Get('check/:aiId')
+  async checkPermission(@Req() req, @Param('aiId') aiId: string) {
+    if (!req.user || !req.user.userId) {
+      throw new Error('User not authenticated or invalid token');
+    }
+    return { hasPermission: await this.aiPermissionService.checkExistingRequest(req.user.userId, aiId) };
+  }
+
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Post('add-bulk/:userId')
