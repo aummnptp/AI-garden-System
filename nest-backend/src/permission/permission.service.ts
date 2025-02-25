@@ -15,6 +15,13 @@ export class AiPermissionService {
     private readonly userRepository: Repository<User>, // Inject repository ของผู้ใช้
   ) {}
 
+  async checkExistingRequest(id: string, aiId: string): Promise<boolean> {
+    const existingRequest = await this.aiPermissionRepository.findOne({
+      where: { user_id: id, ai_id: aiId  },
+    });
+
+    return !!existingRequest; // ถ้าพบจะคืนค่า true (มีอยู่แล้ว)
+  }
   // ฟังก์ชันสร้าง Permission
   async create(data: CreateAiPermissionDto, id: string) {
     // ตรวจสอบว่าผู้ใช้มีอยู่ในระบบ

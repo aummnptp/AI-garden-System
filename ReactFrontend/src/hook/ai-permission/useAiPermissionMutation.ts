@@ -24,7 +24,7 @@ interface addBulkPermissionRequestProps {
     aiIds: string[];
 }
 
-export const useAiPermissionMutations = () => {
+export const useAiPermissionMutations = (userId?:string) => {
     const queryClient = useQueryClient();
 
     const approvePermissionMutation = useMutation({
@@ -32,7 +32,7 @@ export const useAiPermissionMutations = () => {
             return approvePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission","user"] });
             toast.success("ยอมรับคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -45,7 +45,7 @@ export const useAiPermissionMutations = () => {
             return refusePermissionService(id);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-permission","user"] });
             toast.success("ปฏิเสธคำขอใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -58,7 +58,7 @@ export const useAiPermissionMutations = () => {
             return revokePermissionService(userId, aiId);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-approved-models"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-approved-models","user",userId] });
             toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -71,7 +71,7 @@ export const useAiPermissionMutations = () => {
             return addBulkPermissionRequestService(userId, aiIds);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval","user",userId] });
             toast.success("เพิ่มสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {
@@ -84,7 +84,7 @@ export const useAiPermissionMutations = () => {
             return removeBulkPermissionRequestService(userId, ids);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval"] });
+            await queryClient.invalidateQueries({ queryKey: ["ai-models-with-approval","user",userId] });
             toast.success("ถอนสิทธิ์การใช้งาน AI แล้ว");
         },
         onError: () => {

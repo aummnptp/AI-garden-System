@@ -3,6 +3,11 @@ const BASE_URL = import.meta.env.VITE_NEST_BACKEND_API_URL;
 
 axios.defaults.withCredentials = true;
 
+export const fetchCheckPermissionService = async (ai_id: string) => {
+    const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/check/${ai_id}`)
+    return data;
+};
+
 export const fetchPermissionDetailService = async () => {
     const { data } = await axios.get(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/detail`)
     return data;
@@ -31,13 +36,10 @@ export const revokePermissionService = async (userId: string, aiId: string) => {
     }
 };
 
-
 export const addBulkPermissionRequestService = async (userId: string, aiIds: string[]) => {
     const { data } = await axios.post(`${BASE_URL}/ai-permission/add-bulk/${userId}`, { aiIds });
     return data;
 };
-
-  
 
 export const removeBulkPermissionRequestService = async (userId: string, ids: string[]) => {
     const { data } = await axios.delete(`${BASE_URL}/ai-permission/remove-bulk/${userId}`, {
