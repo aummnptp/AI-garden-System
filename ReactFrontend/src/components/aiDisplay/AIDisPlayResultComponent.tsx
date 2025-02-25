@@ -2,7 +2,6 @@ import React from "react";
 import ImageDetectionResultDraw from "./ImageDetectionResultDraw";
 import TextResultDisplay from "./TextResultDisplay";
 import RegressionChart from "./RegressionResultDraw";
-import { convertDetectionsToPolygons } from "../../function/utils/polygon.util";
 import { PredictResult } from "../../types/Ai";
 
 

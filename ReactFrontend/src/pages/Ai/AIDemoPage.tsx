@@ -6,11 +6,8 @@ import { useAiDemoPredict } from "../../hook/ai/useAiDemoPredict";
 import { useAiData } from "../../hook/ai/useAiData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import toast from "react-hot-toast";
+import { PredictResult } from "../../types/Ai";
 
-interface PredictResult {
-  prediction: any;
-  regression_params?: any | null;
-}
 
 const AIDemo: React.FC = () => {
   const [uploadStep, setUploadStep] = useState<number>(1);
@@ -39,7 +36,7 @@ const AIDemo: React.FC = () => {
     }
 
     predictFromUrl.mutate(customedImageUrl, {
-      onSuccess: (data) => {
+      onSuccess: (data: PredictResult) => {
         setPredictResult(data);
         setUploadStep(4);
       },

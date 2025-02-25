@@ -1,12 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { predictFromUrlService } from "../../api/services/AiService";
+import { PredictResult } from "../../types/Ai";
 
-interface PredictResult {
-  ai_type: string;
-  prediction: any;
-  regression_params?: any | null;
-}
 
 export const useAiDemoPredict = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();

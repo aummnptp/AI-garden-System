@@ -28,8 +28,6 @@ const workspaceSchema = z.object({
 
 const WorkspaceSettingPage = () => {
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
   const [open, setOpen] = React.useState(false);
   const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
 
@@ -75,7 +73,7 @@ const WorkspaceSettingPage = () => {
     deleteWorkspaceMutation.mutate({ workspaceId: workspaceId ?? "" });
   };
 
-  const isDeleteDisabled = confirmText !== name;
+  const isDeleteDisabled = confirmText !== workspaceDetail?.name;
 
   if (isLoadingWorkspace) return <SkeletonLayout />;
   return (
@@ -104,13 +102,13 @@ const WorkspaceSettingPage = () => {
               variant="body1"
               sx={{ marginBottom: "20px", color: "#555" }}
             >
-              Delete a <strong>"{name}"</strong> from workspace list?
+            Delete <strong>"{workspaceDetail?.name}"</strong> from workspace list?
             </Typography>
             <Typography
               variant="body1"
               sx={{ marginBottom: "20px", color: "#555" }}
             >
-              To confirm, type <strong>"{name}"</strong>  to in the box
+            To confirm, type <strong>"{workspaceDetail?.name}"</strong> in the box
             </Typography>
             <input
           type="text"
