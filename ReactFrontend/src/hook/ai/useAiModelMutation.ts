@@ -7,12 +7,12 @@ import { addAiModelService, deleteAiModelService, updateAiModelService } from ".
   interface UpdateAiModelProps {
     ai_id: string;
     modelData: AiModelData;
-    uploadedFile?: File | null;
+    ai_picture?: File | null;
   }
 
   interface AddAiModelProps {
     modelData: AiModelData;
-    uploadedFile?: File | null;
+    ai_picture?: File | null;
   }
   export const useAiModelMutation = () => {
     const queryClient = useQueryClient();
@@ -20,11 +20,11 @@ import { addAiModelService, deleteAiModelService, updateAiModelService } from ".
 
     // Update AI Model
     const updateAiModel = useMutation({
-      mutationFn: async ({ ai_id, modelData, uploadedFile }: UpdateAiModelProps) => {
-        if (!uploadedFile) {
+      mutationFn: async ({ ai_id, modelData, ai_picture }: UpdateAiModelProps) => {
+        if (!ai_picture) {
           throw new Error("ต้องแนบไฟล์รูปภาพ!");
         }
-        return updateAiModelService(ai_id, modelData, uploadedFile);
+        return updateAiModelService(ai_id, modelData, ai_picture);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["ai-models"] });
@@ -55,11 +55,11 @@ import { addAiModelService, deleteAiModelService, updateAiModelService } from ".
 
 
     const addAiModel = useMutation({
-      mutationFn: async ({ modelData, uploadedFile }: AddAiModelProps) => {
-        if (!uploadedFile) {
+      mutationFn: async ({ modelData, ai_picture }: AddAiModelProps) => {
+        if (!ai_picture) {
           throw new Error("ต้องแนบไฟล์รูปภาพ!");
         }
-        return addAiModelService(modelData, uploadedFile);
+        return addAiModelService(modelData, ai_picture);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["ai-models"] });

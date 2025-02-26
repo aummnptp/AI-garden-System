@@ -19,7 +19,7 @@ export class AuthController{
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 1000 * 60 * 10, // อายุ 10 นาที
+        maxAge: 1000 * 60 * 10, 
       });
   
       res.end();

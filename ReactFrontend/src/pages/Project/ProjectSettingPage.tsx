@@ -22,7 +22,10 @@ import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useProjectMutations } from "../../hook/projects/useProjectMutations";
-import { projectSchema, ProjectSchemaType } from "../../validations/projectSettingSchema";
+import {
+  projectSchema,
+  ProjectSchemaType,
+} from "../../validations/projectSettingSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -30,10 +33,12 @@ const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
-  const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(workspaceId, projectId);
+  const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(
+    workspaceId,
+    projectId
+  );
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
-
 
   const {
     register,
@@ -53,12 +58,13 @@ const ProjectSetting = () => {
 
   useEffect(() => {
     if (projectDetail) {
+      console.log("Project Detail:", projectDetail.input_type);
+
       setValue("name", projectDetail.name);
       setValue("description", projectDetail.description);
       setValue("inputType", projectDetail.input_type);
     }
   }, [projectDetail, setValue]);
-
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -121,7 +127,10 @@ const ProjectSetting = () => {
         aria-describedby="alert-dialog-description"
       >
         <Box sx={{ textAlign: "center", padding: "20px" }}>
-          <form onSubmit={handleSave}  className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto">
+          <form
+            onSubmit={handleSave}
+            className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto"
+          >
             {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
             <Close sx={{ fontSize: 40, color: "red" }} />
           </form>
@@ -142,7 +151,8 @@ const ProjectSetting = () => {
             variant="body1"
             sx={{ marginBottom: "20px", color: "#555" }}
           >
-            To confirm, type <strong>"{projectDetail?.name}"</strong> to in the box
+            To confirm, type <strong>"{projectDetail?.name}"</strong> to in the
+            box
           </Typography>
           <input
             type="text"
@@ -217,8 +227,8 @@ const ProjectSetting = () => {
 
               <div className="w-full flex py-2">
                 <ProjectImageInput
-                   image={watch("image") || undefined}  
-                   setImage={(file: File | undefined) => setValue("image", file)}
+                  image={watch("image") || undefined}
+                  setImage={(file: File | undefined) => setValue("image", file)}
                   handleFileSelect={handleFileSelect}
                   handleDrop={handleDrop}
                   handleDragOver={handleDragOver}
@@ -230,26 +240,55 @@ const ProjectSetting = () => {
                 Project name
               </label>
               <div className="mx-auto flex-col flex text-black text-2xl mb-4">
-              <TextField {...register("name")} label="Project Name" error={!!errors.name} helperText={errors.name?.message} fullWidth />
-
+                <TextField
+                  {...register("name")}
+                  label="Project Name"
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                  fullWidth
+                />
               </div>
               <FormControl>
-                <label className=" flex-col flex text-black text-2xl mb-4 ">
+                <label className="flex-col flex text-black text-2xl mb-4">
                   Project Type
-                  <RadioGroup {...register("inputType")} row>
-              <FormControlLabel value="รูปภาพและวิดีโอ" control={<Radio />} label="รูปภาพและวิดีโอ" />
-              <FormControlLabel value="รูปภาพ" control={<Radio />} label="รูปภาพ" />
-              <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
-            </RadioGroup>
+                  <RadioGroup
+                    value={watch("inputType") || ""} // กำหนดค่าให้ตรงกับที่ watch ได้
+                    onChange={(e) => setValue("inputType", e.target.value)}
+                    row
+                  >
+                    <FormControlLabel
+                      value="รูปภาพและวิดีโอ"
+                      control={<Radio />}
+                      label="รูปภาพและวิดีโอ"
+                    />
+                    <FormControlLabel
+                      value="รูปภาพ"
+                      control={<Radio />}
+                      label="รูปภาพ"
+                    />
+                    <FormControlLabel
+                      value="วิดีโอ"
+                      control={<Radio />}
+                      label="วิดีโอ"
+                    />
+                  </RadioGroup>
                 </label>
               </FormControl>
+
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
                 {" "}
                 Project description
               </label>
               <div className="mx-auto flex-col flex text-black text-2xl">
-              <TextField {...register("description")} label="Project Description" multiline rows={4} error={!!errors.description} helperText={errors.description?.message} fullWidth />
-
+                <TextField
+                  {...register("description")}
+                  label="Project Description"
+                  multiline
+                  rows={4}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  fullWidth
+                />
               </div>
             </div>
           </div>

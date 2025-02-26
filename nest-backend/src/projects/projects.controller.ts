@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, BadRequestException, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, BadRequestException, Request, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -11,25 +11,23 @@ import { ProjectHistory } from './entities/project-history.entity';
 import { AIEnableGuard } from 'src/ai-setting/guards/ai-enable.guard';
 import { ProjectPermissionGuard } from './guards/project-permission.guard';
 import { WorkspaceRole } from 'src/auth/decorator/workspaceRole-decorater';
-// import { Roles } from 'src/auth/guards/roles-decoraters';
 import { RankingData } from './interfaces/ranking-data.interface';
+import { fileFilter, MAX_FILE_SIZE, storage } from 'src/common/utils/file-upload.utils';
 
 @Controller('workspaces/:workspaceId/projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) { }
+
   @UseGuards(JwtGuard)
   @Post('create')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: multer.diskStorage({
-      destination: './uploads/project', 
-      filename: (req, file, cb) => {
-        const uniqueName = `${Date.now()}-${file.originalname}`;
-        cb(null, uniqueName);
-      },
-    }),
+  @UseInterceptors(FileInterceptor("file", {
+    storage: storage("./uploads/project"),
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
   }))
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   create(
-    @Request() req, 
+    @Request() req,
     @UploadedFile() file: Express.Multer.File,
     @Param('workspaceId') workspaceId: string,
     @Body() createProjectDto: CreateProjectDto
@@ -49,7 +47,7 @@ export class ProjectsController {
   }
 
   @WorkspaceRole('member')
-  @UseGuards(JwtGuard,ProjectPermissionGuard) 
+  @UseGuards(JwtGuard, ProjectPermissionGuard)
   @Get('detail/:projectId')
   findOne(
     @Param('workspaceId') workspaceId: string,
@@ -65,14 +63,10 @@ export class ProjectsController {
 
   @UseGuards(JwtGuard)
   @Patch('update/:projectId')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: multer.diskStorage({
-      destination: './uploads/project', // กำหนดโฟลเดอร์เก็บไฟล์
-      filename: (req, file, cb) => {
-        const uniqueName = `${Date.now()}-${file.originalname}`;
-        cb(null, uniqueName);
-      },
-    }),
+  @UseInterceptors(FileInterceptor("file", {
+    storage: storage("./uploads/project"),
+    fileFilter: fileFilter,
+    limits: { fileSize: MAX_FILE_SIZE },
   }))
   async update(
     @Param('workspaceId') workspaceId: string,
@@ -92,7 +86,7 @@ export class ProjectsController {
     return this.projectsService.remove(workspaceId, projectId);
   }
 
-  @UseGuards(JwtGuard,AIEnableGuard)
+  @UseGuards(JwtGuard, AIEnableGuard)
   @Post('predict/:projectId')
   @UseInterceptors(FileInterceptor('file', {
     storage: multer.diskStorage({
@@ -107,7 +101,6 @@ export class ProjectsController {
     @Request() req,
     @Param('projectId') projectId: string,
     @UploadedFile() file: Express.Multer.File,
-    // @Body() createProjectHistoryDto:CreateProjectHistoryDto
   ): Promise<ProjectHistory> {
     const userId = req.user.userId;
     return this.projectsService.predictInProject(userId, projectId, file);
@@ -116,8 +109,12 @@ export class ProjectsController {
   @UseGuards(JwtGuard)
   @Get('all-history/:projectId')
   getAllHistory(
-    @Param('projectId') projectId: string): Promise<ProjectHistory[]> {
-    return this.projectsService.getAllHistory(projectId);
+    @Param('projectId') projectId: string,
+    @Request() req: any // ดึงข้อมูล user จาก token
+  ): Promise<ProjectHistory[]> {
+    const userId = req.user.userId;
+
+    return this.projectsService.getAllHistory(projectId, userId);
   }
 
   @UseGuards(JwtGuard)
@@ -128,7 +125,7 @@ export class ProjectsController {
     return this.projectsService.getHistory(historyId);
   }
 
-  
+
   // @WorkspaceRole('owner') 
   @UseGuards(JwtGuard, ProjectPermissionGuard)
   @Delete(':projectId/history/:historyId')

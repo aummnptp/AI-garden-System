@@ -4,7 +4,7 @@ import MiniFooter from '../../components/MiniFooter';
 import AdminSidebar from "../../components/AdminSidebar";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle,} from '@mui/material';
 import ColorPickerTags from '../../components/ai/ColorPickerTags';
-import { AiModelData, PredictResult, ResponseKey } from '../../types/Ai';
+import { PredictResult, ResponseKey } from '../../types/Ai';
 import DeleteConfirmationDialog from '../../components/ai/DeleteConfirationAiDialog';
 import AiResponseKeys from '../../components/ai/AiResponseKey';
 import AiTagInput from '../../components/ai/AiTagInputComponent';
@@ -15,190 +15,185 @@ import SkeletonLayout from '../../components/SkeletonPageLayout';
 import { useAiModelMutation } from '../../hook/ai/useAiModelMutation';
 import toast from 'react-hot-toast';
 import AIDisPlayResultComponent from '../../components/aiDisplay/AIDisPlayResultComponent';
+import { useForm } from 'react-hook-form';
+import { aiSchema, AiSchemaType } from '../../validations/aiSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 
 const UpdateAiPage: React.FC = () => {
   const { ai_id } = useParams();
-  const [aiName, setAiName] = useState('');
-  const [description, setDescription] = useState('');
-  const [serviceUri, setServiceUri] = useState('');
-  const [responseKeys, setResponseKeys] = useState<ResponseKey[]>([{ key: '', meaning: '', displayFormat: '' }]);
-  const [inputDescription, setInputDescription] = useState('');
-  const [aiType, setAiType] = useState('Object Detection');
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
-  const [enable, setEnable] = useState<boolean>(true);
-  const [visible, setVisible] = useState<boolean>(true);
-  const [colorSet, setColorSet] = useState<string[]>([]);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [newTag, setNewTag] = useState("");
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  const [predictResult, setPredictResult] = useState<PredictResult
-  >();
-  const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [examplePredictResultModal, setExamplePredictResultModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [inputType, setInputType] = useState<string>("รูปภาพ");
+  const [aiPicturePreview, setAiPicturePreview] = useState<string | null>(null);
 
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
 
-  useEffect(() => {
-    if (aiModelData) {
-      setAiName(aiModelData.name);
-      setDescription(aiModelData.description);
-      setServiceUri(aiModelData.api_uri);
-      setResponseKeys(aiModelData.response_keys);
-      setInputDescription(aiModelData.input_desc);
-      setAiType(aiModelData.ai_type);
-      setTags(aiModelData.ai_tag);
-      setColorSet(aiModelData.colorSet);
-      setInputType(aiModelData.inputType);
-      const keys = aiModelData.response_keys.map((item: ResponseKey) => item.key);
-      setSelectOptions(keys);
-      setSelectOptions(keys);
-      setEnable(aiModelData.enable)
-      setVisible(aiModelData.visible)
-    }
-  }, [aiModelData]);
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<AiSchemaType>({
+    resolver: zodResolver(aiSchema),
+    defaultValues: {
+      aiName: "",
+      description: "",
+      serviceUri: "",
+      aiType: "Object Detection",
+      inputType: "รูปภาพ",
+      tags: [],
+      inputDescription: "",
+      responseKeys: [{ key: "", meaning: "", displayFormat: "text" }],
+      enable: true,
+      visible: true,
+      colorSet: ["#00ff00"],
+      aiPicture: undefined,
+      predictResult: undefined,
+      customedImageUrl: undefined,
+    },
+  });
 
   useEffect(() => {
-    setPredictResult((prev) => ({
-      ...prev,
-      response_keys: responseKeys,
-      prediction: prev?.prediction || {},
+    if (aiModelData) {
+      setValue("aiName", aiModelData.name ?? "");
+      setValue("description", aiModelData.description ?? "");
+      setValue("serviceUri", aiModelData.api_uri ?? "");
+      setValue("responseKeys", aiModelData.response_keys ?? [{ key: "", meaning: "", displayFormat: "text" }]);
+      setValue("inputDescription", aiModelData.input_desc ?? "");
+      setValue("aiType", aiModelData.ai_type ?? "Object Detection");
+      setValue("tags", aiModelData.ai_tag ?? []);
+      setValue("colorSet", aiModelData.colorSet ?? ["#00ff00"]);
+      setValue("inputType", aiModelData.inputType ?? "รูปภาพ");
+      setValue("enable", aiModelData.enable ?? true);
+      setValue("visible", aiModelData.visible ?? true);
+      setSelectOptions(aiModelData.response_keys.map((item: ResponseKey) => item.key) ?? []);
+    }
+  }, [aiModelData]);
+  useEffect(() => {
+    setValue("predictResult", {
+      response_keys: watch("responseKeys"),
+      prediction: watch("predictResult")?.prediction || {},
       ai_model: {
-        name: aiName,
-        ai_tag: tags.join(", "),
-        colorSet: colorSet,
-        ai_type: aiType,
+        name: watch("aiName"),
+        ai_tag: watch("tags").join(", "),
+        colorSet: watch("colorSet"),
+        ai_type: watch("aiType"),
       },
-    }));
-  }, [responseKeys, aiName, tags, colorSet, aiType]);
+    });
+  }, [watch("responseKeys"), watch("aiName"), watch("tags"), watch("colorSet"), watch("aiType")]);
 
   // Handler for file upload & testing Service URI
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setUploadedFile(file);
+      setValue("customedImageUrl", URL.createObjectURL(file));
+
       const formData = new FormData();
       formData.append("file", file);
+
+      const serviceUri = watch("serviceUri");
       if (!serviceUri) {
         toast.error("กรุณาใส่ Service URI ก่อน");
         return;
       }
+
       try {
-        const response = await fetch(serviceUri, { method: "POST", body: formData });
+        const response = await fetch(serviceUri, {
+          method: "POST",
+          body: formData,
+        });
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-          setPredictResult({
-            response_keys: responseKeys,
+
+          setValue("predictResult", {
+            response_keys: watch("responseKeys"),
             prediction: jsonData,
             ai_model: {
-              name: aiName,
-              ai_tag: tags.join(", "),
-              colorSet: colorSet,
-              ai_type: aiType,
+              name: watch("aiName"),
+              ai_tag: watch("tags").join(", "),
+              colorSet: watch("colorSet"),
+              ai_type: watch("aiType"),
             },
           });
-          setCustomedImageUrl(URL.createObjectURL(file));
-          // Extract keys from JSON
-          const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
-            const keys: string[] = [];
-            if (depth > maxDepth) return keys;
-            Object.keys(obj).forEach((key) => {
+          const extractKeys = (
+            obj: any,
+            parentKey = "",
+            depth = 1,
+            maxDepth = 2
+          ): string[] => {
+            if (depth > maxDepth) return [];
+            return Object.keys(obj).flatMap((key) => {
               const fullPath = parentKey ? `${parentKey}.${key}` : key;
               if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
-                keys.push(fullPath);
-                keys.push(...extractKeys(obj[key], fullPath, depth + 1, maxDepth));
-              } else if (Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === "object") {
-                keys.push(fullPath);
-                keys.push(...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth));
-              } else {
-                keys.push(fullPath);
+                return [
+                  fullPath,
+                  ...extractKeys(obj[key], fullPath, depth + 1, maxDepth),
+                ];
+              } else if (
+                Array.isArray(obj[key]) &&
+                obj[key].length > 0 &&
+                typeof obj[key][0] === "object"
+              ) {
+                return [
+                  fullPath,
+                  ...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth),
+                ];
               }
+              return fullPath;
             });
-            return keys;
           };
-          const keys = extractKeys(jsonData);
-          setSelectOptions(keys);
+
+          setSelectOptions(extractKeys(jsonData));
         } else {
+          toast.error("Service URI ไม่ส่ง JSON กลับมา");
         }
       } catch (error) {
-        toast.error("Error uploading file:");
+        console.error("Error testing API:", error);
+        toast.error("เกิดข้อผิดพลาดขณะทดสอบ API");
       }
     } else {
       toast.error("กรุณาเลือกไฟล์ก่อน");
     }
   };
 
-  // Handlers for Response Keys
-  const handleAddKey = () => setResponseKeys([...responseKeys, { key: '', meaning: '', displayFormat: '' }]);
-  const handleRemoveKey = (index: number) => {
-    if (responseKeys.length > 1) {
-      const newKeys = [...responseKeys];
-      newKeys.splice(index, 1);
-      setResponseKeys(newKeys);
+  const onSubmit = (data: AiSchemaType) => {
+    if (ai_id) {
+      updateAiModel.mutate({
+        ai_id,
+        modelData: {
+          name: data.aiName,
+          description: data.description,
+          ai_type: data.aiType,
+          api_uri: data.serviceUri,
+          ai_tag: data.tags,
+          inputType: data.inputType,
+          input_desc: data.inputDescription || "",
+          response_keys: data.responseKeys,
+          enable: data.enable,
+          visible: data.visible,
+          colorSet: data.colorSet,
+        },
+        ai_picture: data.aiPicture,
+      });
+    } else {
+      toast.error("AI ID is missing");
     }
-  };
-  const handleKeyChange = (index: number, field: string, value: string) => {
-    const newKeys = [...responseKeys];
-    newKeys[index] = { ...newKeys[index], [field]: value };
-    setResponseKeys(newKeys);
-  };
-
-  // Handlers for Tags
-  const handleTagAdd = () => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setNewTag("");
-    }
-  };
-  const handleTagRemove = (tagToRemove: string) => setTags(tags.filter((tag) => tag !== tagToRemove));
-
-  // Handler for other file changes
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setUploadedFile(event.target.files[0]);
-    }
-  };
-
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!ai_id) {
-      toast.error("AI ID is not defined.");
-      return;
-    }
-
-    const modelData: AiModelData = {
-      name: aiName,
-      description,
-      ai_type: aiType,
-      api_uri: serviceUri,
-      ai_tag: tags,
-      input_desc: inputDescription,
-      inputType: inputType,
-      response_keys: responseKeys.map((rk) => ({
-        key: rk.key,
-        meaning: rk.meaning,
-        displayFormat: rk.displayFormat,
-      })),
-      enable,
-      visible,
-      colorSet,
-
-    };
-
-    updateAiModel.mutate({
-      ai_id,
-      modelData,
-      uploadedFile,
-    });
   };
   
+
+  const handleAiPictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setValue("aiPicture", file); 
+      setAiPicturePreview(URL.createObjectURL(file)); 
+    }
+  };
+
   const handleConfirmDelete = () => {
     if (ai_id) {
       deleteAiModel.mutate(ai_id);
@@ -223,66 +218,129 @@ const UpdateAiPage: React.FC = () => {
                 </h1>
               </div>
               <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
-              <form onSubmit={handleSubmit} className="m-6 space-y-4">
-                <AiBasicInfo
-                  aiName={aiName}
-                  description={description}
-                  serviceUri={serviceUri}
-                  aiType={aiType}
-                  enable={enable}
-                  visible={visible}
-                  onNameChange={setAiName}
-                  onDescriptionChange={setDescription}
-                  onServiceUriChange={setServiceUri}
-                  onTypeChange={setAiType}
-                  onEnableChange={setEnable}
-                  onVisibleChange={setVisible}
-                  inputType={inputType}
-                  onInputTypeChange={setInputType}
-                />
+              <form  onSubmit={handleSubmit(onSubmit)} className="m-6 space-y-4">
+              <AiBasicInfo
+                aiName={watch("aiName")}
+                description={watch("description")}
+                aiType={watch("aiType")}
+                enable={watch("enable")}
+                visible={watch("visible")}
+                inputType={watch("inputType")}
+                onNameChange={(val) => setValue("aiName", val)}
+                onDescriptionChange={(val) => setValue("description", val)}
+                onTypeChange={(val) =>
+                  setValue(
+                    "aiType",
+                    val as
+                      | "Object Detection"
+                      | "Regression"
+                      | "Segmentation"
+                      | "Classification"
+                  )
+                }
+                onEnableChange={(val) => setValue("enable", val)}
+                onVisibleChange={(val) => setValue("visible", val)}
+                onInputTypeChange={(val) =>
+                  setValue(
+                    "inputType",
+                    val as "รูปภาพและวิดีโอ" | "รูปภาพ" | "วิดีโอ"
+                  )
+                }
+                errors={errors}
+              />
                 <ColorPickerTags
-                  colors={colorSet}
-                  onChange={(newColors: string[]) => setColorSet(newColors)}
+                colors={watch("colorSet")}
+                onChange={(newColors: string[]) =>
+                  setValue("colorSet", newColors)
+                }
+                errors={errors}
+              />
+
+              <AiFileUpload
+                serviceUri={watch("serviceUri")}
+                onServiceUriChange={(val) => setValue("serviceUri", val)}
+                onUriTest={handleUri}
+                fileInputRef={fileInputRef}
+                customedImageUrl={watch("customedImageUrl") ?? null}
+                predictResult={
+                  watch("predictResult") as PredictResult | undefined
+                }
+                onShowPreview={() => setExamplePredictResultModal(true)}
+                errors={errors}
+              />
+
+              <AiResponseKeys
+                responseKeys={watch("responseKeys")}
+                selectOptions={selectOptions}
+                onAddKey={() =>
+                  setValue("responseKeys", [
+                    ...watch("responseKeys"),
+                    { key: "", meaning: "", displayFormat: "text" },
+                  ])
+                }
+                onRemoveKey={(index) => {
+                  const newKeys = [...watch("responseKeys")];
+                  newKeys.splice(index, 1);
+                  setValue("responseKeys", newKeys);
+                }}
+                onKeyChange={(index, field, value) => {
+                  const newKeys = [...watch("responseKeys")];
+                  newKeys[index] = { ...newKeys[index], [field]: value };
+                  setValue("responseKeys", newKeys);
+                }}
+                errors={errors}
+              />
+
+              <AiTagInput
+                tags={watch("tags")}
+                newTag={newTag}
+                onTagAdd={() => {
+                  const currentTags = watch("tags");
+
+                  if (
+                    newTag.trim() !== "" &&
+                    !currentTags.includes(newTag.trim())
+                  ) {
+                    setValue("tags", [...currentTags, newTag.trim()]); // เพิ่ม tag
+                    setNewTag("");
+                  }
+                }}
+                onTagChange={(val) => setNewTag(val)}
+                onTagRemove={(tag) =>
+                  setValue(
+                    "tags",
+                    watch("tags").filter((t) => t !== tag)
+                  )
+                }
+                errors={errors}
+              />
+              <div className="form-group">
+                <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
+                <textarea
+                  value={watch("inputDescription")}
+                  onChange={(e) => setValue("inputDescription", e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg"
                 />
-                <AiFileUpload
-                  serviceUri={serviceUri}
-                  onServiceUriChange={setServiceUri}
-                  onUriTest={handleUri}
-                  fileInputRef={fileInputRef}
-                  customedImageUrl={customedImageUrl}
-                  predictResult={predictResult}
-                  onShowPreview={() => setExamplePredictResultModal(true)}
-                />
-                <AiResponseKeys
-                  responseKeys={responseKeys}
-                  selectOptions={selectOptions}
-                  onAddKey={handleAddKey}
-                  onRemoveKey={handleRemoveKey}
-                  onKeyChange={handleKeyChange}
-                />
-                <AiTagInput
-                  tags={tags}
-                  newTag={newTag}
-                  onTagAdd={handleTagAdd}
-                  onTagChange={setNewTag}
-                  onTagRemove={handleTagRemove}
-                />
-                <div className="form-group">
-                  <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
-                  <textarea
-                    value={inputDescription}
-                    onChange={(e) => setInputDescription(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>AI Picture</label>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
+                {errors.inputDescription && (
+                  <p className="text-red-500 text-sm">
+                    {errors.inputDescription.message}
+                  </p>
+                )}
+              </div>
+              <div className="form-group">
+  <label>AI Picture</label>
+  <input type="file" accept="image/*" onChange={handleAiPictureChange} />
+  {errors.aiPicture && (
+    <p className="text-red-500 text-sm">{errors.aiPicture.message}</p>
+  )}
+
+  {/* แสดงรูปภาพที่อัปโหลด */}
+  {aiPicturePreview && (
+    <div className="mt-2">
+      <img src={aiPicturePreview} alt="AI Preview" className="w-40 h-40 object-cover rounded-lg border" />
+    </div>
+  )}
+</div>
                 <div className="pl-[20%] pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center justify-between">
                   <Button
                     variant="contained"
@@ -317,8 +375,12 @@ const UpdateAiPage: React.FC = () => {
               >
                 <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
                 <DialogContent>
-                  <AIDisPlayResultComponent resultImage={customedImageUrl || ""} predictResult={predictResult} 
-                  />
+                <AIDisPlayResultComponent
+                      resultImage={watch("customedImageUrl") ?? ""}
+                      predictResult={
+                        watch("predictResult") as PredictResult | undefined
+                      }
+                    />
                 </DialogContent>
                 <DialogActions>
                   <Button

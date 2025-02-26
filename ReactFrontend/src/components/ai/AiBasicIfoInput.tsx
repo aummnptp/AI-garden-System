@@ -1,23 +1,22 @@
-
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Switch } from '@mui/material';
 import React from 'react';
+import { FieldErrors } from "react-hook-form";
+import { AiSchemaType } from "../../validations/aiSchema";
 
 interface AiBasicInfoProps {
   aiName: string;
   description: string;
-  serviceUri: string;
   aiType: string;
   enable: boolean;
   visible: boolean;
   inputType: string;
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
-  onServiceUriChange: (value: string) => void;
   onTypeChange: (value: string) => void;
   onEnableChange: (value: boolean) => void;
   onVisibleChange: (value: boolean) => void;
   onInputTypeChange: (value: string) => void;
-
+  errors: FieldErrors<AiSchemaType>; 
 }
 
 const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
@@ -33,26 +32,38 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
   onInputTypeChange,
   onEnableChange,
   onVisibleChange,
+  errors,  
 }) => {
   return (
     <div className="form-group space-y-4">
+      {/* AI Name */}
       <div>
         <label>AI Name</label>
         <input
           type="text"
           value={aiName}
           onChange={(e) => onNameChange(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg"
+          className={`w-full p-2 border rounded-lg ${errors.aiName ? "border-red-500" : "border-gray-300"}`}
+          aria-invalid={errors.aiName ? "true" : "false"}
         />
+        {errors.aiName && <p className="text-red-500 text-sm">{errors.aiName.message}</p>}
       </div>
+
+      {/* AI Description */}
       <div>
         <label>AI Description</label>
         <textarea
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg"
+          className={`w-full p-2 border rounded-lg ${errors.description ? "border-red-500" : "border-gray-300"}`}
+          aria-invalid={errors.description ? "true" : "false"}
         />
+        {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>
+
+      
+
+      {/* AI Type */}
       <div>
         <label>AI Type</label>
         <select
@@ -66,6 +77,8 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
           <option value="Classification">Classification</option>
         </select>
       </div>
+
+      {/* AI Input Type */}
       <FormControl component="fieldset">
         <FormLabel component="legend">AI Input Type</FormLabel>
         <RadioGroup
@@ -78,7 +91,8 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
           <FormControlLabel value="วิดีโอ" control={<Radio />} label="วิดีโอ" />
         </RadioGroup>
       </FormControl>
-  
+
+      {/* Enable & Visibility Switches */}
       <div className="flex items-center space-x-4">
         <FormControlLabel
           control={
@@ -98,7 +112,7 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
               onChange={(e) => onVisibleChange(e.target.checked)}
               name="visibilitySwitch"
               color="primary"
-              disabled={!enable} 
+              disabled={!enable}
             />
           }
           label="Visible"

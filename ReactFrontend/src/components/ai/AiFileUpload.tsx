@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Button } from '@mui/material';
+import { AiSchemaType } from '../../validations/aiSchema';
+import { FieldErrors } from 'react-hook-form';
 
 interface AiFileUploadProps {
   serviceUri: string;
@@ -10,6 +12,8 @@ interface AiFileUploadProps {
   customedImageUrl: string | null;
   predictResult: { response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined;
   onShowPreview: () => void;
+  errors: FieldErrors<AiSchemaType>;
+  
 }
 
 const AiFileUpload: React.FC<AiFileUploadProps> = ({
@@ -20,6 +24,7 @@ const AiFileUpload: React.FC<AiFileUploadProps> = ({
   customedImageUrl,
   predictResult,
   onShowPreview,
+  errors
 }) => {
   return (
     <div className="form-group space-y-4">
@@ -31,6 +36,7 @@ const AiFileUpload: React.FC<AiFileUploadProps> = ({
         onChange={(e) => onServiceUriChange(e.target.value)}
         className="w-80 p-2 border border-gray-300 rounded-lg"
       />
+      {errors.serviceUri && <p className="text-red-500 text-sm">{errors.serviceUri.message}</p>}
 
       {/* Hidden file input */}
       <input
