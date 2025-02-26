@@ -16,10 +16,9 @@ export class AuthController{
     async googleAuth(@Req() req: Request & { query: any }, @Res() res: Response) {
       const redirectUrl = (req.query["redirect"] as string) || "/";
       res.cookie("redirect_after_login", redirectUrl, {
-        httpOnly: false,
-        secure: false,
-        domain: ".suture-bot.it.kmitl.ac.th", 
-        // secure: process.env.NODE_ENV === "production",
+        httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+        secure: process.env.NODE_ENV === "production", // ควรเป็น true ถ้าใช้ HTTPS
+        domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
         sameSite: "none",
         maxAge: 1000 * 60 * 10, // อายุ 10 นาที
       });
@@ -32,10 +31,9 @@ export class AuthController{
     async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
       const { accessToken } = await this.authService.googleLogin(req);
       res.cookie("access_token", accessToken, {
-        httpOnly: false,
-        // secure: process.env.NODE_ENV === "production",
-        secure: false,
-        domain: ".suture-bot.it.kmitl.ac.th", 
+        httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+        secure: process.env.NODE_ENV === "production", // ควรเป็น true ถ้าใช้ HTTPS
+        domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
         sameSite: "none",
       });
       const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
@@ -47,12 +45,10 @@ export class AuthController{
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('access_token', {  
-      httpOnly: false,
-      // secure: process.env.NODE_ENV === 'production',
-      domain: ".suture-bot.it.kmitl.ac.th", 
-      secure: false,
-
-      sameSite: 'none',
+      httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+        secure: process.env.NODE_ENV === "production", // ควรเป็น true ถ้าใช้ HTTPS
+        domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
+        sameSite: "none",
     });
   
     res.status(200).json({ message: "Successfully logged out" });
