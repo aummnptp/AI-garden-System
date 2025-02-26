@@ -32,18 +32,18 @@ export class AuthController {
   async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
     const { accessToken } = await this.authService.googleLogin(req);
     res.cookie("access_token", accessToken, {
-      httpOnly: true,  // ป้องกัน XSS
-      secure: process.env.NODE_ENV === "production",  // ควรเป็น true ถ้าใช้ HTTPS
-      domain: "suture-bot.it.kmitl.ac.th",  // ไม่ต้องมีจุดนำหน้า
+      httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+      secure: false, 
+      domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
       sameSite: "none",
-      path: "/",  // ให้ Cookie ใช้ได้ทุกหน้า
-      maxAge: 1000 * 60 * 60 * 24, // 1 วัน
     });
     const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
     res.clearCookie("redirect_after_login");
 
     const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
-    return res.redirect(fullRedirectUrl);;
+    // return res.redirect(fullRedirectUrl);
+    res.cookie("access_token", accessToken, { /* settings */ });
+    return res.json({ message: "Login successful", redirect: fullRedirectUrl });
   }
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
