@@ -9,9 +9,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    // origin: [`${process.env.REACT_APP_API_URL}`,' https://lh3.googleusercontent.com', ],// หรือคุณสามารถใส่ '*' เพื่ออนุญาตทุก domain
+    origin: [`${process.env.REACT_APP_API_URL}`],// หรือคุณสามารถใส่ '*' เพื่ออนุญาตทุก domain
     // methods: 'GET,POST,PUT,DELETE',
-    origin: "http://suture-bot.it.kmitl.ac.th:8081",
     credentials: true, 
     allowedHeaders: 'Content-Type, Authorization',
   });
