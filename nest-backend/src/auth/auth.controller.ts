@@ -36,10 +36,18 @@ export class AuthController {
     //   domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
     //   sameSite: "none",
     // });
+
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      domain: process.env.NODE_ENV === "production" ? ".suture-bot.it.kmitl.ac.th" : undefined,
+      sameSite: "none",
+    });
+    
     const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
     res.clearCookie("redirect_after_login");
     
-    res.cookie("access_token", accessToken, { /* settings */ });
+    // res.cookie("access_token", accessToken, { /* settings */ });
     const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
     return res.redirect(fullRedirectUrl);
 
