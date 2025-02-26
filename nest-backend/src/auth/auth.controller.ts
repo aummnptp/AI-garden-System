@@ -21,7 +21,7 @@ export class AuthController {
       domain: "suture-bot.it.kmitl.ac.th", 
       sameSite: "none",
       maxAge: 1000 * 60 * 10, 
-      path: "/",
+       path: "/",
     });
 
     res.end();
@@ -41,9 +41,7 @@ export class AuthController {
     res.clearCookie("redirect_after_login");
 
     const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
-    // return res.redirect(fullRedirectUrl);
-    res.cookie("access_token", accessToken, { /* settings */ });
-    return res.json({ message: "Login successful", redirect: fullRedirectUrl });
+    return res.redirect(fullRedirectUrl);;
   }
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
