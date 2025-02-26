@@ -52,7 +52,8 @@ export class AuthController {
       domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
       sameSite: "none",
     });
-
+    res.clearCookie('access_token', {
+    });
     res.status(200).json({ message: "Successfully logged out" });
   }
   @Get('status')
