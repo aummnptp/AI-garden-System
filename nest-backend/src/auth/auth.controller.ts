@@ -16,7 +16,7 @@ export class AuthController{
     async googleAuth(@Req() req: Request & { query: any }, @Res() res: Response) {
       const redirectUrl = (req.query["redirect"] as string) || "/";
       res.cookie("redirect_after_login", redirectUrl, {
-        httpOnly: true,
+        httpOnly: false,
         secure: false,
         domain: ".suture-bot.it.kmitl.ac.th", 
         // secure: process.env.NODE_ENV === "production",
@@ -32,7 +32,7 @@ export class AuthController{
     async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
       const { accessToken } = await this.authService.googleLogin(req);
       res.cookie("access_token", accessToken, {
-        httpOnly: true,
+        httpOnly: false,
         // secure: process.env.NODE_ENV === "production",
         secure: false,
         domain: ".suture-bot.it.kmitl.ac.th", 
@@ -47,7 +47,7 @@ export class AuthController{
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('access_token', {  
-      httpOnly: true,
+      httpOnly: false,
       // secure: process.env.NODE_ENV === 'production',
       domain: ".suture-bot.it.kmitl.ac.th", 
       secure: false,
