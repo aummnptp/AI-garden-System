@@ -161,7 +161,7 @@ const handleRedirect = (path: string) => {
             <div className='col-span-3 ml-24'>
             <img
                 className="w-56"
-                src='images/desktop-smartphone-app-development_23-2148683810.avif'
+                src='images/lennacolor.jpg'
               />
             </div>
             <div className='col-span-7'>
