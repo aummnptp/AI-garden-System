@@ -16,11 +16,12 @@ export class AuthController {
   async googleAuth(@Req() req: Request & { query: any }, @Res() res: Response) {
     const redirectUrl = (req.query["redirect"] as string) || "/";
     res.cookie("redirect_after_login", redirectUrl, {
-      httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+      httpOnly: true, 
       secure: false, 
-      domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
+      domain: "suture-bot.it.kmitl.ac.th", 
       sameSite: "none",
-      maxAge: 1000 * 60 * 10, // อายุ 10 นาที
+      maxAge: 1000 * 60 * 10, 
+      path: "/",
     });
 
     res.end();
@@ -40,7 +41,9 @@ export class AuthController {
     res.clearCookie("redirect_after_login");
 
     const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
-    return res.redirect(fullRedirectUrl);
+    // return res.redirect(fullRedirectUrl);
+    res.cookie("access_token", accessToken, { /* settings */ });
+    return res.json({ message: "Login successful", redirect: fullRedirectUrl });
   }
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
@@ -55,8 +58,8 @@ export class AuthController {
   }
   @Get('status')
   async getAuthStatus(@Request() req) {
-    const token = req.cookies['access_token'];
-    return { isAuthenticated: !!token };
+    console.log("Cookies received:", req.cookies);
+    return { isAuthenticated: !!req.cookies['access_token'] };
   }
 
 }
