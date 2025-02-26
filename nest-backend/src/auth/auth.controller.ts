@@ -18,7 +18,7 @@ export class AuthController{
       res.cookie("redirect_after_login", redirectUrl, {
         httpOnly: true,
         secure: false,
-
+        domain: ".suture-bot.it.kmitl.ac.th", 
         // secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         maxAge: 1000 * 60 * 10, // อายุ 10 นาที
@@ -35,7 +35,7 @@ export class AuthController{
         httpOnly: true,
         // secure: process.env.NODE_ENV === "production",
         secure: false,
-
+        domain: ".suture-bot.it.kmitl.ac.th", 
         sameSite: "none",
       });
       const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
@@ -49,6 +49,7 @@ export class AuthController{
     res.clearCookie('access_token', {  
       httpOnly: true,
       // secure: process.env.NODE_ENV === 'production',
+      domain: ".suture-bot.it.kmitl.ac.th", 
       secure: false,
 
       sameSite: 'none',
