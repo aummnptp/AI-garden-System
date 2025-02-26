@@ -17,8 +17,10 @@ export class AuthController{
       const redirectUrl = (req.query["redirect"] as string) || "/";
       res.cookie("redirect_after_login", redirectUrl, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: false,
+
+        // secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
         maxAge: 1000 * 60 * 10, // อายุ 10 นาที
       });
   
@@ -31,8 +33,10 @@ export class AuthController{
       const { accessToken } = await this.authService.googleLogin(req);
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        // secure: process.env.NODE_ENV === "production",
+        secure: false,
+
+        sameSite: "none",
       });
       const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
       res.clearCookie("redirect_after_login");
@@ -44,8 +48,10 @@ export class AuthController{
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('access_token', {  
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      // secure: process.env.NODE_ENV === 'production',
+      secure: false,
+
+      sameSite: 'none',
     });
   
     res.status(200).json({ message: "Successfully logged out" });
