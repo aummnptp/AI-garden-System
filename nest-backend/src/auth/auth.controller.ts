@@ -21,7 +21,6 @@ export class AuthController {
       domain: "suture-bot.it.kmitl.ac.th", 
       sameSite: "none",
       maxAge: 1000 * 60 * 10, 
-       path: "/",
     });
 
     res.end();
@@ -31,19 +30,19 @@ export class AuthController {
   @Get("google/redirect")
   async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
     const { accessToken } = await this.authService.googleLogin(req);
-    res.cookie("access_token", accessToken, {
-      httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
-      secure: false, 
-      domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
-      sameSite: "none",
-    });
+    // res.cookie("access_token", accessToken, {
+    //   httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+    //   secure: false, 
+    //   domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
+    //   sameSite: "none",
+    // });
     const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
     res.clearCookie("redirect_after_login");
-
-    const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
-    // return res.redirect(fullRedirectUrl);
+    
     res.cookie("access_token", accessToken, { /* settings */ });
-    return res.json({ message: "Login successful", redirect: fullRedirectUrl });
+    const fullRedirectUrl = `${process.env.REACT_APP_API_URL}${redirectUrl}`;
+    return res.redirect(fullRedirectUrl);
+
   }
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
