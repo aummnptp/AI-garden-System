@@ -76,7 +76,7 @@ export default function SubmitRankTable() {
             label="ประมวลผลด้วยภาพ"
             value={statisticData.imageCount}
             valueType="ภาพ"
-            disable={statisticData.imageCount === 0}
+            disable={projectDetail.input_type === "วิดีโอ"}
           />
         ) : (
           <SummaryCard
@@ -93,7 +93,7 @@ export default function SubmitRankTable() {
             label="ประมวลผลด้วยวิดีโอ"
             value={statisticData.videoCount}
             valueType="วิดีโอ"
-            disable={statisticData.videoCount === 0}
+            disable={projectDetail.input_type === "รูปภาพ"}
           />
         ) : (
           <SummaryCard

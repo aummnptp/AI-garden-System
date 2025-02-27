@@ -275,6 +275,7 @@ export class ProjectsService {
     const history = await this.projectHistoryRepository.find({
       where: { project: { projectId } },
       select: {
+        filePath: true,
         prediction: true,
       },
       relations: ['user'],
