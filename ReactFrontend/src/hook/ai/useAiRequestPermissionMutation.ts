@@ -14,7 +14,7 @@ export const useAiRequestPermissionMutation = () => {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["ai-permission",] });
+      await queryClient.invalidateQueries({ queryKey: ["ai-permission","check-permission"] });
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
     onError: () => {
