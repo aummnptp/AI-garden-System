@@ -174,7 +174,6 @@ export default function AddAIDialog() {
     setSelectedToAdd([]);
     setOpen(false);
     setSaveDialogOpen(false);
-    window.location.reload()
   };
 
   const handleCancelSave = () => {
