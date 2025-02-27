@@ -242,9 +242,9 @@ export class ProjectsService {
   async getHistory(historyId: string): Promise<ProjectHistory> {
     const history = await this.projectHistoryRepository.findOne({
       where: { historyId: historyId },
-      select: {
-        prediction: true,
-      },
+      // select: {
+      //   prediction: true,
+      // },
       relations: ['ai_model'],
     });
     if (!history) {

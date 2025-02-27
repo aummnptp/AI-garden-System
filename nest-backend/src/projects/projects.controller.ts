@@ -25,7 +25,7 @@ export class ProjectsController {
     fileFilter: fileFilter,
     limits: { fileSize: MAX_FILE_SIZE },
   }))
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
+  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   create(
     @Request() req,
     @UploadedFile() file: Express.Multer.File,
