@@ -28,7 +28,7 @@ const AddAiPage: React.FC = () => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const [examplePredictResultModal, setExamplePredictResultModal] =
     useState(false);
-    const [aiPicturePreview, setAiPicturePreview] = useState<string | null>(null);
+  const [aiPicturePreview, setAiPicturePreview] = useState<string | null>(null);
 
   const {
     handleSubmit,
@@ -193,10 +193,10 @@ const AddAiPage: React.FC = () => {
                   setValue(
                     "aiType",
                     val as
-                      | "Object Detection"
-                      | "Regression"
-                      | "Segmentation"
-                      | "Classification"
+                    | "Object Detection"
+                    | "Regression"
+                    | "Segmentation"
+                    | "Classification"
                   )
                 }
                 onEnableChange={(val) => setValue("enable", val)}
@@ -217,20 +217,7 @@ const AddAiPage: React.FC = () => {
                 }
                 errors={errors}
               />
-              <div className="form-group">
-  <label>AI Picture</label>
-  <input type="file" accept="image/*" onChange={handleAiPictureChange} />
-  {errors.aiPicture && (
-    <p className="text-red-500 text-sm">{errors.aiPicture.message}</p>
-  )}
-
-  {/* แสดงรูปภาพที่อัปโหลด */}
-  {aiPicturePreview && (
-    <div className="mt-2">
-      <img src={aiPicturePreview} alt="AI Preview" className="w-40 h-40 object-cover rounded-lg border" />
-    </div>
-  )}
-</div>
+              
               <AiFileUpload
                 serviceUri={watch("serviceUri")}
                 onServiceUriChange={(val) => setValue("serviceUri", val)}
@@ -289,7 +276,7 @@ const AddAiPage: React.FC = () => {
                 }
                 errors={errors}
               />
-              
+
               <div className="form-group">
                 <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
                 <textarea
@@ -304,16 +291,17 @@ const AddAiPage: React.FC = () => {
                 )}
               </div>
               <div className="form-group">
-                <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
-                <textarea
-                  value={watch("inputDescription")}
-                  onChange={(e) => setValue("inputDescription", e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-                {errors.inputDescription && (
-                  <p className="text-red-500 text-sm">
-                    {errors.inputDescription.message}
-                  </p>
+                <label>AI Picture</label>
+                <input type="file" accept="image/*" onChange={handleAiPictureChange} />
+                {errors.aiPicture && (
+                  <p className="text-red-500 text-sm">{errors.aiPicture.message}</p>
+                )}
+
+                {/* แสดงรูปภาพที่อัปโหลด */}
+                {aiPicturePreview && (
+                  <div className="mt-2">
+                    <img src={aiPicturePreview} alt="AI Preview" className="w-40 h-40 object-cover rounded-lg border" />
+                  </div>
                 )}
               </div>
 
