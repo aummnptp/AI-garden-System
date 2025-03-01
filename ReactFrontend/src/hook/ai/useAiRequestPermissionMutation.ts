@@ -19,8 +19,5 @@ export const useAiRequestPermissionMutation = () => {
       await queryClient.invalidateQueries({ queryKey: ["check-permission"] });
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
-    onError: () => {
-      toast.error("ไม่สามารถส่งคำขอใช้งานได้");
-    },
   });
 };

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Permission } from './entities/permission.entity';
@@ -28,6 +28,10 @@ export class AiPermissionService {
     const user = await this.userRepository.findOne({ where: { userId: id } });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    const isExistingRequest = await this.checkExistingRequest(id, data.ai_id);
+    if (isExistingRequest) {
+      throw new BadRequestException("Permission request already exists");
     }
 
     // สร้าง Permission ใหม่
