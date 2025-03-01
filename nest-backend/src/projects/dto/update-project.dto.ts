@@ -13,5 +13,5 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     input_type?: string;
   
     @IsOptional()
-    image_path?: string;
+    imagePath?: string;
   }

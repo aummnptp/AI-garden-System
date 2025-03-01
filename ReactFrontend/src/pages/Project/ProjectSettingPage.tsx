@@ -28,6 +28,7 @@ import {
 } from "../../validations/projectSettingSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { getImageUrl } from "../../function/util";
 
 const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
@@ -39,6 +40,7 @@ const ProjectSetting = () => {
   );
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | undefined>();
 
   const {
     register,
@@ -58,14 +60,13 @@ const ProjectSetting = () => {
 
   useEffect(() => {
     if (projectDetail) {
-      console.log("Project Detail:", projectDetail.input_type);
-
+      setImagePreview(projectDetail.imagePath);
       setValue("name", projectDetail.name);
       setValue("description", projectDetail.description);
       setValue("inputType", projectDetail.input_type);
     }
   }, [projectDetail, setValue]);
-
+console.log(imagePreview)
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -92,6 +93,8 @@ const ProjectSetting = () => {
     formData.append("input_type", data.inputType);
     if (data.image) {
       formData.append("file", data.image);
+    } else if (!imagePreview) {
+      formData.append("imagePath", "");
     }
 
     updateProjectMutation.mutate({ workspaceId, projectId, formData });
@@ -190,7 +193,6 @@ const ProjectSetting = () => {
           </h1>
           <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
           <div className="flex justify-start  ">
-            {/* sticky top-[10%] bg-white w-full z-50 */}
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
                 <Link
@@ -227,7 +229,9 @@ const ProjectSetting = () => {
 
               <div className="w-full flex py-2">
                 <ProjectImageInput
-                  image={watch("image") || undefined}
+                  image={watch("image") || undefined }
+                  imagePreview={getImageUrl(imagePreview)} 
+                  setImagePreview={setImagePreview}
                   setImage={(file: File | undefined) => setValue("image", file)}
                   handleFileSelect={handleFileSelect}
                   handleDrop={handleDrop}

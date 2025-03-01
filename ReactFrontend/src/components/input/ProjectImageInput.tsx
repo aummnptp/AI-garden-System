@@ -1,32 +1,44 @@
-import { Button } from '@mui/material';
-import React from 'react'
+import { Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 interface ProjectImageInputProps {
-    image?: File; 
-    setImage: (file?: File) => void;
-    handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
-    handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  }
-  
+  image?: File;
+  imagePreview?: string;
+  setImage: (file?: File) => void;
+  setImagePreview: (url?: string) => void;
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+}
+
 const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
-    image,
-    setImage,
-    handleFileSelect,
-    handleDrop,
-    handleDragOver
-  }) => {
-    return (
-      <>
- {image ? (
+  image,
+  imagePreview,
+  setImage,
+  setImagePreview,
+  handleFileSelect,
+  handleDrop,
+  handleDragOver,
+}) => {
+  const [displayImage, setDisplayImage] = useState<string | undefined>(imagePreview);
+
+  useEffect(() => {
+    if (image) {
+      setDisplayImage(URL.createObjectURL(image));
+    } else if (imagePreview) {
+      setDisplayImage(imagePreview);
+    } else {
+      setDisplayImage(undefined);
+    }
+  }, [image, imagePreview]);
+
+  return (
+    <>
+      {displayImage ? (
         <div className="flex flex-col items-center">
-          {/* Container ของรูป */}
           <div className="relative text-center my-2 flex flex-col items-center w-fit h-fit justify-center group border-2 rounded-[5px]">
-          {/* Overlay แก้ไขรูป */}
             <div
-              onClick={() => {
-                document.getElementById("file-upload-edit")?.click();
-              }}
+              onClick={() => document.getElementById("file-upload-edit")?.click()}
               className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-[5px] 
                          opacity-0 group-hover:opacity-100 cursor-pointer"
             >
@@ -40,9 +52,11 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
 
             {/* แสดงรูป */}
             <img
-              src={URL.createObjectURL(image)}
+              key={displayImage} // บังคับให้ React รีโหลดรูปใหม่เมื่อค่าเปลี่ยน
+              src={displayImage}
               alt="Uploaded"
-              className="object-cover w-full h-auto"
+              className="object-cover w-full h-auto max-w-[400px] max-h-[300px]"
+              onError={() => setDisplayImage(undefined)} // ถ้าโหลดภาพไม่ได้ ให้ซ่อนรูป
             />
 
             {/* Input file (hidden) สำหรับแก้ไขรูป */}
@@ -63,9 +77,7 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
                 backgroundColor: "#4f46e5",
                 "&:hover": { backgroundColor: "#3730a3" },
               }}
-              onClick={() => {
-                document.getElementById("file-upload-edit")?.click();
-              }}
+              onClick={() => document.getElementById("file-upload-edit")?.click()}
             >
               <i className="bi bi-pencil-fill mr-1" />
               Change
@@ -75,6 +87,8 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
               color="error"
               onClick={() => {
                 setImage(undefined);
+                setImagePreview(undefined);
+                setDisplayImage(undefined);
               }}
             >
               <i className="bi bi-trash-fill mr-1" />
@@ -84,12 +98,12 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
         </div>
       ) : (
         <div className="flex flex-col items-center">
-         <label
-                htmlFor="file-upload"
-                className="flex flex-col my-2 items-center justify-center 
-                          p-6 border-2 border-dashed border-gray-500 rounded-lg 
-                          w-full max-w-[400px] min-h-[300px] bg-gray-50 cursor-pointer"
-              >
+          <label
+            htmlFor="file-upload"
+            className="flex flex-col my-2 items-center justify-center 
+                      p-6 border-2 border-dashed border-gray-500 rounded-lg 
+                      w-full max-w-[400px] min-h-[300px] bg-gray-50 cursor-pointer"
+          >
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -109,9 +123,8 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
           </label>
         </div>
       )}
-      </>
-    );
-    };
-    
+    </>
+  );
+};
 
-export default ProjectImageInput
+export default ProjectImageInput;
