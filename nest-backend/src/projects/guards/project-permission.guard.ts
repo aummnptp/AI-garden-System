@@ -35,11 +35,13 @@ export class ProjectPermissionGuard extends WorkspaceRoleGuard {
     const workspaceMember = await this.workspaceMemberRepository.findOne({
       where: { user: { userId }, workspace: { workspaceId } }
     });
-
+    if (req.user.role === "admin") {
+      return true;
+    }
     if (!workspaceMember) {
       throw new ForbiddenException("Project Permission Guard: You are not a member of this workspace.");
     }
-
+  
     if (workspaceMember.role === "owner") {
       return true;
     }

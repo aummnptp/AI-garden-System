@@ -32,7 +32,6 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
       onSuccessCallback: () => {
         reset(); 
         setShowModal(false);
-        toast.success("Workspace created successfully!");
       },
     });
   };
