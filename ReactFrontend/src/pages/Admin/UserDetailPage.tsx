@@ -11,18 +11,28 @@ import { AdminPanelSettings } from '@mui/icons-material';
 import { useUserMutation } from '../../hook/user/useUserMutation';
 import { useUserData } from '../../hook/user/useUserData';
 import { useWorkspaceData } from '../../hook/workspaces/useWorkspaceData';
-import { useAiData } from '../../hook/ai/useAiData'; 
+import { useAiData } from '../../hook/ai/useAiData';
 import { getImageUrl } from '../../function/util';
+import { useAuth } from "../../context/AuthContext";
 
 const UserDetailPage = () => {
   const { userId } = useParams<{ userId?: string }>();
   const [userTab, setUserTab] = useState<string>('Ai');
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-
   const { userDetailById, isLoadinguserDetailById } = useUserData();
-  const promoteMutation = useUserMutation();
-
+  const [actionType, setActionType] = useState<'promote' | 'demote'>('promote');
+  const { promoteToAdminMutation, demoteFromAdminMutation } = useUserMutation();
   const { allAiModelWithApprovalData, isLoadingallAiModelWithApproval } = useAiData();
+  const { user } = useAuth(); // ✅ ดึงข้อมูล user ที่ล็อกอินอยู่
+  // ✅ รายชื่ออีเมลที่สามารถ Promote Admin ได้
+  const allowedPromoters = ['64070007@kmitl.ac.th', '64070079@kmitl.ac.th'];
+
+  // ✅ เช็คว่า user มีสิทธิ์ Promote Admin หรือไม่
+  const canPromote = user && allowedPromoters.includes(user.email);
+  const isInAllowedPromoters = allowedPromoters.includes(userDetailById?.email);
+  const isTargetAdmin = userDetailById?.role === "admin";
+  
+
   const aiCount = allAiModelWithApprovalData
     ? allAiModelWithApprovalData.filter((ai: { permissions?: { approve: boolean }[] }) =>
       ai.permissions?.some((permission: { approve: boolean }) => permission.approve)
@@ -42,15 +52,16 @@ const UserDetailPage = () => {
     }
   }, [userId, refetchWorkspaces]);
 
-  const handlePromoteToAdmin = () => {
+  const handleAction = () => {
     if (!userId) return;
 
-    promoteMutation.mutate({ userId }, {
-      onSuccess: () => {
-        setOpenConfirmDialog(false);
-      },
-    });
+    if (actionType === 'promote') {
+      promoteToAdminMutation.mutate({ userId }, { onSuccess: () => setOpenConfirmDialog(false) });
+    } else {
+      demoteFromAdminMutation.mutate({ userId }, { onSuccess: () => setOpenConfirmDialog(false) });
+    }
   };
+
 
   return (
     <>
@@ -61,23 +72,28 @@ const UserDetailPage = () => {
             {/* Header: User Profile */}
             <div className="relative bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-[15px] text-white h-28">
               <div className="absolute top-5 right-5">
-                <Button
-                  onClick={() => setOpenConfirmDialog(true)}
-                  variant="outlined"
-                  sx={{
-                    background: 'white',
-                    borderColor: "#4f46e5",
-                    color: "#4f46e5",
-                    "&:hover": {
-                      borderColor: "#3730a3",
-                      backgroundColor: "rgba(79, 70, 229, 0.1)"
-                    }
-                  }}
-                  disabled={userDetailById?.role === "admin" || isLoadinguserDetailById}
-                  startIcon={<AdminPanelSettings />}
-                >
-                  {userDetailById?.role === "admin" ? "เป็น Admin แล้ว" : "Promote เป็น Admin"}
-                </Button>
+              {canPromote && (
+            <Button
+              onClick={() => {
+                setActionType(isTargetAdmin ? 'demote' : 'promote'); // ✅ ตั้งค่า action
+                setOpenConfirmDialog(true);
+              }}
+              variant="outlined"
+              sx={{
+                background: 'white',
+                borderColor: isTargetAdmin ? "#e11d48" : "#4f46e5",
+                color: isTargetAdmin ? "#e11d48" : "#4f46e5",
+                "&:hover": {
+                  borderColor: isTargetAdmin ? "#be123c" : "#3730a3",
+                  backgroundColor: isTargetAdmin ? "rgba(225, 29, 72, 0.1)" : "rgba(79, 70, 229, 0.1)"
+                }
+              }}
+              startIcon={<AdminPanelSettings />}
+              disabled={isInAllowedPromoters}
+            >
+              {isInAllowedPromoters ? "ไม่สามารถ Demote Promoter ได้" : isTargetAdmin ? "Demote จาก Admin" : "Promote เป็น Admin"}
+            </Button>
+          )}
               </div>
               <img
                 className="absolute w-32 h-32 rounded-full border-4 border-white top-[52px] left-6"
@@ -152,25 +168,25 @@ const UserDetailPage = () => {
       </div>
 
       <MiniFooter />
-      {/* 🔵 Dialog ยืนยันการ Promote */}
+      {/* 🔵 Dialog ยืนยันการ Promote/Demote */}
       <Dialog open={openConfirmDialog} onClose={() => setOpenConfirmDialog(false)}>
-        <DialogTitle>ยืนยันการ Promote</DialogTitle>
+        <DialogTitle>{actionType === 'promote' ? "ยืนยันการ Promote" : "ยืนยันการ Demote"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            คุณต้องการ Promote <b>{userDetailById?.name}</b> เป็น Admin หรือไม่?
+            คุณต้องการ {actionType === 'promote' ? "Promote" : "Demote"} <b>{userDetailById?.name}</b> {actionType === 'promote' ? "เป็น Admin" : "จาก Admin"} หรือไม่?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenConfirmDialog(false)} color="secondary">
             ยกเลิก
           </Button>
-          <Button onClick={handlePromoteToAdmin} color="primary" variant="contained">
+          <Button onClick={handleAction} color={actionType === 'promote' ? "primary" : "error"} variant="contained">
             ยืนยัน
           </Button>
         </DialogActions>
       </Dialog>
 
-      
+
     </>
   );
 };
