@@ -21,10 +21,8 @@ import { addAiModelService, deleteAiModelService, updateAiModelService } from ".
     // Update AI Model
     const updateAiModel = useMutation({
       mutationFn: async ({ ai_id, modelData, ai_picture }: UpdateAiModelProps) => {
-        if (!ai_picture) {
-          throw new Error("ต้องแนบไฟล์รูปภาพ!");
-        }
-        return updateAiModelService(ai_id, modelData, ai_picture);
+        
+        return updateAiModelService(ai_id, modelData, ai_picture ?? undefined);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["ai-models"] });
