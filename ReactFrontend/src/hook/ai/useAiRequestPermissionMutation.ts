@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const useAiRequestPermissionMutation = () => {
+export const useAiRequestPermissionMutation = (ai_id?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (ai_id: string) => {
+    mutationFn: async () => {
       const response = await axios.post(
         `${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-permission/add`,
         { ai_id },
@@ -14,7 +14,8 @@ export const useAiRequestPermissionMutation = () => {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["ai-permission",] });
+      await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+      await queryClient.invalidateQueries({ queryKey: ["check-permission", ai_id] });
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
     },
     onError: () => {

@@ -43,7 +43,7 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
 };
 
   
-  export const predictFromUrlService = async (ai_id: string, imageUrl: string) => {
+  export const predictFromImageService = async (ai_id: string, imageUrl: string) => {
     if (!ai_id) throw new Error("Missing AI ID");
   
     try {

@@ -27,6 +27,7 @@ export const useWorkspaceMutations = (workspaceId?: string) => {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["workspace-detail", workspaceId] });
       queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
+      queryClient.invalidateQueries({ queryKey: ["all-workspaces"] });
       toast.success("Workspace updated successfully!");
       navigate("/workspaces");
     },
@@ -41,6 +42,7 @@ export const useWorkspaceMutations = (workspaceId?: string) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
+      queryClient.invalidateQueries({ queryKey: ["all-workspaces"] });
       navigate("/workspaces");
       toast.success("Workspace deleted successfully!");
     },

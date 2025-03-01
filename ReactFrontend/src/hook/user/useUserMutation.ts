@@ -5,7 +5,7 @@ interface userDetailProps {
   userId: string;
 }
 
-export const useUserMutation = () => {
+export const useUserMutation = (userId?:string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({userId}:userDetailProps) => {
@@ -14,7 +14,7 @@ export const useUserMutation = () => {
       );
     },
     onSuccess: async() => {
-      await queryClient.invalidateQueries({ queryKey: ["user-detail"] });
+      await queryClient.invalidateQueries({ queryKey: ["user-detail",userId] });
       toast.success(`เปลี่ยนผู้ใช้เป็น admin สำเร็จ`);
     },
     onError: () => {
