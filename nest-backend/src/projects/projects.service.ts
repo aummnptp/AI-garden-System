@@ -86,16 +86,28 @@ export class ProjectsService {
 
 
   async update(workspaceId: string, projectId: string, updateProjectDto: UpdateProjectDto, file?: Express.Multer.File): Promise<Project> {
-
     let filePath: string | undefined;
+    
     if (file) {
-      // บันทึกไฟล์ในตำแหน่งที่ต้องการ
+      // หากมีการอัปโหลดรูปใหม่
       filePath = `/uploads/project/${file.filename}`;
+    } else if (updateProjectDto.imagePath === "") {
+      // ถ้า imagePath เป็น "" แปลว่าผู้ใช้ต้องการลบรูป
+      const project = await this.projectRepository.findOne({ where: { projectId } });
+      if (project?.imagePath) {
+        const oldImagePath = `./uploads/project/${project.imagePath.split('/').pop()}`;
+        fs.unlink(oldImagePath, (err) => {
+          if (err) console.error("Failed to delete old image:", err);
+        });
+      }
+      filePath = null; // ลบค่า imagePath ในฐานข้อมูล
     }
+  
     await this.projectRepository.update(projectId, {
       ...updateProjectDto,
       imagePath: filePath,
     });
+  
     const updatedProject = await this.projectRepository.findOne({ where: { projectId } });
     if (!updatedProject) {
       throw new NotFoundException('Project not found after update');
