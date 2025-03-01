@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { aiSchema, AiSchemaType } from "../../validations/aiSchema";
 import { useForm } from "react-hook-form";
 import { PredictResult } from "../../types/Ai";
+import AiPictureInput from "../../components/input/AiPictureInput";
 
 const AddAiPage: React.FC = () => {
   const { addAiModel } = useAiModelMutation();
@@ -180,35 +181,63 @@ const AddAiPage: React.FC = () => {
         <div className="w-4/5 grid grid-cols-1 items-center justify-center h-full">
           <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] mx-auto relative">
             <form onSubmit={handleSubmit(onSubmit)} className="m-6 space-y-4">
-              <AiBasicInfo
-                aiName={watch("aiName")}
-                description={watch("description")}
-                aiType={watch("aiType")}
-                enable={watch("enable")}
-                visible={watch("visible")}
-                inputType={watch("inputType")}
-                onNameChange={(val) => setValue("aiName", val)}
-                onDescriptionChange={(val) => setValue("description", val)}
-                onTypeChange={(val) =>
-                  setValue(
-                    "aiType",
-                    val as
-                    | "Object Detection"
-                    | "Regression"
-                    | "Segmentation"
-                    | "Classification"
-                  )
-                }
-                onEnableChange={(val) => setValue("enable", val)}
-                onVisibleChange={(val) => setValue("visible", val)}
-                onInputTypeChange={(val) =>
-                  setValue(
-                    "inputType",
-                    val as "รูปภาพและวิดีโอ" | "รูปภาพ" | "วิดีโอ"
-                  )
-                }
-                errors={errors}
-              />
+              <div className="grid grid-cols-5 gap-2 items-stretch">
+                <div className="col-span-2 bg-white p-4 border rounded-[5px] border-gray-300 ">
+                  <AiPictureInput
+                    image={watch("aiPicture") || undefined}
+                    imagePreview={aiPicturePreview}
+                    setImage={(file: File | undefined) =>
+                      setValue("aiPicture", file)
+                    }
+                    setImagePreview={setAiPicturePreview}
+                    handleFileSelect={handleAiPictureChange}
+                    handleDrop={(e) => {
+                      e.preventDefault();
+                      const file = e.dataTransfer.files[0];
+                      if (file) {
+                        setValue("aiPicture", file);
+                        setAiPicturePreview(URL.createObjectURL(file));
+                      }
+                    }}
+                    handleDragOver={(e) => e.preventDefault()}
+                    errorMessage={errors.aiPicture?.message}
+                  />
+                </div>
+
+                {/* 60% - AI Basic Info */}
+                <div className="col-span-3 bg-white p-6 border rounded-[5px] border-gray-300 ">
+                  <AiBasicInfo
+                    aiName={watch("aiName")}
+                    description={watch("description")}
+                    aiType={watch("aiType")}
+                    enable={watch("enable")}
+                    visible={watch("visible")}
+                    inputType={watch("inputType")}
+                    onNameChange={(val) => setValue("aiName", val)}
+                    onDescriptionChange={(val) => setValue("description", val)}
+                    onTypeChange={(val) =>
+                      setValue(
+                        "aiType",
+                        val as
+                          | "Object Detection"
+                          | "Regression"
+                          | "Segmentation"
+                          | "Classification"
+                      )
+                    }
+                    onEnableChange={(val) => setValue("enable", val)}
+                    onVisibleChange={(val) => setValue("visible", val)}
+                    onInputTypeChange={(val) =>
+                      setValue(
+                        "inputType",
+                        val as "รูปภาพและวิดีโอ" | "รูปภาพ" | "วิดีโอ"
+                      )
+                    }
+                    errors={errors}
+                  />
+                </div>
+                
+              </div>
 
               <ColorPickerTags
                 colors={watch("colorSet")}
@@ -290,20 +319,6 @@ const AddAiPage: React.FC = () => {
                   </p>
                 )}
               </div>
-              <div className="form-group">
-                <label>AI Picture</label>
-                <input type="file" accept="image/*" onChange={handleAiPictureChange} />
-                {errors.aiPicture && (
-                  <p className="text-red-500 text-sm">{errors.aiPicture.message}</p>
-                )}
-
-                {/* แสดงรูปภาพที่อัปโหลด */}
-                {aiPicturePreview && (
-                  <div className="mt-2">
-                    <img src={aiPicturePreview} alt="AI Preview" className="w-40 h-40 object-cover rounded-lg border" />
-                  </div>
-                )}
-              </div>
 
               <div className="pl-[20%] justify-end pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
                 <Button
@@ -331,13 +346,17 @@ const AddAiPage: React.FC = () => {
                   <DialogContent>
                     {watch("aiType") === "Regression" ? (
                       <AIDisPlayResultComponent
-                      resultImage={""}
-                        predictResult={watch("predictResult") as PredictResult | undefined}
+                        resultImage={""}
+                        predictResult={
+                          watch("predictResult") as PredictResult | undefined
+                        }
                       />
                     ) : (
                       <AIDisPlayResultComponent
                         resultImage={watch("customedImageUrl") ?? ""}
-                        predictResult={watch("predictResult") as PredictResult | undefined}
+                        predictResult={
+                          watch("predictResult") as PredictResult | undefined
+                        }
                       />
                     )}
                   </DialogContent>
@@ -351,7 +370,6 @@ const AddAiPage: React.FC = () => {
                     </Button>
                   </DialogActions>
                 </Dialog>
-
               </div>
             </form>
           </div>
