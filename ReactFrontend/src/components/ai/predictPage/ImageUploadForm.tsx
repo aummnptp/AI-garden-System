@@ -14,8 +14,7 @@ export const ImageUploadForm: React.FC<{
     setUploadStep: (step: number | ((prev: number) => number)) => void;
     predictResult: PredictResult | null;
     setPredictResult: (result: PredictResult | null) => void;
-    predictFromUrl: any;
-    predictFromFile: any;
+    predictFromImage: any;
     customedImageUrl: string | null;
     setCustomedImageUrl: (url: string | null) => void;
     customImage: File | null;
@@ -27,7 +26,7 @@ export const ImageUploadForm: React.FC<{
     setUploadStep,
     predictResult,
     setPredictResult,
-    predictFromUrl,
+    predictFromImage,
     customedImageUrl,
     setCustomedImageUrl,
     customImage,
@@ -46,7 +45,7 @@ const handleToCustomStep = () => {
         return;
       }
       setUploadStep(3);
-      predictFromUrl.mutate(customedImageUrl, {
+      predictFromImage.mutate(customedImageUrl, {
         onSuccess: (data: PredictResult) => {
           setPredictResult(data);
           setUploadStep(4);

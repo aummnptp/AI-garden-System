@@ -38,7 +38,7 @@ function WorkspaceList() {
         isLoading: isLoadingMyWorkspace,
         error: errorMyWorkspace,
     } = useFetchQuery(
-        ["my-workspace",],
+        ["all-workspaces",],
         `/workspaces/all`
     );
     if (isLoadingMyWorkspace) return <div>Loading...</div>;

@@ -18,7 +18,7 @@ const PredictAiModelPage: React.FC = () => {
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
-  const { predictFromUrl, predictFromFile } = useAiPrediction();
+  const { predictFromImage, predictFromVideo } = useAiPrediction();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
 
@@ -57,8 +57,7 @@ const PredictAiModelPage: React.FC = () => {
                 setUploadStep={setUploadStep}
                 predictResult={predictResult}
                 setPredictResult={setPredictResult}
-                predictFromUrl={predictFromUrl}
-                predictFromFile={predictFromFile}
+                predictFromImage={predictFromImage}
                 customedImageUrl={customedImageUrl}
                 setCustomedImageUrl={setCustomedImageUrl}
                 customImage={customImage}
@@ -72,7 +71,7 @@ const PredictAiModelPage: React.FC = () => {
                 setUploadStep={setUploadStep}
                 predictResult={predictResult}
                 setPredictResult={setPredictResult}
-                predictFromFile={predictFromFile}
+                predictFromVideo={predictFromVideo}
               />
             )}
           </div>

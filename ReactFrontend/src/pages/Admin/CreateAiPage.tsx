@@ -217,7 +217,7 @@ const AddAiPage: React.FC = () => {
                 }
                 errors={errors}
               />
-              
+
               <AiFileUpload
                 serviceUri={watch("serviceUri")}
                 onServiceUriChange={(val) => setValue("serviceUri", val)}
@@ -329,12 +329,17 @@ const AddAiPage: React.FC = () => {
                 >
                   <DialogTitle id="modal-title">ผลลัพธ์การทำนาย</DialogTitle>
                   <DialogContent>
-                    <AIDisPlayResultComponent
-                      resultImage={watch("customedImageUrl") ?? ""}
-                      predictResult={
-                        watch("predictResult") as PredictResult | undefined
-                      }
-                    />
+                    {watch("aiType") === "Regression" ? (
+                      <AIDisPlayResultComponent
+                      resultImage={""}
+                        predictResult={watch("predictResult") as PredictResult | undefined}
+                      />
+                    ) : (
+                      <AIDisPlayResultComponent
+                        resultImage={watch("customedImageUrl") ?? ""}
+                        predictResult={watch("predictResult") as PredictResult | undefined}
+                      />
+                    )}
                   </DialogContent>
                   <DialogActions>
                     <Button
@@ -346,6 +351,7 @@ const AddAiPage: React.FC = () => {
                     </Button>
                   </DialogActions>
                 </Dialog>
+
               </div>
             </form>
           </div>

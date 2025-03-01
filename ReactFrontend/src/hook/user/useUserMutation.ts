@@ -7,18 +7,40 @@ interface userDetailProps {
 
 export const useUserMutation = () => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({userId}:userDetailProps) => {
-        await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/promote/${userId}`,
+
+  const promoteToAdminMutation = useMutation({
+    mutationFn: async ({ userId }: userDetailProps) => {
+      await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/promote/${userId}`,
         { withCredentials: true }
       );
     },
-    onSuccess: async() => {
-      await queryClient.invalidateQueries({ queryKey: ["user-detail"] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-detail"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success(`เปลี่ยนผู้ใช้เป็น admin สำเร็จ`);
     },
     onError: () => {
-      toast.error("เกิดข้อผิดพลาด");
+      toast.error("คุณไม่มีสิทธิ์ในการ promote ผู้ใช้");
     },
   });
+  const demoteFromAdminMutation = useMutation({
+    mutationFn: async ({ userId }: userDetailProps) => {
+      await axios.patch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/users/demote/${userId}`,
+        { withCredentials: true }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-detail"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success(`เปลี่ยนผู้ใช้เป็น user สำเร็จ`);
+    },
+    onError: () => {
+      toast.error("คุณไม่มีสิทธิ์ในการ demote ผู้ใช้");
+    },
+  });
+
+  return {
+    promoteToAdminMutation,
+    demoteFromAdminMutation
+  };
 };

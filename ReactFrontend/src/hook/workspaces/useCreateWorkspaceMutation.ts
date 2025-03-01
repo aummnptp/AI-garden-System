@@ -16,6 +16,7 @@ export const useCreateWorkspaceMutation = () => {
     },
     onSuccess: (_data, { onSuccessCallback }) => {
       queryClient.invalidateQueries({ queryKey: ["my-workspace"] });
+      queryClient.invalidateQueries({ queryKey: ["all-workspaces"] });
       toast.success("Workspace created successfully!");
       if (onSuccessCallback) onSuccessCallback();
     },
