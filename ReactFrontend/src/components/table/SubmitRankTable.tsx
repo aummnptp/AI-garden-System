@@ -13,6 +13,7 @@ import { Avatar, Typography } from '@mui/material';
 import { useProjecteData } from '../../hook/projects/useProjectData';
 import { useHistoryData } from '../../hook/history/useHistoryData';
 import SummaryCard from '../chart/sumaryCard';
+import { useParams,Link } from 'react-router-dom';
 
 export interface RankingData {
   userId: string;
@@ -47,6 +48,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function SubmitRankTable() {
+  const { workspaceId, projectId } = useParams<{ workspaceId: string; projectId: string; }>();
+
   const { statisticData, projectDetail, isLoadingStatistic, errorStatistic } = useProjecteData();
   const { projectHistory } = useHistoryData();
   const inputType = projectDetail?.input_type || '';
@@ -174,20 +177,25 @@ export default function SubmitRankTable() {
           {projectHistory && projectHistory.length > 0 ? (
             projectHistory.map((item: any) => (
               <div key={item.createdAt} className="mb-4 border-b pb-4">
-                <div className="flex items-center mb-2">
-                  <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(item.user.picture)} alt={item.user.name} />
-                  <div className="ml-3">
-                    <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
-                    <p className="text-gray-600 text-sm">
-                      {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)} น.
-                    </p>
+                <Link
+                  to={`/workspaces/${workspaceId}/project/${projectId}/history/detail/${item.historyId}`}
+                  className="block mt-4 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center mb-2">
+                    <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(item.user.picture)} alt={item.user.name} />
+                    <div className="ml-3">
+                      <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
+                      <p className="text-gray-600 text-sm">
+                        {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)} น.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                {inputType === 'วิดีโอ' ? (
-                  <video className="w-28 h-28 border-2 object-cover rounded-md" src={item.filePath} controls />
-                ) : (
-                  <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(item.filePath)} alt={item.user.name} loading="lazy" />
-                )}
+                  {inputType === 'วิดีโอ' ? (
+                    <video className="w-28 h-28 border-2 object-cover rounded-md" src={item.filePath} controls />
+                  ) : (
+                    <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(item.filePath)} alt={item.user.name} loading="lazy" />
+                  )}
+                </Link>
               </div>
             ))
           ) : (
