@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards, ValidationPipe } from '@nestjs/common';
 import { DocsService } from './docs.service';
 import { CreateDocsDto, CreateSubDocsDto } from './dto/create-document.dto';
 import { Document } from './entities/docs.entity';
@@ -30,7 +30,9 @@ export class DocsController {
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
   @Patch("/update-docs/:docsId")
-  async updateDocs(@Param('docsId') docsId: string, @Request() req, @Body() updateDocumentDto: UpdateDocumentDto) {
+  async updateDocs(@Param('docsId') docsId: string, @Request() req,
+  @Body(new ValidationPipe({ transform: true, whitelist: true })) updateDocumentDto: UpdateDocumentDto
+) {
     return this.docsService.updateDocs(docsId, updateDocumentDto);
   }
 
