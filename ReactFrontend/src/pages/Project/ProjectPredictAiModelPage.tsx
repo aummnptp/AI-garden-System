@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, {useState } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
 import SkeletonLayout from '../../components/SkeletonPageLayout';
@@ -17,17 +17,11 @@ const PredictAiModelPage: React.FC = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
-  const [openAlert, setOpenAlert] = useState(false);
   const { predictFromImage, predictFromVideo } = useAiPrediction();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
 
-  useEffect(() => {
-    if (openAlert) {
-      const timer = setTimeout(() => setOpenAlert(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [openAlert]);
+
 
   if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
 

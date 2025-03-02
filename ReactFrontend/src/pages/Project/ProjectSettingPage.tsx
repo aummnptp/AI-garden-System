@@ -253,31 +253,35 @@ console.log(imagePreview)
                 />
               </div>
               <FormControl>
-                <label className="flex-col flex text-black text-2xl mb-4">
-                  Project Type
-                  <RadioGroup
-                    value={watch("inputType") || ""} 
-                    onChange={(e) => setValue("inputType", e.target.value)}
-                    row
-                  >
-                    <FormControlLabel
-                      value="รูปภาพและวิดีโอ"
-                      control={<Radio />}
-                      label="รูปภาพและวิดีโอ"
-                    />
-                    <FormControlLabel
-                      value="รูปภาพ"
-                      control={<Radio />}
-                      label="รูปภาพ"
-                    />
-                    <FormControlLabel
-                      value="วิดีโอ"
-                      control={<Radio />}
-                      label="วิดีโอ"
-                    />
-                  </RadioGroup>
-                </label>
-              </FormControl>
+  <label className="flex-col flex text-black text-2xl mb-4">
+    Project Type
+    <RadioGroup
+      value={watch("inputType") || ""} 
+      onChange={(e) => setValue("inputType", e.target.value)}
+      row
+    >
+      <FormControlLabel
+        value="รูปภาพและวิดีโอ"
+        control={<Radio />}
+        label="รูปภาพและวิดีโอ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ"}
+      />
+      <FormControlLabel
+        value="รูปภาพ"
+        control={<Radio />}
+        label="รูปภาพ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ" }
+      />
+      <FormControlLabel
+        value="วิดีโอ"
+        control={<Radio />}
+        label="วิดีโอ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ"}
+      />
+    </RadioGroup>
+  </label>
+</FormControl>
+
 
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
                 {" "}

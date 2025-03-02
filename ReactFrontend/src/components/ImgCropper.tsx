@@ -17,7 +17,7 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
         x: 0,
         y: 0,
       });
-    const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined); // เริ่มต้นไม่มีอัตราส่วน (free aspect ratio)
+    const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined); 
     const [completedCrop, setCompletedCrop] = useState<Crop | null>(crop);
     const [imageWidth, setImageWidth] = useState<number | null>(null);
     const [imageHeight, setImageHeight] = useState<number | null>(null);
