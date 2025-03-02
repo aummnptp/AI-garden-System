@@ -33,6 +33,7 @@ const AddAiPage: React.FC = () => {
   const [examplePredictResultModal, setExamplePredictResultModal] =
     useState(false);
   const [aiPicturePreview, setAiPicturePreview] = useState<string | null>(null);
+  const [isPredicting, setIsPredicting] = useState(false); // ✅ เพิ่มตัวแปร state เพื่อตรวจสอบ API response
 
   const {
     handleSubmit,
@@ -80,8 +81,8 @@ const AddAiPage: React.FC = () => {
   const handleAiPictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setValue("aiPicture", file); 
-      setAiPicturePreview(URL.createObjectURL(file)); 
+      setValue("aiPicture", file);
+      setAiPicturePreview(URL.createObjectURL(file));
     }
   };
 
@@ -98,6 +99,8 @@ const AddAiPage: React.FC = () => {
         toast.error("กรุณาใส่ Service URI ก่อน");
         return;
       }
+
+      setIsPredicting(true); // ✅ เริ่มการคำนวณ (ปิดปุ่มผลลัพธ์การทำนาย)
 
       try {
         const response = await fetch(serviceUri, {
@@ -146,15 +149,20 @@ const AddAiPage: React.FC = () => {
             });
           };
 
+          setIsPredicting(false); // ✅ API ตอบกลับแล้ว (แสดงปุ่มผลลัพธ์การทำนาย)
+
           setSelectOptions(extractKeys(jsonData));
         } else {
           toast.error("Service URI ไม่ส่ง JSON กลับมา");
+          setIsPredicting(false);
         }
       } catch (error) {
         toast.error("เกิดข้อผิดพลาดขณะทดสอบ API ");
+        setIsPredicting(false);
       }
     } else {
       toast.error("กรุณาเลือกไฟล์ก่อน");
+
     }
   };
 
@@ -227,10 +235,10 @@ const AddAiPage: React.FC = () => {
                       setValue(
                         "aiType",
                         val as
-                          | "Object Detection"
-                          | "Regression"
-                          | "Segmentation"
-                          | "Classification"
+                        | "Object Detection"
+                        | "Regression"
+                        | "Segmentation"
+                        | "Classification"
                       )
                     }
                     onEnableChange={(val) => setValue("enable", val)}
@@ -244,7 +252,7 @@ const AddAiPage: React.FC = () => {
                     errors={errors}
                   />
                 </div>
-                
+
               </div>
 
               <ColorPickerTags
@@ -261,11 +269,10 @@ const AddAiPage: React.FC = () => {
                 onUriTest={handleUri}
                 fileInputRef={fileInputRef}
                 customedImageUrl={watch("customedImageUrl") ?? null}
-                predictResult={
-                  watch("predictResult") as PredictResult | undefined
-                }
+                predictResult={watch("predictResult") as PredictResult | undefined}
                 onShowPreview={() => setExamplePredictResultModal(true)}
                 errors={errors}
+                isPredicting={isPredicting} // ✅ ส่งค่าไปยัง AiFileUpload
               />
 
               <AiResponseKeys
@@ -320,7 +327,7 @@ const AddAiPage: React.FC = () => {
                   multiline
                   fullWidth
                   variant="outlined"
-                  rows={4} 
+                  rows={4}
                   value={watch("inputDescription")}
                   onChange={(e) => setValue("inputDescription", e.target.value)}
                   error={!!errors.inputDescription}
