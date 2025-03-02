@@ -31,7 +31,7 @@ function CreateProjectPage() {
       inputType: "",
     },
   });
-  const { trigger, handleSubmit, setValue, watch } = methods;
+  const { trigger, handleSubmit, setValue, watch, formState: { errors } } = methods;
 
   const handleSelectCard = (id: string) => {
     setValue("selectedCardId", id);
@@ -121,6 +121,7 @@ function CreateProjectPage() {
             handleFileSelect={handleFileSelect}
             handleDrop={handleDrop}
             handleDragOver={handleDragOver}
+            errors={errors}
           />
           )}
           {uploadStep === 2 && (

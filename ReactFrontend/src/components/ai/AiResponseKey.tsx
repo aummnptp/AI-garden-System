@@ -1,9 +1,17 @@
-
-import React from 'react';
-import { Button } from '@mui/material';
-import { ResponseKey } from '../../types/Ai';
-import { FieldErrors } from 'react-hook-form';
-import { AiSchemaType } from '../../validations/aiSchema';
+import React from "react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  FormHelperText,
+} from "@mui/material";
+import { ResponseKey } from "../../types/Ai";
+import { FieldErrors } from "react-hook-form";
+import { AiSchemaType } from "../../validations/aiSchema";
 
 interface AiResponseKeysProps {
   responseKeys: ResponseKey[];
@@ -12,7 +20,6 @@ interface AiResponseKeysProps {
   onRemoveKey: (index: number) => void;
   onKeyChange: (index: number, field: string, value: string) => void;
   errors: FieldErrors<AiSchemaType>;
-  
 }
 
 const AiResponseKeys: React.FC<AiResponseKeysProps> = ({
@@ -24,76 +31,95 @@ const AiResponseKeys: React.FC<AiResponseKeysProps> = ({
   errors,
 }) => {
   return (
-    <div className="form-group space-y-4">
-      <label>Response Data (สำหรับแสดงผลลัพธ์)</label>
-      {errors.responseKeys && <p className="text-red-500 text-sm">{errors.responseKeys.message}</p>}
+    <FormControl fullWidth>
+      <FormLabel>Response Data (สำหรับแสดงผลลัพธ์)</FormLabel>
+      {errors.responseKeys && (
+        <p className="text-red-500 text-sm">{errors.responseKeys.message}</p>
+      )}
 
       {responseKeys.map((key, index) => (
         <div key={index} className="flex space-x-2 mb-2">
-          <input
-            type="text"
+          {/* Meaning Input */}
+          <TextField
+            fullWidth
+            variant="outlined"
             placeholder="Meaning"
             value={key.meaning}
             onChange={(e) => onKeyChange(index, "meaning", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            error={!!errors.responseKeys?.[index]?.meaning}
+            helperText={errors.responseKeys?.[index]?.meaning?.message}
           />
-          {errors.responseKeys?.[index]?.meaning && (
-            <p className="text-red-500 text-sm">{errors.responseKeys[index]?.meaning?.message}</p>
-          )}
 
-          <select
-            value={key.key}
-            onChange={(e) => onKeyChange(index, "key", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+          {/* Select Key */}
+          <FormControl fullWidth error={!!errors.responseKeys?.[index]?.key}>
+            <InputLabel>Select Key</InputLabel>
+            <Select
+              value={key.key}
+              onChange={(e) => onKeyChange(index, "key", e.target.value)}
+            >
+              <MenuItem value="">Select Key</MenuItem>
+              {selectOptions.map((option, i) => (
+                <MenuItem key={i} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.responseKeys?.[index]?.key && (
+              <FormHelperText>
+                {errors.responseKeys[index]?.key?.message}
+              </FormHelperText>
+            )}
+          </FormControl>
+
+          {/* Select Display Format */}
+          <FormControl
+            fullWidth
+            error={!!errors.responseKeys?.[index]?.displayFormat}
           >
-            <option value="">Select Key</option>
-            {selectOptions.map((option, i) => (
-              <option key={i} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          {errors.responseKeys?.[index]?.key && (
-            <p className="text-red-500 text-sm">{errors.responseKeys[index]?.key?.message}</p>
-          )}
+            <InputLabel>Select Display Format</InputLabel>
+            <Select
+              value={key.displayFormat || ""}
+              onChange={(e) =>
+                onKeyChange(index, "displayFormat", e.target.value)
+              }
+            >
+              <MenuItem value="">Select Display Format</MenuItem>
+              <MenuItem value="text">Text</MenuItem>
+              <MenuItem value="chart">Chart</MenuItem>
+              <MenuItem value="objectdetection">Object Detection</MenuItem>
+              <MenuItem value="segmentation">Segmentation</MenuItem>
+            </Select>
+            {errors.responseKeys?.[index]?.displayFormat && (
+              <FormHelperText>
+                {errors.responseKeys[index]?.displayFormat?.message}
+              </FormHelperText>
+            )}
+          </FormControl>
 
-          <select
-            value={key.displayFormat || ""}
-            onChange={(e) => onKeyChange(index, "displayFormat", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          >
-            <option value="">Select Display Format</option>
-            <option value="text">Text</option>
-            <option value="chart">Chart</option>
-            <option value="objectdetection">Object Detection</option>
-            <option value="segmentation">Segmentation</option>
-          </select>
-          {errors.responseKeys?.[index]?.displayFormat && (
-            <p className="text-red-500 text-sm">{errors.responseKeys[index]?.displayFormat?.message}</p>
-          )}
-
+          {/* Remove Button */}
           <Button
             variant="contained"
             color="error"
             size="large"
             onClick={() => onRemoveKey(index)}
-            className="p-2 bg-red-600 text-white rounded-lg"
           >
             Remove
           </Button>
         </div>
       ))}
 
+      {/* Add Key Button */}
       <Button
         variant="contained"
-        sx={{ backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
-        size="large"
+        sx={{
+          backgroundColor: "#4f46e5",
+          "&:hover": { backgroundColor: "#3730a3" },
+        }}
         onClick={onAddKey}
-        className="p-2 text-white bg-indigo-600 rounded-lg"
       >
         + Add Key
       </Button>
-    </div>
+    </FormControl>
   );
 };
 

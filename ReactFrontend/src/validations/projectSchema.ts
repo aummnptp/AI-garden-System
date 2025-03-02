@@ -1,11 +1,25 @@
 import { z } from "zod";
 
 export const createProjectSchema = z.object({
-  projectName: z.string().min(3, "ชื่อโปรเจกต์ต้องมีอย่างน้อย 3 ตัวอักษร").max(20, "ชื่อโปรเจกต์จะมีได้มากสุด 20 ตัวอักษร"),
-  projectDescription: z.string().min(5, "คำอธิบายต้องมีอย่างน้อย 5 ตัวอักษร").max(50, "คำอธิบายต้องจะมีได้มากสุด  50 ตัวอักษร"),
+  projectName: z
+    .string()
+    .min(3, "Project name must be at least 3 characters")
+    .max(20, "Project name must not exceed 20 characters"),
+    
+  projectDescription: z
+    .string()
+    .min(5, "Description must be at least 5 characters")
+    .max(50, "Description must not exceed 50 characters"),
+    
   image: z.instanceof(File).optional(),
-  selectedCardId: z.string().nonempty("กรุณาเลือก AI ที่ต้องการใช้งาน"),
-  inputType: z.string().nonempty("กรุณาเลือกประเภทโปรเจกต์"),
+
+  selectedCardId: z
+    .string()
+    .nonempty("Please select an AI model"),
+
+  inputType: z
+    .string()
+    .nonempty("Please select a project type"),
 });
 
 export type CreateProjectFormType = z.infer<typeof createProjectSchema>;

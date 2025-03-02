@@ -38,7 +38,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
   return (
     <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="sm" fullWidth>
     <DialogTitle>
-      <span className="text-2xl font-semibold text-indigo-900">สร้าง Workspace</span>
+      <span className="text-2xl font-semibold text-indigo-900">Create Workspace</span>
       <IconButton
         aria-label="close"
         onClick={() => setShowModal(false)}
@@ -55,7 +55,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
     <DialogContent dividers>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
         <div>
-          <span className="font-medium tracking-tight text-indigo-900">ชื่อ Workspace</span>
+          <span className="font-medium tracking-tight text-indigo-900">Workspace Name</span>
           <span className="ml-2 text-red-500 text-sm">*</span>
           <TextField
             fullWidth
@@ -68,7 +68,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
           />
         </div>
         <div>
-          <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
+          <span className="font-medium tracking-tight text-indigo-900">Workspace Description</span>
           <TextField
             fullWidth
             placeholder="คำอธิบาย Workspace"
@@ -92,7 +92,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
               },
             }}
           >
-            สร้าง
+            Create
           </Button>
         </DialogActions>
       </form>

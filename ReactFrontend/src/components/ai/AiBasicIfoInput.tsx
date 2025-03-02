@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Switch } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Switch, TextField } from '@mui/material';
 import React from 'react';
 import { FieldErrors } from "react-hook-form";
 import { AiSchemaType } from "../../validations/aiSchema";
@@ -37,45 +37,52 @@ const AiBasicInfo: React.FC<AiBasicInfoProps> = ({
   return (
     <div className="form-group space-y-4">
       {/* AI Name */}
-      <div>
-        <label>AI Name</label>
-        <input
-          type="text"
-          value={aiName}
-          onChange={(e) => onNameChange(e.target.value)}
-          className={`w-full p-2 border rounded-lg ${errors.aiName ? "border-red-500" : "border-gray-300"}`}
-          aria-invalid={errors.aiName ? "true" : "false"}
-        />
-        {errors.aiName && <p className="text-red-500 text-sm">{errors.aiName.message}</p>}
-      </div>
+      <FormControl fullWidth>
+  <FormLabel>AI Name</FormLabel>
+  <TextField
+    fullWidth
+    variant="outlined"
+    type="text"
+    margin="normal"
+    value={aiName}
+    onChange={(e) => onNameChange(e.target.value)}
+    error={!!errors.aiName}
+    helperText={errors.aiName?.message}
+  />
+</FormControl>
 
-      {/* AI Description */}
-      <div>
-        <label>AI Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => onDescriptionChange(e.target.value)}
-          className={`w-full p-2 border rounded-lg ${errors.description ? "border-red-500" : "border-gray-300"}`}
-          aria-invalid={errors.description ? "true" : "false"}
-        />
-        {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
-      </div>
-
+<FormControl fullWidth>
+  <FormLabel>AI Description</FormLabel>
+  <TextField
+    multiline
+    fullWidth
+    variant="outlined"
+    margin="normal"
+    value={description}
+    onChange={(e) => onDescriptionChange(e.target.value)}
+    error={!!errors.description}
+    helperText={errors.description?.message}
+  />
+</FormControl>
       
 
       {/* AI Type */}
-      <div>
-        <label>AI Type</label>
-        <select
-          value={aiType}
-          onChange={(e) => onTypeChange(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg"
-        >
-          <option value="Object Detection">Object Detection</option>
-          <option value="Regression">Regression</option>
-          <option value="Segmentation">Segmentation</option>
-          <option value="Classification">Classification</option>
-        </select>
+            <div>
+        <FormControl fullWidth>
+        <FormLabel component="legend">AI Input Type</FormLabel>
+        <Select
+         
+            labelId="ai-type-label"
+            value={aiType}
+            onChange={(e) => onTypeChange(e.target.value)}
+            className="w-full"
+          >
+            <MenuItem value="Object Detection">Object Detection</MenuItem>
+            <MenuItem value="Regression">Regression</MenuItem>
+            <MenuItem value="Segmentation">Segmentation</MenuItem>
+            <MenuItem value="Classification">Classification</MenuItem>
+          </Select>
+        </FormControl>
       </div>
 
       {/* AI Input Type */}

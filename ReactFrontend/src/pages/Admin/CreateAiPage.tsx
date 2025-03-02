@@ -11,6 +11,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  FormLabel,
+  TextField,
 } from "@mui/material";
 import AiBasicInfo from "../../components/ai/AiBasicIfoInput";
 import { useAiModelMutation } from "../../hook/ai/useAiModelMutation";
@@ -312,19 +315,19 @@ const AddAiPage: React.FC = () => {
                 errors={errors}
               />
 
-              <div className="form-group">
-                <label>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</label>
-                <textarea
+              <FormControl fullWidth>
+                <FormLabel>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</FormLabel>
+                <TextField
+                  multiline
+                  fullWidth
+                  variant="outlined"
+                  rows={4} // ตั้งค่าให้มีหลายบรรทัด
                   value={watch("inputDescription")}
                   onChange={(e) => setValue("inputDescription", e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  error={!!errors.inputDescription}
+                  helperText={errors.inputDescription?.message}
                 />
-                {errors.inputDescription && (
-                  <p className="text-red-500 text-sm">
-                    {errors.inputDescription.message}
-                  </p>
-                )}
-              </div>
+              </FormControl>
 
               <div className="pl-[20%] justify-end pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center">
                 <Button

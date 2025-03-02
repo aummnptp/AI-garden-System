@@ -8,6 +8,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  FormLabel,
+  TextField,
 } from "@mui/material";
 import ColorPickerTags from "../../components/ai/ColorPickerTags";
 import { PredictResult, ResponseKey } from "../../types/Ai";
@@ -366,6 +369,20 @@ const UpdateAiPage: React.FC = () => {
                 }
                 errors={errors}
               />
+
+              <FormControl fullWidth>
+                <FormLabel>AI Input Description (คำอธิบายรูปภาพหรือวิดีโอ)</FormLabel>
+                <TextField
+                  multiline
+                  fullWidth
+                  variant="outlined"
+                  rows={4}
+                  value={watch("inputDescription")}
+                  onChange={(e) => setValue("inputDescription", e.target.value)}
+                  error={!!errors.inputDescription}
+                  helperText={errors.inputDescription?.message}
+                />
+              </FormControl>
 
               <div className="pl-[20%] pr-12 w-full h-[12%] bg-white border border-zinc-300 fixed bottom-0 right-0 flex items-center justify-between">
                 <Button
