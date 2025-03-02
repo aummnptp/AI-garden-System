@@ -11,7 +11,8 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
 
   useEffect(() => {
     if (chartRef.current) {
-      chartRef.current.destroy(); 
+      chartRef.current.destroy();
+    }
 
     if (detections && detections.length > 0) {
       interface ChartData {
