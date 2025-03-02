@@ -12,6 +12,8 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     
   ) {}
+  private allowedPromoters: string[] = ['64070007@kmitl.ac.th', '64070079@kmitl.ac.th']; // 🔹 อีเมลที่อนุญาต
+
   create(registerDTO: RegisterDTO): Promise<User> {
     const newUser = this.userRepository.create(registerDTO);
     return this.userRepository.save(newUser);
@@ -34,11 +36,16 @@ export class UserService {
     return this.userRepository.findOneBy({ email });
   } 
 
-  async promoteToAdmin(userId: string): Promise<User> {
+  async promoteToAdmin(promoterId: string,userId: string): Promise<User> {
+    const promoter = await this.userRepository.findOne({ where: { userId: promoterId } });
     const user = await this.userRepository.findOne({ where: { userId } });
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    if (!this.allowedPromoters.includes(promoter.email)) {
+      throw new ForbiddenException('You are not authorized to promote an admin');
     }
 
     if (user.role === 'admin') {
@@ -46,6 +53,24 @@ export class UserService {
     }
 
     user.role = 'admin';
+    return this.userRepository.save(user);
+  }
+
+  async demoteFromAdmin(promoterId: string,userId: string): Promise<User> {
+    const promoter = await this.userRepository.findOne({ where: { userId: promoterId } });
+    const user = await this.userRepository.findOne({ where: { userId } });
+
+    if (!this.allowedPromoters.includes(promoter.email)) {
+      throw new ForbiddenException('You are not authorized to demote an admin');
+    }
+
+    // ✅ ตรวจสอบว่า targetUser เป็น Admin อยู่หรือไม่
+    if (user.role !== 'admin') {
+      throw new ForbiddenException('User is not an admin');
+    }
+
+    // ✅ เปลี่ยน role กลับเป็น `user`
+    user.role = 'user';
     return this.userRepository.save(user);
   }
   

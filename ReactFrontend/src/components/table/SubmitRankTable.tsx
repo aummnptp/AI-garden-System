@@ -9,10 +9,11 @@ import Paper from '@mui/material/Paper';
 import { PictureOutlined, TrophyFilled, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { formatDate, formatTime, getImageUrl } from '../../function/util';
 import { Avatar, Typography } from '@mui/material';
-// ใช้ custom hook สำหรับข้อมูล ranking และ project detail
+
 import { useProjecteData } from '../../hook/projects/useProjectData';
 import { useHistoryData } from '../../hook/history/useHistoryData';
 import SummaryCard from '../chart/sumaryCard';
+import { useParams,Link } from 'react-router-dom';
 
 export interface RankingData {
   userId: string;
@@ -24,7 +25,7 @@ export interface RankingData {
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
-    color: '#312e81', // text-indigo-900
+    color: '#312e81', 
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -47,6 +48,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function SubmitRankTable() {
+  const { workspaceId, projectId } = useParams<{ workspaceId: string; projectId: string; }>();
+
   const { statisticData, projectDetail, isLoadingStatistic, errorStatistic } = useProjecteData();
   const { projectHistory } = useHistoryData();
   const inputType = projectDetail?.input_type || '';
@@ -76,7 +79,7 @@ export default function SubmitRankTable() {
             label="ประมวลผลด้วยภาพ"
             value={statisticData.imageCount}
             valueType="ภาพ"
-            disable={statisticData.imageCount === 0}
+            disable={projectDetail.input_type === "วิดีโอ"}
           />
         ) : (
           <SummaryCard
@@ -93,7 +96,7 @@ export default function SubmitRankTable() {
             label="ประมวลผลด้วยวิดีโอ"
             value={statisticData.videoCount}
             valueType="วิดีโอ"
-            disable={statisticData.videoCount === 0}
+            disable={projectDetail.input_type === "รูปภาพ"}
           />
         ) : (
           <SummaryCard
@@ -111,15 +114,15 @@ export default function SubmitRankTable() {
           <TableContainer
             component={Paper}
             sx={{
-              width: '100%', // ทำให้มีขนาดเท่ากับ div เดิม
+              width: '100%',
               maxHeight: '500px',
               minHeight: '500px',
               overflowY: 'auto',
-              borderRadius: '10px', // ให้ขอบมน
-              boxShadow: 3, // ให้เงาเหมือนกล่องเดิม
+              borderRadius: '10px', 
+              boxShadow: 3, 
               borderBottom: '1px solid #E5E7EB',
-              backgroundColor: 'white', // พื้นหลังสีขาว
-              padding: '24px', // p-6 ของ Tailwind
+              backgroundColor: 'white', 
+              padding: '24px', 
             }}
           >
             <Table stickyHeader sx={{ width: '100%' }} aria-label="customized table">
@@ -174,20 +177,25 @@ export default function SubmitRankTable() {
           {projectHistory && projectHistory.length > 0 ? (
             projectHistory.map((item: any) => (
               <div key={item.createdAt} className="mb-4 border-b pb-4">
-                <div className="flex items-center mb-2">
-                  <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(item.user.picture)} alt={item.user.name} />
-                  <div className="ml-3">
-                    <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
-                    <p className="text-gray-600 text-sm">
-                      {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)} น.
-                    </p>
+                <Link
+                  to={`/workspaces/${workspaceId}/project/${projectId}/history/detail/${item.historyId}`}
+                  className="block mt-4 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center mb-2">
+                    <Avatar className="w-10 h-10 rounded-full border-2" src={getImageUrl(item.user.picture)} alt={item.user.name} />
+                    <div className="ml-3">
+                      <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
+                      <p className="text-gray-600 text-sm">
+                        {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)} น.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                {inputType === 'วิดีโอ' ? (
-                  <video className="w-28 h-28 border-2 object-cover rounded-md" src={item.filePath} controls />
-                ) : (
-                  <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(item.filePath)} alt={item.user.name} loading="lazy" />
-                )}
+                  {inputType === 'วิดีโอ' ? (
+                    <video className="w-28 h-28 border-2 object-cover rounded-md" src={item.filePath} controls />
+                  ) : (
+                    <img className="w-28 h-28 border-2 object-cover rounded-md" src={getImageUrl(item.filePath)} alt={item.user.name} loading="lazy" />
+                  )}
+                </Link>
               </div>
             ))
           ) : (

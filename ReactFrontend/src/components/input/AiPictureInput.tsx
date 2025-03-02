@@ -1,26 +1,26 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-interface ProjectImageInputProps {
+interface AiPictureInputProps {
   image?: File;
-  imagePreview?: string;
+  imagePreview?: string |null;
   setImage: (file?: File) => void;
-  setImagePreview: (url?: string) => void;
+  setImagePreview?: (url: string | null) => void;
   handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
   handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  errorMessage?: string;
 }
 
-const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
+const AiPictureInput: React.FC<AiPictureInputProps> = ({
   image,
   imagePreview,
-  setImage,
-  setImagePreview,
   handleFileSelect,
   handleDrop,
   handleDragOver,
+  errorMessage,
 }) => {
-  const [displayImage, setDisplayImage] = useState<string | undefined>(imagePreview);
+  const [displayImage, setDisplayImage] = useState<string | undefined>(() => imagePreview ?? undefined);
 
   useEffect(() => {
     if (image) {
@@ -33,13 +33,16 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
   }, [image, imagePreview]);
 
   return (
-    <>
+    <div className="form-group flex flex-col items-center">
+      <label className="font-medium text-lg justify-start ">AI Picture</label>
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
       {displayImage ? (
         <div className="flex flex-col items-center">
-          <div className="relative text-center my-2 flex flex-col items-center w-fit h-fit justify-center group border-2 rounded-[5px]">
+          <div className="relative text-center my-2 flex flex-col items-center w-fit h-fit justify-center group border-2 rounded-lg">
             <div
-              onClick={() => document.getElementById("file-upload-edit")?.click()}
-              className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-[5px] 
+              onClick={() => document.getElementById("ai-file-upload")?.click()}
+              className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-lg
                          opacity-0 group-hover:opacity-100 cursor-pointer"
             >
               <i className="bi bi-pencil-fill text-white text-2xl" />
@@ -54,14 +57,14 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
             <img
               key={displayImage}
               src={displayImage}
-              alt="Uploaded"
+              alt="AI Preview"
               className="object-cover w-full h-auto max-w-[400px] max-h-[300px] rounded-lg border"
-              onError={() => setDisplayImage(undefined)} 
+              onError={() => setDisplayImage(undefined)}
             />
 
-            {/* Input file (hidden) สำหรับแก้ไขรูป */}
+            {/* Input file (hidden) */}
             <input
-              id="file-upload-edit"
+              id="ai-file-upload"
               type="file"
               accept="image/*"
               className="hidden"
@@ -77,30 +80,18 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
                 backgroundColor: "#4f46e5",
                 "&:hover": { backgroundColor: "#3730a3" },
               }}
-              onClick={() => document.getElementById("file-upload-edit")?.click()}
+              onClick={() => document.getElementById("ai-file-upload")?.click()}
             >
               <i className="bi bi-pencil-fill mr-1" />
               Change
             </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => {
-                setImage(undefined);
-                setImagePreview(undefined);
-                setDisplayImage(undefined);
-              }}
-            >
-              <i className="bi bi-trash-fill mr-1" />
-              Remove
-            </Button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
           <label
-            htmlFor="file-upload"
-            className="flex flex-col my-2 items-center justify-center 
+            htmlFor="ai-file-upload"
+            className="flex flex-col items-center justify-center 
                       p-6 border-2 border-dashed border-gray-500 rounded-lg 
                       w-full max-w-[400px] min-h-[300px] bg-gray-50 cursor-pointer"
           >
@@ -110,11 +101,11 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
               className="flex flex-col items-center justify-center text-center w-full h-full"
             >
               <i className="bi bi-image text-gray-500 text-4xl mb-4" />
-              <p className="text-gray-500">ยังไม่มีรูปปก project</p>
+              <p className="text-gray-500">ยังไม่มีรูป AI</p>
               <p className="text-gray-500">กดเพื่อเลือก หรือ ลากไฟล์มาวางที่นี่</p>
             </div>
             <input
-              id="file-upload"
+              id="ai-file-upload"
               type="file"
               accept="image/*"
               onChange={handleFileSelect}
@@ -123,8 +114,8 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
           </label>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default ProjectImageInput;
+export default AiPictureInput;

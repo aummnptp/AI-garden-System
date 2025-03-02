@@ -43,11 +43,10 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
 };
 
   
-  export const predictFromUrlService = async (ai_id: string, imageUrl: string) => {
+  export const predictFromImageService = async (ai_id: string, imageUrl: string) => {
     if (!ai_id) throw new Error("Missing AI ID");
   
     try {
-      // แปลง URL เป็น File
       const file = await convertUrlToFile(imageUrl, "processedImage.jpg");
   
       const formData = new FormData();
@@ -71,8 +70,8 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
   export const fetchAiModelsService = async (filters: Record<string, string | null> = {}) => {
 
     const cleanFilters: Record<string, string> = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value !== null) // กรองค่า null
-        .map(([key, value]) => [key, value as string]) // แปลงให้เป็น string
+      Object.entries(filters).filter(([_, value]) => value !== null)
+        .map(([key, value]) => [key, value as string]) 
     );
   
     const queryString = new URLSearchParams(cleanFilters).toString();
@@ -98,7 +97,7 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
   export const fetchApprovedAiService = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/ai-models/my_approved`);
-      return response.data ?? []; // ป้องกัน undefined
+      return response.data ?? [];
     } catch (error) {
       return [];
     }
@@ -134,7 +133,7 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
   export const fetchUserApprovedAiService = async (userId: string) => {
     try {
       const response = await axios.get(`${BASE_URL}/ai-models/approved/${userId}`);
-      return response.data ?? []; // ป้องกัน undefined
+      return response.data ?? []; 
     } catch (error) {
       return [];
     }

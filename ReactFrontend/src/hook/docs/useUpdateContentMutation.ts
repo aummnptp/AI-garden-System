@@ -1,4 +1,3 @@
-// 📁 src/hooks/useUpdateContent.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateContentDocumentService, updateContentSubDocumentService } from "../../api/services/DocsService";
 

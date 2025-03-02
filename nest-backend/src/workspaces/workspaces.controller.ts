@@ -51,6 +51,7 @@ export class WorkspacesController {
   @WorkspaceRole('owner')
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
   @Patch('/update/:workspaceId')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   update(@Param('workspaceId') workspaceId: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
     return this.workspacesService.update(workspaceId, updateWorkspaceDto);
   }
@@ -101,11 +102,10 @@ export class WorkspacesController {
     return this.workspacesService.getNonMembersProfiles(workspaceId);
   }
 
-  // รายชื่อที่ชวนไป
+  
   @Role("user")
   @WorkspaceRole('owner')
   @UseGuards(JwtGuard, RolesGuard, WorkspaceRoleGuard)
-  // @UseGuards(JwtGuard)
   @Post('/pending-invite/:workspaceId')
   async pendingInvite(@Request() req, @Param('workspaceId') workspaceId: string, @Body() inviteWorkspaceDto: InviteWorkspaceDto,) {
     const userId = req.user.userId;

@@ -11,7 +11,7 @@ export const VideoUploadForm: React.FC<{
     setUploadStep: (step: number) => void;
     predictResult: PredictResult | null;
     setPredictResult: (result: PredictResult | null) => void;
-    predictFromFile: any;
+    predictFromVideo: any;
   }> = ({
     file,
     setFile,
@@ -19,23 +19,32 @@ export const VideoUploadForm: React.FC<{
     setUploadStep,
     predictResult,
     setPredictResult,
-    predictFromFile,
+    predictFromVideo,
   }) => {
     const handleUploadVideo = async () => {
       if (!file) {
         return;
       }
+      console.log("Uploading file:", file); 
       setUploadStep(2);
-      predictFromFile.mutate(file, {
+      predictFromVideo.mutate(file, {
         onSuccess: (data: PredictResult) => {
+          console.log("Prediction Success:", data); 
           setPredictResult(data);
           setUploadStep(3);
         },
-        onError: () => {
+        onError: (error: unknown) => {
+          if (error instanceof Error) {
+            console.error("Prediction Error:", error.message); 
+          } else {
+            console.error("Unknown error occurred:", error);
+          }
           setUploadStep(1);
         },
       });
     };
+    
+    
   
     return (
       <form

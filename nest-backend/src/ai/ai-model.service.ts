@@ -204,11 +204,9 @@ export class AIModelService {
     const queryBuilder = this.aiModelRepository.createQueryBuilder('aiModel');
   
     if (isAdmin) {
-      // ✅ Admin ได้รับทุก AI Model
       return queryBuilder.getMany();
     }
   
-    // ✅ User ทั่วไป ได้รับเฉพาะ AI ที่ได้รับสิทธิ์
     return queryBuilder
       .innerJoin('aiModel.permissions', 'permission')
       .where('permission.user_id = :userId', { userId })

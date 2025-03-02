@@ -44,14 +44,14 @@ interface Data {
   name: string;
   email: string;
   picture: string;
-  approvedCount: number; // จำนวน AI ที่ใช้งานได้
-  workspaceCount: number; // จำนวน Workspace ที่สร้าง
+  approvedCount: number;
+  workspaceCount: number;
 }
 
 type Order = 'asc' | 'desc';
 
 const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
-  // ดึงข้อมูล userData จาก custom hook
+
   const {
     userData,
     isLoadingUserData,
@@ -62,7 +62,7 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Data>('name');
 
-  // เมื่อ userData เปลี่ยนแปลง ให้อัปเดต state rows
+
   useEffect(() => {
     if (userData) {
       setRows(userData);
@@ -91,7 +91,7 @@ const UserListTable = ({ searchQuery }: { searchQuery: string }) => {
     return 0;
   };
 
-  // กรองข้อมูลตาม searchQuery
+
   const filteredRows = rows.filter((user) =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );

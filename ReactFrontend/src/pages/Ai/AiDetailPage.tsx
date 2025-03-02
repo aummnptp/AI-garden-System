@@ -13,7 +13,7 @@ const AiDetail = () => {
   const { ai_id } = useParams<{ ai_id?: string }>();
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { mutate: requestPermission } = useAiRequestPermissionMutation();
-  // 🔹 State สำหรับ Dialog
+
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const { checkPermission } = useAiPermission();
 
@@ -104,7 +104,7 @@ const AiDetail = () => {
                 onClick={handleOpenConfirmDialog}
                 variant="contained"
                 size="large"
-                disabled={checkPermission?.hasPermission ?? false}  // ปิดปุ่มถ้าเคยขอสิทธิ์แล้ว
+                disabled={checkPermission?.hasPermission ?? false}  
                 sx={{ my: "5px", backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
               >
                 {checkPermission?.hasPermission ? "ขอสิทธิ์แล้ว" : "ส่งคำขอใช้งาน"}

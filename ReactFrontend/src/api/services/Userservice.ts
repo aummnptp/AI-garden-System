@@ -10,9 +10,7 @@ export const fetchUserService = async () => {
 
 export const fetchUserWithPermissionAndWorkspaceCountService = async () => {
   try {
-    // ดึงข้อมูลผู้ใช้
     const { data: users } = await axios.get(`${BASE_URL}/users`);
-    // รวมข้อมูล approvedCount และ workspaceCount สำหรับแต่ละผู้ใช้
     const usersWithCounts = await Promise.all(
       users.map(async (user: any) => {
         const { data: approvedData } = await axios.get(

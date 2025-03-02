@@ -12,7 +12,7 @@ export class AIModel {
   @PrimaryGeneratedColumn(`uuid`,{name:"ai_id"})
   aiId: string;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column({ length: 200, nullable: true })

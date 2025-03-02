@@ -53,8 +53,8 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 src={getImageUrl(props.members[0].user.picture)|| "/images/homeImage/profile.webp"}
                 alt="creator"
                 onError={(e) => {
-                  e.currentTarget.onerror = null; // ป้องกัน loop error
-                  e.currentTarget.src = "/images/homeImage/profile.webp"; // 
+                  e.currentTarget.onerror = null; 
+                  e.currentTarget.src = "/images/homeImage/profile.webp"; 
                 }} 
                 
                 />
@@ -69,8 +69,8 @@ const InvitedCard :React.FC<WorkspaceCardProps> = (props) => {
                 className="w-8 h-8 rounded-full border-2 border-white" 
                 src={getImageUrl(member.user.picture)|| "/images/homeImage/profile.webp"} 
                 onError={(e) => {
-                  e.currentTarget.onerror = null; // ป้องกัน loop error
-                  e.currentTarget.src = "/images/homeImage/profile.webp"; // 
+                  e.currentTarget.onerror = null; 
+                  e.currentTarget.src = "/images/homeImage/profile.webp"; 
                 }} 
                 alt={member.user.name} 
                 />

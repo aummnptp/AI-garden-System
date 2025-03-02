@@ -15,6 +15,9 @@ import App from './App';
 
 
 const theme = createTheme({
+   typography: {
+    fontFamily: "Kanit, sans-serif",
+  },
   components: {
     MuiButton: {
       styleOverrides: {
@@ -30,7 +33,6 @@ const theme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
-          // borderRadius: "20px", // มุมมน
         },
       },
     },
@@ -40,7 +42,6 @@ const theme = createTheme({
 
 
 
-//  React router path here
 
 
 const queryClient = new QueryClient({

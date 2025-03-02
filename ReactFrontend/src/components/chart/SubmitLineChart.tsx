@@ -11,7 +11,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface LineChartProps {

@@ -14,22 +14,18 @@ import { Link, useParams } from "react-router-dom";
 import { Close, } from "@mui/icons-material";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
-
 import { useWorkspaceMutations } from "../../hook/workspaces/useWorkspaceMutations";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { workspaceSchema, WorkspaceSchemaType } from "../../validations/workspaceSchema";
 
-const workspaceSchema = z.object({
-  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
-  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
-});
+
 
 
 const WorkspaceSettingPage = () => {
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
   const [open, setOpen] = React.useState(false);
-  const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
+  const [confirmText, setConfirmText] = useState(""); 
 
 
   const {
@@ -37,7 +33,7 @@ const WorkspaceSettingPage = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<WorkspaceSchemaType>({
     resolver: zodResolver(workspaceSchema),
   });
 
@@ -113,7 +109,7 @@ const WorkspaceSettingPage = () => {
             <input
           type="text"
           value={confirmText}
-          onChange={(e) => setConfirmText(e.target.value)}  // อัปเดต confirmText เมื่อผู้ใช้พิมพ์
+          onChange={(e) => setConfirmText(e.target.value)} 
           className="w-full p-2 border border-gray-300 rounded-lg no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
         />
           </Box>

@@ -11,7 +11,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { Workspace } from "../../types/Workspace";
 
 function WorkspacePage() {
-  const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); // เริ่มต้นโชว์แถวที่ 2
+  const [showWorkspaceRow, setShowWorkspaceRow] = useState(false); 
   const [showModal, setShowModal] = useState(false);
   const toggleWorkspaceRow = () => {
     setShowWorkspaceRow(!showWorkspaceRow);
@@ -48,16 +48,15 @@ function WorkspacePage() {
               </h1>
               <Button
                 variant="contained"
-                size="large"
                 sx={{
                   backgroundColor: "#4f46e5",
                   "&:hover": {
-                    backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                    backgroundColor: "#3730a3", 
                   },
                 }}
                 onClick={() => setShowModal(true)}
               >
-                + สร้าง Workspace
+                + Create Workspace
               </Button>
             </div>
 
@@ -96,7 +95,7 @@ function WorkspacePage() {
                     <div className="w-[85%] h-[0px] border border-zinc-300" />
                   </div>
                 ) : (
-                  // เพิ่มพื้นที่เว้นว่างเมื่อไม่มีปุ่มแสดงเพิ่มเติม
+                
                   <div className="my-2 w-[95%] flex items-center px-2">
                     <div className="w-full h-[20px]" />
                   </div>

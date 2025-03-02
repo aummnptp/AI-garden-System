@@ -46,7 +46,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onlogout}) => {
         onClose={handleClose}
         PaperProps={{
           elevation: 3,
-          sx: { mt: 1, minWidth: 200 }, // กำหนดระยะห่างและขนาด
+          sx: { mt: 1, minWidth: 200 },
         }}
       >
         {/* แสดงอีเมลของผู้ใช้ */}

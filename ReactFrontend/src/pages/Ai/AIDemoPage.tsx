@@ -17,12 +17,12 @@ const AIDemo: React.FC = () => {
   const [predictResult, setPredictResult] = useState<PredictResult | null>(
     null
   );
-  const { predictFromUrl } = useAiDemoPredict();
+  const { predictFromImage } = useAiDemoPredict();
   const { aiModelData, isLoadingAiModel } = useAiData();
 
   const steps = ["อัปโหลดรูปภาพ", "ปรับแต่งภาพ", "ประมวลผล", "เสร็จสิ้น"];
 
-  // Handler to receive the processed image URL from the child component
+
   const handleProcessUrlChange = (url: string) => {
     setCustomedImageUrl(url);
   };
@@ -35,7 +35,7 @@ const AIDemo: React.FC = () => {
       return;
     }
 
-    predictFromUrl.mutate(customedImageUrl, {
+    predictFromImage.mutate(customedImageUrl, {
       onSuccess: (data: PredictResult) => {
         setPredictResult(data);
         setUploadStep(4);

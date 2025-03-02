@@ -186,8 +186,8 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                             src={getImageUrl(member.user.picture)|| "/images/homeImage/profile.webp"}
                             alt="User"
                             onError={(e) => {
-                              e.currentTarget.onerror = null; // ป้องกัน loop error
-                              e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/images/homeImage/profile.webp";
                             }}
                           />
                           <div className="ml-2">
@@ -204,7 +204,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                             <Select
                               value={member.role}
                               onChange={(event) => handleChangeRole(member.memberId, event.target.value)} 
-                              // onChange={(event) => handleChange(event, index)}
+
                               displayEmpty
                               inputProps={{ "aria-label": "Without label" }}
                               disabled={index === 0}
@@ -230,8 +230,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                           )}
                         </div>
                       </div>
-                    <Dialog
-                            // open={open}
+                          <Dialog
                             open={removeMembeIndex === index}
                             onClose={handleCloseRemoveMemberDialog}
                             aria-labelledby="alert-dialog-title"
@@ -249,8 +248,8 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                               <Button variant="contained" color="error"  
                                     onClick={() => {
                                       if (member.user?.userId) {
-                                        handleRemoveMember(member.user.userId);  // ลบสมาชิกที่เลือก
-                                        handleCloseRemoveMemberDialog();  // ปิด dialog
+                                        handleRemoveMember(member.user.userId);  
+                                        handleCloseRemoveMemberDialog();  
                                       }
                                     }}
                               autoFocus >remove</Button>
@@ -276,8 +275,8 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                           src={getImageUrl(pending.user.picture)|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
-                            e.currentTarget.onerror = null; // ป้องกัน loop error
-                            e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                            e.currentTarget.onerror = null; 
+                            e.currentTarget.src = "/images/homeImage/profile.webp";  
                           }}
                         />
                         <div className="ml-2">
@@ -309,7 +308,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                   <Autocomplete
                     multiple
                     options={userDatas}
-                    // getOptionLabel={(option) =>`${option.firstName} ${option.lastName} (${option.email})`}
+                    
                     getOptionLabel={(option) => `${option.email}`}
                     renderOption={(props, option) => (
                       <li {...props}>
@@ -317,8 +316,8 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                           src={getImageUrl(option.picture)|| "/images/homeImage/profile.webp"}
                           alt="User"
                           onError={(e) => {
-                            e.currentTarget.onerror = null; // ป้องกัน loop error
-                            e.currentTarget.src = "/images/homeImage/profile.webp"; // ตั้งค่า fallback รูปภาพเมื่อเกิดข้อผิดพลาด
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "/images/homeImage/profile.webp";
                           }}
                           style={{
                             width: 30,
@@ -357,7 +356,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                       my: "5px",
                       backgroundColor: "#4f46e5",
                       "&:hover": {
-                        backgroundColor: "#3730a3", // สีที่ต้องการเมื่อ hover
+                        backgroundColor: "#3730a3",
                       },
                     }}
                     onClick={handleInviteButton}
@@ -384,7 +383,7 @@ if (isLoadingInviteLink|| isLoadingWorkspace||isLoadingAvailableUsers||isLoading
                         }}
                         sx={{
                           "& .MuiInputBase-input": {
-                            color: "#2890e9", // สีของข้อความในช่อง input
+                            color: "#2890e9",
                           },
                           width: "80%",
                           backgroundColor: "white",

@@ -19,32 +19,30 @@ export default function stringToColor(string:string) {
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
-    return "Invalid date"; // หรือข้อความอื่น เช่น "N/A"
+    return "Invalid date"; 
   }
-  return date.toLocaleDateString("th-TH", {
+
+  return new Intl.DateTimeFormat("th-TH", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
+    timeZone: "Asia/Bangkok",
+  }).format(date);
 };
 
 export const formatTime = (dateString: string | Date): string => {
   if (!dateString) return "Invalid time"; 
 
-  let formattedDateString = typeof dateString === "string" ? dateString : dateString.toISOString();
+  let date = new Date(dateString);
 
-  let date = new Date(formattedDateString);
-
- 
-  if (formattedDateString.includes("Z")) {
-    date.setHours(date.getHours() + 7);
-  }
-
-  return date.toLocaleTimeString("th-TH", {
+  return new Intl.DateTimeFormat("th-TH", {
     hour: "2-digit",
     minute: "2-digit",
-  }) + " น.";
+    hour12: false,
+    timeZone: "Asia/Bangkok", 
+  }).format(date) + " น.";
 };
+
 
 
 export const getImageUrl = (path?: string): string => {

@@ -41,10 +41,10 @@ const HistoryDetailPage = () => {
         <Sidebar workspace={workspaceDetail} project={projectDetail} />
 
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] shadow-lg">
+          <div className="pb-5 h-fit w-full bg-white shadow-lg">
             <div className="flex justify-between items-center p-5 border-b border-zinc-300">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
-                {/* {projectDetail.inputType === 'รูปภาพ' ? 'Upload Image' : 'Upload Video'} */}
+               ประวัติผลลัพธ์
               </h1>
             </div>
 

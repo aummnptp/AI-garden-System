@@ -4,17 +4,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useCreateWorkspaceMutation } from '../../hook/workspaces/useCreateWorkspaceMutation';
 import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { workspaceSchema, WorkspaceSchemaType } from '../../validations/workspaceSchema';
 
 interface CreateWorkspaceProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const workspaceSchema = z.object({
-  name: z.string().min(3, "Workspace name must be at least 3 characters").max(20, "Name cannot exceed 20 characters"),
-  description: z.string().min(5, "Description must be at least 5 characters").max(50, "Description cannot exceed 50 characters"),
-});
+
 
 export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, setShowModal }) => {
   const { mutate: createWorkspace } = useCreateWorkspaceMutation();
@@ -24,7 +21,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<WorkspaceSchemaType>({
     resolver: zodResolver(workspaceSchema),
   });
 
@@ -35,14 +32,13 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
       onSuccessCallback: () => {
         reset(); 
         setShowModal(false);
-        toast.success("Workspace created successfully!");
       },
     });
   };
   return (
     <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="sm" fullWidth>
     <DialogTitle>
-      <span className="text-2xl font-semibold text-indigo-900">สร้าง Workspace</span>
+      <span className="text-2xl font-semibold text-indigo-900">Create Workspace</span>
       <IconButton
         aria-label="close"
         onClick={() => setShowModal(false)}
@@ -59,7 +55,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
     <DialogContent dividers>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4">
         <div>
-          <span className="font-medium tracking-tight text-indigo-900">ชื่อ Workspace</span>
+          <span className="font-medium tracking-tight text-indigo-900">Workspace Name</span>
           <span className="ml-2 text-red-500 text-sm">*</span>
           <TextField
             fullWidth
@@ -72,7 +68,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
           />
         </div>
         <div>
-          <span className="font-medium tracking-tight text-indigo-900">คำอธิบาย</span>
+          <span className="font-medium tracking-tight text-indigo-900">Workspace Description</span>
           <TextField
             fullWidth
             placeholder="คำอธิบาย Workspace"
@@ -96,7 +92,7 @@ export const CreateWorkspace: React.FC<CreateWorkspaceProps> = ({ showModal, set
               },
             }}
           >
-            สร้าง
+            Create
           </Button>
         </DialogActions>
       </form>

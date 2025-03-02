@@ -1,4 +1,4 @@
-import React, { ChangeEvent, DragEvent, useEffect, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useState } from "react";
 
 import Sidebar from "../../components/Sidebar";
 import {
@@ -22,63 +22,83 @@ import { useProjecteData } from "../../hook/projects/useProjectData";
 import { useWorkspaceData } from "../../hook/workspaces/useWorkspaceData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import { useProjectMutations } from "../../hook/projects/useProjectMutations";
+import {
+  projectSchema,
+  ProjectSchemaType,
+} from "../../validations/projectSettingSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { getImageUrl } from "../../function/util";
 
 const ProjectSetting = () => {
   let { workspaceId, projectId } = useParams();
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [inputType, setInputType] = useState<string>("");
-  const [open, setOpen] = React.useState(false);
-  const [confirmText, setConfirmText] = useState(""); 
-  const [image, setImage] = useState<File | null>(null);
+  const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
+  const { projectDetail, isLoadingProjectDetail } = useProjecteData();
+  const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(
+    workspaceId,
+    projectId
+  );
+  const [open, setOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | undefined>();
 
-  const { workspaceDetail, isLoadingWorkspace, } =
-    useWorkspaceData();
-  const { projectDetail, isLoadingProjectDetail, } =
-    useProjecteData();
-
-const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(workspaceId, projectId);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ProjectSchemaType>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      inputType: "",
+      image: undefined,
+    },
+  });
 
   useEffect(() => {
     if (projectDetail) {
-      setName(projectDetail.name);
-      setDescription(projectDetail.description);
-      setImage(projectDetail.image_path);
-      setInputType(projectDetail.input_type);
+      setImagePreview(projectDetail.imagePath);
+      setValue("name", projectDetail.name);
+      setValue("description", projectDetail.description);
+      setValue("inputType", projectDetail.input_type);
     }
-  }, [projectDetail]);
-
-
+  }, [projectDetail, setValue]);
+console.log(imagePreview)
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    setImage(file);
+    setValue("image", file);
   };
-  //
+
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImage(file);
+      setValue("image", file);
     }
   };
-  //
+
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  const handleSave = () => {
+  const handleSave = handleSubmit((data) => {
     if (!workspaceId || !projectId) return;
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("input_type", inputType);
-    if (image) {
-      formData.append("file", image);
+    formData.append("name", data.name);
+    formData.append("description", data.description);
+    formData.append("input_type", data.inputType);
+    if (data.image) {
+      formData.append("file", data.image);
+    } else if (!imagePreview) {
+      formData.append("imagePath", "");
     }
 
     updateProjectMutation.mutate({ workspaceId, projectId, formData });
-  };
+  });
 
   const handleDelete = () => {
     if (!workspaceId || !projectId) return;
@@ -93,7 +113,8 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
     setOpen(false);
   };
 
-  const isDeleteDisabled = confirmText !== name;
+  const isDeleteDisabled = confirmText !== watch("name");
+
   if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
   return (
     <div className="flex h-full min-h-screen bg-neutral-100">
@@ -109,10 +130,13 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
         aria-describedby="alert-dialog-description"
       >
         <Box sx={{ textAlign: "center", padding: "20px" }}>
-          <div className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto">
+          <form
+            onSubmit={handleSave}
+            className="p-1 border-red-600 border-2  rounded-full w-fit h-fit flex justify mx-auto"
+          >
             {/* <Delete sx={{ fontSize: 40, color: 'red' }} /> */}
             <Close sx={{ fontSize: 40, color: "red" }} />
-          </div>
+          </form>
 
           <DialogTitle
             id="alert-dialog-title"
@@ -124,18 +148,19 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
             variant="body1"
             sx={{ marginBottom: "20px", color: "#555" }}
           >
-            Delete a <strong>"{name}"</strong> from project list?
+            Delete a <strong>"{projectDetail?.name}"</strong> from project list?
           </Typography>
           <Typography
             variant="body1"
             sx={{ marginBottom: "20px", color: "#555" }}
           >
-            To confirm, type <strong>"{name}"</strong> to in the box
+            To confirm, type <strong>"{projectDetail?.name}"</strong> to in the
+            box
           </Typography>
           <input
             type="text"
             value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)} // อัปเดต confirmText เมื่อผู้ใช้พิมพ์
+            onChange={(e) => setConfirmText(e.target.value)} 
             className="w-full p-2 border border-gray-300 rounded-lg no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
           />
         </Box>
@@ -168,7 +193,6 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
           </h1>
           <div className="w-full h-[0px] border border-zinc-300 mx-auto" />
           <div className="flex justify-start  ">
-            {/* sticky top-[10%] bg-white w-full z-50 */}
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
                 <Link
@@ -205,8 +229,10 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
 
               <div className="w-full flex py-2">
                 <ProjectImageInput
-                  image={image}
-                  setImage={setImage}
+                  image={watch("image") || undefined }
+                  imagePreview={getImageUrl(imagePreview)} 
+                  setImagePreview={setImagePreview}
+                  setImage={(file: File | undefined) => setValue("image", file)}
                   handleFileSelect={handleFileSelect}
                   handleDrop={handleDrop}
                   handleDragOver={handleDragOver}
@@ -219,52 +245,57 @@ const { updateProjectMutation, deleteProjectMutation } = useProjectMutations(wor
               </label>
               <div className="mx-auto flex-col flex text-black text-2xl mb-4">
                 <TextField
-                  id="standard-number"
-                  placeholder="project name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...register("name")}
+                  label="Project Name"
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                  fullWidth
                 />
               </div>
               <FormControl>
-                <label className=" flex-col flex text-black text-2xl mb-4 ">
-                  Project Type
-                  <RadioGroup
-                    value={inputType}
-                    onChange={(e) => setInputType(e.target.value)}
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="row-radio-buttons-group"
-                  >
-                    <FormControlLabel
-                      value="รูปภาพและวิดีโอ "
-                      control={<Radio />}
-                      label="รูปภาพ และ วิดีโอ "
-                    />
-                    <FormControlLabel
-                      value="รูปภาพ"
-                      control={<Radio />}
-                      label="รูปภาพ"
-                    />
-                    <FormControlLabel
-                      value="วิดีโอ"
-                      control={<Radio />}
-                      label="วิดีโอ"
-                    />
-                  </RadioGroup>
-                </label>
-              </FormControl>
+  <label className="flex-col flex text-black text-2xl mb-4">
+    Project Type
+    <RadioGroup
+      value={watch("inputType") || ""} 
+      onChange={(e) => setValue("inputType", e.target.value)}
+      row
+    >
+      <FormControlLabel
+        value="รูปภาพและวิดีโอ"
+        control={<Radio />}
+        label="รูปภาพและวิดีโอ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ"}
+      />
+      <FormControlLabel
+        value="รูปภาพ"
+        control={<Radio />}
+        label="รูปภาพ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ" }
+      />
+      <FormControlLabel
+        value="วิดีโอ"
+        control={<Radio />}
+        label="วิดีโอ"
+        disabled={projectDetail.ai_model.inputType !== "รูปภาพและวิดีโอ"}
+      />
+    </RadioGroup>
+  </label>
+</FormControl>
+
+
               <label className="mx-auto flex-col flex text-black text-2xl mb-2 ">
                 {" "}
                 Project description
               </label>
               <div className="mx-auto flex-col flex text-black text-2xl">
                 <TextField
-                  id="standard-number"
-                  placeholder="project description"
+                  {...register("description")}
+                  label="Project Description"
                   multiline
                   rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                  fullWidth
                 />
               </div>
             </div>

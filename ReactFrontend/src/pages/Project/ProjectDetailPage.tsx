@@ -166,7 +166,7 @@ const ProjectDetailPage = () => {
                       backgroundColor: "#3730a3",
                     },
                   }}
-                  disabled={!projectDetail.ai_model.enable} // ปิดปุ่มถ้า AI Model ไม่ Enable
+                  disabled={!projectDetail.ai_model.enable} 
                 >
                   {projectDetail.input_type === "รูปภาพ"
                     ? "อัพโหลดรูปภาพ"

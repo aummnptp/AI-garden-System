@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDTO } from './dto/register.dto';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -43,8 +43,15 @@ export class UserController {
   @Role("admin")
     @UseGuards(JwtGuard, RolesGuard)
   @Patch('promote/:userId') 
-  promoteToAdmin(@Param('userId') userId: string) {
-    return this.userService.promoteToAdmin(userId);
+  promoteToAdmin(@Req() req,@Param('userId') userId: string) {
+    return this.userService.promoteToAdmin(req.user.userId, userId);
+  }
+
+  @Role("admin")
+    @UseGuards(JwtGuard, RolesGuard)
+  @Patch('demote/:userId') 
+  demoteFromADmin(@Req() req,@Param('userId') userId: string) {
+    return this.userService.demoteFromAdmin(req.user.userId, userId);
   }
 
   @Get('get-user/:id')

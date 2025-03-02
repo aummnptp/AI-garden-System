@@ -9,7 +9,7 @@ export class Workspace {
    @PrimaryGeneratedColumn(`uuid`, { name: 'workspace_id' })
    workspaceId: string;
 
-   @Column()
+   @Column({ unique: true })
    name: string;
 
    @Column()

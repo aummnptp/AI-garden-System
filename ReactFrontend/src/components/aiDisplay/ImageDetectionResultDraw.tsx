@@ -46,44 +46,35 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
  
   useEffect(() => {
     if (!canvasRef.current) return;
-
+  
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     if (!context) return;
-
+  
     const image = new Image();
     image.src = InputImage;
     image.onload = () => {
-
-      if (aiDisplayType === "segmentation") {
-        const canvasWidth = image.width;
-        const canvasHeight = image.height;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-      } else {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        context.drawImage(image, 0, 0);
-      }
-
+      canvas.width = image.width;
+      canvas.height = image.height;
+      context.drawImage(image, 0, 0);
+  
+      const scaleFactor = Math.min(canvas.width, canvas.height) / 600; 
+      const baseFontSize = 30; 
+  
       if (showAnnotations && detections) {
         if (aiDisplayType === "objectdetection") {
-
           (detections as ObjectDetection[]).forEach((detection, index) => {
             const confidence = detection.confidence.toFixed(2);
             const labelText = `${index + 1}. ${detection.label} (${confidence})`;
             const { x1, y1, x2, y2 } = detection.position;
-
-
+  
             const color =
               colorSet && colorSet.length > 0
                 ? colorSet[index % colorSet.length]
-                : "00ff00";
-
-            // color fill alpha (0.2)
+                : "#00ff00";
+  
             const fillColor = hexToRgba(color, 0.2);
-
+  
             context.beginPath();
             context.rect(x1, y1, x2 - x1, y2 - y1);
             context.lineWidth = 2;
@@ -91,24 +82,19 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
             context.fillStyle = fillColor;
             context.fill();
             context.stroke();
-            context.font = "30px Arial";
+  
+            // fontsize  scale min at 12
+            const fontSize = Math.max(baseFontSize * scaleFactor, 12); 
+            context.font = `${fontSize}px Arial`;
             context.fillStyle = color;
             context.fillText(labelText, x1, y1 - 5);
           });
         } else if (aiDisplayType === "segmentation") {
-
-          const canvasWidth = image.width;
-          const canvasHeight = image.height;
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
-          context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-  
           (detections as SegmentationDetection[]).forEach((detection, index) => {
             const { label, polygons } = detection;
-          
             const color = colorSet && colorSet.length > 0 ? colorSet[index % colorSet.length] : "#00ff00";
             const fillColor = hexToRgba(color, 0.3);
-          
+  
             polygons.forEach((polygon: [number, number][]) => {
               context.beginPath();
               polygon.forEach(([x, y]: [number, number], idx: number) => {
@@ -125,22 +111,22 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
               context.fill();
               context.stroke();
             });
-          
-            //  label
+  
             const allPoints: [number, number][] = polygons.flat();
-            const minY = Math.min(...allPoints.map((point: [number, number]) => point[1]));
-            const labelPoint = allPoints.find((point: [number, number]) => point[1] === minY) || [0, 0];
+            const minY = Math.min(...allPoints.map((point) => point[1]));
+            const labelPoint = allPoints.find((point) => point[1] === minY) || [0, 0];
             const [labelX, labelY] = labelPoint;
-          
-            context.font = "25px Arial";
+  
+            const fontSize = Math.max(baseFontSize * scaleFactor, 12);
+            context.font = `${fontSize}px Arial`;
             context.fillStyle = color;
             context.fillText(`${index + 1}. ${label}`, labelX, labelY - 5);
           });
         }
       }
-
     };
   }, [InputImage, detections, showAnnotations, aiDisplayType, colorSet]);
+  
 
 
   const toggleAnnotations = () => {

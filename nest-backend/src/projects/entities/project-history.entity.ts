@@ -10,21 +10,23 @@ export class ProjectHistory {
 @PrimaryGeneratedColumn('uuid',{name:"history_id"})
 historyId: string;
 
-// ภาพไม่ก็วิดีโอ
+
 @Column({nullable: true })
 filePath: string;
 
-@Column('jsonb', { select: false })
+@Column('jsonb',
+  //  { select: false }
+  )
 prediction:{}[];
 
-@Column('jsonb',{name:"response_keys"}) // ใช้ jsonb สำหรับเก็บ Array ใน PostgreSQL
-response_keys: { key: string; meaning: string ,displayFormat:string}[]; // รูปแบบ Array ของ JSON object
+@Column('jsonb',{name:"response_keys"})
+response_keys: { key: string; meaning: string ,displayFormat:string}[]; 
 
 
 // ยังไม่ได้จัด
   @ManyToOne(() => Project, (project) => project.project_historys, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
-  project: Project; // ความสัมพันธ์กับ Workspace
+  project: Project; 
 
   @ManyToOne(() => AIModel,{ onDelete: 'CASCADE' })
   ai_model: AIModel;
@@ -32,7 +34,7 @@ response_keys: { key: string; meaning: string ,displayFormat:string}[]; // ร�
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user:  User; // ความสัมพันธ์กับ User
+  user:  User; 
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'create_at' })
   createdAt: Date;

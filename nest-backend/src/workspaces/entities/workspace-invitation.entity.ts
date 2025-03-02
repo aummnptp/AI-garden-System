@@ -14,8 +14,6 @@ import {
     @PrimaryGeneratedColumn(`uuid`,{ name: 'invite_id' })
     inviteId: string;
 
-    // @Column()
-    // inviteById: number;
     @ManyToOne(() => Workspace, (workspace) => workspace.invitations, {
       onDelete: 'CASCADE',
     })
@@ -31,7 +29,7 @@ import {
     invitedBy: User;
   
     @Column({ default: 'pending' })
-    status: string; // pending | accepted | rejected
+    status: string; 
   
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

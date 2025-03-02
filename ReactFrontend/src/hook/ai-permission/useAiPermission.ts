@@ -9,6 +9,7 @@ export const useAiPermission = () => {
     const { ai_id } = useParams<{ ai_id:string}>();
     const {
         data: PermissionData = [],
+        refetch: fetchAiPermissions,
     } = useQuery({
         queryKey: ["ai-permission"],
         queryFn: () => fetchPermissionDetailService(),
@@ -24,6 +25,8 @@ export const useAiPermission = () => {
 
     return {
         PermissionData,
+        fetchAiPermissions,
+
         checkPermission
     };
 };

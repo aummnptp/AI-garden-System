@@ -16,7 +16,7 @@ import LoadingSpinner from "../LoadingSpinner";
 
 function Nav() {
   const navigate = useNavigate();
-  const { logout, login, user, isAuthenticated, loading, isAdmin } = useAuth(); // ดึง logout จาก context
+  const { logout, login, user, isAuthenticated, loading, isAdmin } = useAuth(); 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -67,7 +67,7 @@ function Nav() {
 
   return (
     <nav className="bg-white w-full sticky z-20 top-0 start-0 border-b border-gray-200">
-      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+      <div className="w-full flex items-center justify-between mx-auto p-4">
         {/* กลุ่ม Logo และ Navigation */}
         <div className="flex items-center gap-x-6">
           <Link to={`/`}>

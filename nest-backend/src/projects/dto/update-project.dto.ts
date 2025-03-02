@@ -1,33 +1,17 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateProjectDto } from './create-project.dto';
+import { IsOptional } from "class-validator";
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
-    // @isString()
-    // @IsOptional()
-    project_name?: string;
+    @IsOptional()
+    name?: string;
   
-    // @IsString()
-    // @IsOptional()
-    project_desc?: string;
+    @IsOptional()
+    description?: string;
   
-    // @IsString()
-    // @IsOptional()
+    @IsOptional()
     input_type?: string;
   
-    // @IsString()
-    // @IsOptional()
+    @IsOptional()
     imagePath?: string;
-  
-    // @IsBoolean()
-    // @IsOptional()
-    permission_only?: boolean;
-  
- 
-    // @IsNumber()
-    // @IsOptional()
-    // workspace_id?: number;
-  
-    // @IsNumber()
-    // @IsOptional()
-    // ai_id?: number;
-}
+  }

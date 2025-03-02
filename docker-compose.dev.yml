@@ -4,24 +4,6 @@ networks:
   ai_garden_network:
     driver: bridge
 services:
-  # db:
-  #   image: postgres:17
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: admin
-  #     POSTGRES_DB: ai_garden_db
-  #   networks:
-  #     - ai_garden_network
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - db-data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
 
   nest-backend:
     build:
@@ -31,7 +13,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./upload:/app/upload
+      - uploads-data:/app/uploads
       - ./nest-backend/.env:/app/.env
     environment:
       DATABASE_URL: postgres://postgres:admin@host.docker.internal:5432/ai_garden_db
@@ -57,3 +39,4 @@ services:
 
 volumes:
   db-data:
+  uploads-data:

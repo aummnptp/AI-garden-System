@@ -1,12 +1,15 @@
 import { Button, Chip } from "@mui/material";
 import React, { useState } from "react";
+import { FieldErrors } from "react-hook-form";
+import { AiSchemaType } from "../../validations/aiSchema";
 
 interface ColorPickerTagsProps {
-  colors: string[]; // ค่าสีที่ถูกเลือก
-  onChange: (colors: string[]) => void; // Callback เมื่อมีการเปลี่ยนแปลงค่า
+  colors: string[]; 
+  onChange: (colors: string[]) => void; 
+  errors: FieldErrors<AiSchemaType>;  
 }
 
-const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange}) => {
+const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange,  errors,  }) => {
   const [newColor, setNewColor] = useState<string>("#00ff00");
 
   const handleTagAdd = () => {
@@ -23,6 +26,7 @@ const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange}) => {
     <div className="form-group">
       <label className="">AI Color (สำหรับการกำหนดสีกรอบผลลัพธ์AI ประเภท ObjectDetection Segmentation)</label>
       <div className="flex flex-wrap gap-2 mt-2">
+      {errors.colorSet && <p className="text-red-500 text-sm">{errors.colorSet.message}</p>}
       {colors.map((color, index) => (
           <Chip
             key={index}
@@ -33,6 +37,7 @@ const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange}) => {
                   style={{ backgroundColor: color }}
                 />
                 <span>Color {index + 1}</span>
+           
               </div>
             }
             onDelete={() => handleTagRemove(color)}
@@ -43,11 +48,13 @@ const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange}) => {
               borderRadius: "20px",
             }}
           />
+  
         ))}
       </div>
 
       {/* Color Picker & Button */}
       <div className="flex items-center space-x-2 mt-3">
+  
       <input
           type="color"
           value={newColor}

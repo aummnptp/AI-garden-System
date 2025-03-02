@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
 
-// pag import
+// page import
 import WorkspacePage from '../pages/Workspace/WorkspacePage.tsx'
 import HomePage from '../pages/HomePage.tsx'
 import ProjectListPage from '../pages/Project/ProjectListPage.tsx'
@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
       path: "/",
       element: <HomePage/>,
     },
-    // สำหรับตอนเริ่มต้น
+
     {
       path: "/docs",
       element: <DocsPage/>,

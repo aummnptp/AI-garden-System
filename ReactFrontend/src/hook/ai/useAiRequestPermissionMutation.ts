@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+
 export const useAiRequestPermissionMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -14,11 +15,11 @@ export const useAiRequestPermissionMutation = () => {
       return response.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["ai-permission","check-permission"] });
+
+      await queryClient.invalidateQueries({ queryKey: ["ai-permission"] });
+      await queryClient.invalidateQueries({ queryKey: ["check-permission"] });
+
       toast.success(`คำขอใช้งาน AI ถูกส่งเรียบร้อย`);
-    },
-    onError: () => {
-      toast.error("ไม่สามารถส่งคำขอใช้งานได้");
     },
   });
 };

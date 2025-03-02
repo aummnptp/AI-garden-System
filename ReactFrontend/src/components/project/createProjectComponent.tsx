@@ -4,6 +4,8 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField 
 import { AIDataType } from "../../types/Ai";
 import CreateProjectCard from "../card/CreateProjectCard";
 import { getImageUrl } from "../../function/util";
+import { CreateProjectFormType } from "../../validations/projectSchema";
+import { FieldErrors } from "react-hook-form";
 
   // ---------------------------------------------------------------------
   // 1) StepOne: ใส่ข้อมูลโปรเจกต์
@@ -13,11 +15,12 @@ import { getImageUrl } from "../../function/util";
     setProjectName: (val: string) => void;
     projectDescription: string;
     setProjectDescription: (val: string) => void;
-    image: File | null;
-    setImage: (file: File | null) => void;
+    image?: File; 
+    setImage: (file?: File) => void;
     handleFileSelect: (e: ChangeEvent<HTMLInputElement>) => void;
     handleDrop: (e: DragEvent<HTMLDivElement>) => void;
     handleDragOver: (e: DragEvent<HTMLDivElement>) => void;
+    errors: FieldErrors<CreateProjectFormType>; 
   }
   
   export const StepOne: React.FC<StepOneProps> = ({
@@ -30,12 +33,15 @@ import { getImageUrl } from "../../function/util";
     handleFileSelect,
     handleDrop,
     handleDragOver,
+    errors,
   }) => {
     return (
         <div className="flex flex-col md:flex-row w-full gap-6 items-stretch mt-8">
         <div className="md:w-2/5 w-full border border-gray-300 rounded-[5px] p-6 flex flex-col">
           <ProjectImageInput
             image={image}
+            imagePreview={undefined}
+            setImagePreview={() => {}}
             setImage={setImage}
             handleFileSelect={handleFileSelect}
             handleDrop={handleDrop}
@@ -51,6 +57,8 @@ import { getImageUrl } from "../../function/util";
             variant="outlined"
             fullWidth
             margin="normal"
+            error={Boolean(errors.projectName)} 
+            helperText={errors.projectName?.message} 
           />
           <label className="text-black text-2xl font-medium mt-4">Project description</label>
           <TextField
@@ -62,6 +70,8 @@ import { getImageUrl } from "../../function/util";
             margin="normal"
             multiline
             rows={4}
+            error={Boolean(errors.projectDescription)} 
+            helperText={errors.projectDescription?.message} 
           />
         </div>
       </div>

@@ -45,8 +45,8 @@ export const useCreateProjectMutation = () => {
       toast.success("Project created successfully!");
       navigate(`/workspaces/${workspaceId}/project-list`);
     },
-    onError: () => {
-      toast.error("Failed to create project.");
+    onError: (error) => {
+      toast.error(`Failed to create project: ${error.message}`);
     },
   });
 

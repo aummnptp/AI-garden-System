@@ -7,7 +7,7 @@ export type Note= {
 
   export type HistoryDetail= {
     filePath: string;
-    // Add other properties of historyDetail if any
+
   }
 
   export type HistoryNoteData= {

@@ -41,9 +41,9 @@ export class ProjectsService {
     @InjectRepository(ProjectPermission)
     private projectPermissionRepository: Repository<ProjectPermission>,
 
-    private readonly aiModelService: AIModelService, 
-) {}
-async validateWorkspace(workspaceId: string): Promise<Workspace> {
+    private readonly aiModelService: AIModelService,
+  ) { }
+  async validateWorkspace(workspaceId: string): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOne({
       where: { workspaceId: workspaceId },
     });
@@ -56,7 +56,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
   }
 
 
-  async create(workspaceId: string, createProjectDto: CreateProjectDto, file?: Express.Multer.File,   userId?: string ,): Promise<Project> {
+  async create(workspaceId: string, createProjectDto: CreateProjectDto, file?: Express.Multer.File, userId?: string,): Promise<Project> {
     await this.validateWorkspace(workspaceId)
     // const aiModel = await this.aiModelService.findOne({ where: { id: createProjectDto.ai_id } });
 
@@ -64,7 +64,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
+
     const aiModel = await this.aiModelService.findOne(createProjectDto.ai_id);
     if (!aiModel) {
       throw new NotFoundException('AI Model not found');
@@ -78,7 +78,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       ...createProjectDto,
       workspace: { workspaceId },
       ai_model: aiModel,
-      imagePath: filePath, 
+      imagePath: filePath,
       createdBy: user,
     });
     return this.projectRepository.save(project);
@@ -86,16 +86,28 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
 
 
   async update(workspaceId: string, projectId: string, updateProjectDto: UpdateProjectDto, file?: Express.Multer.File): Promise<Project> {
-
     let filePath: string | undefined;
+    
     if (file) {
-      // บันทึกไฟล์ในตำแหน่งที่ต้องการ
+      // หากมีการอัปโหลดรูปใหม่
       filePath = `/uploads/project/${file.filename}`;
+    } else if (updateProjectDto.imagePath === "") {
+      // ถ้า imagePath เป็น "" แปลว่าผู้ใช้ต้องการลบรูป
+      const project = await this.projectRepository.findOne({ where: { projectId } });
+      if (project?.imagePath) {
+        const oldImagePath = `./uploads/project/${project.imagePath.split('/').pop()}`;
+        fs.unlink(oldImagePath, (err) => {
+          if (err) console.error("Failed to delete old image:", err);
+        });
+      }
+      filePath = null; // ลบค่า imagePath ในฐานข้อมูล
     }
+  
     await this.projectRepository.update(projectId, {
       ...updateProjectDto,
-      imagePath: filePath, 
+      imagePath: filePath,
     });
+  
     const updatedProject = await this.projectRepository.findOne({ where: { projectId } });
     if (!updatedProject) {
       throw new NotFoundException('Project not found after update');
@@ -136,7 +148,7 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     });
     if (!project) throw new NotFoundException('Project not found');
     return project;
-     
+
   }
 
   async remove(workspaceId: string, projectId: string): Promise<void> {
@@ -195,9 +207,9 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
       const history = this.projectHistoryRepository.create({
         project: project,
         ai_model: model,
-        filePath:filePath,
+        filePath: filePath,
         response_keys: predictionResult.response_keys,
-        prediction: predictionResult.prediction, 
+        prediction: predictionResult.prediction,
         user: userProfile
       });
       await this.projectHistoryRepository.save(history);
@@ -210,30 +222,46 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     }
   }
 
-  async getAllHistory(projectId: string): Promise<ProjectHistory[]> {
-    const allHistory = await this.projectHistoryRepository.find({
-      where: { project: { projectId } },
+  async getAllHistory(projectId: string, userId: string): Promise<ProjectHistory[]> {
+    const project = await this.projectRepository.findOne({
+      
+      where: { projectId },
+      relations: ['workspace'],
+    });
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    const workspaceId = project.workspace.workspaceId;
+    const workspaceMember = await this.workspaceMemberRepository.findOne({
+      where: { user: { userId }, workspace: { workspaceId } },
+    });
+    const isOwnerOrAdmin = workspaceMember?.role === 'owner' || workspaceMember?.role === 'admin';
+    if (isOwnerOrAdmin) {
+      return this.projectHistoryRepository.find({
+        where: { project: { projectId } },
+        relations: ['ai_model', 'user'],
+        order: { createdAt: 'DESC' },
+      });
+    }
+    return this.projectHistoryRepository.find({
+      where: { project: { projectId }, user: { userId } },
       relations: ['ai_model', 'user'],
       order: { createdAt: 'DESC' },
     });
-
-    return allHistory;
   }
+
 
   async getHistory(historyId: string): Promise<ProjectHistory> {
     const history = await this.projectHistoryRepository.findOne({
       where: { historyId: historyId },
-      select: {
-        prediction: true, 
-
-      },
+      // select: {
+      //   prediction: true,
+      // },
       relations: ['ai_model'],
     });
-  
     if (!history) {
       throw new NotFoundException('History not found');
     }
-    
     return history;
   }
 
@@ -254,59 +282,61 @@ async validateWorkspace(workspaceId: string): Promise<Workspace> {
     await this.projectHistoryRepository.remove(history);
     return { message: 'History deleted successfully' };
   }
-async getUploadStatistics(projectId: string) {
-  const history = await this.projectHistoryRepository.find({
-    where: { project: { projectId } },
-    select: {
-      prediction: true, 
-    },
-    relations: ['user'],
-  });
 
-  const imageExtensions = ['.jpg', '.jpeg', '.png'];
-  const videoExtensions = ['.mp4', '.mov', '.avi'];
+  async getUploadStatistics(projectId: string) {
+    const history = await this.projectHistoryRepository.find({
+      where: { project: { projectId } },
+      select: {
+        filePath: true,
+        prediction: true,
+      },
+      relations: ['user'],
+    });
 
-  // ใช้ Set เพื่อนับ userId ที่ไม่ซ้ำ
-  const uniqueUsers = new Set<string>();
-  let imageCount = 0;
-  let videoCount = 0;
+    const imageExtensions = ['.jpg', '.jpeg', '.png'];
+    const videoExtensions = ['.mp4', '.mov', '.avi'];
 
-  // จัดอันดับการอัปโหลด
-  const ranking: Record<string, { userId: string; submitNumber: number; name: string; picture: string }> = {};
+    // ใช้ Set เพื่อนับ userId ที่ไม่ซ้ำ
+    const uniqueUsers = new Set<string>();
+    let imageCount = 0;
+    let videoCount = 0;
 
-  history.forEach(item => {
-    const user = item.user;
-    if (user) {
-      uniqueUsers.add(user.userId);
+    // จัดอันดับการอัปโหลด
+    const ranking: Record<string, { userId: string; submitNumber: number; name: string; picture: string }> = {};
 
-      if (!ranking[user.userId]) {
-        ranking[user.userId] = {
-          userId: user.userId,
-          submitNumber: 0,
-          name: user.name,
-          picture: user.picture,
-        };
+    history.forEach(item => {
+      const user = item.user;
+      if (user) {
+        uniqueUsers.add(user.userId);
+
+        if (!ranking[user.userId]) {
+          ranking[user.userId] = {
+            userId: user.userId,
+            submitNumber: 0,
+            name: user.name,
+            picture: user.picture,
+          };
+        }
+        ranking[user.userId].submitNumber += 1;
       }
-      ranking[user.userId].submitNumber += 1;
-    }
 
-    const filePath = item.filePath?.toLowerCase();
-    if (filePath) {
-      if (imageExtensions.some(ext => filePath.endsWith(ext))) {
-        imageCount++;
-      } else if (videoExtensions.some(ext => filePath.endsWith(ext))) {
-        videoCount++;
+      const filePath = item.filePath?.toLowerCase();
+      if (filePath) {
+        if (imageExtensions.some(ext => filePath.endsWith(ext))) {
+          imageCount++;
+        } else if (videoExtensions.some(ext => filePath.endsWith(ext))) {
+          videoCount++;
+        }
       }
-    }
-  });
+    });
 
-  return {
-    userCount: uniqueUsers.size,
-    imageCount,
-    videoCount,
-    ranking: Object.values(ranking).sort((a, b) => b.submitNumber - a.submitNumber),
-  };
-}
+    return {
+      userCount: uniqueUsers.size,
+      imageCount,
+      videoCount,
+      ranking: Object.values(ranking).sort((a, b) => b.submitNumber - a.submitNumber),
+    };
+  }
 
 
 

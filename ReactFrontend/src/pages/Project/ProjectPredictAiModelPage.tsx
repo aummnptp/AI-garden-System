@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, {useState } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
 import SkeletonLayout from '../../components/SkeletonPageLayout';
@@ -17,17 +17,11 @@ const PredictAiModelPage: React.FC = () => {
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(null);
-  const [openAlert, setOpenAlert] = useState(false);
-  const { predictFromUrl, predictFromFile } = useAiPrediction();
+  const { predictFromImage, predictFromVideo } = useAiPrediction();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
 
-  useEffect(() => {
-    if (openAlert) {
-      const timer = setTimeout(() => setOpenAlert(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [openAlert]);
+
 
   if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
 
@@ -41,7 +35,7 @@ const PredictAiModelPage: React.FC = () => {
       <div className="flex h-full min-h-screen bg-neutral-100">
         <Sidebar workspace={workspaceDetail} project={projectDetail} />
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] relative">
+          <div className="pb-5 h-fit w-full bg-white  relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
                 {isImageType ? "Upload Image" : "Upload Video"}
@@ -57,8 +51,7 @@ const PredictAiModelPage: React.FC = () => {
                 setUploadStep={setUploadStep}
                 predictResult={predictResult}
                 setPredictResult={setPredictResult}
-                predictFromUrl={predictFromUrl}
-                predictFromFile={predictFromFile}
+                predictFromImage={predictFromImage}
                 customedImageUrl={customedImageUrl}
                 setCustomedImageUrl={setCustomedImageUrl}
                 customImage={customImage}
@@ -72,7 +65,7 @@ const PredictAiModelPage: React.FC = () => {
                 setUploadStep={setUploadStep}
                 predictResult={predictResult}
                 setPredictResult={setPredictResult}
-                predictFromFile={predictFromFile}
+                predictFromVideo={predictFromVideo}
               />
             )}
           </div>

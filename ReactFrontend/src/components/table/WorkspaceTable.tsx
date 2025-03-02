@@ -43,7 +43,7 @@ const Workspacetable: React.FC = () => {
   const [searchItem, setSearchItem] = useState<string>("");
   const [filterType, setFilterType] = useState<string>("All");
 
-  // เมื่อ allHistoryData เปลี่ยนแปลง ให้อัปเดต filteredData
+ 
   useEffect(() => {
     if (allHistoryData) {
       setFilteredData(allHistoryData);

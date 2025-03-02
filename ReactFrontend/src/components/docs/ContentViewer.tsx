@@ -1,4 +1,3 @@
-// ContentViewer Component
 import React from "react";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@ant-design/icons";

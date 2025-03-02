@@ -8,6 +8,7 @@ import { Response } from "express";
 
 
 @Controller('auth')
+
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
@@ -50,6 +51,7 @@ export class AuthController {
     return res.redirect(fullRedirectUrl);
 
   }
+
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('access_token', {

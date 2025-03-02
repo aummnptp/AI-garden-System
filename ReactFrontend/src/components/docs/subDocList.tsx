@@ -1,5 +1,5 @@
 import React, { useRef, useState, } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { DeleteOutlined, EditOutlined,  PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Menu, MenuItem, TextField } from "@mui/material";
 import { Reorder } from "framer-motion";
@@ -45,7 +45,8 @@ const SubDocList: React.FC<SubDocListProps> = ({
   const handleClose = (subDocId: string) => {
     setSubDocOptionModal(prev => ({ ...prev, [subDocId]: null }));
   };
-
+ const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
   return (
     <>
       <Reorder.Group axis="y" values={subDocuments} onReorder={onSubDocsReorder}>
@@ -71,7 +72,6 @@ const SubDocList: React.FC<SubDocListProps> = ({
                       }}
                       ref={wrapperRef}
                       onBlur={() => {
-                        // updateSubDocsTitleMutation.mutate({ subDocId: subDoc.subDocsId, newTitle: subDoc.title });
                         setRenameSubDocId(null);
                       }}
                     />
@@ -84,10 +84,19 @@ const SubDocList: React.FC<SubDocListProps> = ({
                   </Reorder.Item>
                 ) : (
                   <Link to={`/docs/${docsId}/${subDoc.subDocsId}`}>
-                    <span className="py-1 flex w-full text-gray-500 font-medium justify-between cursor-pointer hover:text-blue-600">
+                    <span
+                      className={`py-1 px-3 flex w-full text-blue-600 font-medium justify-between rounded-md cursor-pointer transition-all duration-200
+                        ${
+                          isActive(`/docs/${docsId}/${subDoc.subDocsId}`)
+                            ? "text-black bg-gray-200 hover:bg-gray-300"
+                            : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
+                        }
+                      `}
+                    >
                       {subDoc.title}
                     </span>
                   </Link>
+
                 )}
               </span>
               <div className="mx-2 flex items-center h-full w-fit">

@@ -7,12 +7,11 @@ interface RegressionChartProps {
 }
 
 const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
-  // const [chartData, setChartData] = useState<any>(null);
-  const chartRef = useRef<any>(null); // สร้าง ref สำหรับ Chart
+  const chartRef = useRef<any>(null); 
 
   useEffect(() => {
     if (chartRef.current) {
-      chartRef.current.destroy(); // ทำลายกราฟเดิมก่อนสร้างใหม่
+      chartRef.current.destroy();
     }
 
     if (detections && detections.length > 0) {
@@ -31,7 +30,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
       }
 
       const newChartData: ChartData = {
-        labels: detections.map((_: any, index: number) => (index + 1).toString()), // กำหนด labels ให้เป็นตัวเลข
+        labels: detections.map((_: any, index: number) => (index + 1).toString()), 
         datasets: [
           {
         label: 'Regression Data',
@@ -70,7 +69,6 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
               },
               ticks: {
                 callback: function (_, index) {
-                  // แสดงแค่ตัวเลข 0, 100, 200, 300, 400 เท่านั้น
                   return index % 100 === 0 ? index : null;
                 },
               },
@@ -80,8 +78,8 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
                 display: true,
                 text: 'Value',
               },
-              min: -0.5, // ปรับค่า min ของแกน Y
-              max: 1.5,  // ปรับค่า max ของแกน Y ให้ครอบคลุมกราฟ
+              min: -0.5, 
+              max: 1.5, 
             },
           },
         },
@@ -90,7 +88,7 @@ const RegressionChart: React.FC<RegressionChartProps> = ({ detections }) => {
 
     return () => {
       if (chartRef.current) {
-        chartRef.current.destroy(); // ทำลายกราฟเมื่อคอมโพเนนต์ถูก unmount
+        chartRef.current.destroy(); 
       }
     };
   }, [detections]);

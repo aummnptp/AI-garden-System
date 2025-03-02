@@ -1,6 +1,7 @@
-
 import React from 'react';
-import { Button } from '@mui/material';
+import { Button, FormControl, FormLabel, TextField, CircularProgress } from '@mui/material';
+import { AiSchemaType } from '../../validations/aiSchema';
+import { FieldErrors } from 'react-hook-form';
 
 interface AiFileUploadProps {
   serviceUri: string;
@@ -10,6 +11,8 @@ interface AiFileUploadProps {
   customedImageUrl: string | null;
   predictResult: { response_keys: { key: string; meaning: string; displayFormat?: string }[]; prediction: any } | undefined;
   onShowPreview: () => void;
+  errors: FieldErrors<AiSchemaType>;
+  isPredicting: boolean; // ✅ เพิ่มตัวแปร isPredicting เพื่อตรวจสอบการโหลด
 }
 
 const AiFileUpload: React.FC<AiFileUploadProps> = ({
@@ -20,46 +23,51 @@ const AiFileUpload: React.FC<AiFileUploadProps> = ({
   customedImageUrl,
   predictResult,
   onShowPreview,
+  errors,
+  isPredicting, // ✅ ใช้ตัวแปร isPredicting
 }) => {
   return (
     <div className="form-group space-y-4">
       {/* Service URI Input */}
-      <label style={{ display: 'block' }}>Service URI</label>
-      <input
-        type="text"
-        value={serviceUri}
-        onChange={(e) => onServiceUriChange(e.target.value)}
-        className="w-80 p-2 border border-gray-300 rounded-lg"
-      />
+      <FormControl fullWidth>
+        <FormLabel>Service URI</FormLabel>
+        <TextField
+          fullWidth
+          variant="outlined"
+          type="text"
+          value={serviceUri}
+          onChange={(e) => onServiceUriChange(e.target.value)}
+          error={!!errors.serviceUri}
+          helperText={errors.serviceUri?.message}
+        />
+      </FormControl>
 
-      {/* Hidden file input */}
+      {/* File Upload */}
       <input
         type="file"
         onChange={onUriTest}
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
-      {/* Button to open file selector */}
+      {/* Test URI Button */}
       <Button
         variant="contained"
-        sx={{ backgroundColor: '#4f46e5', '&:hover': { backgroundColor: '#3730a3' } }}
-        size="large"
+        sx={{ backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
         onClick={() => fileInputRef.current?.click()}
-        className="p-2 ml-2 bg-indigo-600 text-white rounded-lg"
+        disabled={isPredicting} // ✅ ปิดปุ่มขณะรอ Response
       >
-        Test URI
+        {isPredicting ? <CircularProgress size={24} color="inherit" /> : "Test URI"}
       </Button>
 
-      {/* Button to show preview result */}
-      {predictResult && customedImageUrl && (
+      {/* ✅ ปุ่ม "Show Preview" จะแสดงเมื่อ API ตอบกลับแล้ว */}
+      {!isPredicting && predictResult && customedImageUrl && (
         <Button
           variant="contained"
-          sx={{ backgroundColor: '#4f46e5', '&:hover': { backgroundColor: '#3730a3' } }}
-          size="large"
+          sx={{ backgroundColor: "#4f46e5", "&:hover": { backgroundColor: "#3730a3" } }}
           onClick={onShowPreview}
         >
-          แสดงตัวอย่างผลลัพธ์
+          Show Preview
         </Button>
       )}
     </div>
