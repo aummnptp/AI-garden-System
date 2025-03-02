@@ -48,7 +48,6 @@ function WorkspacePage() {
               </h1>
               <Button
                 variant="contained"
-                size="large"
                 sx={{
                   backgroundColor: "#4f46e5",
                   "&:hover": {
@@ -57,7 +56,7 @@ function WorkspacePage() {
                 }}
                 onClick={() => setShowModal(true)}
               >
-                + สร้าง Workspace
+                + Create Workspace
               </Button>
             </div>
 

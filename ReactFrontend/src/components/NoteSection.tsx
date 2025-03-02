@@ -51,7 +51,10 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
         </div>
       ))
     ) : (
-      <p className="text-gray-500 text-lg mt-4">ไม่มีบันทึก</p>
+       <div className="text-center text-gray-500 py-10">
+          <p className="text-lg">ไม่มีบันทึก</p>
+        </div>
+
     )}
   </div>
     // <p className="text-sm text-gray-500">สร้างเมื่อ: {formatDate(note.created_at)}

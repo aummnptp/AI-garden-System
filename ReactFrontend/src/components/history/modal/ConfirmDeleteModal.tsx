@@ -16,10 +16,10 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({ open, onClose, 
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
-          ยกเลิก
+          Cancel
         </Button>
         <Button onClick={onConfirm} color="error">
-          ลบ
+          Delete
         </Button>
       </DialogActions>
     </Dialog>

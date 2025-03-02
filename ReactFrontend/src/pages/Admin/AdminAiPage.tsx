@@ -27,7 +27,7 @@ function AdminAi() {
           <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
           <div className="flex justify-between items-center p-5">
           <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
-            รายชื่อ AI
+             AI List
               </h1>
 
               <Link to="/admin/createai">

@@ -240,8 +240,10 @@ const UpdateAiPage: React.FC = () => {
               </h1>
             </div>
             <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
+            
             <form onSubmit={handleSubmit(onSubmit)} className="m-6 space-y-4">
-              <div className="form-group">
+            <div className="grid grid-cols-5 gap-2 items-stretch">
+            <div className="col-span-2 bg-white p-4 border rounded-[5px] border-gray-300 ">
                 <AiPictureInput
                   image={watch("aiPicture") || undefined}
                   imagePreview={getImageUrl(aiPicturePreview)}
@@ -264,6 +266,8 @@ const UpdateAiPage: React.FC = () => {
                   errorMessage={errors.aiPicture?.message}
                 />
               </div>
+              <div className="col-span-3 bg-white p-6 border rounded-[5px] border-gray-300 ">
+
               <AiBasicInfo
                 aiName={watch("aiName")}
                 description={watch("description")}
@@ -293,6 +297,8 @@ const UpdateAiPage: React.FC = () => {
                 }
                 errors={errors}
               />
+              </div>
+              </div>
 
               <ColorPickerTags
                 colors={watch("colorSet")}

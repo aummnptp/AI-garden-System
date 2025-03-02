@@ -58,7 +58,7 @@ const ProjectHistoryPage = () => {
                     : "border-transparent text-gray-600 hover:border-gray-300"
                   }`}
               >
-                <UploadFile /> ประวัติอัปโหลด (
+                <UploadFile /> Upload History (
                 {projectDetail?.input_type === "วิดีโอ" ? "วิดีโอ" : "ภาพ"})
               </a>
 
@@ -70,7 +70,7 @@ const ProjectHistoryPage = () => {
                     : "border-transparent text-gray-600 hover:border-gray-300"
                   }`}
               >
-                <NoteAltOutlined /> ประวัติ Note
+                <NoteAltOutlined /> Note History
               </a>
             </div>
           </div>

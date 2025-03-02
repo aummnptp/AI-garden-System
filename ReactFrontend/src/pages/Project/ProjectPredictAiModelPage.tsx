@@ -41,7 +41,7 @@ const PredictAiModelPage: React.FC = () => {
       <div className="flex h-full min-h-screen bg-neutral-100">
         <Sidebar workspace={workspaceDetail} project={projectDetail} />
         <div className="w-10/12 ml-auto bg-neutral-100 flex flex-col items-center pb-32 h-full min-h-screen">
-          <div className="mt-10 pb-5 h-fit w-11/12 bg-white rounded-[15px] relative">
+          <div className="pb-5 h-fit w-full bg-white  relative">
             <div className="flex justify-between items-center p-5">
               <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
                 {isImageType ? "Upload Image" : "Upload Video"}

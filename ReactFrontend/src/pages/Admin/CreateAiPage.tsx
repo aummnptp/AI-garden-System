@@ -180,6 +180,12 @@ const AddAiPage: React.FC = () => {
         <div className="w-1/5 bg-neutral-200 h-full" />
         <div className="w-4/5 grid grid-cols-1 items-center justify-center h-full">
           <div className="mt-4 pb-5 h-fit w-11/12 bg-white rounded-[15px] mx-auto relative">
+            <div className="flex justify-between items-center p-5">
+              <h1 className="text-3xl font-medium tracking-tight text-indigo-900">
+                Add New AI
+              </h1>
+            </div>
+            <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto" />
             <form onSubmit={handleSubmit(onSubmit)} className="m-6 space-y-4">
               <div className="grid grid-cols-5 gap-2 items-stretch">
                 <div className="col-span-2 bg-white p-4 border rounded-[5px] border-gray-300 ">

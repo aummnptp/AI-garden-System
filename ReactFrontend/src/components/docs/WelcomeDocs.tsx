@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const WelcomeDocs = () => {
@@ -12,9 +13,11 @@ const WelcomeDocs = () => {
       </p>
       <Link
         to="/"
-        className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition"
       >
+                            <Button variant="contained" sx={{ mt: 2, backgroundColor: "#4f46e5" }}>
+
         กลับสู่หน้าหลัก
+        </Button>
       </Link>
     </div>
   );
