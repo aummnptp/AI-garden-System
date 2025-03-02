@@ -33,7 +33,7 @@ const AddAiPage: React.FC = () => {
   const [examplePredictResultModal, setExamplePredictResultModal] =
     useState(false);
   const [aiPicturePreview, setAiPicturePreview] = useState<string | null>(null);
-  const [isPredicting, setIsPredicting] = useState(false); // ✅ เพิ่มตัวแปร state เพื่อตรวจสอบ API response
+  const [isPredicting, setIsPredicting] = useState(false);
 
   const {
     handleSubmit,
@@ -100,7 +100,7 @@ const AddAiPage: React.FC = () => {
         return;
       }
 
-      setIsPredicting(true); // ✅ เริ่มการคำนวณ (ปิดปุ่มผลลัพธ์การทำนาย)
+      setIsPredicting(true);
 
       try {
         const response = await fetch(serviceUri, {
@@ -149,7 +149,7 @@ const AddAiPage: React.FC = () => {
             });
           };
 
-          setIsPredicting(false); // ✅ API ตอบกลับแล้ว (แสดงปุ่มผลลัพธ์การทำนาย)
+          setIsPredicting(false);
 
           setSelectOptions(extractKeys(jsonData));
         } else {
@@ -272,7 +272,7 @@ const AddAiPage: React.FC = () => {
                 predictResult={watch("predictResult") as PredictResult | undefined}
                 onShowPreview={() => setExamplePredictResultModal(true)}
                 errors={errors}
-                isPredicting={isPredicting} // ✅ ส่งค่าไปยัง AiFileUpload
+                isPredicting={isPredicting}
               />
 
               <AiResponseKeys

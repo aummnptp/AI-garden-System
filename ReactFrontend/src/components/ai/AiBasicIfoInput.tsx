@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Switch, TextField } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, Switch, TextField } from '@mui/material';
 import React from 'react';
 import { FieldErrors } from "react-hook-form";
 import { AiSchemaType } from "../../validations/aiSchema";
