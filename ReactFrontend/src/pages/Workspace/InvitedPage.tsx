@@ -33,7 +33,7 @@ const InvitePage = () => {
           console.warn("User not authenticated, redirecting to Google Login...");
 
     
-          Cookies.set("redirect_after_login", `/invite?token=${token}`, { expires: 1 / 144, path: "/" }); // หมดอายุใน 10 นาที
+          Cookies.set("redirect_after_login", `/invite?token=${token}`, { expires: 1 / 144, path: "/" });
 
           window.location.href = `${import.meta.env.VITE_NEST_BACKEND_API_URL}/auth/google/login`;
         }

@@ -23,11 +23,11 @@ const UserDetailPage = () => {
   const [actionType, setActionType] = useState<'promote' | 'demote'>('promote');
   const { promoteToAdminMutation, demoteFromAdminMutation } = useUserMutation();
   const { allAiModelWithApprovalData, isLoadingallAiModelWithApproval } = useAiData();
-  const { user } = useAuth(); // ✅ ดึงข้อมูล user ที่ล็อกอินอยู่
-  // ✅ รายชื่ออีเมลที่สามารถ Promote Admin ได้
+  const { user } = useAuth(); 
+
   const allowedPromoters = ['64070007@kmitl.ac.th', '64070079@kmitl.ac.th'];
 
-  // ✅ เช็คว่า user มีสิทธิ์ Promote Admin หรือไม่
+
   const canPromote = user && allowedPromoters.includes(user.email);
   const isInAllowedPromoters = allowedPromoters.includes(userDetailById?.email);
   const isTargetAdmin = userDetailById?.role === "admin";
@@ -75,7 +75,7 @@ const UserDetailPage = () => {
               {canPromote && (
             <Button
               onClick={() => {
-                setActionType(isTargetAdmin ? 'demote' : 'promote'); // ✅ ตั้งค่า action
+                setActionType(isTargetAdmin ? 'demote' : 'promote'); 
                 setOpenConfirmDialog(true);
               }}
               variant="outlined"

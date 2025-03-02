@@ -31,14 +31,14 @@ const WorkspaceRoleGuard: React.FC<WorkspaceRoleGuardProps> = ({ requiredRole, c
     }, [workspaceId, getWorkspaceRole]);
   
     if (loading || checking) {
-      return <LoadingSpinner />; // แสดง Loading ระหว่างตรวจสอบ
+      return <LoadingSpinner />;
     }
   
     if (!workspaceRole || workspaceRole !== requiredRole && workspaceRole !== "owner") {
       return <UnauthorizedPage/>
     }
   
-    return <>{children}</>; // แสดง Component ที่อยู่ใน Guard
+    return <>{children}</>;
   };
   
   export default WorkspaceRoleGuard;

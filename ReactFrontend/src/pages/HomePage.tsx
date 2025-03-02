@@ -95,7 +95,7 @@ const handleRedirect = (path: string) => {
                 sx={{
                   backgroundColor: "#4338ca",
                   "&:hover": {
-                    backgroundColor: "#1e40af", // สีที่ต้องการเมื่อ hover
+                    backgroundColor: "#1e40af",
                   },
                 }}
               >
@@ -110,7 +110,7 @@ const handleRedirect = (path: string) => {
                 sx={{
                   backgroundColor: "#4338ca",
                   "&:hover": {
-                    backgroundColor: "#1e40af", // สีที่ต้องการเมื่อ hover
+                    backgroundColor: "#1e40af", 
                   },
                 }}
               >

@@ -48,7 +48,7 @@ const DoughnutChart: React.FC = () => {
       },
     },
     
-    cutout: '60%', // Adjust this value to control the size of the inner cutout
+    cutout: '60%', 
   };
 
   const textCenter: Plugin<'doughnut'> = {

@@ -42,7 +42,7 @@ function WorkspaceList() {
         `/workspaces/all`
     );
     if (isLoadingMyWorkspace) return <div>Loading...</div>;
-    // ตรวจสอบข้อผิดพลาด
+
     if (errorMyWorkspace) return <div>Error: {errorMyWorkspace?.message}</div>;
     return (
         <>

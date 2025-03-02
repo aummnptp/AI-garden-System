@@ -76,12 +76,12 @@ const AddAiPage: React.FC = () => {
       },
     });
   }, [responseKeysValue, aiNameValue, tagsValue, colorSetValue, aiTypeValue]);
-  // Handler สำหรับอัปโหลดรูป AI Picture
+
   const handleAiPictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      setValue("aiPicture", file); // ใช้ react-hook-form
-      setAiPicturePreview(URL.createObjectURL(file)); // อัปเดต preview URL
+      setValue("aiPicture", file); 
+      setAiPicturePreview(URL.createObjectURL(file)); 
     }
   };
 
@@ -301,7 +301,7 @@ const AddAiPage: React.FC = () => {
                     newTag.trim() !== "" &&
                     !currentTags.includes(newTag.trim())
                   ) {
-                    setValue("tags", [...currentTags, newTag.trim()]); // เพิ่ม tag
+                    setValue("tags", [...currentTags, newTag.trim()]);
                     setNewTag("");
                   }
                 }}
@@ -321,7 +321,7 @@ const AddAiPage: React.FC = () => {
                   multiline
                   fullWidth
                   variant="outlined"
-                  rows={4} // ตั้งค่าให้มีหลายบรรทัด
+                  rows={4} 
                   value={watch("inputDescription")}
                   onChange={(e) => setValue("inputDescription", e.target.value)}
                   error={!!errors.inputDescription}

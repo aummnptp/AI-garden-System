@@ -37,7 +37,7 @@ function CreateProjectPage() {
     setValue("selectedCardId", id);
   };
 
-  // ตัวอย่างฟังก์ชันสำหรับอัปโหลดไฟล์
+
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -55,24 +55,23 @@ function CreateProjectPage() {
     e.preventDefault();
   };
 
-  // Validate เฉพาะ field ที่เกี่ยวข้องในแต่ละ step
+
   const handleToNextStep = async () => {
     if (uploadStep === 1) {
-      // validate projectName และ projectDescription
+
       const valid = await trigger(["projectName", "projectDescription"]);
       if (!valid) {
         toast.error("กรุณากรอกข้อมูลชื่อและคำอธิบายให้ถูกต้อง");
         return;
       }
     } else if (uploadStep === 2) {
-      // validate selectedCardId
+
       const valid = await trigger("selectedCardId");
       if (!valid) {
         toast.error("กรุณาเลือก AI ที่ต้องการใช้งาน");
         return;
       }
     } else if (uploadStep === 3) {
-      // validate inputType
       const valid = await trigger("inputType");
       if (!valid) {
         toast.error("กรุณาเลือกประเภท Project");
@@ -82,7 +81,6 @@ function CreateProjectPage() {
     setUploadStep((prev) => Math.min(prev + 1, steps.length));
   };
 
-  // เมื่อ submit ฟอร์มทั้งหมด
   const onSubmit = (data: CreateProjectFormType) => {
     createProjectMutation.mutate({
       name: data.projectName,

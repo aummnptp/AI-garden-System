@@ -187,12 +187,12 @@ const updateContentMutation = useUpdateContent();
     }
 };
 const handleEnterReorderMode = () => {
-  setInitialDocs([...docs]); // เก็บลำดับเดิมไว้ใน initialDocs
+  setInitialDocs([...docs]); 
   setOnReorderMode(true);
 };
 
 const handleCancelReorder = () => {
-  setDocs(initialDocs); // คืนค่าลำดับกลับไปเป็นค่าเดิม
+  setDocs(initialDocs); 
   setOnReorderMode(false);
 };
 
@@ -302,7 +302,7 @@ const handleCancelReorder = () => {
         setRenameDocId={setRenameDocId}
         onchangeDocTitle={onchangeDocTitle} 
         onInputKeyDown={handleInputKeyDown}
-        // เมื่อกด delete จะเปิด modal confirm delete
+
         onDeleteDoc={(docId: string) => {
           setSelectedDocId(docId);
           setDeleteModalOpen(true);
@@ -317,10 +317,10 @@ const handleCancelReorder = () => {
         onReorderSubDocs={onSubDocsReorder}
         onSubDocsToggleVisibility={handleSubDocsToggleVisibility}
         onReorderMode={onReorderMode}
-        onSetReorderMode={handleEnterReorderMode} // เริ่มโหมด Reorder
+        onSetReorderMode={handleEnterReorderMode}
         onReorderDocs={onReorder}
         onSaveReorder={() => setReorderModalOpen(true)}
-        onCancelReorder={handleCancelReorder} // ยกเลิกการ Reorder
+        onCancelReorder={handleCancelReorder}
 
         />
 

@@ -57,8 +57,6 @@ const NoteSection: React.FC<NoteSectionProps> = ({ projectNoteData }) => {
 
     )}
   </div>
-    // <p className="text-sm text-gray-500">สร้างเมื่อ: {formatDate(note.created_at)}
-            //  เวลา: {formatTime(note.created_at)}</p>
   );
 };
 

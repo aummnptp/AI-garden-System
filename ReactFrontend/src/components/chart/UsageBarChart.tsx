@@ -41,7 +41,7 @@ const UsageBarChart: React.FC = () => {
     ],
   };
 
-  // profile image
+
 
   const doubleLabels: Plugin<'bar'> = {
     id: 'doubleLabels',
@@ -68,11 +68,11 @@ const profileImage: Plugin<'bar'> = {
     images.forEach((image, index) => {
       const label = new Image();
       label.src = image;
-      const yPosition = y.getPixelForValue(index) - 15; // Adjust to center image vertically
-      const xPosition = left - 35; // Position image to the left of the y-axis labels
+      const yPosition = y.getPixelForValue(index) - 15; 
+      const xPosition = left - 35;
 
-      // Draw the image
-      ctx.drawImage(label, xPosition, yPosition, 30, 30); // Adjust width and height as needed
+
+      ctx.drawImage(label, xPosition, yPosition, 30, 30); 
     });
 
     ctx.restore();

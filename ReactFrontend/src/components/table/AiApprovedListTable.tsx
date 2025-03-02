@@ -22,7 +22,7 @@ import { useUserApprovedAiData } from '../../hook/ai/useUserApprovedAiData';
 import { useAiPermissionMutations } from '../../hook/ai-permission/useAiPermissionMutation';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  width: '33.33%', // ทำให้คอลัมน์มีขนาดเท่าๆ กัน
+  width: '33.33%',  
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
@@ -38,7 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
+
   '&:last-child td, &:last-child th': {
     border: 0,
   },
@@ -62,9 +62,9 @@ interface AiListTableProps {
 type Order = 'asc' | 'desc';
 
 const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
-  // ดึงข้อมูล AI ที่ได้รับอนุมัติ
+
   const { AIData, refetchAIModels } = useUserApprovedAiData();
-  // ใช้งาน mutation สำหรับถอนสิทธิ์ AI
+
   const { revokePermissionMutation } = useAiPermissionMutations();
 
   const [rows, setRows] = useState<Data[]>([]);
@@ -117,16 +117,14 @@ const AiListTable: React.FC<AiListTableProps> = ({ userId }) => {
   const handleRevokePermission = () => {
     if (!userId || !selectedAi) return;
   
-    // ปิด Dialog ทันทีเมื่อกดปุ่ม
     setOpenDialog(false);
   
     revokePermissionMutation.mutate(
       { userId, aiId: selectedAi.aiId },
       {
         onSuccess: () => {
-          // อัปเดตตารางโดยลบข้อมูลที่ถูกถอนสิทธิ์ออก
           setRows((prevRows) => prevRows.filter((row) => row.aiId !== selectedAi.aiId));
-          refetchAIModels(); // รีเฟรชข้อมูล AI ที่อนุมัติ
+          refetchAIModels(); 
         }
       }
     );

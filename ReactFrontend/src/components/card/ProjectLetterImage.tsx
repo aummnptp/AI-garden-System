@@ -1,5 +1,4 @@
 
-// แสดงตัวหนังสือแทนรูปเมื่อไม่มีรูป 
 import React from 'react'
 import stringToColor from '../../function/util';
 
@@ -9,7 +8,7 @@ interface ProjectImageProps {
 
   }
   const ProjectImage: React.FC<ProjectImageProps>  = ({ projectName = "N/A", className = "" }) => {
-    if (!projectName.trim()) projectName = "N/A"; // ถ้า projectName เป็นค่าว่างให้ใช้ "N/A"
+    if (!projectName.trim()) projectName = "N/A";
 
     const words = projectName.split(" ");
     let initials = "";

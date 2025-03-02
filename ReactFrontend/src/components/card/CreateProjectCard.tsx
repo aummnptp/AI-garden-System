@@ -22,9 +22,9 @@ const CreateProjectCard: React.FC<CreateProjectCardProps> = (props) => {
         transition-all duration-300 
         ${
           isSelected
-            ? // ถ้าเลือกอยู่ (isSelected)
+            ?
               "border-2 border-indigo-600 shadow-lg ring-2 ring-indigo-400 scale-105"
-            : // ถ้ายังไม่ถูกเลือก
+            :
               "border-gray-300 shadow-md hover:shadow-xl hover:scale-105 hover:border-indigo-300"
         }
       `}

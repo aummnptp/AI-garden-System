@@ -266,10 +266,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
       const img = new Image();
       img.src = selectedImage;
       img.onload = () => {
-        if (!canvasRef.current) return; // Exit early if the canvas isn't available
+        if (!canvasRef.current) return
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
-        if (!ctx) return; // Optional: exit if context isn't available
+        if (!ctx) return;
       
         const angleInRadians = (rotation * Math.PI) / 180;
         const absCos = Math.abs(Math.cos(angleInRadians));
@@ -352,19 +352,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
         const ctx = canvas.getContext("2d");
         if(paddingMode == 'custom'){
           if (ctx) {
-            // คำนวณความกว้างและความสูงที่รวม padding ด้านซ้าย ขวา บน ล่าง
             const paddedWidth = image.width + paddingLeft + paddingRight;
             const paddedHeight = image.height + paddingTop + paddingBottom;
             canvas.width = paddedWidth;
             canvas.height = paddedHeight;
             setImagePaddedWidth(canvas.width);
             setImagePaddedHeight(canvas.height);
-            // ตั้งค่าสีเป็นสีดำ
             ctx.fillStyle = 'black';
-            // เติมสีดำในพื้นที่ทั้งหมดของ canvas
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // วาดรูปภาพโดยเริ่มจากตำแหน่งที่กำหนดด้วย padding บนและซ้าย
             ctx.drawImage(image, paddingLeft, paddingTop);
           }
         }
@@ -385,19 +381,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ image, onProcessUrlChange
 
         if (paddingMode === 'square') {
           if (ctx) {
-            const maxDimension = Math.max(image.width, image.height); //หาว่าwidth || height กว้างกว่า
-            const paddingHorizontal = (maxDimension - image.width) / 2; // Padding ด้านซ้ายและขวา
-            const paddingVertical = (maxDimension - image.height) / 2; // Padding ด้านบนและล่าง        
-            // ตั้งค่า canvas ให้มีความกว้างและความสูงเป็น maxDimension
+            const maxDimension = Math.max(image.width, image.height);
+            const paddingHorizontal = (maxDimension - image.width) / 2;
+            const paddingVertical = (maxDimension - image.height) / 2;
             canvas.width = maxDimension;
             canvas.height = maxDimension;
             setImagePaddedWidth(canvas.width);
             setImagePaddedHeight(canvas.height);
-            // ตั้งค่าสีเป็นสีดำ
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-            // วาดรูปภาพที่กลาง canvas โดยเพิ่ม padding ด้านซ้าย/ขวา หรือบน/ล่าง
             ctx.drawImage(image, paddingHorizontal, paddingVertical);
           }
         }

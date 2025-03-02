@@ -67,7 +67,6 @@ export default function AddAIDialog() {
     isLoadingallAiModelWithApproval
   } = useAiData();
 
-  // ดึง mutation สำหรับ bulk add และ remove
   const { addBulkPermissionRequest, removeBulkPermissionRequest } = useAiPermissionMutations();
 
   const [open, setOpen] = useState(false);
@@ -136,7 +135,6 @@ export default function AddAIDialog() {
       return;
     }
 
-    // หาค่า ids ของ permissions ที่จะลบ
     const idsToRemove = selectedToRemove.flatMap((aiId) => {
       const ai = aiListData.find((item) => item.aiId === aiId);
       return ai?.permissions.map((perm: Permission) => perm.id) || [];

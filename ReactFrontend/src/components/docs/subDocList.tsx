@@ -72,7 +72,6 @@ const SubDocList: React.FC<SubDocListProps> = ({
                       }}
                       ref={wrapperRef}
                       onBlur={() => {
-                        // updateSubDocsTitleMutation.mutate({ subDocId: subDoc.subDocsId, newTitle: subDoc.title });
                         setRenameSubDocId(null);
                       }}
                     />
@@ -89,7 +88,7 @@ const SubDocList: React.FC<SubDocListProps> = ({
                       className={`py-1 px-3 flex w-full text-blue-600 font-medium justify-between rounded-md cursor-pointer transition-all duration-200
                         ${
                           isActive(`/docs/${docsId}/${subDoc.subDocsId}`)
-                            ? "text-black bg-gray-200 hover:bg-gray-300" // Active + Hover
+                            ? "text-black bg-gray-200 hover:bg-gray-300"
                             : "text-gray-500 hover:text-blue-600 hover:bg-gray-100"
                         }
                       `}

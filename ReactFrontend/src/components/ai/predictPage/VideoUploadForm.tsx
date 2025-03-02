@@ -25,18 +25,17 @@ export const VideoUploadForm: React.FC<{
       if (!file) {
         return;
       }
-      console.log("Uploading file:", file); // Debug file
-    
+      console.log("Uploading file:", file); 
       setUploadStep(2);
       predictFromVideo.mutate(file, {
         onSuccess: (data: PredictResult) => {
-          console.log("Prediction Success:", data); // Debug result
+          console.log("Prediction Success:", data); 
           setPredictResult(data);
           setUploadStep(3);
         },
         onError: (error: unknown) => {
           if (error instanceof Error) {
-            console.error("Prediction Error:", error.message); // Debug error message
+            console.error("Prediction Error:", error.message); 
           } else {
             console.error("Unknown error occurred:", error);
           }

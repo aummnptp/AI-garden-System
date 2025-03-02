@@ -33,7 +33,6 @@ const theme = createTheme({
     MuiTextField: {
       styleOverrides: {
         root: {
-          // borderRadius: "20px", // มุมมน
         },
       },
     },
@@ -43,7 +42,6 @@ const theme = createTheme({
 
 
 
-//  React router path here
 
 
 const queryClient = new QueryClient({

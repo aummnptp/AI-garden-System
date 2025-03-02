@@ -25,7 +25,7 @@ import { workspaceSchema, WorkspaceSchemaType } from "../../validations/workspac
 const WorkspaceSettingPage = () => {
   const {workspaceId} = useParams<{ workspaceId?: string, projectId?: string }>();
   const [open, setOpen] = React.useState(false);
-  const [confirmText, setConfirmText] = useState(""); // สร้าง state สำหรับการเก็บค่าที่ผู้ใช้กรอก
+  const [confirmText, setConfirmText] = useState(""); 
 
 
   const {
@@ -109,7 +109,7 @@ const WorkspaceSettingPage = () => {
             <input
           type="text"
           value={confirmText}
-          onChange={(e) => setConfirmText(e.target.value)}  // อัปเดต confirmText เมื่อผู้ใช้พิมพ์
+          onChange={(e) => setConfirmText(e.target.value)} 
           className="w-full p-2 border border-gray-300 rounded-lg no-spinner focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
         />
           </Box>

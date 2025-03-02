@@ -27,8 +27,8 @@ const CustomDialogTitle = styled(DialogTitle)({
 
 interface AddNoteDialogProps {
   projectId: string;
-  historyId: string;  // 🔹 ต้องการค่า historyId สำหรับเพิ่ม note
-  onNoteAdded: () => void;  // 🔹 ใช้ refetch Note หลังจากเพิ่มเสร็จ
+  historyId: string;  
+  onNoteAdded: () => void;  
 }
 
 const AddNoteDialog: React.FC<AddNoteDialogProps> = ({ projectId, historyId, onNoteAdded }) => {

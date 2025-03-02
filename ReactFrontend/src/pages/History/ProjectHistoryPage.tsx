@@ -32,7 +32,7 @@ const ProjectHistoryPage = () => {
     useProjecteData();
  
 
-  // Loading และ Error State
+
   if ( isLoadingProjectDetail || isLoadingWorkspace||isLoadingNotes||isLoadingHistory) return <SkeletonLayout/>;
  
 
@@ -78,12 +78,12 @@ const ProjectHistoryPage = () => {
           <div className="py-10 mt-4 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative pt-10 px-10 ">
             {historyTab === "Upload" ? (
               <HistoryUploadSection
-                historyData={projectHistory} // ใส่ข้อมูลที่ดึงมาจาก API
+                historyData={projectHistory} 
                 workspaceId={workspaceId ?? ""}
                 projectId={projectId ?? ""}
-                inputType={projectDetail?.input_type} // ส่ง inputType ไปด้วย
+                inputType={projectDetail?.input_type} 
               />
-            ) : // <div></div>
+            ) : 
             historyTab === "Note" ? (
               <NoteSection projectNoteData={projectNotes} />
             ) : null}

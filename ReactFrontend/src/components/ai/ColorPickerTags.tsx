@@ -4,9 +4,9 @@ import { FieldErrors } from "react-hook-form";
 import { AiSchemaType } from "../../validations/aiSchema";
 
 interface ColorPickerTagsProps {
-  colors: string[]; // ค่าสีที่ถูกเลือก
+  colors: string[]; 
   onChange: (colors: string[]) => void; 
-  errors: FieldErrors<AiSchemaType>;  // รับค่า errors จาก React Hook Form
+  errors: FieldErrors<AiSchemaType>;  
 }
 
 const ColorPickerTags: React.FC<ColorPickerTagsProps> = ({colors,onChange,  errors,  }) => {

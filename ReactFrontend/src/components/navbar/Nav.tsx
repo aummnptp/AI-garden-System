@@ -16,7 +16,7 @@ import LoadingSpinner from "../LoadingSpinner";
 
 function Nav() {
   const navigate = useNavigate();
-  const { logout, login, user, isAuthenticated, loading, isAdmin } = useAuth(); // ดึง logout จาก context
+  const { logout, login, user, isAuthenticated, loading, isAdmin } = useAuth(); 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 

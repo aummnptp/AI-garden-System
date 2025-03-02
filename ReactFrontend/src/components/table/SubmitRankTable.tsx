@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { PictureOutlined, TrophyFilled, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { formatDate, formatTime, getImageUrl } from '../../function/util';
 import { Avatar, Typography } from '@mui/material';
-// ใช้ custom hook สำหรับข้อมูล ranking และ project detail
+
 import { useProjecteData } from '../../hook/projects/useProjectData';
 import { useHistoryData } from '../../hook/history/useHistoryData';
 import SummaryCard from '../chart/sumaryCard';
@@ -25,7 +25,7 @@ export interface RankingData {
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
-    color: '#312e81', // text-indigo-900
+    color: '#312e81', 
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -114,15 +114,15 @@ export default function SubmitRankTable() {
           <TableContainer
             component={Paper}
             sx={{
-              width: '100%', // ทำให้มีขนาดเท่ากับ div เดิม
+              width: '100%',
               maxHeight: '500px',
               minHeight: '500px',
               overflowY: 'auto',
-              borderRadius: '10px', // ให้ขอบมน
-              boxShadow: 3, // ให้เงาเหมือนกล่องเดิม
+              borderRadius: '10px', 
+              boxShadow: 3, 
               borderBottom: '1px solid #E5E7EB',
-              backgroundColor: 'white', // พื้นหลังสีขาว
-              padding: '24px', // p-6 ของ Tailwind
+              backgroundColor: 'white', 
+              padding: '24px', 
             }}
           >
             <Table stickyHeader sx={{ width: '100%' }} aria-label="customized table">

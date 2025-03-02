@@ -22,7 +22,7 @@ const AIDemo: React.FC = () => {
 
   const steps = ["อัปโหลดรูปภาพ", "ปรับแต่งภาพ", "ประมวลผล", "เสร็จสิ้น"];
 
-  // Handler to receive the processed image URL from the child component
+
   const handleProcessUrlChange = (url: string) => {
     setCustomedImageUrl(url);
   };

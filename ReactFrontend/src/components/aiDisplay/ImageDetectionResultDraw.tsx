@@ -112,13 +112,11 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
               context.stroke();
             });
   
-            // คำนวณตำแหน่งของ label
             const allPoints: [number, number][] = polygons.flat();
             const minY = Math.min(...allPoints.map((point) => point[1]));
             const labelPoint = allPoints.find((point) => point[1] === minY) || [0, 0];
             const [labelX, labelY] = labelPoint;
   
-            // ปรับขนาดฟอนต์ตาม scale factor
             const fontSize = Math.max(baseFontSize * scaleFactor, 12);
             context.font = `${fontSize}px Arial`;
             context.fillStyle = color;

@@ -64,7 +64,7 @@ const SortableTable: React.FC = () => {
     action: 'accept' | 'reject';
   } | null>(null);
 
-  // ใช้ custom mutation hook
+
   const { PermissionData, fetchAiPermissions } = useAiPermission();
   const { approvePermissionMutation, refusePermissionMutation } = useAiPermissionMutations();
 
@@ -103,8 +103,8 @@ const SortableTable: React.FC = () => {
         { id },
         {
           onSuccess: () => {
-            setRows(prevRows => prevRows.filter(row => row.id !== id)); // ✅ ลบตาม id แทน index
-            fetchAiPermissions(); // ✅ รีโหลดข้อมูลใหม่
+            setRows(prevRows => prevRows.filter(row => row.id !== id));
+            fetchAiPermissions();
           },
         }
       );
@@ -113,8 +113,8 @@ const SortableTable: React.FC = () => {
         { id },
         {
           onSuccess: () => {
-            setRows(prevRows => prevRows.filter(row => row.id !== id)); // ✅ ลบตาม id แทน index
-            fetchAiPermissions(); // ✅ รีโหลดข้อมูลใหม่
+            setRows(prevRows => prevRows.filter(row => row.id !== id));
+            fetchAiPermissions();
           },
         }
       );

@@ -113,7 +113,7 @@ const UpdateAiPage: React.FC = () => {
     watch("aiType"),
   ]);
 
-  // Handler for file upload & testing Service URI
+
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -356,7 +356,7 @@ const UpdateAiPage: React.FC = () => {
                     newTag.trim() !== "" &&
                     !currentTags.includes(newTag.trim())
                   ) {
-                    setValue("tags", [...currentTags, newTag.trim()]); // เพิ่ม tag
+                    setValue("tags", [...currentTags, newTag.trim()]); 
                     setNewTag("");
                   }
                 }}

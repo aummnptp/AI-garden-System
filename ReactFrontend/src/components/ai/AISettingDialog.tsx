@@ -15,7 +15,7 @@ const AISettingDialog: React.FC<AISettingDialogProps> = ({ open, onClose, initia
 
   const handleSave = () => {
     
-    onSave(limit, isLimitActive); // ส่งค่าล่าสุดไปให้ `onSave`
+    onSave(limit, isLimitActive); 
     onClose();
   };
 

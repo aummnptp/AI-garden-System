@@ -24,10 +24,10 @@ interface UploadHistory {
 
 const Barchart: React.FC = () => {
   const [chartData, setChartData] = useState<{ labels: string[]; counts: number[] }>({ labels: [], counts: [] });
-  const [selectedKey, setSelectedKey] = useState<string>('');  // state สำหรับเก็บ Key ที่เลือก
-  const [availableKeys, setAvailableKeys] = useState<string[]>([]);  // state สำหรับเก็บ Key ที่มีให้เลือก
+  const [selectedKey, setSelectedKey] = useState<string>('');  
+  const [availableKeys, setAvailableKeys] = useState<string[]>([]); 
   const [keyMeaningMap, setKeyMeaningMap] = useState<Record<string, string>>({});
-  const [selectedMeaning, setSelectedMeaning] = useState<string>(''); // สำหรับเก็บ meaning ที่เลือก
+  const [selectedMeaning, setSelectedMeaning] = useState<string>('');
   const { projectHistory, isLoadingHistory } = useHistoryData();
 
 
@@ -36,22 +36,18 @@ const Barchart: React.FC = () => {
 
     const data: UploadHistory[] = projectHistory;
 
-    // กรองเฉพาะ response_keys ที่มี displayFormat เป็น text
     const textKeys = data[0]?.response_keys?.filter(item => item.displayFormat === 'text') || [];
 
-    // Mapping ระหว่าง key กับ meaning
     const keyMeaning = textKeys.reduce((acc: Record<string, string>, item) => {
-      acc[item.key] = item.meaning || item.key; // ถ้าไม่มี meaning ให้ใช้ key แทน
+      acc[item.key] = item.meaning || item.key;
       return acc;
     }, {});
 
     setKeyMeaningMap(keyMeaning);
 
-    // เก็บเฉพาะ key ที่มี displayFormat เป็น text
     const availableKeyList = textKeys.map(item => item.key);
     setAvailableKeys(availableKeyList);
 
-    // ตั้งค่าเริ่มต้นให้ selectedKey เป็น key แรก
     if (!selectedKey && availableKeyList.length > 0) {
       setSelectedKey(availableKeyList[0]);
     }
@@ -59,38 +55,31 @@ const Barchart: React.FC = () => {
 
 
 
-  // อัปเดต selectedMeaning เมื่อ selectedKey เปลี่ยนแปลง
   useEffect(() => {
     setSelectedMeaning(keyMeaningMap[selectedKey] || selectedKey);
   }, [selectedKey, keyMeaningMap]);
 
 
-  // ดึงข้อมูลเมื่อ selectedKey เปลี่ยนแปลง
   useEffect(() => {
     if (!projectHistory || isLoadingHistory || !selectedKey) return;
 
     const data: UploadHistory[] = projectHistory;
 
-    // ดึงค่าจาก prediction ตาม selectedKey
     const selectedValues = data.map(item => item.prediction[selectedKey]);
 
-    // นับจำนวนการเกิดของแต่ละค่า
     const valueCount = selectedValues.reduce((acc: Record<string, number>, value) => {
-      const valueStr = String(value).toLowerCase().trim();  // แปลงเป็นตัวพิมพ์เล็กและตัดช่องว่าง
+      const valueStr = String(value).toLowerCase().trim();  
       acc[valueStr] = (acc[valueStr] || 0) + 1;
       return acc;
     }, {});
 
-    // จัดเรียงตามจำนวนจากมากไปน้อย แล้วเลือก 5 อันดับแรก
     const sortedValues = Object.entries(valueCount)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
 
-    // แยก labels และ counts สำหรับ Chart.js
     const labels = sortedValues.map(item => item[0]);
     const counts = sortedValues.map(item => item[1]);
 
-    // เก็บข้อมูลสำหรับแสดงผล
     setChartData({ labels, counts });
 
   }, [projectHistory, isLoadingHistory, selectedKey]);
@@ -127,10 +116,10 @@ const Barchart: React.FC = () => {
     scales: {
       y: {
         beginAtZero: true,
-        suggestedMax: Math.max(...chartData.counts) + 1, // แนะนำค่าสูงสุด
+        suggestedMax: Math.max(...chartData.counts) + 1,
         ticks: {
           precision: 0,
-          stepSize: 2,   // ไม่แสดงทศนิยม
+          stepSize: 2,  
         }
       }
     },
@@ -150,7 +139,7 @@ const Barchart: React.FC = () => {
         color: '#312e81',
         padding: {
           top: 20,
-          bottom: 40, // เว้นที่ว่างให้ Dropdown
+          bottom: 40, 
         },
       },
       tooltip: {

@@ -82,7 +82,6 @@ const ProjectListPage = () => {
                 ))}
               </div>
             ) : (
-              // กรณีไม่มีโปรเจกต์
               <div className="text-center py-10 text-gray-500">
                 <p className="text-lg">No project here in this workspace</p>
                 {(isAdmin || isWorkspaceOwner) && (

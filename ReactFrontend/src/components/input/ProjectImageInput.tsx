@@ -52,11 +52,11 @@ const ProjectImageInput: React.FC<ProjectImageInputProps> = ({
 
             {/* แสดงรูป */}
             <img
-              key={displayImage} // บังคับให้ React รีโหลดรูปใหม่เมื่อค่าเปลี่ยน
+              key={displayImage}
               src={displayImage}
               alt="Uploaded"
               className="object-cover w-full h-auto max-w-[400px] max-h-[300px] rounded-lg border"
-              onError={() => setDisplayImage(undefined)} // ถ้าโหลดภาพไม่ได้ ให้ซ่อนรูป
+              onError={() => setDisplayImage(undefined)} 
             />
 
             {/* Input file (hidden) สำหรับแก้ไขรูป */}

@@ -18,30 +18,22 @@ const ChartResultDisplay: React.FC<ChartResultDisplayProps> = ({
 }) => {
 
   let PredictData: number[] = [];
-  // let ai_text_type = null;
   
-  // ถ้าตีย์มี displayFormat data ให้ PredictDrawData = display format data ตัวนั้น
   const searchChartKey = predictResult.response_keys?.find(
     (responseKey) =>
       responseKey.displayFormat === "chart"
   );
   
   if (searchChartKey) {
-
-    // กำหนด `ai_text_type` จาก `displayFormat`
-    // ai_text_type = searchChartKey.displayFormat;
   
-    // แยก key ออกเป็นส่วนย่อย (เช่น detections.position)
     const keyParts = searchChartKey.key.split(".");
     let data = predictResult.prediction;
   
-    // เดินทางไปตาม key เพื่อดึงค่าจาก prediction
     for (const part of keyParts) {
       data = data?.[part];
       if (!data) break;
     }
   
-    // กำหนดค่าให้ PredictDrawData
     if (Array.isArray(data) && data.every(item => typeof item === 'number')) {
       PredictData = data;
     } else {

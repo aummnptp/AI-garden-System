@@ -67,7 +67,7 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
     
         const croppedImageUrl = generateCroppedImage(imgRef.current, completedCrop);
         if (croppedImageUrl) {
-          onCropDone(croppedImageUrl); // ส่งค่า URL ที่ครอบออกไป
+          onCropDone(croppedImageUrl); 
         }
       };
 
@@ -76,7 +76,6 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
           const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
           const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
   
-          // ใช้ค่าขนาดของพื้นที่ครอบจริง ๆ หลังจากคำนวณ scale
         setImageWidth(Math.round(completedCrop.width! * scaleX));
         setImageHeight(Math.round(completedCrop.height! * scaleY));
         }
@@ -93,7 +92,7 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
           crop={crop}
           onChange={(newCrop) => setCrop(newCrop)}
           onComplete={(c) => setCompletedCrop(c)}
-          aspect={aspectRatio} // กำหนดอัตราส่วนที่นี่
+          aspect={aspectRatio} 
         >
           <img
             src={src}
@@ -105,7 +104,6 @@ const ImgCropper: React.FC<ImgCropperProps> = ({ src , onCropDone,onCancel}) => 
               minHeight: "150px",
             }}
             alt="Crop me"
-            //    style={{ maxWidth: "450px", maxHeight: "450px",  minWidth:"450px" ,minHeight:"450px"}}
           />
         </ReactCrop>
       </div>
