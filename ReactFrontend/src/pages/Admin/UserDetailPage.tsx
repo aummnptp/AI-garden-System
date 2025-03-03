@@ -25,7 +25,7 @@ const UserDetailPage = () => {
   const { allAiModelWithApprovalData, isLoadingallAiModelWithApproval } = useAiData();
   const { user } = useAuth(); 
 
-  const allowedPromoters = ['64070007@kmitl.ac.th', '64070079@kmitl.ac.th'];
+  const allowedPromoters = ['taravichet@it.kmitl.ac.th','64070007@kmitl.ac.th', '64070079@kmitl.ac.th'];
 
 
   const canPromote = user && allowedPromoters.includes(user.email);

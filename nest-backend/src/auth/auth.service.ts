@@ -27,7 +27,7 @@ export class AuthService{
   
     const { email, name, picture, googleId } = req.user;
     let user = await this.userRepository.findOne({ where: { email } });
-    const adminEmails = ['64070079@kmitl.ac.th', '64070007@kmitl.ac.th'];
+    const adminEmails = ['taravichet@it.kmitl.ac.th','64070079@kmitl.ac.th', '64070007@kmitl.ac.th'];
 
     const urlWithoutQuery = picture.split('?')[0];
     const ext = path.extname(urlWithoutQuery) || '.jpg';
