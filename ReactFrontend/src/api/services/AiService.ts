@@ -63,6 +63,22 @@ export const uploadFileService = async (serviceUri: string, file: File) => {
     }
   };
 
+  export const predictFromVideoService = async (ai_id: string, file: File) => {
+    if (!ai_id) {
+      throw new Error("AI ID is required");
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    const response = await axios.post(`${BASE_URL}/ai-models/predict/${ai_id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  
+    return response.data;
+  };
+  
+
+  
   export const deleteAiModelService = async (ai_id: string) => {
     await axios.delete(`${BASE_URL}/ai-models/${ai_id}/remove-ai`);
   };

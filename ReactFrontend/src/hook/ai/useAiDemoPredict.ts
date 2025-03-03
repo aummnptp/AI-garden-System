@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { predictFromImageService } from "../../api/services/AiService";
+import { predictFromImageService, predictFromVideoService } from "../../api/services/AiService";
 import { PredictResult } from "../../types/Ai";
+
 
 
 export const useAiDemoPredict = () => {
@@ -16,6 +17,12 @@ export const useAiDemoPredict = () => {
     },
   });
 
+  const predictFromVideo = useMutation<PredictResult, Error, File>({
+      mutationFn: async (file) => {
+        if (!ai_id) throw new Error("Missing AI ID");
+        return predictFromVideoService(ai_id, file);
+      },
+    });
 
-  return {predictFromImage };
+  return {predictFromImage, predictFromVideo };
 };
