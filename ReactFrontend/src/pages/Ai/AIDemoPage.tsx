@@ -7,21 +7,24 @@ import { useAiData } from "../../hook/ai/useAiData";
 import SkeletonLayout from "../../components/SkeletonPageLayout";
 import toast from "react-hot-toast";
 import { PredictResult } from "../../types/Ai";
+import { VideoUploadDemoForm } from "../../components/ai/demo/VideoUploadDemoForm";
 
 
 const AIDemo: React.FC = () => {
   const [uploadStep, setUploadStep] = useState<number>(1);
   const [image, setImage] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [customedImageUrl, setCustomedImageUrl] = useState<string | null>(null);
   const [predictResult, setPredictResult] = useState<PredictResult | null>(
     null
   );
-  const { predictFromImage } = useAiDemoPredict();
+  const { predictFromImage, predictFromVideo } = useAiDemoPredict();
   const { aiModelData, isLoadingAiModel } = useAiData();
 
-  const steps = ["อัปโหลดรูปภาพ", "ปรับแต่งภาพ", "ประมวลผล", "เสร็จสิ้น"];
+  const isImageType = aiModelData?.inputType === "รูปภาพ";
 
+  const steps = isImageType ? ["อัปโหลดรูปภาพ", "ปรับแต่งภาพ", "ประมวลผล", "เสร็จสิ้น"] : ["อัปโหลดวิดีโอ", "ประมวลผล", "เสร็จสิ้น"];
 
   const handleProcessUrlChange = (url: string) => {
     setCustomedImageUrl(url);
@@ -70,22 +73,35 @@ const AIDemo: React.FC = () => {
             <div className="w-full">
               {/* Left: Upload & Process Form */}
               <div className=" p-4">
-                <ImageUploadDemoForm
-                  uploadStep={uploadStep}
-                  setUploadStep={setUploadStep}
-                  image={image}
-                  setImage={setImage}
-                  customImage={customImage}
-                  setCustomImage={setCustomImage}
-                  customedImageUrl={customedImageUrl}
-                  setCustomedImageUrl={setCustomedImageUrl}
-                  predictResult={predictResult}
-                  setPredictResult={setPredictResult}
-                  handleUpload={handleUpload}
-                  handleProcessUrlChange={handleProcessUrlChange}
-                  onBack={handleBack}
-                  aiData={aiModelData}
-                />
+                {isImageType ? (
+                  <ImageUploadDemoForm
+                    uploadStep={uploadStep}
+                    setUploadStep={setUploadStep}
+                    image={image}
+                    setImage={setImage}
+                    customImage={customImage}
+                    setCustomImage={setCustomImage}
+                    customedImageUrl={customedImageUrl}
+                    setCustomedImageUrl={setCustomedImageUrl}
+                    predictResult={predictResult}
+                    setPredictResult={setPredictResult}
+                    handleUpload={handleUpload}
+                    handleProcessUrlChange={handleProcessUrlChange}
+                    onBack={handleBack}
+                    aiData={aiModelData}
+                  />
+                ) : (
+                  <VideoUploadDemoForm
+                    uploadStep={uploadStep}
+                    setUploadStep={setUploadStep}
+                    file={file}
+                    setFile={setFile}
+                    predictResult={predictResult}
+                    setPredictResult={setPredictResult}
+                    aiData={aiModelData}
+                    predictFromVideo={predictFromVideo}
+                  />
+                )}
               </div>
             </div>
           </div>
