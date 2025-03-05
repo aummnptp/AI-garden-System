@@ -89,10 +89,10 @@ export class ProjectsService {
     let filePath: string | undefined;
     
     if (file) {
-      // หากมีการอัปโหลดรูปใหม่
+     
       filePath = `/uploads/project/${file.filename}`;
     } else if (updateProjectDto.imagePath === "") {
-      // ถ้า imagePath เป็น "" แปลว่าผู้ใช้ต้องการลบรูป
+      Copy link
       const project = await this.projectRepository.findOne({ where: { projectId } });
       if (project?.imagePath) {
         const oldImagePath = `./uploads/project/${project.imagePath.split('/').pop()}`;

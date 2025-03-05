@@ -23,7 +23,7 @@ prediction:{}[];
 response_keys: { key: string; meaning: string ,displayFormat:string}[]; 
 
 
-// ยังไม่ได้จัด
+
   @ManyToOne(() => Project, (project) => project.project_historys, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
   project: Project; 

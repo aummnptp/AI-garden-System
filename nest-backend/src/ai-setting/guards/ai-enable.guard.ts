@@ -17,14 +17,13 @@ export class AIEnableGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
     const projectId = req.params.projectId; 
-    const aiId = req.params.aiId; // 🔹 เช็คว่า AI ID มีค่าหรือไม่
+    const aiId = req.params.aiId; 
 
     let aiModel: AIModel | null = null;
 
     if (projectId) {
-      // 🔹 ถ้ามี Project ID → ค้นหา AI จาก Project
       const project = await this.projectRepository.findOne({
-        where: { projectId: projectId }, // 🔹 ใช้ `id` เพราะ `projectId` ใน Entity อาจเป็น `id`
+        where: { projectId: projectId }, 
         relations: ['ai_model'],
       });
 
@@ -34,18 +33,15 @@ export class AIEnableGuard implements CanActivate {
 
       aiModel = project.ai_model;
     } else if (aiId) {
-      // 🔹 ถ้ามี AI ID → ค้นหา AI โดยตรง
       aiModel = await this.aiModelRepository.findOne({ where: { aiId } });
 
       if (!aiModel) {
         throw new NotFoundException("AI Model not found");
       }
     } else {
-      // ❌ ถ้าไม่มี `projectId` หรือ `aiId` ส่ง Error
       throw new BadRequestException("Either Project ID or AI ID is required.");
     }
 
-    // 🔴 ถ้า AI ปิดการใช้งาน `enable: false` → ห้ามใช้ AI
     if (!aiModel.enable) {
       throw new BadRequestException("This AI is currently disabled and cannot be used.");
     }

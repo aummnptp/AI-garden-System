@@ -39,7 +39,6 @@ export class AuthService{
       try {
         localPicture = await downloadImage(picture, filename);
       } catch (error) {
-        console.error("Error downloading image:", error);
         localPicture = picture;
       }
       user = this.userRepository.create({
@@ -58,7 +57,6 @@ export class AuthService{
         try {
           localPicture = await downloadImage(picture, filename);
         } catch (error) {
-          console.error("Error downloading image:", error);
           localPicture = picture;
         }
         user.picture = localPicture;
