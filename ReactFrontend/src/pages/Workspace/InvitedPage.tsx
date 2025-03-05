@@ -30,8 +30,6 @@ const InvitePage = () => {
          
           navigate("/workspaces");
         } else {
-          console.warn("User not authenticated, redirecting to Google Login...");
-
     
           Cookies.set("redirect_after_login", `/invite?token=${token}`, { expires: 1 / 144, path: "/" });
 

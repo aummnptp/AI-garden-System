@@ -180,7 +180,6 @@ const UpdateAiPage: React.FC = () => {
           toast.error("Service URI ไม่ส่ง JSON กลับมา");
         }
       } catch (error) {
-        console.error("Error testing API:", error);
         toast.error("เกิดข้อผิดพลาดขณะทดสอบ API");
       }
     } else {
