@@ -342,10 +342,9 @@ export class ProjectsService {
 
   async getAllHistoryFromAllProject(workspaceId: string): Promise<ProjectHistory[]> {
     try {
-      // ดึงประวัติของโปรเจคที่อยู่ใน workspaceId เดียวกัน
       const allHistory = await this.projectHistoryRepository.find({
-        relations: ['ai_model', 'user', 'project', 'project.workspace'], // เพิ่ม workspace ใน relations
-        where: { project: { workspace: { workspaceId } } }, // กรองเฉพาะโปรเจกต์ที่อยู่ใน workspaceId
+        relations: ['ai_model', 'user', 'project', 'project.workspace'],
+        where: { project: { workspace: { workspaceId } } },
         order: { createdAt: 'DESC' },
       });
       return allHistory;
