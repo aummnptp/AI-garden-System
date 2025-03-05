@@ -12,7 +12,7 @@ export class UpdateDocumentDto extends PartialType(CreateDocsDto) {
      order: number;
      @IsOptional()
      @IsString()
-     @MinLength(3, { message: 'Title ต้องมีความยาวอย่างน้อย 3 ตัวอักษร' })
+     @MinLength(1, { message: 'Title ต้องมีความยาวอย่างน้อย 1 ตัวอักษร' })
      @MaxLength(20, { message: 'Title ต้องมีความยาวไม่เกิน 20 ตัวอักษร' })
      title?: string;
 
@@ -41,7 +41,7 @@ export class UpdateSubDocumentDto extends PartialType(CreateSubDocsDto) {
     
     @IsOptional()
     @IsString()
-    @MinLength(3, { message: 'Title ต้องมีความยาวอย่างน้อย 3 ตัวอักษร' })
+    @MinLength(1, { message: 'Title ต้องมีความยาวอย่างน้อย 1 ตัวอักษร' })
     @MaxLength(20, { message: 'Title ต้องมีความยาวไม่เกิน 20 ตัวอักษร' })
     title?: string;
     @IsOptional()
