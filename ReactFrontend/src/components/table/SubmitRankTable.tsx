@@ -186,7 +186,7 @@ export default function SubmitRankTable() {
                     <div className="ml-3">
                       <p className="text-indigo-900 text-lg font-medium">{item.user.name}</p>
                       <p className="text-gray-600 text-sm">
-                        {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)} น.
+                        {formatDate(item.createdAt)} เวลา: {formatTime(item.createdAt)}
                       </p>
                     </div>
                   </div>

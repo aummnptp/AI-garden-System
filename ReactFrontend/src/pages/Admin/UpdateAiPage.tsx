@@ -44,6 +44,7 @@ const UpdateAiPage: React.FC = () => {
 
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
+   const [isPredicting, setIsPredicting] = useState(false);
 
   const {
     handleSubmit,
@@ -128,6 +129,8 @@ const UpdateAiPage: React.FC = () => {
         return;
       }
 
+      setIsPredicting(true);
+
       try {
         const response = await fetch(serviceUri, {
           method: "POST",
@@ -175,13 +178,16 @@ const UpdateAiPage: React.FC = () => {
             });
           };
 
+          setIsPredicting(false);
+
           setSelectOptions(extractKeys(jsonData));
         } else {
           toast.error("Service URI ไม่ส่ง JSON กลับมา");
+          setIsPredicting(false);
         }
       } catch (error) {
-        console.error("Error testing API:", error);
         toast.error("เกิดข้อผิดพลาดขณะทดสอบ API");
+        setIsPredicting(false);
       }
     } else {
       toast.error("กรุณาเลือกไฟล์ก่อน");
@@ -322,6 +328,7 @@ const UpdateAiPage: React.FC = () => {
                 }
                 onShowPreview={() => setExamplePredictResultModal(true)}
                 errors={errors}
+                isPredicting={isPredicting}
               />
 
               <AiResponseKeys
