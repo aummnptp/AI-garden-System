@@ -1,5 +1,4 @@
 import { Controller, Get, Req, Request, Res, UseGuards } from "@nestjs/common";
-// import { Controller, Get, Post,  Request, Res, UseGuards } from "@nestjs/common";
 import { GoogleAuthGuard } from "./guards/google-auth.guard";
 import { AuthService } from "./auth.service";
 import { PassThrough } from "stream";
@@ -53,7 +52,6 @@ export class AuthController {
   }
   @Get('status')
   async getAuthStatus(@Request() req) {
-    console.log("Cookies received:", req.cookies);
     return { isAuthenticated: !!req.cookies['access_token'] };
   }
 

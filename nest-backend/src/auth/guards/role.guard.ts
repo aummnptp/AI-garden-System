@@ -1,7 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 
-// import { ROLES_KEY } from "./roles-decoraters";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,17 +14,17 @@ export class RolesGuard implements CanActivate {
     
     
     if (!user?.role) {
-      return false; // หากไม่มี role ใน user
+      return false; 
     }
     
     if (!requiredRole) {
-      return true; // ไม่มีการกำหนด role ก็อนุญาต
+      return true; 
     }
-    // อนุญาตทุก path สำหรับ admin
+
     if (user.role === 'admin') {
       return true;
     }
 
-    return user.role === requiredRole; // ตรวจสอบ role ตรงกันหรือไม่
+    return user.role === requiredRole; 
   }
 }

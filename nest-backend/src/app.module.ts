@@ -28,22 +28,6 @@ import { AISettingModule } from './ai-setting/ai-setting.module';
 import {  NoteModule } from './note_history/note.module';
 
 
-//@Module({
-  //imports: [
-    //ConfigModule.forRoot({isGlobal:true}),
-    //TypeOrmModule.forRoot({
-      //type: 'postgres',
-      //host: process.env.POSTGRES_HOST,
-      //port: parseInt(<string>process.env.POSTGRES_PORT),
-      //username: process.env.POSTGRES_USER,
-      //password: process.env.POSTGRES_PASSWORD,
-      //database: process.env.POSTGRES_DATABASE,
-      //entities: [User, Workspace, AIModel, Permission], // เพิ่ม AIModel ที่นี่
-      //synchronize: true, // ปิดในการใช้งาน production
-      //logging: true,
-
-// import { InvitationModule } from './invitation/invitation.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -68,10 +52,7 @@ import {  NoteModule } from './note_history/note.module';
   ],
   controllers: [AppController],
   providers: [AppService
-    // , {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // }
+
   ],
 })
 export class AppModule {}

@@ -8,10 +8,10 @@ interface ImageUploaderProps {
 const ImageUploaderRetest: React.FC<ImageUploaderProps> = ({ image }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
-  const [rotation, setRotation] = useState<number>(0); // state for rotation
-  const [isGrayscale, setIsGrayscale] = useState<boolean>(false); // state for grayscale
-  const [resizeWidth, setResizeWidth] = useState<number>(300); // width for resizing
-  const [resizeHeight, setResizeHeight] = useState<number>(300); // height for resizing
+  const [rotation, setRotation] = useState<number>(0); 
+  const [isGrayscale, setIsGrayscale] = useState<boolean>(false);
+  const [resizeWidth, setResizeWidth] = useState<number>(300);
+  const [resizeHeight, setResizeHeight] = useState<number>(300);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleRotateLeft = () => {
@@ -52,15 +52,15 @@ const ImageUploaderRetest: React.FC<ImageUploaderProps> = ({ image }) => {
         const canvas = canvasRef.current!;
         const ctx = canvas.getContext('2d');
         
-        canvas.width = resizeWidth; // กำหนดขนาดความกว้าง
-        canvas.height = resizeHeight; // กำหนดขนาดความสูง
+        canvas.width = resizeWidth;
+        canvas.height = resizeHeight;
 
-        ctx?.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+        ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
         ctx?.save();
-        ctx?.translate(canvas.width / 2, canvas.height / 2); // move to center
-        ctx?.rotate((rotation * Math.PI) / 180); // rotate canvas
-        ctx?.drawImage(image, -resizeWidth / 2, -resizeHeight / 2, resizeWidth, resizeHeight); // draw image with resizing
+        ctx?.translate(canvas.width / 2, canvas.height / 2);
+        ctx?.rotate((rotation * Math.PI) / 180); 
+        ctx?.drawImage(image, -resizeWidth / 2, -resizeHeight / 2, resizeWidth, resizeHeight);
         ctx?.restore();
 
         if (isGrayscale) {

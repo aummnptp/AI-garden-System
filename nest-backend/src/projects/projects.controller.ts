@@ -126,7 +126,7 @@ export class ProjectsController {
   }
 
 
-  // @WorkspaceRole('owner') 
+  // @WorkspaceRole('owner')
   @UseGuards(JwtGuard, ProjectPermissionGuard)
   @Delete(':projectId/history/:historyId')
   async deleteHistory(
