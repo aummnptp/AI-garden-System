@@ -10,8 +10,9 @@ interface ProjectPermissionGuardProps {
 
 const ProjectPermissionGuard: React.FC<ProjectPermissionGuardProps> = ({ children }) => {
   const { workspaceId, projectId } = useParams<{ workspaceId?: string; projectId?: string }>();
-  const { getProjectPermission, loading } = useAuth();
+  const { getProjectPermission, loading  , isAdmin, isOwner} = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [isWorkspaceOwner, setIsWorkspaceOwner] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -21,23 +22,27 @@ const ProjectPermissionGuard: React.FC<ProjectPermissionGuardProps> = ({ childre
         return;
       }
 
-      const permission = await getProjectPermission(workspaceId, projectId);
+      const [permission, ownerStatus] = await Promise.all([
+        getProjectPermission(workspaceId, projectId),
+        isOwner(workspaceId),
+      ]);
+
       setHasPermission(permission);
+      setIsWorkspaceOwner(ownerStatus);
       setChecking(false);
     };
 
     fetchPermission();
-  }, [workspaceId, projectId, getProjectPermission]);
+  }, [workspaceId, projectId, getProjectPermission, isOwner]);
 
   if (loading || checking) {
-    return <LoadingSpinner /> 
+    return <LoadingSpinner />;
+  }
+  if (isAdmin || isWorkspaceOwner || hasPermission) {
+    return <>{children}</>;
   }
 
-  if (!hasPermission) {
-    return <UnauthorizedPage />; 
-  }
-
-  return <>{children}</>;
+  return <UnauthorizedPage />;
 };
 
 export default ProjectPermissionGuard;
