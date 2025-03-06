@@ -36,10 +36,9 @@ export class WorkspaceRoleGuard implements CanActivate {
       return true;
     }
 
-    if (member.role === "owner") {
+    if (member.role === "owner" || member.user.role === "admin") {
       return true;
     }
-
     if (member.role !== requiredRole) {
       throw new ForbiddenException(`Role Guard: Required workspace role: ${requiredRole}`);
     }
