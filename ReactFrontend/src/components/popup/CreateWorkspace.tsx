@@ -2,7 +2,6 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCreateWorkspaceMutation } from '../../hook/workspaces/useCreateWorkspaceMutation';
-import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { workspaceSchema, WorkspaceSchemaType } from '../../validations/workspaceSchema';

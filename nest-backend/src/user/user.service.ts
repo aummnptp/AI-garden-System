@@ -12,7 +12,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     
   ) {}
-  private allowedPromoters: string[] = ['64070007@kmitl.ac.th', '64070079@kmitl.ac.th']; // 🔹 อีเมลที่อนุญาต
+  private allowedPromoters: string[] = ['taravichet@it.kmitl.ac.th','64070007@kmitl.ac.th', '64070079@kmitl.ac.th']; // 🔹 อีเมลที่อนุญาต
 
   create(registerDTO: RegisterDTO): Promise<User> {
     const newUser = this.userRepository.create(registerDTO);

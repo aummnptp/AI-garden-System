@@ -272,7 +272,7 @@ const AddAiPage: React.FC = () => {
                 predictResult={watch("predictResult") as PredictResult | undefined}
                 onShowPreview={() => setExamplePredictResultModal(true)}
                 errors={errors}
-                isPredicting={isPredicting} // ✅ ส่งค่าไปยัง AiFileUpload
+                isPredicting={isPredicting}
               />
 
               <AiResponseKeys
