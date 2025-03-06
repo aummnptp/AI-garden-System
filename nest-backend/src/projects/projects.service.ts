@@ -340,16 +340,16 @@ export class ProjectsService {
 
 
 
-  async getAllHistoryFromAllProject(): Promise<ProjectHistory[]> {
+  async getAllHistoryFromAllProject(workspaceId: string): Promise<ProjectHistory[]> {
     try {
-      // ดึงประวัติทั้งหมดจากทุกโปรเจค
       const allHistory = await this.projectHistoryRepository.find({
-        relations: ['ai_model', 'user', 'project'], // ดึงข้อมูลที่เกี่ยวข้องทั้งหมด
+        relations: ['ai_model', 'user', 'project', 'project.workspace'],
+        where: { project: { workspace: { workspaceId } } },
         order: { createdAt: 'DESC' },
       });
-      return allHistory
+      return allHistory;
     } catch (error) {
-      throw new InternalServerErrorException('Failed to fetch all project history');
+      throw new InternalServerErrorException('Failed to fetch project history for the given workspace');
     }
   }
 

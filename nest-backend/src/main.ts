@@ -5,7 +5,6 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.enableCors({
@@ -14,7 +13,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
   });
   
-  // เสิร์ฟไฟล์จากโฟลเดอร์ 'uploads'
+
   app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
   await app.listen(3000);
 }

@@ -15,11 +15,9 @@ export class AIVisibleGuard implements CanActivate {
     const aiId = req.params.aiId;
     if (!aiId) throw new BadRequestException("AI ID is required.");
 
-    // ดึงข้อมูล AI
     const aiModel = await this.aiModelRepository.findOne({ where: { aiId } });
     if (!aiModel) throw new NotFoundException("AI Model not found");
 
-    // ถ้า visible = false ห้ามใช้ใน Demo
     if (!aiModel.visible) {
       throw new BadRequestException("This AI is not available for demo.");
     }

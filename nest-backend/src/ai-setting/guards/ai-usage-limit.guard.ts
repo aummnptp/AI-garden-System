@@ -11,7 +11,7 @@ import { AIUsageLimit } from "src/ai-setting/entities/ai-usage-limit.entity";
 import { AISetting } from "src/ai-setting/entities/ai-setting.entity";
 import { User } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
-import { AIModel } from "src/ai/entities/ai-model.entity";  // Import AIModel
+import { AIModel } from "src/ai/entities/ai-model.entity"; 
 
 @Injectable()
 export class AIUsageLimitGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class AIUsageLimitGuard implements CanActivate {
     private readonly aiSettingRepository: Repository<AISetting>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(AIModel)   // Inject repository สำหรับ AIModel
+    @InjectRepository(AIModel)  
     private readonly aiModelRepository: Repository<AIModel>,
   ) {}
 
@@ -40,10 +40,8 @@ export class AIUsageLimitGuard implements CanActivate {
   
     const today = new Date().toISOString().split('T')[0];
   
-    // ดึงค่าการตั้งค่า AI (เช่น maxUsagePerDay, isLimitEnabled)
     const settings = await this.aiSettingRepository.find({ take: 1 });
     const limitSetting = settings[0];
-    // ถ้า limit ถูกปิดใช้งาน ให้ผ่านทันที
     if (limitSetting && !limitSetting.isLimitEnabled) {
       return true;
     }
@@ -51,7 +49,6 @@ export class AIUsageLimitGuard implements CanActivate {
    
     const maxUsagePerDay = limitSetting ? limitSetting.maxUsagePerDay : 10;
   
-    // ดึงข้อมูล usage record สำหรับ (user, ai, date)
     let usage = await this.aiUsageLimitRepository.findOne({
       where: {
         user: { userId: userId },
@@ -60,24 +57,20 @@ export class AIUsageLimitGuard implements CanActivate {
       },
     });
   
-    // หากมี record อยู่แล้ว ตรวจสอบค่า usageCount
     if (usage && usage.usageCount >= maxUsagePerDay) {
       throw new BadRequestException(`You have reached the daily limit of ${maxUsagePerDay} requests.`);
     }
   
-    // ดึงข้อมูลผู้ใช้
     const user = await this.userRepository.findOne({ where: { userId: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
   
-    // ดึงข้อมูล AI model
     const ai = await this.aiModelRepository.findOne({ where: { aiId: aiIdFromParams } });
     if (!ai) {
       throw new NotFoundException('AI model not found');
     }
   
-    // ถ้าไม่มี recordใช้งานในวันนี้ ให้สร้างใหม่, ถ้ามีให้เพิ่ม usageCount
     if (usage) {
       usage.usageCount += 1;
     } else {

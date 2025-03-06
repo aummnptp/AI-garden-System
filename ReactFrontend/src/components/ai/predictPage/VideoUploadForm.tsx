@@ -2,58 +2,48 @@ import { Button, Skeleton } from "@mui/material";
 import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { FileUploadArea } from "./FileUploadArea";
 import { PredictResult } from "../../../types/Ai";
-
+import toast from "react-hot-toast";
 
 export const VideoUploadForm: React.FC<{
-    file: File | null;
-    setFile: (file: File | null) => void;
-    uploadStep: number;
-    setUploadStep: (step: number) => void;
-    predictResult: PredictResult | null;
-    setPredictResult: (result: PredictResult | null) => void;
-    predictFromVideo: any;
-  }> = ({
-    file,
-    setFile,
-    uploadStep,
-    setUploadStep,
-    predictResult,
-    setPredictResult,
-    predictFromVideo,
-  }) => {
+  file: File | null;
+  setFile: (file: File | null) => void;
+  uploadStep: number;
+  setUploadStep: (step: number) => void;
+  predictResult: PredictResult | null;
+  setPredictResult: (result: PredictResult | null) => void;
+  predictFromVideo: any;
+}> = ({
+  file,
+  setFile,
+  uploadStep,
+  setUploadStep,
+  predictResult,
+  setPredictResult,
+  predictFromVideo,
+}) => {
+  
     const handleUploadVideo = async () => {
       if (!file) {
+        toast.error("No file to upload");
         return;
       }
-      console.log("Uploading file:", file); 
       setUploadStep(2);
       predictFromVideo.mutate(file, {
         onSuccess: (data: PredictResult) => {
-          console.log("Prediction Success:", data); 
           setPredictResult(data);
           setUploadStep(3);
         },
-        onError: (error: unknown) => {
-          if (error instanceof Error) {
-            console.error("Prediction Error:", error.message); 
-          } else {
-            console.error("Unknown error occurred:", error);
-          }
+        onError: (error: any) => {
+          toast.error(error.message);
           setUploadStep(1);
         },
       });
     };
-    
-    
-  
+
+
+
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleUploadVideo();
-        }}
-        className="m-6 space-y-4"
-      >
+      <div className="m-6 space-y-4">
         {uploadStep === 1 && (
           <div className="form-group">
             <FileUploadArea
@@ -83,7 +73,7 @@ export const VideoUploadForm: React.FC<{
           <AIDisPlayResultComponent resultImage="" predictResult={predictResult} />
         )}
         <div className="flex justify-end">
-          {uploadStep === 1 && (
+          {uploadStep !== 2 && (
             <Button
               type="submit"
               variant="contained"
@@ -92,11 +82,18 @@ export const VideoUploadForm: React.FC<{
                 backgroundColor: "#3b82f6",
                 "&:hover": { backgroundColor: "#2563eb" },
               }}
+              onClick={() => {
+                if (uploadStep === 1) {
+                  handleUploadVideo();
+                } else {
+                  setUploadStep(1);
+                }
+              }}
             >
-              ประมวลผล
+              {uploadStep === 1 ? "ประมวลผล" : "อัพโหลดอีกครั้ง"}
             </Button>
           )}
         </div>
-      </form>
+        </div>
     );
   };

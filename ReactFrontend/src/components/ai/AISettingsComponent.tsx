@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import AISettingDialog from './AISettingDialog';
-
 import { SettingFilled } from '@ant-design/icons';
 import { useAiData } from '../../hook/ai/useAiData';
-import LoadingSpinner from '../LoadingSpinner';
 import { useUpdateAISettingsMutation } from '../../hook/ai/useUpdateAISettingsMutation';
 
 const AISettingsComponent: React.FC = () => {
@@ -29,7 +27,7 @@ const AISettingsComponent: React.FC = () => {
   };
 
 
-  if (isLoadingAiSetting) return <LoadingSpinner/>;
+  if (isLoadingAiSetting) return <CircularProgress/>;
 
   return (
     <>

@@ -57,8 +57,8 @@ export class ProjectsController {
 
   @UseGuards(JwtGuard)
   @Get('all-history-in-project')
-  async getAllHistoryFromAllProject() {
-    return this.projectsService.getAllHistoryFromAllProject();
+  async getAllHistoryFromAllProject(@Param('workspaceId') workspaceId: string) {
+    return this.projectsService.getAllHistoryFromAllProject(workspaceId);
   }
 
   @UseGuards(JwtGuard)
@@ -126,7 +126,7 @@ export class ProjectsController {
   }
 
 
-  // @WorkspaceRole('owner') 
+  // @WorkspaceRole('owner')
   @UseGuards(JwtGuard, ProjectPermissionGuard)
   @Delete(':projectId/history/:historyId')
   async deleteHistory(

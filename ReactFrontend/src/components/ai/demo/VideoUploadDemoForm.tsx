@@ -4,6 +4,7 @@ import AIDisPlayResultComponent from "../../aiDisplay/AIDisPlayResultComponent";
 import { Link } from "react-router-dom";
 import { AIDataType, PredictResult } from "../../../types/Ai";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
 
 
   
@@ -28,6 +29,7 @@ export const VideoUploadDemoForm: React.FC<{
   }) => {
     const handleUploadVideo = async () => {
       if (!file) {
+        toast.error("No file to upload");
         return;
       }
       setUploadStep(2);
@@ -36,12 +38,8 @@ export const VideoUploadDemoForm: React.FC<{
           setPredictResult(data);
           setUploadStep(3);
         },
-        onError: (error: unknown) => {
-          if (error instanceof Error) {
-            console.error("Prediction Error:", error.message); 
-          } else {
-            console.error("Unknown error occurred:", error);
-          }
+        onError: (error: any) => {
+          toast.error(error.message);
           setUploadStep(1);
         },
       });

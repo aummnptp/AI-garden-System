@@ -104,7 +104,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return !!data; 
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 403) {
-        console.warn(`Permission denied for project ${projectId}`);
         return false;
       }
       return false;

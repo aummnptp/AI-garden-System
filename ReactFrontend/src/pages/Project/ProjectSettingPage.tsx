@@ -66,7 +66,6 @@ const ProjectSetting = () => {
       setValue("inputType", projectDetail.input_type);
     }
   }, [projectDetail, setValue]);
-console.log(imagePreview)
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];

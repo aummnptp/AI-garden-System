@@ -17,6 +17,7 @@ export const ImageUploadForm: React.FC<{
   setCustomedImageUrl: (url: string | null) => void;
   customImage: File | null;
   setCustomImage: (file: File | null) => void;
+
 }> = ({
   file,
   setFile,
@@ -30,6 +31,7 @@ export const ImageUploadForm: React.FC<{
   customImage,
   setCustomImage,
 }) => {
+  
   const handleToCustomStep = () => {
     setUploadStep((prev: number) => Math.min(prev + 1, 5));
     setCustomImage(file);
@@ -109,7 +111,13 @@ export const ImageUploadForm: React.FC<{
               backgroundColor: "#3b82f6",
               "&:hover": { backgroundColor: "#2563eb" },
             }}
-            onClick={handleUpload}
+            onClick={() => {
+              if (uploadStep === 2) {
+                handleUpload();
+              } else {
+                setUploadStep(1);
+              }
+            }}
           >
             {uploadStep === 2 ? "ประมวลผล" : "อัพโหลดอีกครั้ง"}
           </Button>

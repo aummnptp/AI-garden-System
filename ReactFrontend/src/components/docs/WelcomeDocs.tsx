@@ -16,7 +16,7 @@ const WelcomeDocs = () => {
       >
                             <Button variant="contained" sx={{ mt: 2, backgroundColor: "#4f46e5" }}>
 
-        กลับสู่หน้าหลัก
+        Back To Home
         </Button>
       </Link>
     </div>

@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import MiniFooter from '../../components/MiniFooter';
 import Sidebar from "../../components/Sidebar";
 import SkeletonLayout from '../../components/SkeletonPageLayout';
@@ -20,7 +20,6 @@ const PredictAiModelPage: React.FC = () => {
   const { predictFromImage, predictFromVideo } = useAiPrediction();
   const { workspaceDetail, isLoadingWorkspace } = useWorkspaceData();
   const { projectDetail, isLoadingProjectDetail } = useProjecteData();
-
 
 
   if (isLoadingProjectDetail || isLoadingWorkspace) return <SkeletonLayout />;
@@ -57,6 +56,7 @@ const PredictAiModelPage: React.FC = () => {
                 customImage={customImage}
                 setCustomImage={setCustomImage}
               />
+
             ) : (
               <VideoUploadForm
                 file={file}

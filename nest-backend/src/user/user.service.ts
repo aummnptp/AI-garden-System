@@ -64,12 +64,10 @@ export class UserService {
       throw new ForbiddenException('You are not authorized to demote an admin');
     }
 
-    // ✅ ตรวจสอบว่า targetUser เป็น Admin อยู่หรือไม่
     if (user.role !== 'admin') {
       throw new ForbiddenException('User is not an admin');
     }
 
-    // ✅ เปลี่ยน role กลับเป็น `user`
     user.role = 'user';
     return this.userRepository.save(user);
   }

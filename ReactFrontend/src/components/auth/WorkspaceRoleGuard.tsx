@@ -11,8 +11,8 @@ interface WorkspaceRoleGuardProps{
 }
 
 const WorkspaceRoleGuard: React.FC<WorkspaceRoleGuardProps> = ({ requiredRole, children }) => {
-    const { workspaceId } = useParams(); // ใช้ workspaceId จาก URL
-    const { getWorkspaceRole, loading } = useAuth();
+    const { workspaceId } = useParams();
+    const { getWorkspaceRole, loading,isAdmin } = useAuth();
     const [workspaceRole, setWorkspaceRole] = useState<string | null>(null);
     const [checking, setChecking] = useState(true);
   
@@ -33,12 +33,12 @@ const WorkspaceRoleGuard: React.FC<WorkspaceRoleGuardProps> = ({ requiredRole, c
     if (loading || checking) {
       return <LoadingSpinner />;
     }
-  
-    if (!workspaceRole || workspaceRole !== requiredRole && workspaceRole !== "owner") {
-      return <UnauthorizedPage/>
+
+    if (isAdmin || workspaceRole === requiredRole || workspaceRole === "owner") {
+      return <>{children}</>;
     }
-  
-    return <>{children}</>;
+
+    return <UnauthorizedPage />;
   };
   
   export default WorkspaceRoleGuard;

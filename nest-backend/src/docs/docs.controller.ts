@@ -6,7 +6,6 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/auth/decorator/roles-decoraters';
 import { UpdateDocumentDto, UpdateSubDocumentDto } from './dto/update-document.dto';
-import { config } from 'dotenv';
 
 
 
@@ -50,22 +49,19 @@ export class DocsController {
     return this.docsService.deleteSubDoc(subDocsId);
   }
 
-  // @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard) 
   @Get('/content-docs/:docsId')
   async getDocsConetent(@Param("docsId") docsId: string) {
     return this.docsService.getDocs(docsId)
   }
 
-  // @UseGuards(JwtGuard) 
+  @UseGuards(JwtGuard) 
   @Get('/content-subdocs/:subDocsId')
   async getSubDocsConetent(@Param("subDocsId") subDocsId: string) {
     return this.docsService.getSubDocs(subDocsId)
   }
 
-  // @Get('/content-docs-by-title/:title')
-  // async getDocsByTitle(@Param('title') title: string) {
-  //   return this.docsService.findByTitle(title);
-  // }
+
 
   @Role("admin")
   @UseGuards(JwtGuard, RolesGuard)
@@ -75,12 +71,14 @@ export class DocsController {
   }
 
   @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Patch("update-subdocs/:subDocsId")
   async updateSubDocs(@Param('subDocsId') subDocsId: string, @Request() req, @Body() updateSubDocumentDto: UpdateSubDocumentDto) {
     return this.docsService.updateSubDocs(subDocsId, updateSubDocumentDto);
   }
 
   @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Patch('/save-docs-order')
   async saveDocsOrder(@Request() req,@Body() body: { documents: UpdateDocumentDto[] }) {
 
@@ -88,6 +86,7 @@ export class DocsController {
   }
   
   @Role("admin")
+  @UseGuards(JwtGuard, RolesGuard)
   @Patch('/save-subdocs-order')
   async saveSubDocsOrder(@Request() req,@Body() body: { subDocuments: UpdateSubDocumentDto[] }) {
     return this.docsService.saveSubDocsOrder(body.subDocuments);

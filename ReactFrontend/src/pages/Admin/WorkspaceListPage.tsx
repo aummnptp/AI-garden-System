@@ -54,25 +54,12 @@ function WorkspaceList() {
                     <div className="mt-4 pb-5 h-fit w-[95%] bg-white rounded-[15px] justify-self-center relative">
                         <div className="flex justify-between items-center p-5">
                             <h1 className="text-3xl font-medium tracking-tight text-indigo-900 ">
-                                รายชื่อ Workspace
+                                 Workspace List
                             </h1>
                         </div>
                         <div className="w-[95%] h-[0px] border border-zinc-300 mx-auto"></div>
                         <div className="m-6 flex justify-between items-center gap-4">
-                            <input
-                                type="text"
-                                id="first_name"
-                                className="w-6/12 h-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 "
-                                placeholder="Search with AI name"
-                                required
-                            />
-                            <div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-4 h-fit w-[95%] bg-white rounded-[15px] items-center relative p-6">
-                        {/* Card container */}
-                        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8 pt-2`}>
+                            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1 pb-8 pt-2`}>
                             {myWorkspace.map((data:WorkspaceCard) => (
                                 <div>
                                     <Link to={`/workspaces/${data.workspaceId}/project-list`}>
@@ -81,6 +68,7 @@ function WorkspaceList() {
                                     </Link>
                                 </div>
                             ))}
+                        </div>
                         </div>
                     </div>
                 </div>

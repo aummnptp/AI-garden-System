@@ -75,9 +75,9 @@ export default function AddAIDialog() {
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
   const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false); // Dialog ยืนยันการลบ
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false); // Dialog ยืนยันการบันทึก
-  const [aiToRemove, setAiToRemove] = useState<AIModel | null>(null); // AI ที่จะลบ
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false); 
+  const [aiToRemove, setAiToRemove] = useState<AIModel | null>(null);
 
 
   React.useEffect(() => {

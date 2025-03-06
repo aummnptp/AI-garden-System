@@ -15,26 +15,8 @@ class ResponseKeyDto {
   }
   
 export class CreateProjectHistoryDto {
-  // @IsNumber()
-  // @IsNotEmpty()
-  // projectId: number;
-
-  // @IsNumber()
-  // @IsNotEmpty()
-  // modelId: number;
 
   @IsString()
   filePath: string;
-
-  
-  // @IsArray()
-  // @ValidateNested({ each: true })
-  // @Type(() => ResponseKeyDto)
-  // readonly response_keys: ResponseKeyDto[];
-    
-  // @IsArray()
-  // @IsNotEmpty()
-  // result:{}[];
-
 
 }

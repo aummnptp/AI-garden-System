@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { AIModel } from './entities/ai-model.entity';
 import axios from 'axios';
 import * as FormData from 'form-data';
-import { createReadStream } from 'fs'; // ใช้ในกรณีที่มีการอ่านไฟล์จากระบบ
+import { createReadStream } from 'fs'; 
 import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import { Permission } from '../permission/entities/permission.entity';
@@ -35,7 +35,6 @@ export class AIModelService {
     if (!userProfile) {
       throw new NotFoundException('User not found');
     }
-    // Parse response_keys to ensure it's an array
     if (typeof createAIModelDto.response_keys === 'string') {
       try {
         responseKeys = JSON.parse(createAIModelDto.response_keys);
@@ -74,13 +73,11 @@ export class AIModelService {
   
     const updatedModelData: Partial<AIModel> = { ...updateAIModelDto };
   
-    // หากมีไฟล์ใหม่ให้เปลี่ยนแปลงไฟล์และอัปเดต imagePath
     if (file) {
       const fileName = file.filename;
       updatedModelData.imagePath = `/uploads/${fileName}`;
     }
   
-    // อัปเดตข้อมูลในฐานข้อมูล
     await this.aiModelRepository.update(aiId, updatedModelData);
   
     return 'Model updated successfully!';
@@ -139,7 +136,6 @@ export class AIModelService {
     }
     
     const formData = new FormData();
-    // เมื่อ file มีค่าแล้ว เราจะเข้าถึง file.buffer
     formData.append('file', file.buffer, file.originalname);
     
     try {
@@ -173,7 +169,7 @@ export class AIModelService {
 
   async findAllWithDetails() {
     return this.aiModelRepository.find({
-      relations: ['permissions'], // ระบุความสัมพันธ์กับ user และ ai
+      relations: ['permissions'],
     });
   }
 
@@ -194,7 +190,7 @@ export class AIModelService {
   async getApprovedAiModelsByUserId(userId: string): Promise<AIModel[]> {
     return this.aiModelRepository
       .createQueryBuilder('aiModel')
-      .innerJoin('aiModel.permissions', 'permission') // Assumes a relation is defined
+      .innerJoin('aiModel.permissions', 'permission') 
       .where('permission.user_id = :userId', { userId })
       .andWhere('permission.approve = :approve', { approve: true })
       .getMany();
