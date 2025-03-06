@@ -36,7 +36,7 @@ export class WorkspaceRoleGuard implements CanActivate {
       return true;
     }
 
-    if (member.role === "owner") {
+    if (member.role === "owner" || member.user.role === "admin") {
       return true;
     }
 
