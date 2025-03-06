@@ -23,7 +23,7 @@ export class AuthController {
       // maxAge: 1000 * 60 * 10, 
       httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
       secure: true,        // ใช้ HTTPS เท่านั้น
-      sameSite: 'strict',  // ป้องกัน CSRF
+      sameSite: 'none',  // ป้องกัน CSRF
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
     });
 
@@ -37,7 +37,7 @@ export class AuthController {
       res.cookie('token', accessToken, {
         httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
         secure: true,        // ใช้ HTTPS เท่านั้น
-        sameSite: 'strict',  // ป้องกัน CSRF
+        sameSite: 'none',  // ป้องกัน CSRF
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
       });
 
@@ -64,7 +64,7 @@ export class AuthController {
       // domain: ".suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
       httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
       secure: true,        // ใช้ HTTPS เท่านั้น
-      sameSite: 'strict',  // ป้องกัน CSRF
+      sameSite: 'none',  // ป้องกัน CSRF
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
     });
     res.status(200).json({ message: "Successfully logged out" });
