@@ -17,10 +17,14 @@ export class AuthController {
   async googleAuth(@Req() req: Request & { query: any }, @Res() res: Response) {
     const redirectUrl = (req.query["redirect"] as string) || "/";
     res.cookie("redirect_after_login", redirectUrl, {
-      httpOnly: true, 
-      secure: false, 
-      domain: ".suture-bot.it.kmitl.ac.th", 
-      maxAge: 1000 * 60 * 10, 
+      // httpOnly: true, 
+      // secure: false, 
+      // domain: ".suture-bot.it.kmitl.ac.th", 
+      // maxAge: 1000 * 60 * 10, 
+      httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
+      secure: true,        // ใช้ HTTPS เท่านั้น
+      sameSite: 'strict',  // ป้องกัน CSRF
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
     });
 
     res.end();
@@ -30,18 +34,18 @@ export class AuthController {
   @Get("google/redirect")
   async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
     const { accessToken } = await this.authService.googleLogin(req);
-    // res.cookie("access_token", accessToken, {
-    //   httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
-    //   secure: false, 
-    //   domain: "suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
-    //   sameSite: "none",
-    // });
+      res.cookie('token', accessToken, {
+        httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
+        secure: true,        // ใช้ HTTPS เท่านั้น
+        sameSite: 'strict',  // ป้องกัน CSRF
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
+      });
 
-    res.cookie("access_token", accessToken, {
-      httpOnly: true,
-      secure: false,
-      domain: process.env.NODE_ENV === "production" ? ".suture-bot.it.kmitl.ac.th" : undefined,
-    });
+    // res.cookie("access_token", accessToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   domain: process.env.NODE_ENV === "production" ? ".suture-bot.it.kmitl.ac.th" : undefined,
+    // });
     
     const redirectUrl = req.cookies?.["redirect_after_login"] || "/";
     res.clearCookie("redirect_after_login");
@@ -55,9 +59,13 @@ export class AuthController {
   @Get('logout')
   async logout(@Request() req, @Res() res: Response) {
     res.clearCookie('access_token', {
-      httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
-      secure: false, 
-      domain: ".suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
+      // httpOnly: true, // ควรเป็น true เพื่อป้องกัน XSS
+      // secure: false, 
+      // domain: ".suture-bot.it.kmitl.ac.th", // ไม่ต้องมีจุดนำหน้า
+      httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
+      secure: true,        // ใช้ HTTPS เท่านั้น
+      sameSite: 'strict',  // ป้องกัน CSRF
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 วัน
     });
     res.status(200).json({ message: "Successfully logged out" });
   }
