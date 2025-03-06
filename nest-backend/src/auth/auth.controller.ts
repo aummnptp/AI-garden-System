@@ -34,7 +34,7 @@ export class AuthController {
   @Get("google/redirect")
   async googleAuthRedirect(@Req() req: Request & { cookies: any }, @Res() res: Response) {
     const { accessToken } = await this.authService.googleLogin(req);
-      res.cookie('token', accessToken, {
+      res.cookie('access_token', accessToken, {
         httpOnly: true,      // ป้องกันการเข้าถึงจาก JavaScript
         secure: true,        // ใช้ HTTPS เท่านั้น
         sameSite: 'none',  // ป้องกัน CSRF
