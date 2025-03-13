@@ -154,6 +154,16 @@ export class AIModelController {
   async getAITags(): Promise<string[]> {
     return this.aiModelService.getUniqueAITags();
   }
+
+  // @Role("admin")
+  // @UseGuards(JwtGuard, RolesGuard)
+  @Post('test-service')
+  @UseInterceptors(
+    FileInterceptor('file', { storage: multer.memoryStorage() }) 
+  )
+  async testService(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    return this.aiModelService.sendFileToService(file, req.body.serviceUri);
+  }
 }
 
 

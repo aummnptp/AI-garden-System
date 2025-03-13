@@ -46,7 +46,7 @@ const TextResultDisplay: React.FC<TextResultDisplayProps> = ({
   const formatValue = (value: any) => { if (typeof value === "number") { return value.toFixed(2); } return value; };
 
   return (
-    <div className="w-full border rounded-[5px] p-10">
+    <div className="w-full">
       <div className="flex justify-start items-center p-0 space-x-4">
         <PictureOutlined style={{ fontSize: "32px", color: "#4f46e5" }} />
         <h1 className="text-3xl font-medium tracking-tight text-indigo-900 mb-0">

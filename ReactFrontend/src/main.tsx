@@ -40,10 +40,6 @@ const theme = createTheme({
   },
 });
 
-
-
-
-
 const queryClient = new QueryClient({
   queryCache: new QueryCache(),
   defaultOptions: {
@@ -54,8 +50,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

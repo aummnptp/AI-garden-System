@@ -70,14 +70,16 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
         </div>
       ) : (
         <div className="flex w-full flex-wrap">
-    
+     <div className="w-[60%] text-center space-y-2 border rounded-[5px] p-10 justify-center">
           <ImageDetectionResultDraw
             detections={PredictDrawData}
             InputImage={resultImage}
             aiDisplayType={ai_text_type || ""}
             colorSet={predictResult?.ai_model?.colorSet || []}
           />
-     
+     </div>
+     <div className="w-[40%] border rounded-[5px] p-10">
+
           {predictResult && (
           <TextResultDisplay
             predictResult={predictResult}
@@ -87,6 +89,7 @@ const AIDisPlayResultComponent: React.FC<AIDisPlayResultComponentProps> = ({
             colorSet={predictResult.ai_model?.colorSet || []}
           />
             )}
+            </div>
         </div>
       )}
     </div>

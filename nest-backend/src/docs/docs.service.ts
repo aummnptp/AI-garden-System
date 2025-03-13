@@ -59,7 +59,11 @@ export class DocsService {
     try {
       const query = this.documentRepository
         .createQueryBuilder('document')
-        .leftJoinAndSelect('document.subDocuments', 'subDocument')
+        .leftJoinAndSelect(
+          'document.subDocuments',
+          'subDocument',
+          userRole === 'admin' ? '' : 'subDocument.hidden = false'
+        )
         .select([
           'document.docsId',
           'document.title',
@@ -73,16 +77,18 @@ export class DocsService {
         .orderBy('document.order', 'ASC')
         .addOrderBy('subDocument.order', 'ASC');
   
+      // ซ่อนเฉพาะสำหรับ user ที่ไม่ใช่ admin
       if (userRole !== 'admin') {
-        // ถ้าไม่ใช่ Admin ซ่อนหัวข้อที่ hidden
-        query.where('document.hidden = false').andWhere('subDocument.hidden = false');
+        query.where('document.hidden = false'); 
       }
   
       return await query.getMany();
     } catch (error) {
-      throw new Error(`Failed to fetch document titles: ${error.message}`);
+      throw new Error(`Failed to fetch titles: ${error.message}`);
     }
   }
+  
+  
   async getDocs(docsId: string): Promise<Document> {
     return this.documentRepository.findOneBy({ docsId: docsId });
   }
