@@ -23,11 +23,14 @@ export class WorkspaceRoleGuard implements CanActivate {
     if (!user || !workspaceId) {
       throw new ForbiddenException("Workspace Role Guard: Invalid user or workspace");
     }
-
     const member = await this.workspaceMemberRepository.findOne({
       where: { user: { userId: user.userId }, workspace: { workspaceId } }
     });
-
+    
+        if (user.role === "admin") {
+          return true;
+        }
+    
     if (!member) {
       throw new ForbiddenException("Role Guard: You are not a member of this workspace");
     }
@@ -36,7 +39,7 @@ export class WorkspaceRoleGuard implements CanActivate {
       return true;
     }
 
-    if (member.role === "owner" || member.user.role === "admin") {
+    if (member.role === "owner" ) {
       return true;
     }
     if (member.role !== requiredRole) {
