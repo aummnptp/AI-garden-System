@@ -114,32 +114,32 @@ const UpdateAiPage: React.FC = () => {
     watch("aiType"),
   ]);
 
-
   const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setValue("customedImageUrl", URL.createObjectURL(file));
-
+  
+      const serviceUri = watch("serviceUri");
       const formData = new FormData();
       formData.append("file", file);
-
-      const serviceUri = watch("serviceUri");
-      if (!serviceUri) {
+      formData.append("serviceUri", serviceUri);
+            if (!serviceUri) {
         toast.error("กรุณาใส่ Service URI ก่อน");
         return;
       }
-
+  
       setIsPredicting(true);
-
+  
       try {
-        const response = await fetch(serviceUri, {
+        const response = await fetch(`${import.meta.env.VITE_NEST_BACKEND_API_URL}/ai-models/test-service`, {
           method: "POST",
           body: formData,
         });
+  
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const jsonData = await response.json();
-
+  
           setValue("predictResult", {
             response_keys: watch("responseKeys"),
             prediction: jsonData,
@@ -150,49 +150,112 @@ const UpdateAiPage: React.FC = () => {
               ai_type: watch("aiType"),
             },
           });
-          const extractKeys = (
-            obj: any,
-            parentKey = "",
-            depth = 1,
-            maxDepth = 2
-          ): string[] => {
+  
+
+          const extractKeys = (obj: any, parentKey = "", depth = 1, maxDepth = 2): string[] => {
             if (depth > maxDepth) return [];
             return Object.keys(obj).flatMap((key) => {
               const fullPath = parentKey ? `${parentKey}.${key}` : key;
               if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
-                return [
-                  fullPath,
-                  ...extractKeys(obj[key], fullPath, depth + 1, maxDepth),
-                ];
-              } else if (
-                Array.isArray(obj[key]) &&
-                obj[key].length > 0 &&
-                typeof obj[key][0] === "object"
-              ) {
-                return [
-                  fullPath,
-                  ...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth),
-                ];
+                return [fullPath, ...extractKeys(obj[key], fullPath, depth + 1, maxDepth)];
+              } else if (Array.isArray(obj[key]) && obj[key].length > 0 && typeof obj[key][0] === "object") {
+                return [fullPath, ...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth)];
               }
               return fullPath;
             });
           };
-
-          setIsPredicting(false);
-
+  
           setSelectOptions(extractKeys(jsonData));
         } else {
-          toast.error("Service URI ไม่ส่ง JSON กลับมา");
-          setIsPredicting(false);
+          toast.error("Backend ไม่ส่ง JSON กลับมา");
         }
       } catch (error) {
         toast.error("เกิดข้อผิดพลาดขณะทดสอบ API");
+      } finally {
         setIsPredicting(false);
       }
     } else {
       toast.error("กรุณาเลือกไฟล์ก่อน");
     }
   };
+  // const handleUri = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     setValue("customedImageUrl", URL.createObjectURL(file));
+
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+
+  //     const serviceUri = watch("serviceUri");
+  //     if (!serviceUri) {
+  //       toast.error("กรุณาใส่ Service URI ก่อน");
+  //       return;
+  //     }
+
+  //     setIsPredicting(true);
+
+  //     try {
+  //       const response = await fetch(serviceUri, {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+  //       const contentType = response.headers.get("content-type");
+  //       if (contentType && contentType.includes("application/json")) {
+  //         const jsonData = await response.json();
+
+  //         setValue("predictResult", {
+  //           response_keys: watch("responseKeys"),
+  //           prediction: jsonData,
+  //           ai_model: {
+  //             name: watch("aiName"),
+  //             ai_tag: watch("tags").join(", "),
+  //             colorSet: watch("colorSet"),
+  //             ai_type: watch("aiType"),
+  //           },
+  //         });
+  //         const extractKeys = (
+  //           obj: any,
+  //           parentKey = "",
+  //           depth = 1,
+  //           maxDepth = 2
+  //         ): string[] => {
+  //           if (depth > maxDepth) return [];
+  //           return Object.keys(obj).flatMap((key) => {
+  //             const fullPath = parentKey ? `${parentKey}.${key}` : key;
+  //             if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+  //               return [
+  //                 fullPath,
+  //                 ...extractKeys(obj[key], fullPath, depth + 1, maxDepth),
+  //               ];
+  //             } else if (
+  //               Array.isArray(obj[key]) &&
+  //               obj[key].length > 0 &&
+  //               typeof obj[key][0] === "object"
+  //             ) {
+  //               return [
+  //                 fullPath,
+  //                 ...extractKeys(obj[key][0], fullPath, depth + 1, maxDepth),
+  //               ];
+  //             }
+  //             return fullPath;
+  //           });
+  //         };
+
+  //         setIsPredicting(false);
+
+  //         setSelectOptions(extractKeys(jsonData));
+  //       } else {
+  //         toast.error("Service URI ไม่ส่ง JSON กลับมา");
+  //         setIsPredicting(false);
+  //       }
+  //     } catch (error) {
+  //       toast.error("เกิดข้อผิดพลาดขณะทดสอบ API");
+  //       setIsPredicting(false);
+  //     }
+  //   } else {
+  //     toast.error("กรุณาเลือกไฟล์ก่อน");
+  //   }
+  // };
 
   const onSubmit = (data: AiSchemaType) => {
     if (ai_id) {
