@@ -14,7 +14,7 @@ import { CreateAIModelDto } from './dto/create-ai-model.dto';
 import { UpdateAIModelDto } from './dto/update-ai-model.dto';
 import { Permission } from '../permission/entities/permission.entity';
 import { User } from 'src/user/entities/user.entity';
-
+import fetch from 'node-fetch';
 
 @Injectable()
 export class AIModelService {
@@ -214,5 +214,32 @@ export class AIModelService {
   const aiModels = await this.aiModelRepository.find({ select: ["ai_tag"] });
   const allTags = aiModels.flatMap(model => model.ai_tag || []);
   return [...new Set(allTags)];
+}
+
+
+async sendFileToService(file: Express.Multer.File, serviceUri: string) {
+  if (!file) {
+    throw new BadRequestException('กรุณาอัปโหลดไฟล์');
+  }
+
+  if (!serviceUri) {
+    throw new BadRequestException('กรุณาระบุ serviceUri');
+  }
+
+  try {
+    // สร้าง FormData เพื่อส่งไปยัง serviceUri
+    const formData = new FormData();
+    formData.append('file', Buffer.from(file.buffer), file.originalname);
+
+    const response = await axios.post(serviceUri, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new BadRequestException('เกิดข้อผิดพลาดในการเรียก API');
+  }
 }
 }

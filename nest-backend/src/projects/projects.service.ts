@@ -231,11 +231,13 @@ export class ProjectsService {
     if (!project) {
       throw new NotFoundException('Project not found');
     }
+    const user = await this.userRepository.findOne({ where: { userId } });
+
     const workspaceId = project.workspace.workspaceId;
     const workspaceMember = await this.workspaceMemberRepository.findOne({
       where: { user: { userId }, workspace: { workspaceId } },
     });
-    const isOwnerOrAdmin = workspaceMember?.role === 'owner' || workspaceMember?.role === 'admin';
+    const isOwnerOrAdmin = workspaceMember?.role === 'owner' || user?.role === 'admin';
     if (isOwnerOrAdmin) {
       return this.projectHistoryRepository.find({
         where: { project: { projectId } },

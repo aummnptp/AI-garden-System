@@ -134,7 +134,7 @@ const ImageDetectionResultDraw: React.FC<ImageDetectionResultDrawProps> = ({ det
   };
 
   return (
-    <div className="w-full text-center space-y-2 border rounded-[5px] p-10 justify-center">
+    <div className="w-full ">
       <div className="w-full flex justify-end py-1">
       <Button
           onClick={toggleAnnotations}
