@@ -44,7 +44,9 @@ const UpdateAiPage: React.FC = () => {
 
   const { aiModelData, isLoadingAiModel } = useAiData();
   const { updateAiModel, deleteAiModel } = useAiModelMutation();
-   const [isPredicting, setIsPredicting] = useState(false);
+
+  const [isPredicting, setIsPredicting] = useState(false);
+
 
   const {
     handleSubmit,
