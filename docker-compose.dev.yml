@@ -16,7 +16,7 @@ services:
       - uploads-data:/app/uploads
       - ./nest-backend/.env:/app/.env
     environment:
-      DATABASE_URL: postgres://postgres:admin@host.docker.internal:5432/ai_garden_db
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@host.docker.internal:5432/ai_garden_db
       NODE_ENV: development
     networks:
       - ai_garden_network
